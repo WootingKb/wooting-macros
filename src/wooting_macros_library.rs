@@ -11,6 +11,10 @@ pub enum MacroType {
     MultiLevel(Macro),
 }
 
+impl MacroType {
+
+}
+
 /// Key contains a temporary char that needs to be changed,
 /// the delay after pressing and pressing duration
 #[derive(Debug)]
@@ -18,6 +22,10 @@ pub struct Key {
     pub keypress: char,
     pub press_wait_delay_after: time::Duration,
     pub press_duration: time::Duration,
+}
+
+impl Key {
+
 }
 
 ///KeyPress wraps the type of a keypress (Action, KeyUp, KeyDown). For parsing the output (using it).
@@ -40,10 +48,18 @@ pub enum KeyPress {
     UnicodeDirect(),
 }
 
+impl KeyPress {
+
+}
+
 #[derive(Debug)]
 pub struct Action {
     pub action: char,
     pub press_wait_delay_after: time::Duration,
+}
+
+impl Action {
+
 }
 
 #[derive(Debug)]
@@ -53,6 +69,10 @@ pub struct Macro {
     trigger: Vec<KeyPress>,
 }
 
+impl Macro {
+
+}
+
 //TODO: Macro group functionality?
 #[derive(Debug)]
 pub struct MacroGroup {
@@ -60,6 +80,10 @@ pub struct MacroGroup {
     //TODO: PNG/WEBP image?
     icon: char,
     items: Vec<Macro>,
+}
+
+impl MacroGroup {
+
 }
 
 pub fn run_this() {
