@@ -16,7 +16,7 @@ impl MacroType {
 }
 
 /// Key contains a temporary char that needs to be changed,
-/// the delay after pressing and pressing duration
+/// the delay after pressing and pressing duration.
 #[derive(Debug)]
 pub struct Key {
     pub keypress: char,
