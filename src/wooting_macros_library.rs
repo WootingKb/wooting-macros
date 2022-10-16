@@ -1,5 +1,8 @@
+use std::{thread, time};
 use std::str::Bytes;
-use std::time;
+
+use rdev::{Event, listen};
+use rdev::{Button, EventType, Key, simulate, SimulateError};
 
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
 ///
@@ -18,7 +21,7 @@ impl MacroType {
 /// Key contains a temporary char that needs to be changed,
 /// the delay after pressing and pressing duration.
 #[derive(Debug)]
-pub struct Key {
+pub struct KeyPress {
     pub keypress: char,
     pub press_wait_delay_after: time::Duration,
     pub press_duration: time::Duration,
@@ -27,12 +30,15 @@ pub struct Key {
 ///This basically serves as the implementation that gets called from the methods on KeyPress enum.
 /// We always handle the input as: Keypress comes in -> triage -> call the execute according to logic -> process.
 // TODO: This poses a question: do we change the enum variants to just a struct field instead of the enum embodying the struct?
-impl Key {
-    fn execute_key_up(&self){
+impl KeyPress {
+    fn execute_key_up(&self) {
 
+        //send(&EventType::KeyRelease(key_to_press));
     }
-    fn execute_key_down(&self){
+    fn execute_key_down(&self) {
+        let key_to_press = Key::Unknown(self.keypress as i32 as u32);
 
+        send(&EventType::KeyPress(key_to_press));
     }
 }
 
@@ -47,9 +53,9 @@ impl Key {
 ///
 /// ```
 #[derive(Debug)]
-pub enum KeyPress {
-    KeyUpEvent(Key),
-    KeyDownEvent(Key),
+pub enum KeyPressEventType {
+    KeyUpEvent(KeyPress),
+    KeyDownEvent(KeyPress),
     SystemEvent(Action),
     PhillipsHueCommand(),
     DiscordCommand(),
@@ -73,28 +79,27 @@ impl Execute for KeyPress {
 
  */
 
-impl KeyPress {
-
+impl KeyPressEventType {
     //TODO: execute function? Seems a bit annoying but could work.
     //TODO: Make a trait probably, that has an "execute" function, implemented indivudally. Special logic for the KeyUp and Down linking.
-    fn press_key_down(&self){
+    fn press_key_down(&self) {
         match self {
-            KeyPress::KeyDownEvent(s) =>{
+            KeyPressEventType::KeyDownEvent(s) => {
                 s.execute_key_down();
             },
-            KeyPress::KeyUpEvent(s) => {
+            KeyPressEventType::KeyUpEvent(s) => {
                 s.execute_key_up();
             },
-            KeyPress::SystemEvent(s) => {
+            KeyPressEventType::SystemEvent(s) => {
                 todo!("Not yet done");
             },
-            KeyPress::PhillipsHueCommand() => {
+            KeyPressEventType::PhillipsHueCommand() => {
                 todo!("Not yet done");
             },
-            KeyPress::DiscordCommand() => {
+            KeyPressEventType::DiscordCommand() => {
                 todo!("Not yet done");
             },
-            KeyPress::UnicodeDirect() => {
+            KeyPressEventType::UnicodeDirect() => {
                 todo!("Not yet done");
             },
             _ => unimplemented!("Error! Implement this!"),
@@ -120,7 +125,7 @@ impl Action {
 pub struct Macro {
     name: String,
     //TODO: really think about the timeline as it ties into here
-    trigger: Vec<KeyPress>,
+    trigger: Vec<KeyPressEventType>,
 }
 
 impl Macro {
@@ -141,21 +146,30 @@ impl MacroGroup {
 }
 
 pub fn run_this() {
-    let testing_keypress = KeyPress::KeyDownEvent(Key {
+    let testing_keypress = KeyPressEventType::KeyDownEvent(KeyPress {
         keypress: 'c',
         press_wait_delay_after: time::Duration::from_millis(50),
         press_duration: time::Duration::from_millis(50),
     });
 
-    let testing_action = KeyPress::SystemEvent(Action {
+    let testing_action = KeyPressEventType::SystemEvent(Action {
         action: 'd',
         press_wait_delay_after: time::Duration::from_millis(5),
     });
 
-
-
-    match testing_keypress {
-        KeyPress::KeyUpEvent(s) => println!("Result: {}", s.keypress),
-        _ => (),
-    }
+    thread::sleep(time::Duration::from_secs(3));
+    testing_keypress.press_key_down();
 }
+
+fn send(event_type: &EventType) {
+    let delay = time::Duration::from_millis(20);
+    match simulate(event_type) {
+        Ok(()) => (),
+        Err(SimulateError) => {
+            println!("We could not send {:?}", event_type);
+        }
+    }
+    // Let ths OS catchup (at least MacOS)
+    thread::sleep(delay);
+}
+
