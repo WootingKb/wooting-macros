@@ -37,7 +37,7 @@ impl KeyPress {
     }
     fn execute_key_down(&self) {
         let key_to_press = Key::Unknown(self.keypress as i32 as u32);
-
+        let key_to_press = Key::KeyO;
         send(&EventType::KeyPress(key_to_press));
     }
 }
