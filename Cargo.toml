@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+device_query = "1.1.1"
 rdev = { version = "0.5.1", features = ["unstable_grab"] }
 tauri = "1.1.1"

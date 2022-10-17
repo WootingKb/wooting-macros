@@ -1,7 +1,9 @@
 use std::{result, thread, time};
 use std::collections::HashMap;
 use std::str::Bytes;
+use std::time::Duration;
 
+use device_query::{DeviceEvents, DeviceQuery, DeviceState, Keycode, MouseState};
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 
 use crate::wooting_macros_library::KeyEventType::KeyPressEvent;
@@ -10,7 +12,6 @@ use crate::wooting_macros_library::KeyEventType::KeyPressEvent;
 // TODO: JSON config import
 const USE_INPUT_GRAB: bool = true;
 const STARTUP_DELAY: time::Duration = time::Duration::from_secs(3);
-
 
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
 ///
@@ -46,6 +47,17 @@ impl KeyPress {
 
         //let key_to_press = Key::KeyO;
         //send(&EventType::KeyPress(key_to_press));
+    }
+    fn new(
+        keypress: Key,
+        press_wait_delay_after: time::Duration,
+        press_duration: time::Duration,
+    ) -> KeyPress {
+        KeyPress {
+            keypress,
+            press_wait_delay_after,
+            press_duration,
+        }
     }
 }
 
@@ -123,18 +135,36 @@ pub struct Macro {
     name: String,
     //TODO: really think about the timeline as it ties into here
     body: Vec<KeyEventType>,
-    trigger: Vec<KeyEventType>,
-    active: bool
+    trigger: KeyEventType,
+    active: bool,
 }
 
 impl Macro {
     fn rename(&mut self, new_name: String) {
         self.name = new_name;
     }
+    fn new(name: String, body: Vec<KeyEventType>, trigger: KeyEventType) -> Macro {
+        Macro {
+            name,
+            body,
+            trigger,
+            active: false,
+        }
+    }
+    fn activate(&mut self) {
+        self.active = true;
+    }
+    fn deactivate(&mut self) {
+        self.active = false;
+    }
+    fn is_active(&self) -> bool {
+        self.active
+    }
+
+    ///check the trigger and if its true, execute the macro.
 }
 
 //TODO: Macro group functionality?
-#[derive(Debug)]
 pub struct MacroGroup {
     name: String,
     //TODO: PNG/WEBP image?
@@ -142,6 +172,7 @@ pub struct MacroGroup {
     items: Vec<Macro>,
     active: bool,
 }
+
 
 impl MacroGroup {
     ///Renames the Group of Macros
@@ -160,20 +191,40 @@ impl MacroGroup {
                     press_wait_delay_after: Default::default(),
                     press_duration: Default::default(),
                 })],
-                trigger: vec![KeyPressEvent(KeyPress {
+                trigger: KeyPressEvent(KeyPress {
                     keypress: Key::Unknown(0),
                     press_wait_delay_after: Default::default(),
                     press_duration: Default::default(),
-                })],
+                }),
                 active: false,
-            },
-            ],
+            }],
             active: false,
         }
     }
     ///Adds a member to a group
     fn add_to_group(&mut self, macro_to_add: Macro) {
         self.items.push(macro_to_add);
+    }
+
+    ///List the macros
+    fn list_macros(&self) {
+        for macro_item in &self.items {
+            println!("Macro: {:#?}", macro_item);
+        }
+    }
+    ///Removes a macro from the group
+    fn remove_macro_from_group(&mut self, macro_to_remove: String) {
+        self.items.retain(|x| x.name != macro_to_remove);
+    }
+
+    ///check for the trigger
+    fn check_for_trigger(&self, trigger: KeyEventType) -> bool {
+        for macro_item in &self.items {
+            if macro_item.trigger == trigger {
+                return true;
+            }
+        }
+        false
     }
 }
 
@@ -185,7 +236,7 @@ pub fn run_this() {
         press_wait_delay_after: time::Duration::from_millis(5),
     });
 
-    let testing_macro_full = MacroGroup {
+    let mut testing_macro_full = MacroGroup {
         name: "Main group".to_string(),
         icon: 'i',
         items: vec![Macro {
@@ -202,44 +253,74 @@ pub fn run_this() {
                     press_duration: time::Duration::from_millis(50),
                 }),
             ],
-            trigger: vec![KeyEventType::KeyPressEvent(KeyPress {
+            trigger: KeyEventType::KeyPressEvent(KeyPress {
                 keypress: Key::Comma,
                 press_wait_delay_after: time::Duration::from_millis(50),
                 press_duration: time::Duration::from_millis(50),
-            })],
-            active: false
+            }),
+            active: false,
         }],
-        active: false
+        active: false,
     };
 
+    loop {
+        let user_input = get_user_input(format!(
+            "Select what you want to do:
+        1 - Start the key {}
+        2 - List the macros in the group
+        3 - Add a macro to the group
+        4 - Remove a macro from the group",
+            if USE_INPUT_GRAB == true {
+                "grabber"
+            } else {
+                "logger"
+            }
+        ));
+
+        let user_input: u8 = match user_input.trim().parse::<u8>() {
+            Ok(T) => T,
+            Err(E) => {
+                println!("Error: {}", E);
+                continue;
+            }
+        };
+
+        match user_input {
+            1 => execute_special_function(&mut testing_macro_full, true),
+            2 => {
+                testing_macro_full.list_macros();
+            }
+            3 => testing_macro_full.add_to_group(Macro::new(
+                get_user_input("Enter the name of the macro: ".to_string()),
+                vec![KeyPressEvent(KeyPress::new(
+                    Key::Unknown(get_user_input_int("Enter the key to press: ".to_string()) as u32),
+                    time::Duration::from_millis(get_user_input_int(
+                        "Enter how many millisecond delay after pressing: ".to_string(),
+                    ) as u64),
+                    time::Duration::from_millis(get_user_input_int(
+                        "Enter how many millisecond time to hold the key for: ".to_string(),
+                    ) as u64),
+                ))],
+                KeyPressEvent(KeyPress::new(
+                    Key::Unknown(get_user_input_int("Enter the key to press: ".to_string()) as u32),
+                    Default::default(),
+                    Default::default(),
+                )),
+            )),
+            4 => {
+                testing_macro_full.list_macros();
+                testing_macro_full.remove_macro_from_group(get_user_input(
+                    "Enter the name of the macro to remove: ".to_string(),
+                ))
+            }
+            _ => {
+                println!("Invalid input");
+                continue;
+            }
+        };
+    }
 
     //Temporary "option" for either using the input grab or not.
-    match USE_INPUT_GRAB {
-        true => {
-            println!("Using the input grabbing feature (Mac OS + Win).\nBe sure to grant accessibility permissions (Mac OS). Beginning in {} seconds", STARTUP_DELAY.as_secs());
-
-            thread::sleep(STARTUP_DELAY);
-
-            //Run the blocking grab function
-            if let Err(error) = grab(callback_grab_win_osx) {
-                println!("Error: {:?}", error)
-            };
-        }
-        false => {
-            println!("Listening for key presses only (Linux). Beginning in {} seconds", STARTUP_DELAY.as_secs());
-
-            thread::sleep(STARTUP_DELAY);
-
-            //Run the blocking listening function
-            if let Err(error) = listen(callback_listen_only) {
-                println!("Error: {:?}", error)
-            }
-        }
-    }
-
-    if let Err(error) = listen(callback_listen_only) {
-        println!("Error: {:?}", error)
-    }
 }
 
 // fn send(event_type: &EventType) {
@@ -254,13 +335,42 @@ pub fn run_this() {
 //     thread::sleep(delay);
 // }
 
+///Gets user's text.
+fn get_user_input(display_text: String) -> String {
+    println!("{}\n", display_text);
+
+    let mut buffer: String = String::new();
+
+    std::io::stdin()
+        .read_line(&mut buffer)
+        .expect("Invalid type");
+    buffer.trim().to_string()
+}
+
+///Gets user's text and parse into i64. TODO: This needs much more work
+fn get_user_input_int(display_text: String) -> i64 {
+    println!("{}\n", display_text);
+
+    let mut buffer: String = String::new();
+
+    std::io::stdin()
+        .read_line(&mut buffer)
+        .expect("Invalid type");
+
+    let vector_chars = buffer.trim().chars().next().unwrap();
+
+    println!("Vector chars: {}", vector_chars);
+
+    return vector_chars as i64;
+}
+
 //TODO: Match this with an event table.. fork the library to do that..?
 fn callback_grab_win_osx(event: Event) -> Option<Event> {
     println!("My callback {:?}", event);
 
     match event.event_type {
-        EventType::KeyPress(Key::Tab) => {
-            println!("Cancelling tab !");
+        EventType::KeyPress(Key::Comma) => {
+            println!("Comma pressed");
             None
         }
         //EventType::KeyPress(Key::Kp7)
@@ -272,4 +382,56 @@ fn callback_listen_only(event: Event) {
     println!("My callback {:?}", event);
 }
 
+fn execute_special_function(input: &MacroGroup, run_grab: bool) {
+    let device_state = DeviceState::new();
+    let _guard = device_state.on_key_down(|key_watched| {
+        println!("Down: {:#?}", key_watched);
 
+
+        match key_watched {
+            Keycode::Comma => {
+                for item_macro in input.items {
+                    match item_macro.trigger {
+                        KeyEventType::KeyPressEvent(s) => {}
+                        _ => continue,
+                    }
+                }
+            }
+            _ => (),
+        };
+    });
+    let _guard = device_state.on_key_up(|key| {
+        println!("Up: {:#?}", key);
+    });
+
+    loop {}
+
+
+    // if run_grab == true {
+    //     match USE_INPUT_GRAB {
+    //         true => {
+    //             println!("Using the input grabbing feature (Mac OS + Win).\nBe sure to grant accessibility permissions (Mac OS). Beginning in {} seconds", STARTUP_DELAY.as_secs());
+    //
+    //             thread::sleep(STARTUP_DELAY);
+    //
+    //             //Run the blocking grab function
+    //             if let Err(error) = grab(callback_grab_win_osx) {
+    //                 println!("Error: {:?}", error)
+    //             };
+    //         }
+    //         false => {
+    //             println!(
+    //                 "Listening for key presses only (Linux). Beginning in {} seconds",
+    //                 STARTUP_DELAY.as_secs()
+    //             );
+    //
+    //             thread::sleep(STARTUP_DELAY);
+    //
+    //             //Run the blocking listening function
+    //             if let Err(error) = listen(callback_listen_only) {
+    //                 println!("Error: {:?}", error)
+    //             }
+    //         }
+    //     }
+    // }
+}
