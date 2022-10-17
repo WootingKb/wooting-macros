@@ -1,6 +1,6 @@
 use std::{result, thread, time};
 use std::collections::HashMap;
-use std::str::Bytes;
+use std::str::{Bytes, FromStr};
 use std::time::Duration;
 
 use device_query::{DeviceEvents, DeviceQuery, DeviceState, Keycode, MouseState};
@@ -29,7 +29,7 @@ impl MacroType {}
 /// the delay after pressing and pressing duration.
 #[derive(Debug)]
 pub struct KeyPress {
-    pub keypress: Key,
+    pub keypress: Keycode,
     pub press_wait_delay_after: time::Duration,
     pub press_duration: time::Duration,
 }
@@ -43,13 +43,18 @@ impl KeyPress {
         //send(&EventType::KeyRelease(key_to_press));
     }
     fn execute_key_down(&self) {
-        //let key_to_press = Key::Unknown(self.keypress as u32);
+        // let key_to_press = Key::Unknown(self.keypress as u32);
 
         //let key_to_press = Key::KeyO;
-        //send(&EventType::KeyPress(key_to_press));
+        //rdev::simulate(&EventType::KeyPress(self.keypress.to_string()));
     }
+
+    fn get_wait_delay(&self) -> time::Duration {
+        self.press_wait_delay_after
+    }
+
     fn new(
-        keypress: Key,
+        keypress: Keycode,
         press_wait_delay_after: time::Duration,
         press_duration: time::Duration,
     ) -> KeyPress {
@@ -160,8 +165,45 @@ impl Macro {
     fn is_active(&self) -> bool {
         self.active
     }
+}
 
-    ///check the trigger and if its true, execute the macro.
+///Interop between libraries (temporary).
+fn check_key(checked_macro_trigger: &MacroGroup, to_check_with_key: &Keycode) {
+    let to_check_with_key_string = to_check_with_key.to_string();
+
+    for item in &checked_macro_trigger.items {
+        match &item.trigger {
+
+
+            //TODO: FINISH THE COMPARISON TODAY!!!
+            KeyEventType::KeyPressEvent(s) => {
+                let checked_macro_trigger_string: String = match s.keypress {
+                    Keycode::Comma => "Semicolon".to_string(),
+                    _ => "".to_string(),
+                };
+
+
+                println!("Found, debug info: {} compared to {}", checked_macro_trigger_string, to_check_with_key_string);
+
+                if checked_macro_trigger_string == to_check_with_key_string && item.active == true {
+                    for macro_to_press in &item.body {
+                        match macro_to_press {
+                            KeyEventType::KeyPressEvent(s) => {
+                                println!("EXECUTING MACRO!!");
+                                s.execute_key_down();
+                                thread::sleep(time::Duration::from_millis(
+                                    s.get_wait_delay().as_secs(),
+                                ));
+                            }
+                            _ => (),
+                        }
+                    }
+                }
+            }
+
+            _ => (),
+        }
+    }
 }
 
 //TODO: Macro group functionality?
@@ -172,7 +214,6 @@ pub struct MacroGroup {
     items: Vec<Macro>,
     active: bool,
 }
-
 
 impl MacroGroup {
     ///Renames the Group of Macros
@@ -187,12 +228,12 @@ impl MacroGroup {
             items: vec![Macro {
                 name: name_of_group.to_string(),
                 body: vec![KeyPressEvent(KeyPress {
-                    keypress: Key::Unknown(0),
+                    keypress: Keycode::O,
                     press_wait_delay_after: Default::default(),
                     press_duration: Default::default(),
                 })],
                 trigger: KeyPressEvent(KeyPress {
-                    keypress: Key::Unknown(0),
+                    keypress: Keycode::O,
                     press_wait_delay_after: Default::default(),
                     press_duration: Default::default(),
                 }),
@@ -216,16 +257,6 @@ impl MacroGroup {
     fn remove_macro_from_group(&mut self, macro_to_remove: String) {
         self.items.retain(|x| x.name != macro_to_remove);
     }
-
-    ///check for the trigger
-    fn check_for_trigger(&self, trigger: KeyEventType) -> bool {
-        for macro_item in &self.items {
-            if macro_item.trigger == trigger {
-                return true;
-            }
-        }
-        false
-    }
 }
 
 pub fn run_this() {
@@ -243,24 +274,24 @@ pub fn run_this() {
             name: "Paste".to_string(),
             body: vec![
                 KeyEventType::KeyPressEvent(KeyPress {
-                    keypress: Key::ControlLeft,
+                    keypress: Keycode::LControl,
                     press_wait_delay_after: time::Duration::from_millis(50),
                     press_duration: time::Duration::from_millis(50),
                 }),
                 KeyEventType::KeyPressEvent(KeyPress {
-                    keypress: Key::KeyV,
+                    keypress: Keycode::V,
                     press_wait_delay_after: time::Duration::from_millis(50),
                     press_duration: time::Duration::from_millis(50),
                 }),
             ],
             trigger: KeyEventType::KeyPressEvent(KeyPress {
-                keypress: Key::Comma,
+                keypress: Keycode::Semicolon,
                 press_wait_delay_after: time::Duration::from_millis(50),
                 press_duration: time::Duration::from_millis(50),
             }),
-            active: false,
+            active: true,
         }],
-        active: false,
+        active: true,
     };
 
     loop {
@@ -286,14 +317,33 @@ pub fn run_this() {
         };
 
         match user_input {
-            1 => execute_special_function(&mut testing_macro_full, true),
+            1 => {
+                //execute_special_function(&testing_macro_full);
+
+                let device_state = DeviceState::new();
+
+                let mut _guard = device_state.on_key_down(move |key_watched| {
+                    println!("Down: {:#?}", key_watched);
+                    //key_watched_send = key_watched.clone();
+
+                    check_key(&testing_macro_full, &key_watched);
+                });
+
+                let _guard = device_state.on_key_up(|key| {
+                    println!("Up: {:#?}", key);
+                });
+
+
+                loop {}
+            },
+
             2 => {
                 testing_macro_full.list_macros();
             }
             3 => testing_macro_full.add_to_group(Macro::new(
                 get_user_input("Enter the name of the macro: ".to_string()),
                 vec![KeyPressEvent(KeyPress::new(
-                    Key::Unknown(get_user_input_int("Enter the key to press: ".to_string()) as u32),
+                    Keycode::from_str(get_user_input("Enter the key to press: ".to_string()).as_str()).unwrap(),
                     time::Duration::from_millis(get_user_input_int(
                         "Enter how many millisecond delay after pressing: ".to_string(),
                     ) as u64),
@@ -302,7 +352,7 @@ pub fn run_this() {
                     ) as u64),
                 ))],
                 KeyPressEvent(KeyPress::new(
-                    Key::Unknown(get_user_input_int("Enter the key to press: ".to_string()) as u32),
+                    Keycode::from_str(get_user_input("Enter the key to press: ".to_string()).as_str()).unwrap(),
                     Default::default(),
                     Default::default(),
                 )),
@@ -364,74 +414,42 @@ fn get_user_input_int(display_text: String) -> i64 {
     return vector_chars as i64;
 }
 
-//TODO: Match this with an event table.. fork the library to do that..?
-fn callback_grab_win_osx(event: Event) -> Option<Event> {
-    println!("My callback {:?}", event);
+//
+// //TODO: Match this with an event table.. fork the library to do that..?
+// fn callback_grab_win_osx(event: Event) -> Option<Event> {
+//     println!("My callback {:?}", event);
+//
+//     match event.event_type {
+//         EventType::KeyPress(Key::Comma) => {
+//             println!("Comma pressed");
+//             None
+//         }
+//         //EventType::KeyPress(Key::Kp7)
+//         _ => Some(event),
+//     }
+// }
+//
+// fn callback_listen_only(event: Event) {
+//     println!("My callback {:?}", event);
+// }
 
-    match event.event_type {
-        EventType::KeyPress(Key::Comma) => {
-            println!("Comma pressed");
-            None
-        }
-        //EventType::KeyPress(Key::Kp7)
-        _ => Some(event),
-    }
-}
-
-fn callback_listen_only(event: Event) {
-    println!("My callback {:?}", event);
-}
-
-fn execute_special_function(input: &MacroGroup, run_grab: bool) {
-    let device_state = DeviceState::new();
-    let _guard = device_state.on_key_down(|key_watched| {
-        println!("Down: {:#?}", key_watched);
-
-
-        match key_watched {
-            Keycode::Comma => {
-                for item_macro in input.items {
-                    match item_macro.trigger {
-                        KeyEventType::KeyPressEvent(s) => {}
-                        _ => continue,
-                    }
-                }
-            }
-            _ => (),
-        };
-    });
-    let _guard = device_state.on_key_up(|key| {
-        println!("Up: {:#?}", key);
-    });
-
-    loop {}
-
-
-    // if run_grab == true {
-    //     match USE_INPUT_GRAB {
-    //         true => {
-    //             println!("Using the input grabbing feature (Mac OS + Win).\nBe sure to grant accessibility permissions (Mac OS). Beginning in {} seconds", STARTUP_DELAY.as_secs());
-    //
-    //             thread::sleep(STARTUP_DELAY);
-    //
-    //             //Run the blocking grab function
-    //             if let Err(error) = grab(callback_grab_win_osx) {
-    //                 println!("Error: {:?}", error)
-    //             };
-    //         }
-    //         false => {
-    //             println!(
-    //                 "Listening for key presses only (Linux). Beginning in {} seconds",
-    //                 STARTUP_DELAY.as_secs()
-    //             );
-    //
-    //             thread::sleep(STARTUP_DELAY);
-    //
-    //             //Run the blocking listening function
-    //             if let Err(error) = listen(callback_listen_only) {
-    //                 println!("Error: {:?}", error)
-    //             }
-    //         }
-    //     }
-    // }
-}
+// fn execute_special_function(input: &MacroGroup) -> MacroGroup {
+//     let device_state = DeviceState::new();
+//     let mut key_watched_send: Keycode = Keycode::A;
+//
+//     let mut _guard = device_state.on_key_down(move |key_watched| {
+//         println!("Down: {:#?}", key_watched);
+//         //key_watched_send = key_watched.clone();
+//
+//         check_key(&input, &key_watched);
+//
+//
+//     });
+//
+//     let _guard = device_state.on_key_up(|key| {
+//         println!("Up: {:#?}", key);
+//     });
+//
+//
+//     loop {}
+// }
