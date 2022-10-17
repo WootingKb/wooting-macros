@@ -4,6 +4,8 @@ use std::str::Bytes;
 
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 
+use crate::wooting_macros_library::KeyEventType::KeyPressEvent;
+
 // Primitive configuration stuff
 // TODO: JSON config import
 const USE_INPUT_GRAB: bool = true;
@@ -122,9 +124,14 @@ pub struct Macro {
     //TODO: really think about the timeline as it ties into here
     body: Vec<KeyEventType>,
     trigger: Vec<KeyEventType>,
+    active: bool
 }
 
-impl Macro {}
+impl Macro {
+    fn rename(&mut self, new_name: String) {
+        self.name = new_name;
+    }
+}
 
 //TODO: Macro group functionality?
 #[derive(Debug)]
@@ -133,9 +140,42 @@ pub struct MacroGroup {
     //TODO: PNG/WEBP image?
     icon: char,
     items: Vec<Macro>,
+    active: bool,
 }
 
-impl MacroGroup {}
+impl MacroGroup {
+    ///Renames the Group of Macros
+    fn rename(&mut self, new_name: String) {
+        self.name = new_name;
+    }
+    ///Creates a new empty group (must have a name and an icon)
+    fn new_group(name_of_group: &String, icon: char) -> MacroGroup {
+        MacroGroup {
+            name: name_of_group.to_string(),
+            icon,
+            items: vec![Macro {
+                name: name_of_group.to_string(),
+                body: vec![KeyPressEvent(KeyPress {
+                    keypress: Key::Unknown(0),
+                    press_wait_delay_after: Default::default(),
+                    press_duration: Default::default(),
+                })],
+                trigger: vec![KeyPressEvent(KeyPress {
+                    keypress: Key::Unknown(0),
+                    press_wait_delay_after: Default::default(),
+                    press_duration: Default::default(),
+                })],
+                active: false,
+            },
+            ],
+            active: false,
+        }
+    }
+    ///Adds a member to a group
+    fn add_to_group(&mut self, macro_to_add: Macro) {
+        self.items.push(macro_to_add);
+    }
+}
 
 pub fn run_this() {
     println!("Character {}: {}", 'c', 'c' as u32);
@@ -167,7 +207,9 @@ pub fn run_this() {
                 press_wait_delay_after: time::Duration::from_millis(50),
                 press_duration: time::Duration::from_millis(50),
             })],
+            active: false
         }],
+        active: false
     };
 
 
@@ -178,6 +220,7 @@ pub fn run_this() {
 
             thread::sleep(STARTUP_DELAY);
 
+            //Run the blocking grab function
             if let Err(error) = grab(callback_grab_win_osx) {
                 println!("Error: {:?}", error)
             };
@@ -187,6 +230,7 @@ pub fn run_this() {
 
             thread::sleep(STARTUP_DELAY);
 
+            //Run the blocking listening function
             if let Err(error) = listen(callback_listen_only) {
                 println!("Error: {:?}", error)
             }
@@ -210,7 +254,7 @@ pub fn run_this() {
 //     thread::sleep(delay);
 // }
 
-//TODO: Match this with an event table
+//TODO: Match this with an event table.. fork the library to do that..?
 fn callback_grab_win_osx(event: Event) -> Option<Event> {
     println!("My callback {:?}", event);
 
@@ -227,3 +271,5 @@ fn callback_grab_win_osx(event: Event) -> Option<Event> {
 fn callback_listen_only(event: Event) {
     println!("My callback {:?}", event);
 }
+
+
