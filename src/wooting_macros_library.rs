@@ -1,7 +1,14 @@
-use std::{thread, time};
+use std::{result, thread, time};
+use std::collections::HashMap;
 use std::str::Bytes;
 
-use rdev::{Button, Event, EventType, grab, Key, simulate, SimulateError};
+use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
+
+// Primitive configuration stuff
+// TODO: JSON config import
+const USE_INPUT_GRAB: bool = true;
+const STARTUP_DELAY: time::Duration = time::Duration::from_secs(3);
+
 
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
 ///
@@ -19,7 +26,7 @@ impl MacroType {}
 /// the delay after pressing and pressing duration.
 #[derive(Debug)]
 pub struct KeyPress {
-    pub keypress: char,
+    pub keypress: Key,
     pub press_wait_delay_after: time::Duration,
     pub press_duration: time::Duration,
 }
@@ -35,10 +42,6 @@ impl KeyPress {
     fn execute_key_down(&self) {
         //let key_to_press = Key::Unknown(self.keypress as u32);
 
-        println!(
-            "{:#?}\nCharacter: {} number {}",
-            self, self.keypress, self.keypress as u32
-        );
         //let key_to_press = Key::KeyO;
         //send(&EventType::KeyPress(key_to_press));
     }
@@ -117,6 +120,7 @@ impl Action {}
 pub struct Macro {
     name: String,
     //TODO: really think about the timeline as it ties into here
+    body: Vec<KeyEventType>,
     trigger: Vec<KeyEventType>,
 }
 
@@ -136,23 +140,60 @@ impl MacroGroup {}
 pub fn run_this() {
     println!("Character {}: {}", 'c', 'c' as u32);
 
-    let testing_keypress = KeyEventType::KeyPressEvent(KeyPress {
-        keypress: 'c',
-        press_wait_delay_after: time::Duration::from_millis(50),
-        press_duration: time::Duration::from_millis(50),
-    });
-
     let testing_action = KeyEventType::SystemEvent(Action {
         action: 'd',
         press_wait_delay_after: time::Duration::from_millis(5),
     });
 
-    thread::sleep(time::Duration::from_secs(3));
-    testing_keypress.press_key_down();
+    let testing_macro_full = MacroGroup {
+        name: "Main group".to_string(),
+        icon: 'i',
+        items: vec![Macro {
+            name: "Paste".to_string(),
+            body: vec![
+                KeyEventType::KeyPressEvent(KeyPress {
+                    keypress: Key::ControlLeft,
+                    press_wait_delay_after: time::Duration::from_millis(50),
+                    press_duration: time::Duration::from_millis(50),
+                }),
+                KeyEventType::KeyPressEvent(KeyPress {
+                    keypress: Key::KeyV,
+                    press_wait_delay_after: time::Duration::from_millis(50),
+                    press_duration: time::Duration::from_millis(50),
+                }),
+            ],
+            trigger: vec![KeyEventType::KeyPressEvent(KeyPress {
+                keypress: Key::Comma,
+                press_wait_delay_after: time::Duration::from_millis(50),
+                press_duration: time::Duration::from_millis(50),
+            })],
+        }],
+    };
 
 
-    // This will block.
-    if let Err(error) = grab(callback) {
+    //Temporary "option" for either using the input grab or not.
+    match USE_INPUT_GRAB {
+        true => {
+            println!("Using the input grabbing feature (Mac OS + Win).\nBe sure to grant accessibility permissions (Mac OS). Beginning in {} seconds", STARTUP_DELAY.as_secs());
+
+            thread::sleep(STARTUP_DELAY);
+
+            if let Err(error) = grab(callback_grab_win_osx) {
+                println!("Error: {:?}", error)
+            };
+        }
+        false => {
+            println!("Listening for key presses only (Linux). Beginning in {} seconds", STARTUP_DELAY.as_secs());
+
+            thread::sleep(STARTUP_DELAY);
+
+            if let Err(error) = listen(callback_listen_only) {
+                println!("Error: {:?}", error)
+            }
+        }
+    }
+
+    if let Err(error) = listen(callback_listen_only) {
         println!("Error: {:?}", error)
     }
 }
@@ -169,15 +210,20 @@ pub fn run_this() {
 //     thread::sleep(delay);
 // }
 
-
 //TODO: Match this with an event table
-fn callback(event: Event) -> Option<Event> {
+fn callback_grab_win_osx(event: Event) -> Option<Event> {
     println!("My callback {:?}", event);
+
     match event.event_type {
         EventType::KeyPress(Key::Tab) => {
             println!("Cancelling tab !");
             None
         }
+        //EventType::KeyPress(Key::Kp7)
         _ => Some(event),
     }
+}
+
+fn callback_listen_only(event: Event) {
+    println!("My callback {:?}", event);
 }
