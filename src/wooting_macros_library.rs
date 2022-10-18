@@ -179,7 +179,11 @@ fn check_key(checked_macro_trigger: &MacroGroup, to_check_with_key: &Keycode) {
             match &macro_items.trigger {
                 KeyEventType::KeyPressEvent(s) => {
                     if s.keypress.to_string() == to_check_with_key_string {
-                        println!("Found, debug info: {} compared to {}", s.keypress.to_string(), to_check_with_key_string);
+                        println!(
+                            "Found, debug info: {} compared to {}",
+                            s.keypress.to_string(),
+                            to_check_with_key_string
+                        );
                         s.execute_key_down();
                     };
                 }
@@ -188,12 +192,11 @@ fn check_key(checked_macro_trigger: &MacroGroup, to_check_with_key: &Keycode) {
         }
     }
 
-
     // for item in &checked_macro_trigger.items {
     //     match &item.trigger {
     //
     //
-    //         //TODO: FINISH THE COMPARISON TODAY!!!
+    //
     //         KeyEventType::KeyPressEvent(s) => {
     //             let checked_macro_trigger_string: String = match s.keypress {
     //                 Keycode::Comma => "Semicolon".to_string(),
@@ -355,9 +358,8 @@ pub fn run_this() {
                     println!("Up: {:#?}", key);
                 });
 
-
                 loop {}
-            },
+            }
 
             2 => {
                 testing_macro_full.list_macros();
@@ -366,7 +368,10 @@ pub fn run_this() {
                 testing_macro_full.add_to_group(Macro::new(
                     get_user_input("Enter the name of the macro: ".to_string()),
                     vec![KeyPressEvent(KeyPress::new(
-                        Keycode::from_str(get_user_input("Enter the key to press: ".to_string()).as_str()).unwrap(),
+                        Keycode::from_str(
+                            get_user_input("Enter the key to press: ".to_string()).as_str(),
+                        )
+                            .unwrap(),
                         time::Duration::from_millis(get_user_input_int(
                             "Enter how many millisecond delay after pressing: ".to_string(),
                         ) as u64),
@@ -375,13 +380,16 @@ pub fn run_this() {
                         ) as u64),
                     ))],
                     KeyPressEvent(KeyPress::new(
-                        Keycode::from_str(get_user_input("Enter the key to press: ".to_string()).as_str()).unwrap(),
+                        Keycode::from_str(
+                            get_user_input("Enter the key to press: ".to_string()).as_str(),
+                        )
+                            .unwrap(),
                         Default::default(),
                         Default::default(),
                     )),
                 ));
                 println!("Macro Added!");
-            },
+            }
             4 => {
                 testing_macro_full.list_macros();
                 testing_macro_full.remove_macro_from_group(get_user_input(
