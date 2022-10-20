@@ -1,5 +1,7 @@
 #![allow(warnings, unused)]
 
+extern crate core;
+
 use std::fs::File;
 use std::io::Read;
 
@@ -14,9 +16,9 @@ mod wooting_macros_library;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "PascalCase")]
-struct ApplicationConfig {
-    use_input_grab: bool,
-    startup_delay: u64,
+pub struct ApplicationConfig {
+    pub use_input_grab: bool,
+    pub startup_delay: u64,
 }
 
 fn main() {
@@ -26,14 +28,12 @@ fn main() {
     };
 
     let mut file = match File::open("config.json") {
-        Ok(T) => {
-            T
-        },
+        Ok(T) => T,
         Err(E) => {
             eprintln!("Error parsing the file {}", E);
             println!("Error finding the config.json file.\nPlease place one in the root directory. Using default configuration (safe).\nCreating an empty file.\n");
             File::create("config.json").unwrap()
-        },
+        }
     };
     let mut data = String::new();
 
@@ -48,5 +48,5 @@ fn main() {
         Err(E) => {}
     }
 
-    run_this();
+    run_this(&config);
 }
