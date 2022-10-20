@@ -375,118 +375,99 @@ pub fn run_this(config: &ApplicationConfig) {
 
     //let mut events = Vec::new();
 
-    let mut keys_pressed: EventList = EventList::new();
 
-    for event in rchan.iter() {
-        match event.event_type {
-            EventType::KeyPress(s) => {
-                //TODO: Make this a hashtable or smth
-                println!("Pressed: {:?}", s);
+    loop {
+        let user_input = get_user_input(format!(
+            "Select what you want to do:
+        1 - Start the key {}
+        2 - List the macros in the group
+        3 - Add a macro to the group
+        4 - Remove a macro from the group",
+            if config.use_input_grab == true {
+                "grabber"
+            } else {
+                "logger"
+            }
+        ));
 
-                testing_macro_full.check_key(&s);
+        let user_input: u8 = match user_input.trim().parse::<u8>() {
+            Ok(T) => T,
+            Err(E) => {
+                println!("Error: {}", E);
+                continue;
             }
-            EventType::KeyRelease(s) => {
-                println!("Released: {:?}", s)
+        };
+
+        match user_input {
+            1 => {
+                let mut keys_pressed: EventList = EventList::new();
+
+                for event in rchan.iter() {
+                    match event.event_type {
+                        EventType::KeyPress(s) => {
+                            //TODO: Make this a hashtable or smth
+                            println!("Pressed: {:?}", s);
+
+                            testing_macro_full.check_key(&s);
+                        }
+                        EventType::KeyRelease(s) => {
+                            println!("Released: {:?}", s)
+                        }
+                        EventType::ButtonPress(s) => {
+                            println!("MB Pressed:{:?}", s)
+                        }
+                        EventType::ButtonRelease(s) => {
+                            println!("MB Released:{:?}", s)
+                        }
+                        EventType::MouseMove { x, y } => (),
+                        EventType::Wheel { delta_x, delta_y } => {
+                            println!("{}, {}", delta_x, delta_y)
+                        }
+                    }
+                }
+            },
+
+            // 2 => {
+            //     testing_macro_full.list_macros();
+            // }
+            // 3 => {
+            //     testing_macro_full.add_to_group(Macro::new(
+            //         get_user_input("Enter the name of the macro: ".to_string()),
+            //         vec![TriggerEventType(KeyPress::new(
+            //             Keycode::from_str(
+            //                 get_user_input("Enter the key to press: ".to_string()).as_str(),
+            //             )
+            //             .unwrap(),
+            //             time::Duration::from_millis(get_user_input_int(
+            //                 "Enter how many millisecond delay after pressing: ".to_string(),
+            //             ) as u64),
+            //             time::Duration::from_millis(get_user_input_int(
+            //                 "Enter how many millisecond time to hold the key for: ".to_string(),
+            //             ) as u64),
+            //         ))],
+            //         KeyPressEvent(KeyPress::new(
+            //             Keycode::from_str(
+            //                 get_user_input("Enter the key to press: ".to_string()).as_str(),
+            //             )
+            //             .unwrap(),
+            //             Default::default(),
+            //             Default::default(),
+            //         )),
+            //     ));
+            //     println!("Macro Added!");
+            // }
+            // 4 => {
+            //     testing_macro_full.0.list_macros();
+            //     testing_macro_full.remove_macro_from_group(get_user_input(
+            //         "Enter the name of the macro to remove: ".to_string(),
+            //     ))
+            // }
+            _ => {
+                println!("Invalid input");
+                continue;
             }
-            EventType::ButtonPress(s) => {
-                println!("MB Pressed:{:?}", s)
-            }
-            EventType::ButtonRelease(s) => {
-                println!("MB Released:{:?}", s)
-            }
-            EventType::MouseMove { x, y } => (),
-            EventType::Wheel { delta_x, delta_y } => {
-                println!("{}, {}", delta_x, delta_y)
-            }
-        }
+        };
     }
-
-    // loop {
-    //     let user_input = get_user_input(format!(
-    //         "Select what you want to do:
-    //     1 - Start the key {}
-    //     2 - List the macros in the group
-    //     3 - Add a macro to the group
-    //     4 - Remove a macro from the group",
-    //         if USE_INPUT_GRAB == true {
-    //             "grabber"
-    //         } else {
-    //             "logger"
-    //         }
-    //     ));
-    //
-    //     let user_input: u8 = match user_input.trim().parse::<u8>() {
-    //         Ok(T) => T,
-    //         Err(E) => {
-    //             println!("Error: {}", E);
-    //             continue;
-    //         }
-    //     };
-    //
-    //     match user_input {
-    //         1 => {
-    //             //execute_special_function(&testing_macro_full);
-    //
-    //             let device_state = DeviceState::new();
-    //
-    //
-    //             let mut _guard = device_state.on_key_down(move |key_watched| {
-    //                 println!("Down: {:#?}", key_watched);
-    //                 //key_watched_send = key_watched.clone();
-    //
-    //
-    //
-    //                 check_key(&testing_macro_full, &key_watched);
-    //             });
-    //
-    //             let _guard = device_state.on_key_up(|key| {
-    //                 println!("Up: {:#?}", key);
-    //             });
-    //
-    //             loop {}
-    //         }
-    //
-    //         2 => {
-    //             testing_macro_full.list_macros();
-    //         }
-    //         3 => {
-    //             testing_macro_full.add_to_group(Macro::new(
-    //                 get_user_input("Enter the name of the macro: ".to_string()),
-    //                 vec![KeyPressEvent(KeyPress::new(
-    //                     Keycode::from_str(
-    //                         get_user_input("Enter the key to press: ".to_string()).as_str(),
-    //                     )
-    //                     .unwrap(),
-    //                     time::Duration::from_millis(get_user_input_int(
-    //                         "Enter how many millisecond delay after pressing: ".to_string(),
-    //                     ) as u64),
-    //                     time::Duration::from_millis(get_user_input_int(
-    //                         "Enter how many millisecond time to hold the key for: ".to_string(),
-    //                     ) as u64),
-    //                 ))],
-    //                 KeyPressEvent(KeyPress::new(
-    //                     Keycode::from_str(
-    //                         get_user_input("Enter the key to press: ".to_string()).as_str(),
-    //                     )
-    //                     .unwrap(),
-    //                     Default::default(),
-    //                     Default::default(),
-    //                 )),
-    //             ));
-    //             println!("Macro Added!");
-    //         }
-    //         4 => {
-    //             testing_macro_full.list_macros();
-    //             testing_macro_full.remove_macro_from_group(get_user_input(
-    //                 "Enter the name of the macro to remove: ".to_string(),
-    //             ))
-    //         }
-    //         _ => {
-    //             println!("Invalid input");
-    //             continue;
-    //         }
-    //     };
-    // }
 
     //Temporary "option" for either using the input grab or not.
 }
