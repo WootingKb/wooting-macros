@@ -4,18 +4,12 @@ use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-use device_query::Keycode::T;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 
 use crate::ApplicationConfig;
 
-// Primitive configuration stuff
-// TODO: JSON config import
-const USE_INPUT_GRAB: bool = true;
-const STARTUP_DELAY: time::Duration = time::Duration::from_secs(3);
-
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
-///
+/// This does not yet do anything.
 #[derive(Debug)]
 pub enum MacroType {
     Single(Macro),
@@ -26,40 +20,41 @@ pub enum MacroType {
 
 impl MacroType {}
 
-/// Key contains a temporary char that needs to be changed,
-/// the delay after pressing and pressing duration.
+/// Key contains an rdev::Key enum to be pressed.
+/// * `keypress` - an rdev::Key enum of the key that will be pressed
+/// * `press_wait_delay_after` - time::Duration argument that makes the macro wait after (this is subject to change potentially)
+/// * `press_duration` - time::Duration for how long the key should stay pressed for (currently not implemented or used)
 #[derive(Debug)]
-pub struct KeyPress {
-    pub keypress: rdev::Key,
-    pub press_wait_delay_after: time::Duration,
-    pub press_duration: time::Duration,
+struct KeyPress {
+    keypress: rdev::Key,
+    press_wait_delay_after: time::Duration,
+    press_duration: time::Duration,
 }
 
-///This basically serves as the implementation that gets called from the methods on KeyPress enum.
-/// We always handle the input as: Keypress comes in -> triage -> call the execute according to logic -> process.
-// TODO: This poses a question: do we change the enum variants to just a struct field instead of the enum embodying the struct?
 impl KeyPress {
-    fn execute_key_up(&self, key_to_release: &rdev::Key) {
+    /// Executes an action on key up.
+    /// TODO: Meant to search the eventlist and remove all duplicates of the keys being pressed.
+    ///  This should be either paired with each keypress, or called after registering that key release to clean up the array
+    fn execute_key_up(&self, key_to_release: &rdev::Key, event_list: &EventList) {
         send(&EventType::KeyRelease(*key_to_release));
-        //send(&EventType::KeyRelease(key_to_press));
     }
 
+    /// Executes the actual keypress according to what it should be
     fn execute_key_down(&self) {
-        // let key_to_press = Key::Unknown(self.keypress as u32);
-
-        let key_to_press = Key::KeyO;
-
-        send(&EventType::KeyPress(key_to_press.clone()));
+        send(&EventType::KeyPress(self.keypress));
         thread::sleep(time::Duration::from_millis(50));
-        self.execute_key_up(&key_to_press.clone());
     }
 
+    /// Getter function
     fn get_wait_delay(&self) -> time::Duration {
         self.press_wait_delay_after
     }
 
-    //TODO: make this set get and expand, return only empty struct
-    fn new(
+    /// Creates a new key from parameters provided right away.
+    /// * `keypress` - rdev::Key in question
+    /// * `press_wait_delay_after` - time::Duration for how long to wait after keypress (might get moved)
+    /// * `press_duration` - time::Duration for how long the key should be pressed for (unimplemented for now)
+    fn new_construct(
         keypress: rdev::Key,
         press_wait_delay_after: time::Duration,
         press_duration: time::Duration,
@@ -68,6 +63,14 @@ impl KeyPress {
             keypress,
             press_wait_delay_after,
             press_duration,
+        }
+    }
+
+    fn new() -> KeyPress {
+        KeyPress {
+            keypress: rdev::Key::Unknown(0),
+            press_wait_delay_after: time::Duration::default(),
+            press_duration: time::Duration::default(),
         }
     }
 }
@@ -132,6 +135,15 @@ impl ActionEventType {
             }
             _ => unimplemented!("Error! Implement this!"),
         }
+    }
+}
+
+#[derive(Debug)]
+struct EventList(Vec<rdev::Key>);
+
+impl EventList {
+    fn new() -> EventList {
+        EventList { 0: vec![] }
     }
 }
 
@@ -294,7 +306,9 @@ pub fn run_this(config: &ApplicationConfig) {
     });
 
     //let mut events = Vec::new();
-    let mut keys_pressed: Vec<rdev::Key> = Vec::new();
+
+
+    let mut keys_pressed: EventList = EventList::new();
 
     for event in rchan.iter() {
         match event.event_type {

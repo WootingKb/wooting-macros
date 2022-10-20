@@ -3231,11 +3231,11 @@ checksum = "5e4d40883ae9cae962787ca76ba76390ffa29214667a111db9e0a1ad8377e809"
 name = "wooting_macros"
 version = "0.1.0"
 dependencies = [
-    "device_query",
-    "rdev",
-    "serde",
-    "serde_json",
-    "tauri",
+ "device_query",
+ "rdev",
+ "serde",
+ "serde_json",
+ "tauri",
 ]
 
 [[package]]
