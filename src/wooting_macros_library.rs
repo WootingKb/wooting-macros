@@ -8,6 +8,10 @@ use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError}
 
 use crate::ApplicationConfig;
 
+//TODO: Move all the specific functions here.
+trait MacroFunctions {}
+
+
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
 /// This does not yet do anything.
 #[derive(Debug)]
@@ -30,6 +34,9 @@ struct KeyPress {
     press_wait_delay_after: time::Duration,
     press_duration: time::Duration,
 }
+
+impl MacroFunctions for KeyPress {}
+
 
 impl KeyPress {
     /// Executes an action on key up.
@@ -246,6 +253,8 @@ impl Macro {
 //     }
 // }
 
+
+///MacroData is the main data structure that contains all macro data.
 pub struct MacroData(Vec<MacroGroup>);
 
 impl MacroData {
@@ -268,9 +277,22 @@ impl MacroData {
             }
         }
     }
+    ///List the macros
+    fn list_macros(&self) {
+        for macro_groups in &self.0 {
+            for macro_item in &macro_groups.items {
+                println!("Macro: {:#?}", macro_item);
+            }
+        }
+    }
 }
 
 //TODO: Macro group functionality?
+///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
+/// * `name` - String based name of the MacroGroup
+/// * `icon` - Placeholder for now
+/// * `items` - Macros (vector) that belong to a group
+/// * `active` - Whether they should be executable
 pub struct MacroGroup {
     name: String,
     //TODO: PNG/WEBP image?
@@ -284,6 +306,7 @@ impl MacroGroup {
     fn rename(&mut self, new_name: String) {
         self.name = new_name;
     }
+
     ///Creates a new empty group (must have a name and an icon)
     fn new_group(name_of_group: &String, icon: char) -> MacroGroup {
         MacroGroup {
@@ -323,6 +346,8 @@ impl MacroGroup {
     }
 }
 
+///Main loop for now (of the library)
+/// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
     println!("Character {}: {}", 'c', 'c' as u32);
 
@@ -427,9 +452,9 @@ pub fn run_this(config: &ApplicationConfig) {
                 }
             },
 
-            // 2 => {
-            //     testing_macro_full.list_macros();
-            // }
+            2 => {
+                testing_macro_full.list_macros();
+            },
             // 3 => {
             //     testing_macro_full.add_to_group(Macro::new(
             //         get_user_input("Enter the name of the macro: ".to_string()),
