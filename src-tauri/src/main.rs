@@ -11,11 +11,12 @@ use std::fs::File;
 use std::io::Read;
 
 use serde::{Deserialize, Serialize};
+use serde_json;
 use tauri::App;
 
-use crate::wooting_macros_library;
+use crate::wooting_macros_library::run_this;
 
-//use serde_json;
+//use crate::wooting_macros_library;
 
 mod wooting_macros_library;
 
@@ -58,5 +59,5 @@ fn main() {
         Err(E) => {}
     }
 
-    run_this(&config);
+    run_this(&config)
 }
