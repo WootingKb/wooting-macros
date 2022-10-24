@@ -1,5 +1,6 @@
 use std::{result, thread, time};
 use std::collections::HashMap;
+use std::fmt::{format, Formatter};
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
@@ -27,7 +28,9 @@ trait MacroFunctions {
         unimplemented!("Unimplemented value")
     }
 
-    fn find(&self, search_string: String) {}
+    fn push_new(&mut self, macro_to_add: Macro) {}
+
+    fn remove(&mut self, macro_name_to_remove: String) {}
 }
 
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
@@ -122,6 +125,27 @@ impl ActionEventType {
     fn press_key_down(&self) {}
 }
 
+impl std::fmt::Display for ActionEventType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut buffer_text: String = "".to_string();
+        let mut number = 0;
+
+        match &self {
+            ActionEventType::KeyPressEvent(i) => {
+                buffer_text += format!("\n\t\tKey #{}\n\t\tKey: {:?}\tDelayAfterPress: {} ms\tDuration: {} ms", number, i.keypress, i.press_wait_delay_after.as_millis(), i.press_duration.as_millis()).as_str();
+                number += 1;
+            }
+            ActionEventType::SystemEvent(_) => {}
+            ActionEventType::PhillipsHueCommand() => {}
+            ActionEventType::OBS() => {}
+            ActionEventType::DiscordCommand() => {}
+            ActionEventType::UnicodeDirect() => {}
+        }
+
+        write!(f, "{}", buffer_text)
+    }
+}
+
 /// These are the events that can come from within the OS and are supported as triggers for running a macro.
 /// Currently supported:
 /// * `KeyPressEvent` - Very much like the output counterpart, a key event that can be caught using a grab feature and processed.
@@ -157,6 +181,7 @@ pub struct Action {
 
 impl Action {}
 
+
 /// Macro is the main building block that has several fields.
 /// * `name` - Name of the macro.
 /// * `body` - Actions to execute within a macro.
@@ -190,6 +215,23 @@ impl MacroFunctions for Macro {
     /// Gets the active status
     fn get_active(&self) -> bool {
         self.active
+    }
+}
+
+impl std::fmt::Display for Macro {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut buffer_text: String = "".to_string();
+        let mut number = 0;
+
+        buffer_text += format!("There are {} keys in the macro {}.\n", self.body.len(), self.name).as_str();
+
+        for i in &self.body {
+            buffer_text += format!("Key {}: {}", number, i)
+                .as_str();
+            number += 1;
+        }
+
+        write!(f, "{}", buffer_text)
     }
 }
 
@@ -243,49 +285,55 @@ impl Macro {
             }
         }
     }
-
-    // //TODO: We cannot convert to strings yet. Manually need to add a method for that...
-    // pub fn get_actions_key_names_string(&self) -> Vec<String> {
-    //     let mut vector: Vec<String> = vec![];
-    //
-    //     for items in self.body {
-    //         match items {
-    //             ActionEventType::KeyPressEvent(s) => {
-    //                 match s.keypress{
-    //
-    //                 }
-    //
-    //             },
-    //             _ => {
-    //
-    //             }
-    //         };
-    //     }
-    //
-    //     vector
-    //
-    // }
 }
 
-// /// Check if the key matches with the macro
-// fn check_key(checked_macro_trigger: &MacroGroup, to_check_with_key: &rdev::Key) {
-//     for macro_items in &checked_macro_trigger.items {
-//         if macro_items.active == true {
-//             match &macro_items.trigger {
-//                 TriggerEventType::KeyPressEvent(s) => {
-//                     if s.keypress == *to_check_with_key {
-//                         println!("MATCHED!!!! EXECUTING MACRO");
-//                         s.execute_key_down();
-//                     };
-//                 }
-//                 _ => (),
-//             }
-//         }
-//     }
-// }
-
 ///MacroData is the main data structure that contains all macro data.
+#[derive(Debug, Clone)]
 pub struct MacroData(Vec<MacroGroup>);
+
+impl MacroData {
+    ///Search for a macro group in all macro groups.
+    fn find(&self, search_string: String) -> Option<Vec<MacroGroup>> {
+        let mut result: Vec<MacroGroup> = vec![];
+
+
+        for i in &self.0 {
+            if i.name == search_string {
+                result.push(i.clone());
+            }
+        }
+
+        match result.len() {
+            0 => None,
+            _ => Some(result),
+        }
+    }
+
+    fn new_group(&mut self, name: String) {
+        self.0.push(MacroGroup::new_group(&name, 'c'));
+    }
+}
+
+impl std::fmt::Display for MacroData {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut buffer_text: String = "".to_string();
+        let mut number = 0;
+
+        buffer_text += format!("There are {} macro groups.\n", &self.0.len()).as_str();
+
+        for i in &self.0 {
+            buffer_text += format!(
+                "\tGroup {}\n\tGroupName: {}\n\tActive: {}\n+++++++++++\n",
+                number, i.name, i.active
+            )
+                .as_str();
+            number += 1;
+            buffer_text += format!("\nMacro {}\n{}", i.name, i).as_str();
+        }
+
+        write!(f, "{}", buffer_text)
+    }
+}
 
 ///Trait implementation for MacroData
 impl MacroFunctions for MacroData {
@@ -308,16 +356,33 @@ impl MacroFunctions for MacroData {
     }
     fn list_macros(&self) {
         for macro_groups in &self.0 {
-            for macro_item in &macro_groups.items {
-                println!("Macro: {:#?}", macro_item);
+            println!("Listing Macros:\n{}", macro_groups);
+        }
+    }
+    fn push_new(&mut self, macro_to_add: Macro) {
+        //show macro list
+        self.list_macros();
+
+        //choose to which group to push it
+        let selection_level: usize =
+            get_user_input("Enter the macro group ID".to_string()).parse().unwrap();
+
+
+        for (i, j) in self.0.iter_mut().enumerate() {
+            if selection_level == i {
+                j.items.push(macro_to_add.clone())
             }
         }
     }
-    ///Search for a macro in all macros
-    fn find(&self, search_string: String) {
-        self.0.iter().for_each(|x| x.find(search_string.clone()))
+
+
+    ///Removes a group entirely
+    fn remove(&mut self, macro_to_remove: String) {
+        self.0.retain(|x| x.name != macro_to_remove);
     }
 }
+
+
 
 //TODO: Macro group functionality?
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
@@ -325,12 +390,45 @@ impl MacroFunctions for MacroData {
 /// * `icon` - Placeholder for now
 /// * `items` - Macros (vector) that belong to a group
 /// * `active` - Whether they should be executable
+#[derive(Debug, Clone)]
 pub struct MacroGroup {
     name: String,
     //TODO: PNG/WEBP image?
     icon: char,
     items: Vec<Macro>,
     active: bool,
+}
+
+impl std::fmt::Display for MacroGroup {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut buffer_text: String = "".to_string();
+        let mut number = 0;
+
+        buffer_text += format!(
+            "There are {} macros in the group {}.\n",
+            &self.items.len(),
+            &self.name
+        )
+            .as_str();
+
+        for i in &self.items {
+            buffer_text += format!(
+                "========\n\tMacro # {}\n\tMacroName: {}\tActive: {}",
+                number, i.name, i.active
+            )
+                .as_str();
+            for j in &i.body {
+                buffer_text += format!(
+                    "\n\t\tKeys: {}\n",
+                    j
+                )
+                    .as_str();
+            }
+            number += 1;
+        }
+
+        write!(f, "{}", buffer_text)
+    }
 }
 
 ///Trait implementation for MacroGroup
@@ -360,6 +458,17 @@ impl MacroFunctions for MacroGroup {
     fn get_active(&self) -> bool {
         self.active
     }
+
+    /// Pushes a new Macro to the group
+    /// * `macro_to_add` - Macro type to add (construct using a new operator)
+    fn push_new(&mut self, macro_to_add: Macro) {
+        self.items.push(macro_to_add);
+    }
+
+    ///Removes a macro from a group
+    fn remove(&mut self, macro_to_remove: String) {
+        self.items.retain(|x| x.name != macro_to_remove);
+    }
 }
 
 ///Individual methods for MacroGroup
@@ -386,23 +495,22 @@ impl MacroGroup {
             active: false,
         }
     }
-    ///Adds a member to a group
-    fn add_to_group(&mut self, macro_to_add: Macro) {
-        self.items.push(macro_to_add);
-    }
 
-    ///Removes a macro from the group
-    fn remove_macro_from_group(&mut self, macro_to_remove: String) {
-        self.items.retain(|x| x.name != macro_to_remove);
-    }
 
     ///Search for a macro in a group
-    fn find(&self, search_string: String) {
+    fn find(&self, search_string: &String) -> Option<Vec<Macro>> {
+        let mut result = vec![];
         self.items.iter().for_each(|x| {
-            if x.name.contains(&search_string) {
+            if x.name.contains(search_string) {
                 println!("Result is: {:?}", x);
+                result.push(x.clone());
             }
         });
+
+        match result.len() {
+            0 => None,
+            _ => Some(result)
+        }
     }
 }
 
@@ -416,58 +524,90 @@ pub fn run_this(config: &ApplicationConfig) {
         press_wait_delay_after: time::Duration::from_millis(5),
     });
 
+    //Very temporary debugging only variable (so I can precisely see and manipulate data
     let mut testing_macro_full: MacroData = MacroData {
-        0: vec![MacroGroup {
-            name: "Main group".to_string(),
-            icon: 'i',
-            items: vec![Macro {
-                name: "Paste".to_string(),
-                body: vec![
-                    ActionEventType::KeyPressEvent(KeyPress {
-                        keypress: rdev::Key::ControlLeft,
+        0: vec![
+            MacroGroup {
+                name: "Main group".to_string(),
+                icon: 'i',
+                items: vec![Macro {
+                    name: "Paste".to_string(),
+                    body: vec![
+                        ActionEventType::KeyPressEvent(KeyPress {
+                            keypress: rdev::Key::ControlLeft,
+                            press_wait_delay_after: time::Duration::from_millis(50),
+                            press_duration: time::Duration::from_millis(50),
+                        }),
+                        ActionEventType::KeyPressEvent(KeyPress {
+                            keypress: rdev::Key::KeyV,
+                            press_wait_delay_after: time::Duration::from_millis(50),
+                            press_duration: time::Duration::from_millis(50),
+                        }),
+                    ],
+                    trigger: TriggerEventType::KeyPressEvent(KeyPress {
+                        keypress: rdev::Key::SemiColon,
                         press_wait_delay_after: time::Duration::from_millis(50),
                         press_duration: time::Duration::from_millis(50),
                     }),
-                    ActionEventType::KeyPressEvent(KeyPress {
-                        keypress: rdev::Key::KeyV,
-                        press_wait_delay_after: time::Duration::from_millis(50),
-                        press_duration: time::Duration::from_millis(50),
-                    }),
-                ],
-                trigger: TriggerEventType::KeyPressEvent(KeyPress {
-                    keypress: rdev::Key::SemiColon,
-                    press_wait_delay_after: time::Duration::from_millis(50),
-                    press_duration: time::Duration::from_millis(50),
-                }),
+                    active: true,
+                }],
                 active: true,
-            }],
-            active: true,
-        }, MacroGroup {
-            name: "Fun macro group".to_string(),
-            icon: 'i',
-            items: vec![Macro {
-                name: "Havo".to_string(),
-                body: vec![
-                    ActionEventType::KeyPressEvent(KeyPress {
-                        keypress: rdev::Key::ControlLeft,
-                        press_wait_delay_after: time::Duration::from_millis(50),
-                        press_duration: time::Duration::from_millis(50),
-                    }),
-                    ActionEventType::KeyPressEvent(KeyPress {
-                        keypress: rdev::Key::KeyV,
-                        press_wait_delay_after: time::Duration::from_millis(50),
-                        press_duration: time::Duration::from_millis(50),
-                    }),
+            },
+            MacroGroup {
+                name: "Fun macro group".to_string(),
+                icon: 'i',
+                items: vec![
+                    Macro {
+                        name: "Havo".to_string(),
+                        body: vec![
+                            ActionEventType::KeyPressEvent(KeyPress {
+                                keypress: rdev::Key::KeyL,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }),
+                            ActionEventType::KeyPressEvent(KeyPress {
+                                keypress: rdev::Key::KeyO,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }),
+                            ActionEventType::KeyPressEvent(KeyPress {
+                                keypress: rdev::Key::KeyL,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }),
+                        ],
+                        trigger: TriggerEventType::KeyPressEvent(KeyPress {
+                            keypress: rdev::Key::KpMultiply,
+                            press_wait_delay_after: time::Duration::from_millis(50),
+                            press_duration: time::Duration::from_millis(50),
+                        }),
+                        active: true,
+                    },
+                    Macro {
+                        name: "Svorka".to_string(),
+                        body: vec![
+                            ActionEventType::KeyPressEvent(KeyPress {
+                                keypress: rdev::Key::KeyS,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }),
+                            ActionEventType::KeyPressEvent(KeyPress {
+                                keypress: rdev::Key::KeyO,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }),
+                        ],
+                        trigger: TriggerEventType::KeyPressEvent(KeyPress {
+                            keypress: rdev::Key::KpMinus,
+                            press_wait_delay_after: time::Duration::from_millis(50),
+                            press_duration: time::Duration::from_millis(50),
+                        }),
+                        active: true,
+                    },
                 ],
-                trigger: TriggerEventType::KeyPressEvent(KeyPress {
-                    keypress: rdev::Key::SemiColon,
-                    press_wait_delay_after: time::Duration::from_millis(50),
-                    press_duration: time::Duration::from_millis(50),
-                }),
                 active: true,
-            }],
-            active: true,
-        }, ],
+            },
+        ],
     };
 
     // Testing this feature of rdev separate thread
@@ -490,9 +630,12 @@ pub fn run_this(config: &ApplicationConfig) {
             "Select what you want to do:
         1 - Start the key {}
         2 - List the macros in the group
-        3 - Add a macro to the group
-        4 - Remove a macro from the group
-        5 - Search for a macro",
+        3 - Add a new group
+        4 - Add a macro to the group
+        5 - Remove a group of macros
+        6 - Remove a macro from a specific group
+        7 - Search for a group
+        8 - Search for a macro",
             if config.use_input_grab == true {
                 "grabber"
             } else {
@@ -538,43 +681,70 @@ pub fn run_this(config: &ApplicationConfig) {
             }
 
             2 => {
-                testing_macro_full.list_macros();
+                println!("{}", testing_macro_full);
+                // testing_macro_full.list_macros();
             }
-            // 3 => {
-            //     testing_macro_full.add_to_group(Macro::new(
-            //         get_user_input("Enter the name of the macro: ".to_string()),
-            //         vec![TriggerEventType(KeyPress::new(
-            //             Keycode::from_str(
-            //                 get_user_input("Enter the key to press: ".to_string()).as_str(),
-            //             )
-            //             .unwrap(),
-            //             time::Duration::from_millis(get_user_input_int(
-            //                 "Enter how many millisecond delay after pressing: ".to_string(),
-            //             ) as u64),
-            //             time::Duration::from_millis(get_user_input_int(
-            //                 "Enter how many millisecond time to hold the key for: ".to_string(),
-            //             ) as u64),
-            //         ))],
-            //         KeyPressEvent(KeyPress::new(
-            //             Keycode::from_str(
-            //                 get_user_input("Enter the key to press: ".to_string()).as_str(),
-            //             )
-            //             .unwrap(),
-            //             Default::default(),
-            //             Default::default(),
-            //         )),
-            //     ));
-            //     println!("Macro Added!");
-            // }
-            // 4 => {
-            //     testing_macro_full.0.list_macros();
-            //     testing_macro_full.remove_macro_from_group(get_user_input(
-            //         "Enter the name of the macro to remove: ".to_string(),
-            //     ))
-            // }
+            3 => {
+                testing_macro_full.new_group(get_user_input("Enter the macro group name".to_string()))
+            }
+            4 => {
+                let push_this = Macro::new_construct(
+                    get_user_input("Enter the name for the macro".to_string()),
+                    vec![ActionEventType::KeyPressEvent(KeyPress {
+                        keypress: Key::KeyC,
+                        press_wait_delay_after: time::Duration::from_millis(get_user_input_int(
+                            "Enter how many millisecond delay after pressing: ".to_string(),
+                        )
+                            as u64),
+                        press_duration: Default::default(),
+                    })],
+                    TriggerEventType::KeyPressEvent(KeyPress {
+                        keypress: Key::KpPlus,
+                        press_wait_delay_after: time::Duration::from_millis(get_user_input_int(
+                            "Enter how many millisecond delay after pressing: ".to_string(),
+                        )
+                            as u64),
+                        press_duration: Default::default(),
+                    }),
+                );
+
+                testing_macro_full.push_new(push_this)
+            }
+
             5 => {
-                testing_macro_full.find(get_user_input("Enter the search term\n".to_string()))
+                testing_macro_full.0.iter().for_each(|x| println!("{}", x.name));
+                testing_macro_full.remove(get_user_input(
+                    "Enter the name of the macro to remove: ".to_string(),
+                ))
             }
+            6 => {
+                testing_macro_full.list_macros();
+
+
+                for i in &mut testing_macro_full.0 {
+                    for mut j in &mut i.items {
+                        j.remove(get_user_input(
+                            "Enter the name of the macro to remove: ".to_string(),
+                        ))
+                    }
+                }
+            }
+            7 => {
+                match testing_macro_full.find(get_user_input("Enter the search term\n".to_string())) {
+                    None => println!("No groups with that name exist"),
+                    Some(T) => T.iter().for_each(|x| println!("Found: {}", x))
+                }
+            },
+            8 => {
+                let result = get_user_input("Enter the search term\n".to_string());
+
+                for i in &testing_macro_full.0 {
+                    match i.find(&result) {
+                        None => println!("No macro with that name exists in group {}", i.name),
+                        Some(T) => T.iter().for_each(|x| println!("Found: {}", x))
+                    }
+                }
+            },
             _ => {
                 println!("Invalid input");
                 continue;
