@@ -5,12 +5,30 @@ use std::sync::mpsc::channel;
 use std::time::Duration;
 
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
+use serde::Serialize;
 
 use crate::ApplicationConfig;
 
 //TODO: Move all the specific functions here.
-trait MacroFunctions {}
+trait MacroFunctions {
+    fn check_key(&self, to_check_with_key: &rdev::Key) {}
 
+    fn list_macros(&self) {}
+
+    fn rename(&mut self, new_name: String) {}
+
+    fn set_name(&mut self, new_name: String) {}
+
+    fn set_active(&mut self, active: bool) {}
+
+    fn get_active(&self) -> bool {
+        unimplemented!("Unimplemented value")
+    }
+
+    fn get_name(&self) -> String {
+        unimplemented!("Unimplemented string")
+    }
+}
 
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
 /// This does not yet do anything.
@@ -34,9 +52,6 @@ struct KeyPress {
     press_wait_delay_after: time::Duration,
     press_duration: time::Duration,
 }
-
-impl MacroFunctions for KeyPress {}
-
 
 impl KeyPress {
     /// Executes an action on key up.
@@ -156,6 +171,28 @@ pub struct Macro {
     active: bool,
 }
 
+impl MacroFunctions for Macro {
+    /// Sets the name of the Macro to something else
+    fn set_name(&mut self, new_name: String) {
+        self.name = new_name;
+    }
+
+    /// Sets the macro to be either active or inactive
+    fn set_active(&mut self, active: bool) {
+        self.active;
+    }
+
+    /// Gets the active status
+    fn get_active(&self) -> bool {
+        self.active
+    }
+
+    /// Gets the name
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 impl Macro {
     /// Creates a new macro with parameters.
     /// * `name` - Name of the macro.
@@ -181,26 +218,6 @@ impl Macro {
         }
     }
 
-    /// Sets the name of the Macro to something else
-    pub fn set_name(&mut self, new_name: String) {
-        self.name = new_name;
-    }
-
-    /// Sets the macro to be either active or inactive
-    pub fn set_active(&mut self, active: bool) {
-        self.active;
-    }
-
-    /// Gets the active status
-    pub fn get_active(&self) -> bool {
-        self.active
-    }
-
-    /// Gets the name
-    pub fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
     /// Get trigger event type
     fn get_trigger_event(&self) -> TriggerEventType {
         self.trigger.clone()
@@ -210,6 +227,20 @@ impl Macro {
     pub fn get_trigger_event_key(&self) -> rdev::Key {
         match self.get_trigger_event() {
             TriggerEventType::KeyPressEvent(s) => s.keypress,
+        }
+    }
+
+    fn check_key(&self, to_check_with_key: &rdev::Key) {
+        if self.active == true {
+            match &self.trigger {
+                TriggerEventType::KeyPressEvent(s) => {
+                    if s.keypress == *to_check_with_key {
+                        println!("MATCHED!!!! EXECUTING MACRO");
+                        s.execute_key_down();
+                    };
+                }
+                _ => (),
+            }
         }
     }
 
@@ -253,14 +284,11 @@ impl Macro {
 //     }
 // }
 
-
 ///MacroData is the main data structure that contains all macro data.
 pub struct MacroData(Vec<MacroGroup>);
 
-impl MacroData {
-    /// Checks and triggers the macro if there is such trigger
-    // TODO: remake this into a hashmap check
-    pub fn check_key(&self, to_check_with_key: &rdev::Key) {
+impl MacroFunctions for MacroData {
+    fn check_key(&self, to_check_with_key: &rdev::Key) {
         for macro_group in &self.0 {
             for macro_items in &macro_group.items {
                 if macro_items.active == true {
@@ -277,7 +305,6 @@ impl MacroData {
             }
         }
     }
-    ///List the macros
     fn list_macros(&self) {
         for macro_groups in &self.0 {
             for macro_item in &macro_groups.items {
@@ -301,12 +328,39 @@ pub struct MacroGroup {
     active: bool,
 }
 
-impl MacroGroup {
-    ///Renames the Group of Macros
+impl MacroFunctions for MacroGroup {
     fn rename(&mut self, new_name: String) {
         self.name = new_name;
     }
 
+    fn list_macros(&self) {
+        for macro_item in &self.items {
+            println!("Macro: {:#?}", macro_item);
+        }
+    }
+
+    /// Sets the name of the Macro to something else
+    fn set_name(&mut self, new_name: String) {
+        self.name = new_name;
+    }
+
+    /// Sets the macro to be either active or inactive
+    fn set_active(&mut self, active: bool) {
+        self.active;
+    }
+
+    /// Gets the active status
+    fn get_active(&self) -> bool {
+        self.active
+    }
+
+    /// Gets the name
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+}
+
+impl MacroGroup {
     ///Creates a new empty group (must have a name and an icon)
     fn new_group(name_of_group: &String, icon: char) -> MacroGroup {
         MacroGroup {
@@ -334,12 +388,6 @@ impl MacroGroup {
         self.items.push(macro_to_add);
     }
 
-    ///List the macros
-    fn list_macros(&self) {
-        for macro_item in &self.items {
-            println!("Macro: {:#?}", macro_item);
-        }
-    }
     ///Removes a macro from the group
     fn remove_macro_from_group(&mut self, macro_to_remove: String) {
         self.items.retain(|x| x.name != macro_to_remove);
@@ -400,7 +448,6 @@ pub fn run_this(config: &ApplicationConfig) {
 
     //let mut events = Vec::new();
 
-
     loop {
         let user_input = get_user_input(format!(
             "Select what you want to do:
@@ -450,11 +497,11 @@ pub fn run_this(config: &ApplicationConfig) {
                         }
                     }
                 }
-            },
+            }
 
             2 => {
                 testing_macro_full.list_macros();
-            },
+            }
             // 3 => {
             //     testing_macro_full.add_to_group(Macro::new(
             //         get_user_input("Enter the name of the macro: ".to_string()),
