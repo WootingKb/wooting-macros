@@ -1,9 +1,8 @@
-#![allow(warnings, unused)]
-
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
+#![allow(warnings, unused)]
 
 extern crate core;
 
@@ -27,13 +26,19 @@ pub struct ApplicationConfig {
     pub startup_delay: u64,
 }
 
+// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+#[tauri::command]
+fn greet(name: &str) -> String {
+    format!("Hello, {}! You've been greeted from Rust!", name)
+}
 
 fn main() {
     tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    let mut config: ApplicationConfig = ApplicationConfig {
+        let mut config: ApplicationConfig = ApplicationConfig {
         use_input_grab: false,
         startup_delay: 3,
     };

@@ -1,13 +1,13 @@
 {
   "build": {
-    "beforeBuildCommand": "yarn run build",
-    "beforeDevCommand": "yarn run dev",
-    "devPath": "http://localhost:3000",
-    "distDir": "../build"
+    "beforeDevCommand": "yarn dev",
+    "beforeBuildCommand": "yarn build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
   },
   "package": {
-    "productName": "Wooting Macros",
-    "version": "0.1.0"
+    "productName": "wooting-macros",
+    "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -57,7 +57,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Wooting Macros",
+        "title": "wooting-macros",
         "width": 800
       }
     ]
