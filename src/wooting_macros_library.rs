@@ -26,6 +26,8 @@ trait MacroFunctions {
     fn get_active(&self) -> bool {
         unimplemented!("Unimplemented value")
     }
+
+    fn find(&self, search_string: String) {}
 }
 
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
@@ -285,6 +287,7 @@ impl Macro {
 ///MacroData is the main data structure that contains all macro data.
 pub struct MacroData(Vec<MacroGroup>);
 
+///Trait implementation for MacroData
 impl MacroFunctions for MacroData {
     fn check_key(&self, to_check_with_key: &rdev::Key) {
         for macro_group in &self.0 {
@@ -310,6 +313,10 @@ impl MacroFunctions for MacroData {
             }
         }
     }
+    ///Search for a macro in all macros
+    fn find(&self, search_string: String) {
+        self.0.iter().for_each(|x| x.find(search_string.clone()))
+    }
 }
 
 //TODO: Macro group functionality?
@@ -326,6 +333,7 @@ pub struct MacroGroup {
     active: bool,
 }
 
+///Trait implementation for MacroGroup
 impl MacroFunctions for MacroGroup {
     fn list_macros(&self) {
         for macro_item in &self.items {
@@ -354,6 +362,7 @@ impl MacroFunctions for MacroGroup {
     }
 }
 
+///Individual methods for MacroGroup
 impl MacroGroup {
     ///Creates a new empty group (must have a name and an icon)
     fn new_group(name_of_group: &String, icon: char) -> MacroGroup {
@@ -385,6 +394,15 @@ impl MacroGroup {
     ///Removes a macro from the group
     fn remove_macro_from_group(&mut self, macro_to_remove: String) {
         self.items.retain(|x| x.name != macro_to_remove);
+    }
+
+    ///Search for a macro in a group
+    fn find(&self, search_string: String) {
+        self.items.iter().for_each(|x| {
+            if x.name.contains(&search_string) {
+                println!("Result is: {:?}", x);
+            }
+        });
     }
 }
 
@@ -424,7 +442,32 @@ pub fn run_this(config: &ApplicationConfig) {
                 active: true,
             }],
             active: true,
-        }],
+        }, MacroGroup {
+            name: "Fun macro group".to_string(),
+            icon: 'i',
+            items: vec![Macro {
+                name: "Havo".to_string(),
+                body: vec![
+                    ActionEventType::KeyPressEvent(KeyPress {
+                        keypress: rdev::Key::ControlLeft,
+                        press_wait_delay_after: time::Duration::from_millis(50),
+                        press_duration: time::Duration::from_millis(50),
+                    }),
+                    ActionEventType::KeyPressEvent(KeyPress {
+                        keypress: rdev::Key::KeyV,
+                        press_wait_delay_after: time::Duration::from_millis(50),
+                        press_duration: time::Duration::from_millis(50),
+                    }),
+                ],
+                trigger: TriggerEventType::KeyPressEvent(KeyPress {
+                    keypress: rdev::Key::SemiColon,
+                    press_wait_delay_after: time::Duration::from_millis(50),
+                    press_duration: time::Duration::from_millis(50),
+                }),
+                active: true,
+            }],
+            active: true,
+        }, ],
     };
 
     // Testing this feature of rdev separate thread
@@ -448,7 +491,8 @@ pub fn run_this(config: &ApplicationConfig) {
         1 - Start the key {}
         2 - List the macros in the group
         3 - Add a macro to the group
-        4 - Remove a macro from the group",
+        4 - Remove a macro from the group
+        5 - Search for a macro",
             if config.use_input_grab == true {
                 "grabber"
             } else {
@@ -528,6 +572,9 @@ pub fn run_this(config: &ApplicationConfig) {
             //         "Enter the name of the macro to remove: ".to_string(),
             //     ))
             // }
+            5 => {
+                testing_macro_full.find(get_user_input("Enter the search term\n".to_string()))
+            }
             _ => {
                 println!("Invalid input");
                 continue;
