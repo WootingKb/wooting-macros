@@ -15,18 +15,16 @@ trait MacroFunctions {
 
     fn list_macros(&self) {}
 
-    fn rename(&mut self, new_name: String) {}
-
     fn set_name(&mut self, new_name: String) {}
+
+    fn get_name(&self) -> String {
+        unimplemented!("Unimplemented string")
+    }
 
     fn set_active(&mut self, active: bool) {}
 
     fn get_active(&self) -> bool {
         unimplemented!("Unimplemented value")
-    }
-
-    fn get_name(&self) -> String {
-        unimplemented!("Unimplemented string")
     }
 }
 
@@ -55,7 +53,7 @@ struct KeyPress {
 
 impl KeyPress {
     /// Executes an action on key up.
-    /// TODO: Meant to search the eventlist and remove all duplicates of the keys being pressed.
+    /// TODO: Meant to search the event list and remove all duplicates of the keys being pressed.
     ///  This should be either paired with each keypress, or called after registering that key release to clean up the array
     fn execute_key_up(&self, key_to_release: &rdev::Key, event_list: &EventList) {
         send(&EventType::KeyRelease(*key_to_release));
@@ -177,6 +175,11 @@ impl MacroFunctions for Macro {
         self.name = new_name;
     }
 
+    /// Gets the name
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
     /// Sets the macro to be either active or inactive
     fn set_active(&mut self, active: bool) {
         self.active;
@@ -185,11 +188,6 @@ impl MacroFunctions for Macro {
     /// Gets the active status
     fn get_active(&self) -> bool {
         self.active
-    }
-
-    /// Gets the name
-    fn get_name(&self) -> String {
-        self.name.clone()
     }
 }
 
@@ -329,10 +327,6 @@ pub struct MacroGroup {
 }
 
 impl MacroFunctions for MacroGroup {
-    fn rename(&mut self, new_name: String) {
-        self.name = new_name;
-    }
-
     fn list_macros(&self) {
         for macro_item in &self.items {
             println!("Macro: {:#?}", macro_item);
@@ -344,6 +338,11 @@ impl MacroFunctions for MacroGroup {
         self.name = new_name;
     }
 
+    /// Gets the name
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
     /// Sets the macro to be either active or inactive
     fn set_active(&mut self, active: bool) {
         self.active;
@@ -352,11 +351,6 @@ impl MacroFunctions for MacroGroup {
     /// Gets the active status
     fn get_active(&self) -> bool {
         self.active
-    }
-
-    /// Gets the name
-    fn get_name(&self) -> String {
-        self.name.clone()
     }
 }
 
