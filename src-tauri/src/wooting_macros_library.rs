@@ -126,7 +126,7 @@ pub enum ActionEventType {
 }
 
 impl ActionEventType {
-    //TODO: Right now unused for unknown reasons
+
     fn press_key_down(&self) {}
 }
 
@@ -167,7 +167,7 @@ pub enum TriggerEventType {
 }
 
 impl TriggerEventType {
-    //TODO: Right now unused for unknown reasons
+
 }
 
 /// The list of events that are currently happening (basically a list of all keys or buttons currently being pressed).
@@ -180,7 +180,6 @@ impl EventList {
     fn new() -> EventList {
         EventList { 0: vec![] }
     }
-    //TODO: Push and pop methods?
 }
 
 /// Action is a structure currently unused.
@@ -201,7 +200,7 @@ impl Action {}
 #[derive(Debug, Clone)]
 pub struct Macro {
     name: String,
-    //TODO: really think about the timeline as it ties into here
+
     body: Vec<ActionEventType>,
     trigger: TriggerEventType,
     active: bool,
@@ -415,7 +414,7 @@ impl MacroFunctions for MacroData {
     }
 }
 
-//TODO: Macro group functionality?
+
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
 /// * `name` - String based name of the MacroGroup
 /// * `icon` - Placeholder for now
@@ -806,7 +805,7 @@ fn get_user_input(display_text: String) -> String {
     buffer.trim().to_string()
 }
 
-///Gets user's text and parse into i64. TODO: This needs much more work
+///Gets user's text and parse into i64.
 fn get_user_input_int(display_text: String) -> i64 {
     println!("{}\n", display_text);
 
@@ -823,7 +822,7 @@ fn get_user_input_int(display_text: String) -> i64 {
     return vector_chars as i64;
 }
 
-// //TODO: Match this with an event table.. fork the library to do that..?
+//
 // fn callback_grab_win_osx(event: Event) -> Option<Event> {
 //     println!("My callback {:?}", event);
 //
