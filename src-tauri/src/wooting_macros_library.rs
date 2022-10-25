@@ -115,6 +115,7 @@ impl KeyPress {
 /// * `UnicodeDirect` - Output a Unicode symbol of choice
 #[derive(Debug, Clone)]
 pub enum ActionEventType {
+    //TODO: rewrite the tuples into structs
     KeyPressEvent(KeyPress),
     SystemEvent(Action),
     PhillipsHueCommand(),
