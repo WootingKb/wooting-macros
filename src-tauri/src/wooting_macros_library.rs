@@ -121,6 +121,7 @@ pub enum ActionEventType {
     OBS(),
     DiscordCommand(),
     UnicodeDirect(),
+    //TODO: Move the delay after here as an action
 }
 
 impl ActionEventType {
