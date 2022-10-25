@@ -448,6 +448,7 @@ impl std::fmt::Display for MacroGroup {
                 .as_str();
             for j in &i.body {
                 buffer_text += format!("\n\t\tKeys: {}\n", j).as_str();
+
             }
             number += 1;
         }
