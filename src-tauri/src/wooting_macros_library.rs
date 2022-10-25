@@ -10,8 +10,8 @@ use serde::Serialize;
 
 use crate::ApplicationConfig;
 
-//TODO: Move all the specific functions here.
 trait MacroFunctions {
+    //TODO: get/set configuration only, get rid of the other ones
     fn check_key(&self, to_check_with_key: &rdev::Key) {}
 
     fn list_macros(&self) {}
