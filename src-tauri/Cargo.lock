@@ -20,9 +20,9 @@ version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fcb51a0695d8f838b1ee009b3fbf66bda078cd64590202a864a8f3e8c4315c47"
 dependencies = [
-    "getrandom 0.2.8",
-    "once_cell",
-    "version_check",
+ "getrandom 0.2.8",
+ "once_cell",
+ "version_check",
 ]
 
 [[package]]
@@ -31,7 +31,7 @@ version = "0.7.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b4f55bd91a0978cbfd91c457a164bab8b4001c833b7f323132c0a4e1922dd44e"
 dependencies = [
-    "memchr",
+ "memchr",
 ]
 
 [[package]]
@@ -1093,12 +1093,12 @@ version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24f518afe90c23fba585b2d7697856f9e6a7bbc62f65588035e66f6afb01a2e9"
 dependencies = [
-    "anyhow",
-    "proc-macro-crate",
-    "proc-macro-error",
-    "proc-macro2",
-    "quote",
-    "syn",
+ "anyhow",
+ "proc-macro-crate",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -1107,7 +1107,7 @@ version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce69ed202df415a3d4a01e6f3341320ca88b9bd4f0bf37be6fa239cdea06d9bf"
 dependencies = [
-    "hashbrown",
+ "hashbrown",
 ]
 
 [[package]]
@@ -1116,7 +1116,7 @@ version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 dependencies = [
-    "ahash",
+ "ahash",
 ]
 
 [[package]]
@@ -3768,12 +3768,12 @@ dependencies = [
 name = "wooting-macros"
 version = "0.1.0"
 dependencies = [
-    "halfbrown",
-    "rdev",
-    "serde",
-    "serde_json",
-    "tauri",
-    "tauri-build",
+ "halfbrown",
+ "rdev",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
 ]
 
 [[package]]

@@ -4,7 +4,7 @@ use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-use halfbrown::{HashMap, hashmap};
+use halfbrown::{hashmap, HashMap};
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 
@@ -74,34 +74,34 @@ pub enum ActionEventType {
     UnicodeDirect {},
     //TODO: Move the delay after here as an action
 }
-
-impl std::fmt::Display for ActionEventType {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut buffer_text: String = "".to_string();
-        let mut number = 0;
-
-        match &self {
-            ActionEventType::KeyPressEvent { data: i } => {
-                buffer_text += format!(
-                    "\n\t\tKey #{}\n\t\tKey: {:?}\tDelayAfterPress: {} ms\tDuration: {} ms",
-                    number,
-                    i.keypress,
-                    i.press_wait_delay_after.as_millis(),
-                    i.press_duration.as_millis()
-                )
-                    .as_str();
-                number += 1;
-            }
-            ActionEventType::SystemEvent { action: _ } => {}
-            ActionEventType::PhillipsHueCommand {} => {}
-            ActionEventType::OBS {} => {}
-            ActionEventType::DiscordCommand {} => {}
-            ActionEventType::UnicodeDirect {} => {}
-        }
-
-        write!(f, "{}", buffer_text)
-    }
-}
+//
+// impl std::fmt::Display for ActionEventType {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+//         let mut buffer_text: String = "".to_string();
+//         let mut number = 0;
+//
+//         match &self {
+//             ActionEventType::KeyPressEvent { data: i } => {
+//                 buffer_text += format!(
+//                     "\n\t\tKey #{}\n\t\tKey: {:?}\tDelayAfterPress: {} ms\tDuration: {} ms",
+//                     number,
+//                     i.keypress,
+//                     i.press_wait_delay_after.as_millis(),
+//                     i.press_duration.as_millis()
+//                 )
+//                     .as_str();
+//                 number += 1;
+//             }
+//             ActionEventType::SystemEvent { action: _ } => {}
+//             ActionEventType::PhillipsHueCommand {} => {}
+//             ActionEventType::OBS {} => {}
+//             ActionEventType::DiscordCommand {} => {}
+//             ActionEventType::UnicodeDirect {} => {}
+//         }
+//
+//         write!(f, "{}", buffer_text)
+//     }
+// }
 
 /// These are the events that can come from within the OS and are supported as triggers for running a macro.
 /// Currently supported:
@@ -137,27 +137,27 @@ pub struct Macro {
     trigger: TriggerEventType,
     active: bool,
 }
-
-impl std::fmt::Display for Macro {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut buffer_text: String = "".to_string();
-        let mut number = 0;
-
-        buffer_text += format!(
-            "There are {} keys in the macro {}.\n",
-            self.body.len(),
-            self.name
-        )
-            .as_str();
-
-        for i in &self.body {
-            buffer_text += format!("Key {}: {}", number, i).as_str();
-            number += 1;
-        }
-
-        write!(f, "{}", buffer_text)
-    }
-}
+//
+// impl std::fmt::Display for Macro {
+//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+//         let mut buffer_text: String = "".to_string();
+//         let mut number = 0;
+//
+//         buffer_text += format!(
+//             "There are {} keys in the macro {}.\n",
+//             self.body.len(),
+//             self.name
+//         )
+//             .as_str();
+//
+//         for i in &self.body {
+//             buffer_text += format!("Key {}: {}", number, i).as_str();
+//             number += 1;
+//         }
+//
+//         write!(f, "{}", buffer_text)
+//     }
+// }
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone)]
@@ -182,26 +182,27 @@ impl MacroData {
     }
 }
 
-impl std::fmt::Display for MacroData {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut buffer_text: String = "".to_string();
-        let mut number = 0;
-
-        buffer_text += format!("There are {} macro groups.\n", &self.0.len()).as_str();
-
-        for i in &self.0 {
-            buffer_text += format!(
-                "\tGroup {}\n\tGroupName: {}\n\tActive: {}\n+++++++++++\n",
-                number, i.name, i.active
-            )
-                .as_str();
-            number += 1;
-            buffer_text += format!("\nMacro {}\n{}", i.name, i).as_str();
-        }
-
-        write!(f, "{}", buffer_text)
-    }
-}
+//
+// impl std::fmt::Display for MacroData {
+//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+//         let mut buffer_text: String = "".to_string();
+//         let mut number = 0;
+//
+//         buffer_text += format!("There are {} macro groups.\n", &self.0.len()).as_str();
+//
+//         for i in &self.0 {
+//             buffer_text += format!(
+//                 "\tGroup {}\n\tGroupName: {}\n\tActive: {}\n+++++++++++\n",
+//                 number, i.name, i.active
+//             )
+//                 .as_str();
+//             number += 1;
+//             buffer_text += format!("\nMacro {}\n{}", i.name, i).as_str();
+//         }
+//
+//         write!(f, "{}", buffer_text)
+//     }
+// }
 
 #[derive(Debug, Clone)]
 struct MacroItems(halfbrown::HashMap<Macro, Vec<Macro>>);
@@ -222,33 +223,34 @@ pub struct MacroGroup {
     active: bool,
 }
 
-impl std::fmt::Display for MacroGroup {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut buffer_text: String = "".to_string();
-        let mut number = 0;
-
-        buffer_text += format!(
-            "There are {} macros in the group {}.\n",
-            &self.items.len(),
-            &self.name
-        )
-            .as_str();
-
-        for i in &self.items {
-            buffer_text += format!(
-                "========\n\tMacro # {}\n\tMacroName: {}\tActive: {}",
-                number, i.name, i.active
-            )
-                .as_str();
-            for j in &i.body {
-                buffer_text += format!("\n\t\tKeys: {}\n", j).as_str();
-            }
-            number += 1;
-        }
-
-        write!(f, "{}", buffer_text)
-    }
-}
+//
+// impl std::fmt::Display for MacroGroup {
+//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+//         let mut buffer_text: String = "".to_string();
+//         let mut number = 0;
+//
+//         buffer_text += format!(
+//             "There are {} macros in the group {}.\n",
+//             &self.items.len(),
+//             &self.name
+//         )
+//             .as_str();
+//
+//         for i in &self.items {
+//             buffer_text += format!(
+//                 "========\n\tMacro # {}\n\tMacroName: {}\tActive: {}",
+//                 number, i.name, i.active
+//             )
+//                 .as_str();
+//             for j in &i.body {
+//                 buffer_text += format!("\n\t\tKeys: {}\n", j).as_str();
+//             }
+//             number += 1;
+//         }
+//
+//         write!(f, "{}", buffer_text)
+//     }
+// }
 
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
@@ -259,98 +261,22 @@ pub fn run_this(config: &ApplicationConfig) {
         action: Action {
             action: 'd',
             press_wait_delay_after: time::Duration::from_millis(5),
-        }
+        },
     };
 
     //Very temporary debugging only variable (so I can precisely see and manipulate data
     let mut testing_macro_full: MacroData = MacroData {
-        0: vec![
-            MacroGroup {
-                name: "Main group".to_string(),
-                icon: 'i',
-                items: vec![Macro {
-                    name: "Paste".to_string(),
-                    body: vec![
-                        ActionEventType::KeyPressEvent {
-                            data: KeyPress {
-                                keypress: rdev::Key::ControlLeft,
-                                press_wait_delay_after: time::Duration::from_millis(50),
-                                press_duration: time::Duration::from_millis(50),
-                            }
-                        },
-                        ActionEventType::KeyPressEvent {
-                            data: KeyPress {
-                                keypress: rdev::Key::KeyV,
-                                press_wait_delay_after: time::Duration::from_millis(50),
-                                press_duration: time::Duration::from_millis(50),
-                            }
-                        },
-                    ],
-                    trigger: TriggerEventType::KeyPressEvent(KeyPress {
-                        keypress: rdev::Key::SemiColon,
-                        press_wait_delay_after: time::Duration::from_millis(50),
-                        press_duration: time::Duration::from_millis(50),
-                    }),
-                    active: true,
-                }],
-                active: true,
+        0: vec![MacroGroup {
+            name: "Main group".to_string(),
+            icon: 'i',
+            items: MacroItems {
+                0: {
+                    let mut macros = halfbrown::HashMap::new();
+                    macros.insert()
+                }
             },
-            MacroGroup {
-                name: "Fun macro group".to_string(),
-                icon: 'i',
-                items: vec![
-                    Macro {
-                        name: "Havo".to_string(),
-                        body: vec![
-                            ActionEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: rdev::Key::KeyL,
-                                    press_wait_delay_after: time::Duration::from_millis(50),
-                                    press_duration: time::Duration::from_millis(50),
-                                }
-                            },
-                            ActionEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: rdev::Key::KeyO,
-                                    press_wait_delay_after: time::Duration::from_millis(50),
-                                    press_duration: time::Duration::from_millis(50),
-                                }
-                            },
-                            ActionEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: rdev::Key::KeyL,
-                                    press_wait_delay_after: time::Duration::from_millis(50),
-                                    press_duration: time::Duration::from_millis(50),
-                                }
-                            },
-                        ],
-                        trigger: TriggerEventType::KeyPressEvent(KeyPress {
-                            keypress: rdev::Key::KpMultiply,
-                            press_wait_delay_after: time::Duration::from_millis(50),
-                            press_duration: time::Duration::from_millis(50),
-                        }),
-                        active: true,
-                    },
-                    Macro {
-                        name: "Svorka".to_string(),
-                        body: vec![ActionEventType::KeyPressEvent {
-                            data: KeyPress {
-                                keypress: rdev::Key::KeyS,
-                                press_wait_delay_after: time::Duration::from_millis(50),
-                                press_duration: time::Duration::from_millis(50),
-                            }
-                        }],
-                        trigger: TriggerEventType::KeyPressEvent(KeyPress {
-                            keypress: rdev::Key::KpMinus,
-                            press_wait_delay_after: time::Duration::from_millis(50),
-                            press_duration: time::Duration::from_millis(50),
-                        }),
-                        active: true,
-                    },
-                ],
-                active: true,
-            },
-        ],
+            active: false,
+        }],
     };
 
     //let mut events = Vec::new();
