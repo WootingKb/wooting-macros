@@ -10,40 +10,15 @@ use serde::Serialize;
 
 use crate::ApplicationConfig;
 
-trait MacroFunctions {
-    //TODO: get/set configuration only, get rid of the other ones
-    fn check_key(&self, to_check_with_key: &rdev::Key) {}
-
-    fn list_macros(&self) {}
-
-    fn set_name(&mut self, new_name: String) {}
-
-    fn get_name(&self) -> String {
-        unimplemented!("Unimplemented string")
-    }
-
-    fn set_active(&mut self, active: bool) {}
-
-    fn get_active(&self) -> bool {
-        unimplemented!("Unimplemented value")
-    }
-
-    fn push_new(&mut self, macro_to_add: Macro) {}
-
-    fn remove(&mut self, macro_name_to_remove: String) {}
-}
-
 /// MacroType that wraps the Macro struct. Depending on the type we decide what to do.
 /// This does not yet do anything.
 #[derive(Debug)]
 pub enum MacroType {
-    Single(Macro),
-    Repeating(Macro),
-    OnHold(Macro),
-    MultiLevel(Macro),
+    Single { data: Macro },
+    Repeating { data: Macro },
+    OnHold { data: Macro },
+    MultiLevel { data: Macro },
 }
-
-impl MacroType {}
 
 /// Key contains an rdev::Key enum to be pressed.
 /// * `keypress` - an rdev::Key enum of the key that will be pressed
@@ -77,31 +52,6 @@ impl KeyPress {
     fn get_wait_delay(&self) -> time::Duration {
         self.press_wait_delay_after
     }
-
-    /// Creates a new key from parameters provided right away.
-    /// * `keypress` - rdev::Key in question
-    /// * `press_wait_delay_after` - time::Duration for how long to wait after keypress (might get moved)
-    /// * `press_duration` - time::Duration for how long the key should be pressed for (unimplemented for now)
-    fn new_construct(
-        keypress: rdev::Key,
-        press_wait_delay_after: time::Duration,
-        press_duration: time::Duration,
-    ) -> KeyPress {
-        KeyPress {
-            keypress,
-            press_wait_delay_after,
-            press_duration,
-        }
-    }
-
-    /// Constructs and returns a new empty type.
-    fn new() -> KeyPress {
-        KeyPress {
-            keypress: rdev::Key::Unknown(0),
-            press_wait_delay_after: time::Duration::default(),
-            press_duration: time::Duration::default(),
-        }
-    }
 }
 
 /// Action event type is the *output* action that is sent to the system after being processed by the backend.
@@ -116,18 +66,13 @@ impl KeyPress {
 #[derive(Debug, Clone)]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
-    KeyPressEvent(KeyPress),
-    SystemEvent(Action),
-    PhillipsHueCommand(),
-    OBS(),
-    DiscordCommand(),
-    UnicodeDirect(),
+    KeyPressEvent { data: KeyPress },
+    SystemEvent { action: Action },
+    PhillipsHueCommand {},
+    OBS {},
+    DiscordCommand {},
+    UnicodeDirect {},
     //TODO: Move the delay after here as an action
-}
-
-impl ActionEventType {
-
-    fn press_key_down(&self) {}
 }
 
 impl std::fmt::Display for ActionEventType {
@@ -136,7 +81,7 @@ impl std::fmt::Display for ActionEventType {
         let mut number = 0;
 
         match &self {
-            ActionEventType::KeyPressEvent(i) => {
+            ActionEventType::KeyPressEvent { data: i } => {
                 buffer_text += format!(
                     "\n\t\tKey #{}\n\t\tKey: {:?}\tDelayAfterPress: {} ms\tDuration: {} ms",
                     number,
@@ -147,11 +92,11 @@ impl std::fmt::Display for ActionEventType {
                     .as_str();
                 number += 1;
             }
-            ActionEventType::SystemEvent(_) => {}
+            ActionEventType::SystemEvent { action: _ } => {}
             ActionEventType::PhillipsHueCommand() => {}
             ActionEventType::OBS() => {}
-            ActionEventType::DiscordCommand() => {}
-            ActionEventType::UnicodeDirect() => {}
+            ActionEventType::DiscordCommand {} => {}
+            ActionEventType::UnicodeDirect {} => {}
         }
 
         write!(f, "{}", buffer_text)
@@ -166,21 +111,10 @@ pub enum TriggerEventType {
     KeyPressEvent(KeyPress),
 }
 
-impl TriggerEventType {
-
-}
-
 /// The list of events that are currently happening (basically a list of all keys or buttons currently being pressed).
 /// Helps to check this list after a change to see if to trigger a macro.
 #[derive(Debug, Clone)]
 struct EventList(Vec<rdev::Key>);
-
-impl EventList {
-    /// Returns a new empty event list ready to be populated
-    fn new() -> EventList {
-        EventList { 0: vec![] }
-    }
-}
 
 /// Action is a structure currently unused.
 /// Action serves for the system actions (paste clipboard, etc). Not used yet.
@@ -189,8 +123,6 @@ pub struct Action {
     pub action: char,
     pub press_wait_delay_after: time::Duration,
 }
-
-impl Action {}
 
 /// Macro is the main building block that has several fields.
 /// * `name` - Name of the macro.
@@ -204,53 +136,6 @@ pub struct Macro {
     body: Vec<ActionEventType>,
     trigger: TriggerEventType,
     active: bool,
-}
-
-impl MacroFunctions for Macro {
-    /// Sets the name of the Macro to something else
-    fn set_name(&mut self, new_name: String) {
-        self.name = new_name;
-    }
-
-    /// Gets the name
-    fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
-    /// Sets the macro to be either active or inactive
-    fn set_active(&mut self, active: bool) {
-        self.active;
-    }
-
-    /// Gets the active status
-    fn get_active(&self) -> bool {
-        self.active
-    }
-
-    fn check_key(&self, to_check_with_key: &rdev::Key) {
-        if self.active == true {
-            match &self.trigger {
-                TriggerEventType::KeyPressEvent(s) => {
-                    if s.keypress == *to_check_with_key {
-                        println!("MATCHED!!!! EXECUTING MACRO");
-                        for body in &self.body {
-                            match body {
-                                ActionEventType::KeyPressEvent(s) => {
-                                    s.execute_key_down()
-                                }
-                                ActionEventType::SystemEvent(_) => {}
-                                ActionEventType::PhillipsHueCommand() => {}
-                                ActionEventType::OBS() => {}
-                                ActionEventType::DiscordCommand() => {}
-                                ActionEventType::UnicodeDirect() => {}
-                            }
-                        }
-                    };
-                }
-                _ => (),
-            }
-        }
-    }
 }
 
 impl std::fmt::Display for Macro {
@@ -274,68 +159,19 @@ impl std::fmt::Display for Macro {
     }
 }
 
-impl Macro {
-    /// Creates a new macro with parameters.
-    /// * `name` - Name of the macro.
-    /// * `body` - Actions to execute within a macro.
-    /// * `trigger` - The trigger event that can trigger the macro to execute
-    /// * `active` - Always set to false. Whether the macro is active (should be executed when conditions meet) or not.
-    fn new_construct(name: String, body: Vec<ActionEventType>, trigger: TriggerEventType) -> Macro {
-        Macro {
-            name,
-            body,
-            trigger,
-            active: false,
-        }
-    }
-
-    /// Returns a clear new Macro struct
-    fn new() -> Macro {
-        Macro {
-            name: "".to_string(),
-            body: vec![],
-            trigger: TriggerEventType::KeyPressEvent(KeyPress::new()),
-            active: false,
-        }
-    }
-
-    /// Get trigger event type
-    fn get_trigger_event(&self) -> TriggerEventType {
-        self.trigger.clone()
-    }
-
-    /// Get the trigger key
-    pub fn get_trigger_event_key(&self) -> rdev::Key {
-        match self.get_trigger_event() {
-            TriggerEventType::KeyPressEvent(s) => s.keypress,
-        }
-    }
-}
-
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone)]
 pub struct MacroData(Vec<MacroGroup>);
 
 impl MacroData {
-    ///Search for a macro group in all macro groups.
-    fn find(&self, search_string: String) -> Option<Vec<MacroGroup>> {
-        let mut result: Vec<MacroGroup> = vec![];
+    /// This exports data for the frontend to process it.
+    /// Basically sends the entire struct to the frontend
+    pub fn export_data(&self) -> MacroData {}
 
-        for i in &self.0 {
-            if i.name == search_string {
-                result.push(i.clone());
-            }
-        }
 
-        match result.len() {
-            0 => None,
-            _ => Some(result),
-        }
-    }
-
-    fn new_group(&mut self, name: String) {
-        self.0.push(MacroGroup::new_group(&name, 'c'));
-    }
+    /// Imports data from the frontend (when updated) to update the background data structure
+    /// This overwrites the datastructure
+    pub fn import_data(self, input: MacroData) {}
 }
 
 impl std::fmt::Display for MacroData {
@@ -360,60 +196,6 @@ impl std::fmt::Display for MacroData {
 }
 
 ///Trait implementation for MacroData
-impl MacroFunctions for MacroData {
-    fn check_key(&self, to_check_with_key: &rdev::Key) {
-        println!("Checking against {:?}", to_check_with_key);
-
-        for macro_group in &self.0 {
-            println!("Checking group");
-            for macro_items in &macro_group.items {
-                macro_items.check_key(to_check_with_key);
-                // println!("Checking item");
-                // if macro_items.active == true {
-                //     println!("Checking item allowed");
-                //     match &macro_items.trigger {
-                //         TriggerEventType::KeyPressEvent(s) => {
-                //             println!("Checking with");
-                //
-                //             if s.keypress == *to_check_with_key {
-                //                 println!("MATCHED!!!! EXECUTING MACRO");
-                //                 s.execute_key_down();
-                //                 break
-                //             };
-                //         }
-                //         _ => (),
-                //     }
-                // }
-            }
-        }
-    }
-    fn list_macros(&self) {
-        for macro_groups in &self.0 {
-            println!("Listing Macros:\n{}", macro_groups);
-        }
-    }
-    fn push_new(&mut self, macro_to_add: Macro) {
-        //show macro list
-        self.list_macros();
-
-        //choose to which group to push it
-        let selection_level: usize = get_user_input("Enter the macro group ID".to_string())
-            .parse()
-            .unwrap();
-
-        for (i, j) in self.0.iter_mut().enumerate() {
-            if selection_level == i {
-                j.items.push(macro_to_add.clone())
-            }
-        }
-    }
-
-    ///Removes a group entirely
-    fn remove(&mut self, macro_to_remove: String) {
-        self.0.retain(|x| x.name != macro_to_remove);
-    }
-}
-
 
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
 /// * `name` - String based name of the MacroGroup
@@ -449,7 +231,6 @@ impl std::fmt::Display for MacroGroup {
                 .as_str();
             for j in &i.body {
                 buffer_text += format!("\n\t\tKeys: {}\n", j).as_str();
-
             }
             number += 1;
         }
@@ -458,97 +239,17 @@ impl std::fmt::Display for MacroGroup {
     }
 }
 
-///Trait implementation for MacroGroup
-impl MacroFunctions for MacroGroup {
-    fn list_macros(&self) {
-        for macro_item in &self.items {
-            println!("Macro: {:#?}", macro_item);
-        }
-    }
-
-    /// Sets the name of the Macro to something else
-    fn set_name(&mut self, new_name: String) {
-        self.name = new_name;
-    }
-
-    /// Gets the name
-    fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
-    /// Sets the macro to be either active or inactive
-    fn set_active(&mut self, active: bool) {
-        self.active;
-    }
-
-    /// Gets the active status
-    fn get_active(&self) -> bool {
-        self.active
-    }
-
-    /// Pushes a new Macro to the group
-    /// * `macro_to_add` - Macro type to add (construct using a new operator)
-    fn push_new(&mut self, macro_to_add: Macro) {
-        self.items.push(macro_to_add);
-    }
-
-    ///Removes a macro from a group
-    fn remove(&mut self, macro_to_remove: String) {
-        self.items.retain(|x| x.name != macro_to_remove);
-    }
-}
-
-///Individual methods for MacroGroup
-impl MacroGroup {
-    ///Creates a new empty group (must have a name and an icon)
-    fn new_group(name_of_group: &String, icon: char) -> MacroGroup {
-        MacroGroup {
-            name: name_of_group.to_string(),
-            icon,
-            items: vec![Macro {
-                name: name_of_group.to_string(),
-                body: vec![ActionEventType::KeyPressEvent(KeyPress {
-                    keypress: rdev::Key::KeyO,
-                    press_wait_delay_after: Default::default(),
-                    press_duration: Default::default(),
-                })],
-                trigger: TriggerEventType::KeyPressEvent(KeyPress {
-                    keypress: rdev::Key::KeyO,
-                    press_wait_delay_after: Default::default(),
-                    press_duration: Default::default(),
-                }),
-                active: false,
-            }],
-            active: false,
-        }
-    }
-
-    ///Search for a macro in a group
-    fn find(&self, search_string: &String) -> Option<Vec<Macro>> {
-        let mut result = vec![];
-        self.items.iter().for_each(|x| {
-            if x.name.contains(search_string) {
-                println!("Result is: {:?}", x);
-                result.push(x.clone());
-            }
-        });
-
-        match result.len() {
-            0 => None,
-            _ => Some(result),
-        }
-    }
-}
-
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
     println!("Character {}: {}", 'c', 'c' as u32);
 
-    let testing_action = ActionEventType::SystemEvent(Action {
-        action: 'd',
-        press_wait_delay_after: time::Duration::from_millis(5),
-    });
+    let testing_action = ActionEventType::SystemEvent {
+        action: Action {
+            action: 'd',
+            press_wait_delay_after: time::Duration::from_millis(5),
+        }
+    };
 
     //Very temporary debugging only variable (so I can precisely see and manipulate data
     let mut testing_macro_full: MacroData = MacroData {
@@ -559,16 +260,20 @@ pub fn run_this(config: &ApplicationConfig) {
                 items: vec![Macro {
                     name: "Paste".to_string(),
                     body: vec![
-                        ActionEventType::KeyPressEvent(KeyPress {
-                            keypress: rdev::Key::ControlLeft,
-                            press_wait_delay_after: time::Duration::from_millis(50),
-                            press_duration: time::Duration::from_millis(50),
-                        }),
-                        ActionEventType::KeyPressEvent(KeyPress {
-                            keypress: rdev::Key::KeyV,
-                            press_wait_delay_after: time::Duration::from_millis(50),
-                            press_duration: time::Duration::from_millis(50),
-                        }),
+                        ActionEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::ControlLeft,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        },
+                        ActionEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::KeyV,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        },
                     ],
                     trigger: TriggerEventType::KeyPressEvent(KeyPress {
                         keypress: rdev::Key::SemiColon,
@@ -586,21 +291,27 @@ pub fn run_this(config: &ApplicationConfig) {
                     Macro {
                         name: "Havo".to_string(),
                         body: vec![
-                            ActionEventType::KeyPressEvent(KeyPress {
-                                keypress: rdev::Key::KeyL,
-                                press_wait_delay_after: time::Duration::from_millis(50),
-                                press_duration: time::Duration::from_millis(50),
-                            }),
-                            ActionEventType::KeyPressEvent(KeyPress {
-                                keypress: rdev::Key::KeyO,
-                                press_wait_delay_after: time::Duration::from_millis(50),
-                                press_duration: time::Duration::from_millis(50),
-                            }),
-                            ActionEventType::KeyPressEvent(KeyPress {
-                                keypress: rdev::Key::KeyL,
-                                press_wait_delay_after: time::Duration::from_millis(50),
-                                press_duration: time::Duration::from_millis(50),
-                            }),
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyL,
+                                    press_wait_delay_after: time::Duration::from_millis(50),
+                                    press_duration: time::Duration::from_millis(50),
+                                }
+                            },
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyO,
+                                    press_wait_delay_after: time::Duration::from_millis(50),
+                                    press_duration: time::Duration::from_millis(50),
+                                }
+                            },
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyL,
+                                    press_wait_delay_after: time::Duration::from_millis(50),
+                                    press_duration: time::Duration::from_millis(50),
+                                }
+                            },
                         ],
                         trigger: TriggerEventType::KeyPressEvent(KeyPress {
                             keypress: rdev::Key::KpMultiply,
@@ -611,11 +322,13 @@ pub fn run_this(config: &ApplicationConfig) {
                     },
                     Macro {
                         name: "Svorka".to_string(),
-                        body: vec![ActionEventType::KeyPressEvent(KeyPress {
-                            keypress: rdev::Key::KeyS,
-                            press_wait_delay_after: time::Duration::from_millis(50),
-                            press_duration: time::Duration::from_millis(50),
-                        })],
+                        body: vec![ActionEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::KeyS,
+                                press_wait_delay_after: time::Duration::from_millis(50),
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        }],
                         trigger: TriggerEventType::KeyPressEvent(KeyPress {
                             keypress: rdev::Key::KpMinus,
                             press_wait_delay_after: time::Duration::from_millis(50),
@@ -631,155 +344,50 @@ pub fn run_this(config: &ApplicationConfig) {
 
     //let mut events = Vec::new();
 
-    loop {
-        let user_input = get_user_input(format!(
-            "Select what you want to do:
-        1 - Start the key {}
-        2 - List the macros in the group
-        3 - Add a new group
-        4 - Add a macro to the group
-        5 - Remove a group of macros
-        6 - Remove a macro from a specific group
-        7 - Search for a group
-        8 - Search for a macro",
-            if config.use_input_grab == true {
-                "grabber"
-            } else {
-                "logger"
-            }
-        ));
+    //TODO: make this a grab instead of listen
+    let (schan, rchan) = channel();
+    let _listener = thread::spawn(move || {
+        listen(move |event| {
+            schan
+                .send(event)
+                .unwrap_or_else(|e| println!("Could not send event {:?}", e));
+        })
+            .expect("Could not listen");
+    });
 
-        let user_input: u8 = match user_input.trim().parse::<u8>() {
-            Ok(T) => T,
-            Err(E) => {
-                println!("Error: {}", E);
-                continue;
-            }
-        };
+    let mut events = Vec::new();
 
-        match user_input {
-            1 => {
-                // Testing this feature of rdev separate thread
-                // spawn new thread because listen blocks
-                //TODO: make this a grab instead of listen
-                let (schan, rchan) = channel();
-                let _listener = thread::spawn(move || {
-                    listen(move |event| {
-                        schan
-                            .send(event)
-                            .unwrap_or_else(|e| println!("Could not send event {:?}", e));
-                    })
-                        .expect("Could not listen");
-                });
+    for event in rchan.iter() {
+        events.push(event);
 
-                let mut events = Vec::new();
-
-                for event in rchan.iter() {
-                    events.push(event);
-
-                    for i in &events {
-                        //println!("{:?}", events.len());
-                        match i.event_type {
-                            EventType::KeyPress(s) => {
-                                //TODO: Make this a hashtable or smth
-                                println!("Pressed: {:?}", s);
-                                testing_macro_full.check_key(&s);
-                            }
-                            EventType::KeyRelease(s) => {
-                                println!("Released: {:?}", s)
-                            }
-                            EventType::ButtonPress(s) => {
-                                println!("MB Pressed:{:?}", s)
-                            }
-                            EventType::ButtonRelease(s) => {
-                                println!("MB Released:{:?}", s)
-                            }
-                            EventType::MouseMove { x, y } => (),
-                            EventType::Wheel { delta_x, delta_y } => {
-                                println!("{}, {}", delta_x, delta_y)
-                            }
-                        }
-                    }
-                    events.pop();
+        for i in &events {
+            //println!("{:?}", events.len());
+            match i.event_type {
+                EventType::KeyPress(s) => {
+                    //TODO: Make this a hashtable or smth
+                    println!("Pressed: {:?}", s);
+                    //testing_macro_full.check_key(&s);
+                }
+                EventType::KeyRelease(s) => {
+                    println!("Released: {:?}", s)
+                }
+                EventType::ButtonPress(s) => {
+                    println!("MB Pressed:{:?}", s)
+                }
+                EventType::ButtonRelease(s) => {
+                    println!("MB Released:{:?}", s)
+                }
+                EventType::MouseMove { x, y } => (),
+                EventType::Wheel { delta_x, delta_y } => {
+                    println!("{}, {}", delta_x, delta_y)
                 }
             }
-
-            2 => {
-                println!("{}", testing_macro_full);
-                // testing_macro_full.list_macros();
-            }
-            3 => testing_macro_full
-                .new_group(get_user_input("Enter the macro group name".to_string())),
-            4 => {
-                let push_this = Macro::new_construct(
-                    get_user_input("Enter the name for the macro".to_string()),
-                    vec![ActionEventType::KeyPressEvent(KeyPress {
-                        keypress: Key::KeyC,
-                        press_wait_delay_after: time::Duration::from_millis(get_user_input_int(
-                            "Enter how many millisecond delay after pressing: ".to_string(),
-                        )
-                            as u64),
-                        press_duration: Default::default(),
-                    })],
-                    TriggerEventType::KeyPressEvent(KeyPress {
-                        keypress: Key::KpPlus,
-                        press_wait_delay_after: time::Duration::from_millis(get_user_input_int(
-                            "Enter how many millisecond delay after pressing: ".to_string(),
-                        )
-                            as u64),
-                        press_duration: Default::default(),
-                    }),
-                );
-
-                testing_macro_full.push_new(push_this)
-            }
-
-            5 => {
-                testing_macro_full
-                    .0
-                    .iter()
-                    .for_each(|x| println!("{}", x.name));
-                testing_macro_full.remove(get_user_input(
-                    "Enter the name of the macro to remove: ".to_string(),
-                ))
-            }
-            6 => {
-                testing_macro_full.list_macros();
-
-                for i in &mut testing_macro_full.0 {
-                    for mut j in &mut i.items {
-                        j.remove(get_user_input(
-                            "Enter the name of the macro to remove: ".to_string(),
-                        ))
-                    }
-                }
-            }
-            7 => {
-                match testing_macro_full.find(get_user_input("Enter the search term\n".to_string()))
-                {
-                    None => println!("No groups with that name exist"),
-                    Some(T) => T.iter().for_each(|x| println!("Found: {}", x)),
-                }
-            }
-            8 => {
-                let result = get_user_input("Enter the search term\n".to_string());
-
-                for i in &testing_macro_full.0 {
-                    match i.find(&result) {
-                        None => println!("No macro with that name exists in group {}", i.name),
-                        Some(T) => T.iter().for_each(|x| println!("Found: {}", x)),
-                    }
-                }
-            }
-            _ => {
-                println!("Invalid input");
-                continue;
-            }
-        };
+        }
+        events.pop();
     }
-
-    //Temporary "option" for either using the input grab or not.
 }
+
+//Temporary "option" for either using the input grab or not.
 
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
@@ -803,23 +411,6 @@ fn get_user_input(display_text: String) -> String {
         .read_line(&mut buffer)
         .expect("Invalid type");
     buffer.trim().to_string()
-}
-
-///Gets user's text and parse into i64.
-fn get_user_input_int(display_text: String) -> i64 {
-    println!("{}\n", display_text);
-
-    let mut buffer: String = String::new();
-
-    std::io::stdin()
-        .read_line(&mut buffer)
-        .expect("Invalid type");
-
-    let vector_chars = buffer.trim().chars().next().unwrap();
-
-    println!("Vector chars: {}", vector_chars);
-
-    return vector_chars as i64;
 }
 
 //
