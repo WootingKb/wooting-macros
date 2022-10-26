@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
-import { Box, Button, Flex, useColorMode } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
+import { Route } from "wouter";
+import Overview from "./components/Overview";
+import MacroView from "./components/MacroView";
 
 function App() {
-  const { colorMode, toggleColorMode } = useColorMode()
 
   return (
-    <Box minH="100vh">
-      <Flex minH="100vh" direction="column" justifyContent="center" alignItems="center" gap="4">
-        <h1>Welcome to Tauri!</h1>
-        <Button onClick={toggleColorMode}>
-          Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-        </Button>
-      </Flex>
-    </Box>
+    <Flex h="100vh" direction="column">
+      <Route path="/">
+        <Overview />
+      </Route>
+      <Route path="/macroview">
+        <MacroView />
+      </Route>
+    </Flex>
   );
 }
 
