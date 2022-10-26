@@ -168,6 +168,7 @@ impl MacroData {
     fn check_key(&self, checking_against: MacroData) {}
 }
 
+//TODO: Serialize and deserialize to JSON!!!
 impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
