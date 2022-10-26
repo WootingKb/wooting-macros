@@ -1,10 +1,10 @@
 use std::{result, thread, time};
-use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
+use halfbrown::{HashMap, hashmap};
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 
@@ -93,8 +93,8 @@ impl std::fmt::Display for ActionEventType {
                 number += 1;
             }
             ActionEventType::SystemEvent { action: _ } => {}
-            ActionEventType::PhillipsHueCommand() => {}
-            ActionEventType::OBS() => {}
+            ActionEventType::PhillipsHueCommand {} => {}
+            ActionEventType::OBS {} => {}
             ActionEventType::DiscordCommand {} => {}
             ActionEventType::UnicodeDirect {} => {}
         }
@@ -164,14 +164,22 @@ impl std::fmt::Display for Macro {
 pub struct MacroData(Vec<MacroGroup>);
 
 impl MacroData {
+    ///A simple method to help to triage the key to the proper executor
+    fn check_key(&self, checking_against: MacroData) {}
+}
+
+impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) -> MacroData {}
-
+    pub fn export_data(&self) -> MacroData {
+        self.clone()
+    }
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
-    pub fn import_data(self, input: MacroData) {}
+    pub fn import_data(&mut self, input: MacroData) {
+        *self = input;
+    }
 }
 
 impl std::fmt::Display for MacroData {
@@ -195,6 +203,9 @@ impl std::fmt::Display for MacroData {
     }
 }
 
+#[derive(Debug, Clone)]
+struct MacroItems(halfbrown::HashMap<Macro, Vec<Macro>>);
+
 ///Trait implementation for MacroData
 
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
@@ -207,7 +218,7 @@ pub struct MacroGroup {
     name: String,
     //TODO: PNG/WEBP image?
     icon: char,
-    items: Vec<Macro>,
+    items: MacroItems,
     active: bool,
 }
 
@@ -366,7 +377,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 EventType::KeyPress(s) => {
                     //TODO: Make this a hashtable or smth
                     println!("Pressed: {:?}", s);
-                    //testing_macro_full.check_key(&s);
+                    testing_macro_full.check_key(&s);
                 }
                 EventType::KeyRelease(s) => {
                     println!("Released: {:?}", s)
@@ -379,7 +390,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 }
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {
-                    println!("{}, {}", delta_x, delta_y)
+                    //println!("{}, {}", delta_x, delta_y)
                 }
             }
         }
