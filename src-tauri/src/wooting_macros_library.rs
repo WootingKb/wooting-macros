@@ -24,10 +24,10 @@ pub enum MacroType {
 /// * `keypress` - an rdev::Key enum of the key that will be pressed
 /// * `press_wait_delay_after` - time::Duration argument that makes the macro wait after (this is subject to change potentially)
 /// * `press_duration` - time::Duration for how long the key should stay pressed for (currently not implemented or used)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 struct KeyPress {
+    //TODO: Deserialization is kinda eh?
     keypress: rdev::Key,
-    press_wait_delay_after: time::Duration,
     press_duration: time::Duration,
 }
 
@@ -45,13 +45,10 @@ impl KeyPress {
         thread::sleep(self.press_duration);
 
         self.execute_key_up(&self.keypress);
-        thread::sleep(self.press_wait_delay_after);
+
     }
 
-    /// Getter function
-    fn get_wait_delay(&self) -> time::Duration {
-        self.press_wait_delay_after
-    }
+
 }
 
 /// Action event type is the *output* action that is sent to the system after being processed by the backend.
@@ -63,11 +60,11 @@ impl KeyPress {
 /// * `OBS` - OpenBroadcastSoftware integration
 /// * `DiscordCommand` - Discord integration (muting microphone, deafening)
 /// * `UnicodeDirect` - Output a Unicode symbol of choice
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
-    SystemEvent { action: Action },
+    //SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
     DiscordCommand {},
@@ -108,7 +105,7 @@ pub enum ActionEventType {
 /// These are the events that can come from within the OS and are supported as triggers for running a macro.
 /// Currently supported:
 /// * `KeyPressEvent` - Very much like the output counterpart, a key event that can be caught using a grab feature and processed.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub enum TriggerEventType {
     KeyPressEvent { data: KeyPress },
 }
@@ -131,8 +128,9 @@ pub struct Action {
 /// * `body` - Actions to execute within a macro.
 /// * `trigger` - The trigger event that can trigger the macro to execute
 /// * `active` - whether the macro is active (should be executed when conditions meet) or not.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub struct Macro {
+    name: String,
     sequence: Vec<ActionEventType>,
     trigger: TriggerEventType,
     active: bool,
@@ -160,26 +158,67 @@ pub struct Macro {
 // }
 
 ///MacroData is the main data structure that contains all macro data.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub struct MacroData(Vec<MacroGroup>);
 
 impl MacroData {
     ///A simple method to help to triage the key to the proper executor
-    fn check_key(&self, checking_against: MacroData) {}
+    fn check_keypress(&self, checking_against: &Key) {}
 }
 
 //TODO: Serialize and deserialize to JSON!!!
 impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) -> MacroData {
-        self.clone()
+    pub fn export_data(&self) {
+        let mut testing_macro_full: MacroData = MacroData {
+            0: vec![MacroGroup {
+                name: "Main group".to_string(),
+                icon: 'i',
+                items: MacroItems {
+                    0: {
+                        let mut macros = halfbrown::HashMap::new();
+
+                        macros
+                            .insert(
+                                "Havo".to_string(),
+                                Macro {
+                                    name: "Havo".to_string(),
+                                    sequence: vec![ActionEventType::KeyPressEvent {
+                                        data: KeyPress {
+                                            keypress: Key::Alt,
+                                            press_duration: Default::default(),
+                                        },
+                                    }],
+                                    trigger: TriggerEventType::KeyPressEvent {
+                                        data: KeyPress {
+                                            keypress: Key::Alt,
+                                            press_duration: Default::default(),
+                                        },
+                                    },
+                                    active: false,
+                                },
+                            )
+                            .unwrap();
+
+                        macros
+                    },
+                },
+                active: false,
+            }],
+        };
+
+        let j = serde_json::to_string(&self).unwrap();
+
+
+        println!("{}", j);
     }
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
     pub fn import_data(&mut self, input: MacroData) {
         *self = input;
+
     }
 }
 
@@ -215,7 +254,7 @@ struct MacroItems(halfbrown::HashMap<String, Macro>);
 /// * `icon` - Placeholder for now
 /// * `items` - Macros (vector) that belong to a group
 /// * `active` - Whether they should be executable
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub struct MacroGroup {
     name: String,
     //TODO: PNG/WEBP image?
@@ -278,17 +317,16 @@ pub fn run_this(config: &ApplicationConfig) {
                         .insert(
                             "Havo".to_string(),
                             Macro {
+                                name: "Havo".to_string(),
                                 sequence: vec![ActionEventType::KeyPressEvent {
                                     data: KeyPress {
                                         keypress: Key::Alt,
-                                        press_wait_delay_after: Default::default(),
                                         press_duration: Default::default(),
                                     },
                                 }],
                                 trigger: TriggerEventType::KeyPressEvent {
                                     data: KeyPress {
                                         keypress: Key::Alt,
-                                        press_wait_delay_after: Default::default(),
                                         press_duration: Default::default(),
                                     },
                                 },
@@ -328,7 +366,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 EventType::KeyPress(s) => {
                     //TODO: Make this a hashtable or smth
                     println!("Pressed: {:?}", s);
-                    testing_macro_full.check_key(&s);
+                    testing_macro_full.check_keypress(&s);
                 }
                 EventType::KeyRelease(s) => {
                     println!("Released: {:?}", s)
