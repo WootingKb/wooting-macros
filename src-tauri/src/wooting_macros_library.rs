@@ -72,6 +72,8 @@ pub enum ActionEventType {
     OBS {},
     DiscordCommand {},
     UnicodeDirect {},
+    Delay {},
+    IkeaIdasen {},
     //TODO: Move the delay after here as an action
 }
 //
@@ -108,7 +110,7 @@ pub enum ActionEventType {
 /// * `KeyPressEvent` - Very much like the output counterpart, a key event that can be caught using a grab feature and processed.
 #[derive(Debug, Clone)]
 pub enum TriggerEventType {
-    KeyPressEvent(KeyPress),
+    KeyPressEvent { data: KeyPress },
 }
 
 /// The list of events that are currently happening (basically a list of all keys or buttons currently being pressed).
@@ -131,9 +133,7 @@ pub struct Action {
 /// * `active` - whether the macro is active (should be executed when conditions meet) or not.
 #[derive(Debug, Clone)]
 pub struct Macro {
-    name: String,
-
-    body: Vec<ActionEventType>,
+    sequence: Vec<ActionEventType>,
     trigger: TriggerEventType,
     active: bool,
 }
@@ -206,7 +206,7 @@ impl MacroData {
 // }
 
 #[derive(Debug, Clone)]
-struct MacroItems(halfbrown::HashMap<Macro, Vec<Macro>>);
+struct MacroItems(halfbrown::HashMap<String, Macro>);
 
 ///Trait implementation for MacroData
 
@@ -273,8 +273,32 @@ pub fn run_this(config: &ApplicationConfig) {
             items: MacroItems {
                 0: {
                     let mut macros = halfbrown::HashMap::new();
-                    macros.insert()
-                }
+
+                    macros
+                        .insert(
+                            "Havo".to_string(),
+                            Macro {
+                                sequence: vec![ActionEventType::KeyPressEvent {
+                                    data: KeyPress {
+                                        keypress: Key::Alt,
+                                        press_wait_delay_after: Default::default(),
+                                        press_duration: Default::default(),
+                                    },
+                                }],
+                                trigger: TriggerEventType::KeyPressEvent {
+                                    data: KeyPress {
+                                        keypress: Key::Alt,
+                                        press_wait_delay_after: Default::default(),
+                                        press_duration: Default::default(),
+                                    },
+                                },
+                                active: false,
+                            },
+                        )
+                        .unwrap();
+
+                    macros
+                },
             },
             active: false,
         }],

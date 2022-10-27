@@ -18,6 +18,7 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all"] }
 rdev = { version = "0.5.1", features = ["unstable_grab"] }
 halfbrown = "0.1.15"
+idasen-cli = "0.1.0"
 
 [features]
 # by default Tauri runs in production mode
