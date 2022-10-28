@@ -16,7 +16,7 @@ tauri-build = { version = "1.1", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.1", features = ["api-all"] }
-rdev = { version = "0.5.1", features = ["unstable_grab"] }
+rdev = { version = "0.5.1", features = ["unstable_grab", "serde", "serialize"] }
 halfbrown = { version = "0.1.15", features = ["serde"] }
 idasen-cli = "0.1.0"
 

@@ -24,10 +24,10 @@ pub enum MacroType {
 /// * `keypress` - an rdev::Key enum of the key that will be pressed
 /// * `press_wait_delay_after` - time::Duration argument that makes the macro wait after (this is subject to change potentially)
 /// * `press_duration` - time::Duration for how long the key should stay pressed for (currently not implemented or used)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 struct KeyPress {
     keypress: rdev::Key,
-    press_duration: time::Duration,
+    press_duration: Delay,
 }
 
 impl KeyPress {
@@ -41,13 +41,16 @@ impl KeyPress {
     /// Executes the actual keypress according to what it should be
     fn execute_key_down(&self) {
         send(&EventType::KeyPress(self.keypress));
-        thread::sleep(self.press_duration);
+        //thread::sleep(self.press_duration);
 
         self.execute_key_up(&self.keypress);
-
     }
-
 }
+
+///Delay for the sequence
+type Delay = u32;
+
+//TODO: Make a hashmap that links to trigger:&macro
 
 /// Action event type is the *output* action that is sent to the system after being processed by the backend.
 /// Each of these have a struct embedded within them to provide the necessary data for the execution.
@@ -58,16 +61,16 @@ impl KeyPress {
 /// * `OBS` - OpenBroadcastSoftware integration
 /// * `DiscordCommand` - Discord integration (muting microphone, deafening)
 /// * `UnicodeDirect` - Output a Unicode symbol of choice
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
-    SystemEvent { action: Action },
+    //SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
     DiscordCommand {},
     UnicodeDirect {},
-    Delay { data: time::Duration },
+    Delay { data: Delay },
     //TODO: Move the delay after here as an action
 }
 
@@ -102,9 +105,10 @@ pub enum ActionEventType {
 /// These are the events that can come from within the OS and are supported as triggers for running a macro.
 /// Currently supported:
 /// * `KeyPressEvent` - Very much like the output counterpart, a key event that can be caught using a grab feature and processed.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum TriggerEventType {
     KeyPressEvent { data: KeyPress },
+
 }
 
 /// The list of events that are currently happening (basically a list of all keys or buttons currently being pressed).
@@ -125,11 +129,10 @@ pub struct Action {
 /// * `body` - Actions to execute within a macro.
 /// * `trigger` - The trigger event that can trigger the macro to execute
 /// * `active` - whether the macro is active (should be executed when conditions meet) or not.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Macro {
     name: String,
-
-    body: Vec<ActionEventType>,
+    sequence: Vec<ActionEventType>,
     trigger: TriggerEventType,
     active: bool,
 }
@@ -156,14 +159,115 @@ pub struct Macro {
 // }
 
 ///MacroData is the main data structure that contains all macro data.
-#[derive(Debug, Clone)]
-pub struct MacroData(Vec<MacroGroup>);
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MacroData(Vec<Collection>);
 
 impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
     //TODO: MAKE THIS WORK
-    pub fn export_data(&self) {}
+    pub fn export_data(&self) {
+        let mut testing_macro_full: MacroData = MacroData {
+            0: vec![
+                Collection {
+                    name: "Main group".to_string(),
+                    icon: 'i'.to_string(),
+                    items: vec![Macro {
+                        name: "Paste".to_string(),
+                        sequence: vec![
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::ControlLeft,
+
+                                    press_duration: 50,
+                                }
+                            },
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyV,
+
+                                    press_duration: 50,
+                                }
+                            },
+                        ],
+                        trigger: TriggerEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::SemiColon,
+
+                                press_duration: 50,
+                            }
+                        },
+                        active: true,
+                    }],
+                    active: true,
+                },
+                Collection {
+                    name: "Fun macro group".to_string(),
+                    icon: 'i'.to_string(),
+                    items: vec![
+                        Macro {
+                            name: "Havo".to_string(),
+                            sequence: vec![
+                                ActionEventType::KeyPressEvent {
+                                    data: KeyPress {
+                                        keypress: rdev::Key::KeyL,
+
+                                        press_duration: 50,
+                                    }
+                                },
+                                ActionEventType::KeyPressEvent {
+                                    data: KeyPress {
+                                        keypress: rdev::Key::KeyO,
+
+                                        press_duration: 50,
+                                    }
+                                },
+                                ActionEventType::KeyPressEvent {
+                                    data: KeyPress {
+                                        keypress: rdev::Key::KeyL,
+
+                                        press_duration: 50,
+                                    }
+                                },
+                            ],
+                            trigger: TriggerEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KpMultiply,
+
+                                    press_duration: 50,
+                                }
+                            },
+                            active: true,
+                        },
+                        Macro {
+                            name: "Svorka".to_string(),
+                            sequence: vec![ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyS,
+
+                                    press_duration: 50,
+                                }
+                            }],
+                            trigger: TriggerEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KpMinus,
+
+                                    press_duration: 50,
+                                }
+                            },
+                            active: true,
+                        },
+                    ],
+                    active: true,
+                },
+            ],
+        };
+
+        let j = serde_json::to_string(&self).unwrap();
+
+
+        println!("{}", j);
+    }
 
 
     /// Imports data from the frontend (when updated) to update the background data structure
@@ -200,11 +304,11 @@ impl MacroData {
 /// * `icon` - Placeholder for now
 /// * `items` - Macros (vector) that belong to a group
 /// * `active` - Whether they should be executable
-#[derive(Debug, Clone)]
-pub struct MacroGroup {
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct Collection {
     name: String,
-    //TODO: PNG/WEBP image?
-    icon: char,
+    //TODO: base64 encoding
+    icon: String,
     items: Vec<Macro>,
     active: bool,
 }
@@ -242,34 +346,34 @@ pub struct MacroGroup {
 pub fn run_this(config: &ApplicationConfig) {
     println!("Character {}: {}", 'c', 'c' as u32);
 
-    let testing_action = ActionEventType::SystemEvent {
-        action: Action {
-            action: 'd',
-            press_wait_delay_after: time::Duration::from_millis(5),
-        }
-    };
+    // let testing_action = ActionEventType::SystemEvent {
+    //     action: Action {
+    //         action: 'd',
+    //         press_wait_delay_after: time::Duration::from_millis(5),
+    //     }
+    // };
 
     //Very temporary debugging only variable (so I can precisely see and manipulate data
     let mut testing_macro_full: MacroData = MacroData {
         0: vec![
-            MacroGroup {
+            Collection {
                 name: "Main group".to_string(),
-                icon: 'i',
+                icon: 'i'.to_string(),
                 items: vec![Macro {
                     name: "Paste".to_string(),
-                    body: vec![
+                    sequence: vec![
                         ActionEventType::KeyPressEvent {
                             data: KeyPress {
                                 keypress: rdev::Key::ControlLeft,
 
-                                press_duration: time::Duration::from_millis(50),
+                                press_duration: 50,
                             }
                         },
                         ActionEventType::KeyPressEvent {
                             data: KeyPress {
                                 keypress: rdev::Key::KeyV,
 
-                                press_duration: time::Duration::from_millis(50),
+                                press_duration: 50,
                             }
                         },
                     ],
@@ -277,39 +381,39 @@ pub fn run_this(config: &ApplicationConfig) {
                         data: KeyPress {
                             keypress: rdev::Key::SemiColon,
 
-                            press_duration: time::Duration::from_millis(50),
+                            press_duration: 50,
                         }
                     },
                     active: true,
                 }],
                 active: true,
             },
-            MacroGroup {
+            Collection {
                 name: "Fun macro group".to_string(),
-                icon: 'i',
+                icon: 'i'.to_string(),
                 items: vec![
                     Macro {
                         name: "Havo".to_string(),
-                        body: vec![
+                        sequence: vec![
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
                                     keypress: rdev::Key::KeyL,
 
-                                    press_duration: time::Duration::from_millis(50),
+                                    press_duration: 50,
                                 }
                             },
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
                                     keypress: rdev::Key::KeyO,
 
-                                    press_duration: time::Duration::from_millis(50),
+                                    press_duration: 50,
                                 }
                             },
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
                                     keypress: rdev::Key::KeyL,
 
-                                    press_duration: time::Duration::from_millis(50),
+                                    press_duration: 50,
                                 }
                             },
                         ],
@@ -317,25 +421,25 @@ pub fn run_this(config: &ApplicationConfig) {
                             data: KeyPress {
                                 keypress: rdev::Key::KpMultiply,
 
-                                press_duration: time::Duration::from_millis(50),
+                                press_duration: 50,
                             }
                         },
                         active: true,
                     },
                     Macro {
                         name: "Svorka".to_string(),
-                        body: vec![ActionEventType::KeyPressEvent {
+                        sequence: vec![ActionEventType::KeyPressEvent {
                             data: KeyPress {
                                 keypress: rdev::Key::KeyS,
 
-                                press_duration: time::Duration::from_millis(50),
+                                press_duration: 50,
                             }
                         }],
                         trigger: TriggerEventType::KeyPressEvent {
                             data: KeyPress {
                                 keypress: rdev::Key::KpMinus,
 
-                                press_duration: time::Duration::from_millis(50),
+                                press_duration: 50,
                             }
                         },
                         active: true,
@@ -345,6 +449,7 @@ pub fn run_this(config: &ApplicationConfig) {
             },
         ],
     };
+    testing_macro_full.export_data();
 
     //let mut events = Vec::new();
 
@@ -389,6 +494,7 @@ pub fn run_this(config: &ApplicationConfig) {
         }
         events.pop();
     }
+    //TODO: Make a translation table to a hashmap from a keycode HID compatible -> library rdev enums.
 }
 
 //Temporary "option" for either using the input grab or not.
