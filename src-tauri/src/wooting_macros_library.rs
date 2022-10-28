@@ -1,10 +1,10 @@
 use std::{result, thread, time};
+use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 
-use halfbrown::{hashmap, HashMap};
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 
@@ -24,9 +24,8 @@ pub enum MacroType {
 /// * `keypress` - an rdev::Key enum of the key that will be pressed
 /// * `press_wait_delay_after` - time::Duration argument that makes the macro wait after (this is subject to change potentially)
 /// * `press_duration` - time::Duration for how long the key should stay pressed for (currently not implemented or used)
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone)]
 struct KeyPress {
-    //TODO: Deserialization is kinda eh?
     keypress: rdev::Key,
     press_duration: time::Duration,
 }
@@ -48,7 +47,6 @@ impl KeyPress {
 
     }
 
-
 }
 
 /// Action event type is the *output* action that is sent to the system after being processed by the backend.
@@ -60,20 +58,19 @@ impl KeyPress {
 /// * `OBS` - OpenBroadcastSoftware integration
 /// * `DiscordCommand` - Discord integration (muting microphone, deafening)
 /// * `UnicodeDirect` - Output a Unicode symbol of choice
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[derive(Debug, Clone)]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
-    //SystemEvent { action: Action },
+    SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
     DiscordCommand {},
     UnicodeDirect {},
-    Delay {},
-    IkeaIdasen {},
+    Delay { data: time::Duration },
     //TODO: Move the delay after here as an action
 }
-//
+
 // impl std::fmt::Display for ActionEventType {
 //     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
 //         let mut buffer_text: String = "".to_string();
@@ -92,8 +89,8 @@ pub enum ActionEventType {
 //                 number += 1;
 //             }
 //             ActionEventType::SystemEvent { action: _ } => {}
-//             ActionEventType::PhillipsHueCommand {} => {}
-//             ActionEventType::OBS {} => {}
+//             ActionEventType::PhillipsHueCommand() => {}
+//             ActionEventType::OBS() => {}
 //             ActionEventType::DiscordCommand {} => {}
 //             ActionEventType::UnicodeDirect {} => {}
 //         }
@@ -105,7 +102,7 @@ pub enum ActionEventType {
 /// These are the events that can come from within the OS and are supported as triggers for running a macro.
 /// Currently supported:
 /// * `KeyPressEvent` - Very much like the output counterpart, a key event that can be caught using a grab feature and processed.
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[derive(Debug, Clone)]
 pub enum TriggerEventType {
     KeyPressEvent { data: KeyPress },
 }
@@ -128,18 +125,15 @@ pub struct Action {
 /// * `body` - Actions to execute within a macro.
 /// * `trigger` - The trigger event that can trigger the macro to execute
 /// * `active` - whether the macro is active (should be executed when conditions meet) or not.
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[derive(Debug, Clone)]
 pub struct Macro {
     name: String,
-    sequence: Vec<ActionEventType>,
-    trigger: TriggerList,
+
+    body: Vec<ActionEventType>,
+    trigger: TriggerEventType,
     active: bool,
 }
 
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
-pub struct TriggerList(halfbrown::HashMap<TriggerEventType, &Macro>);
-
-//
 // impl std::fmt::Display for Macro {
 //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
 //         let mut buffer_text: String = "".to_string();
@@ -162,71 +156,21 @@ pub struct TriggerList(halfbrown::HashMap<TriggerEventType, &Macro>);
 // }
 
 ///MacroData is the main data structure that contains all macro data.
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[derive(Debug, Clone)]
 pub struct MacroData(Vec<MacroGroup>);
 
-
-impl MacroData {
-    ///A simple method to help to triage the key to the proper executor
-    fn check_keypress(&self, checking_against: &Key) {}
-}
-
-//TODO: Serialize and deserialize to JSON!!!
 impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) {
-        let mut testing_macro_full: MacroData = MacroData {
-            0: vec![MacroGroup {
-                name: "Main group".to_string(),
-                icon: 'i',
-                items: MacroItems {
-                    0: {
-                        let mut macros = halfbrown::HashMap::new();
+    //TODO: MAKE THIS WORK
+    pub fn export_data(&self) {}
 
-                        macros
-                            .insert(
-                                "Havo".to_string(),
-                                Macro {
-                                    name: "Havo".to_string(),
-                                    sequence: vec![ActionEventType::KeyPressEvent {
-                                        data: KeyPress {
-                                            keypress: Key::Alt,
-                                            press_duration: Default::default(),
-                                        },
-                                    }],
-                                    trigger: TriggerEventType::KeyPressEvent {
-                                        data: KeyPress {
-                                            keypress: Key::Alt,
-                                            press_duration: Default::default(),
-                                        },
-                                    },
-                                    active: false,
-                                },
-                            )
-                            .unwrap();
-
-                        macros
-                    },
-                },
-                active: false,
-            }],
-        };
-
-        let j = serde_json::to_string(&self).unwrap();
-
-
-        println!("{}", j);
-    }
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
-    pub fn import_data(&mut self, input: MacroData) {
-        *self = input;
-
-    }
+    //TODO: MAKE THIS WORK
+    pub fn import_data(self, input: MacroData) {}
 }
-
 //
 // impl std::fmt::Display for MacroData {
 //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -249,9 +193,6 @@ impl MacroData {
 //     }
 // }
 
-#[derive(Debug, Clone)]
-struct MacroItems(halfbrown::HashMap<String, Macro>);
-
 ///Trait implementation for MacroData
 
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
@@ -259,15 +200,14 @@ struct MacroItems(halfbrown::HashMap<String, Macro>);
 /// * `icon` - Placeholder for now
 /// * `items` - Macros (vector) that belong to a group
 /// * `active` - Whether they should be executable
-#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+#[derive(Debug, Clone)]
 pub struct MacroGroup {
     name: String,
     //TODO: PNG/WEBP image?
     icon: char,
-    items: MacroItems,
+    items: Vec<Macro>,
     active: bool,
 }
-
 //
 // impl std::fmt::Display for MacroGroup {
 //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -306,45 +246,104 @@ pub fn run_this(config: &ApplicationConfig) {
         action: Action {
             action: 'd',
             press_wait_delay_after: time::Duration::from_millis(5),
-        },
+        }
     };
 
     //Very temporary debugging only variable (so I can precisely see and manipulate data
     let mut testing_macro_full: MacroData = MacroData {
-        0: vec![MacroGroup {
-            name: "Main group".to_string(),
-            icon: 'i',
-            items: MacroItems {
-                0: {
-                    let mut macros = halfbrown::HashMap::new();
+        0: vec![
+            MacroGroup {
+                name: "Main group".to_string(),
+                icon: 'i',
+                items: vec![Macro {
+                    name: "Paste".to_string(),
+                    body: vec![
+                        ActionEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::ControlLeft,
 
-                    macros
-                        .insert(
-                            "Havo".to_string(),
-                            Macro {
-                                name: "Havo".to_string(),
-                                sequence: vec![ActionEventType::KeyPressEvent {
-                                    data: KeyPress {
-                                        keypress: Key::Alt,
-                                        press_duration: Default::default(),
-                                    },
-                                }],
-                                trigger: TriggerEventType::KeyPressEvent {
-                                    data: KeyPress {
-                                        keypress: Key::Alt,
-                                        press_duration: Default::default(),
-                                    },
-                                },
-                                active: false,
-                            },
-                        )
-                        .unwrap();
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        },
+                        ActionEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::KeyV,
 
-                    macros
-                },
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        },
+                    ],
+                    trigger: TriggerEventType::KeyPressEvent {
+                        data: KeyPress {
+                            keypress: rdev::Key::SemiColon,
+
+                            press_duration: time::Duration::from_millis(50),
+                        }
+                    },
+                    active: true,
+                }],
+                active: true,
             },
-            active: false,
-        }],
+            MacroGroup {
+                name: "Fun macro group".to_string(),
+                icon: 'i',
+                items: vec![
+                    Macro {
+                        name: "Havo".to_string(),
+                        body: vec![
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyL,
+
+                                    press_duration: time::Duration::from_millis(50),
+                                }
+                            },
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyO,
+
+                                    press_duration: time::Duration::from_millis(50),
+                                }
+                            },
+                            ActionEventType::KeyPressEvent {
+                                data: KeyPress {
+                                    keypress: rdev::Key::KeyL,
+
+                                    press_duration: time::Duration::from_millis(50),
+                                }
+                            },
+                        ],
+                        trigger: TriggerEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::KpMultiply,
+
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        },
+                        active: true,
+                    },
+                    Macro {
+                        name: "Svorka".to_string(),
+                        body: vec![ActionEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::KeyS,
+
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        }],
+                        trigger: TriggerEventType::KeyPressEvent {
+                            data: KeyPress {
+                                keypress: rdev::Key::KpMinus,
+
+                                press_duration: time::Duration::from_millis(50),
+                            }
+                        },
+                        active: true,
+                    },
+                ],
+                active: true,
+            },
+        ],
     };
 
     //let mut events = Vec::new();
@@ -371,7 +370,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 EventType::KeyPress(s) => {
                     //TODO: Make this a hashtable or smth
                     println!("Pressed: {:?}", s);
-                    testing_macro_full.check_keypress(&s);
+                    //testing_macro_full.check_key(&s);
                 }
                 EventType::KeyRelease(s) => {
                     println!("Released: {:?}", s)
@@ -384,7 +383,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 }
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {
-                    //println!("{}, {}", delta_x, delta_y)
+                    println!("{}, {}", delta_x, delta_y)
                 }
             }
         }
