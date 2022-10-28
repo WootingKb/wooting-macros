@@ -132,9 +132,13 @@ pub struct Action {
 pub struct Macro {
     name: String,
     sequence: Vec<ActionEventType>,
-    trigger: TriggerEventType,
+    trigger: TriggerList,
     active: bool,
 }
+
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
+pub struct TriggerList(halfbrown::HashMap<TriggerEventType, &Macro>);
+
 //
 // impl std::fmt::Display for Macro {
 //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -160,6 +164,7 @@ pub struct Macro {
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub struct MacroData(Vec<MacroGroup>);
+
 
 impl MacroData {
     ///A simple method to help to triage the key to the proper executor
