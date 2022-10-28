@@ -4,17 +4,24 @@ import "./App.css";
 import { Flex } from '@chakra-ui/react'
 import { Route } from "wouter";
 import Overview from "./components/Overview";
-import MacroView from "./components/MacroView";
+import AddMacroView from "./components/AddMacroView";
+import EditMacroView from "./components/EditMacroView";
+import { Macro } from "./types";
 
 function App() {
+
+  let macros: Macro[] = []
 
   return (
     <Flex h="100vh" direction="column">
       <Route path="/">
-        <Overview />
+        <Overview macros={macros}/>
       </Route>
       <Route path="/macroview">
-        <MacroView />
+        <AddMacroView macros={macros}/>
+      </Route>
+      <Route path="/editview">
+        <EditMacroView macro={macros[0]}/>
       </Route>
     </Flex>
   );
