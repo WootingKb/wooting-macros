@@ -363,7 +363,7 @@ pub fn run_this(config: &ApplicationConfig) {
             },
         ],
     };
-    testing_macro_full.export_data();
+
 
     //let mut events = Vec::new();
 
