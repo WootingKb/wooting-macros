@@ -274,7 +274,7 @@ pub struct Collection {
 pub fn run_this(config: &ApplicationConfig) {
     println!("Character {}: {}", 'c', 'c' as u32);
 
-    push_frontend_first();
+    // push_frontend_first();
 
     // let testing_action = ActionEventType::SystemEvent {
     //     action: Action {
