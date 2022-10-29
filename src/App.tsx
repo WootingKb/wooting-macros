@@ -10,28 +10,33 @@ import { Collection, Macro } from "./types";
 
 function App() {
   const [collections, setCollections] = useState<Collection[]>([])
-
-  // let collections: Collection[] = [
-  //   {name:"Default", isActive: true, macros:[{"name": "Macro 1", "isActive": false, "trigger": ['a', 's', 'd'], "sequence":"not available"}], icon:""}
-  // ]
-  let macros: Macro[] = []
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("hello")
-    invoke("export_frontend", {data: []}).then((result) => setCollections(result as Collection[]))
-    console.log(collections)
+    invoke("push_frontend_first").then((res) => {
+      if (typeof res === 'string') {
+        // setCollections(JSON.parse(res))
+      }
 
-    if (collections.length <= 0) {
-      setCollections([
-        {name:"Default", isActive: true, macros:[{"name": "Macro 1", "isActive": false, "trigger": ['a', 's', 'd'], "sequence":"not available"}], icon:""}
-      ])
-    }
+      if (collections.length == 0) {
+        setCollections([
+          {name:"Default", isActive: true, macros:[{"name": "Macro 1", "isActive": false, "trigger": ['a', 's', 'd'], "sequence": []}], icon:""}
+        ])
+      }
+
+      setLoading(false)
+    }).catch(e => {
+      console.error(e)
+    })
   }, [])
 
-  async function getCollections() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+  if (isLoading) {
+    return(
+      <Flex h="100vh">
+        Loading
+      </Flex>
+    )
   }
-
   return (
     <Flex h="100vh" direction="column">
       <Route path="/">

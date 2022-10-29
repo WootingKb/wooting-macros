@@ -165,12 +165,12 @@ pub fn export_frontend(data: MacroData) -> String {
 }
 
 #[tauri::command]
-pub fn push_frontend_first() -> String {
+pub fn push_frontend_first() -> Result<String, String> {
     let path = "./data_json.json";
     let data = fs::read_to_string(path).expect("Unable to read file");
     let res: serde_json::Value = serde_json::from_str(&data).expect("Unable to parse");
 
-    res.to_string()
+    Ok(res.to_string())
 }
 
 #[tauri::command]
@@ -230,14 +230,14 @@ impl MacroData {
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
 /// * `name` - String based name of the MacroGroup
 /// * `icon` - Placeholder for now
-/// * `items` - Macros (vector) that belong to a group
+/// * `macros` - Macros (vector) that belong to a group
 /// * `active` - Whether they should be executable
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
     name: String,
     //TODO: base64 encoding
     icon: String,
-    items: Vec<Macro>,
+    macros: Vec<Macro>,
     active: bool,
 }
 //
@@ -248,12 +248,12 @@ pub struct Collection {
 //
 //         buffer_text += format!(
 //             "There are {} macros in the group {}.\n",
-//             &self.items.len(),
+//             &self.macros.len(),
 //             &self.name
 //         )
 //             .as_str();
 //
-//         for i in &self.items {
+//         for i in &self.macros {
 //             buffer_text += format!(
 //                 "========\n\tMacro # {}\n\tMacroName: {}\tActive: {}",
 //                 number, i.name, i.active
@@ -289,7 +289,7 @@ pub fn run_this(config: &ApplicationConfig) {
             Collection {
                 name: "Main group".to_string(),
                 icon: 'i'.to_string(),
-                items: vec![Macro {
+                macros: vec![Macro {
                     name: "Paste".to_string(),
                     sequence: vec![
                         ActionEventType::KeyPressEvent {
@@ -321,7 +321,7 @@ pub fn run_this(config: &ApplicationConfig) {
             Collection {
                 name: "Fun macro group".to_string(),
                 icon: 'i'.to_string(),
-                items: vec![
+                macros: vec![
                     Macro {
                         name: "Havo".to_string(),
                         sequence: vec![

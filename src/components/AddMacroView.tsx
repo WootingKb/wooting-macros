@@ -64,7 +64,7 @@ const AddMacroView = ({collections}: Props) => {
                         <Input variant='unstyled' placeholder='Macro Name' isRequired onChange={onMacroNameChange}/>
                     </Flex>
                 </Flex>
-                <Button isDisabled={!(triggerKeys.length > 0)} onClick={onSaveButtonPress}>Save Macro</Button>
+                <Button colorScheme="yellow" isDisabled={!(triggerKeys.length > 0)} onClick={onSaveButtonPress}>Save Macro</Button>
             </HStack>
             {/** Trigger Area */}
             <VStack spacing="16px">

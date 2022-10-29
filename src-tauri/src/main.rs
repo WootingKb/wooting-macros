@@ -29,18 +29,7 @@ pub struct ApplicationConfig {
 fn main() {
     tauri::Builder::default()
         // This is where you pass in your commands
-        .invoke_handler(tauri::generate_handler![export_frontend])
-        .run(tauri::generate_context!())
-        .expect("failed to run app");
-
-
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![import_frontend])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![push_frontend_first])
+        .invoke_handler(tauri::generate_handler![export_frontend, import_frontend, push_frontend_first])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

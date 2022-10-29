@@ -60,7 +60,7 @@ function Overview({collections}: Props) {
                 {collections.map((collection:Collection, index:number) => 
                     <CollectionButton collection={collection} index={index} key={index} onClick={onCollectionButtonPress}/>
                 )}
-                <Button leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
+                <Button colorScheme="yellow" leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
                     New Collection
                 </Button>
                 <Button onClick={toggleColorMode}>
@@ -92,12 +92,12 @@ function Overview({collections}: Props) {
                     </HStack>
                 </VStack>
                 <Link href={'/macroview/' + collectionIndex}>
-                    <Button leftIcon={<AddIcon />}>
+                    <Button colorScheme="yellow" leftIcon={<AddIcon />}>
                         Add Macro
                     </Button>
                 </Link>
                 </Flex>
-                <Flex w="100%" direction="row" wrap="wrap" justify="space-around" rowGap="1" p="8px">
+                <Flex w="100%" direction="row" wrap="wrap" gap="1" p="8px">
                 {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard macro={macro} index={index} key={index} collectionIndex={collectionIndex}/>)}
                 </Flex>
             </VStack>

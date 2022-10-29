@@ -51,7 +51,10 @@ const EditMacroView = ({collections}: Props) => {
     }
 
     const onSaveButtonPress = () => {
-        macro = {name: macroName, isActive: true, trigger: triggerKeys, sequence: ""}
+        if (match) {
+            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, isActive: true, trigger: triggerKeys, sequence: ""}
+            console.log(collections[parseInt(params.cid)].macros[parseInt(params.mid)])
+        }
         setLocation("/")
     }
 
@@ -75,7 +78,7 @@ const EditMacroView = ({collections}: Props) => {
                         <Input variant='unstyled' placeholder='Macro Name' isRequired onChange={onMacroNameChange} value={macroName}/>
                     </Flex>
                 </Flex>
-                <Button isDisabled={!(triggerKeys.length > 0)} onClick={onSaveButtonPress}>Save Macro</Button>
+                <Button colorScheme="yellow" isDisabled={!(triggerKeys.length > 0)} onClick={onSaveButtonPress}>Save Macro</Button>
             </HStack>
             {/** Trigger Area */}
             <VStack spacing="16px">

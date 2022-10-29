@@ -2,7 +2,7 @@
   {
     "name": "Main group",
     "icon": "i",
-    "items": [
+    "macros": [
       {
         "name": "Paste",
         "sequence": [
@@ -39,7 +39,7 @@
   {
     "name": "Fun macro group",
     "icon": "i",
-    "items": [
+    "macros": [
       {
         "name": "Havo",
         "sequence": [
