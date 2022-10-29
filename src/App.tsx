@@ -6,22 +6,25 @@ import { Route } from "wouter";
 import Overview from "./components/Overview";
 import AddMacroView from "./components/AddMacroView";
 import EditMacroView from "./components/EditMacroView";
-import { Macro } from "./types";
+import { Collection, Macro } from "./types";
 
 function App() {
 
+  let collections: Collection[] = [
+    {name:"Default", isActive: true, macros:[{"name": "Macro 1", "isActive": false, "trigger": ['a', 's', 'd'], "sequence":"not available"}]}
+  ]
   let macros: Macro[] = []
 
   return (
     <Flex h="100vh" direction="column">
       <Route path="/">
-        <Overview macros={macros}/>
+        <Overview collections={collections}/>
       </Route>
-      <Route path="/macroview">
-        <AddMacroView macros={macros}/>
+      <Route path="/macroview/:cid">
+        <AddMacroView collections={collections}/>
       </Route>
-      <Route path="/editview">
-        <EditMacroView macro={macros[0]}/>
+      <Route path="/editview/:cid/:mid">
+        <EditMacroView collections={collections}/>
       </Route>
     </Flex>
   );

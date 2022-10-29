@@ -1,13 +1,20 @@
-import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack } from '@chakra-ui/react'
+import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../types'
 import { Link } from 'wouter'
 
 type Props = {
   macro: Macro
+  index: number
+  collectionIndex: number
 }
 
-function MacroCard({macro}: Props) {
+function MacroCard({macro, index, collectionIndex}: Props) {
+
+  const onToggle = (event:any) => {
+    macro.isActive = event.target.checked
+  }
+
   return (
     <VStack w="33%" border="1px" rounded="md" p="3" spacing="8px">
       {/** Header */}
@@ -24,16 +31,18 @@ function MacroCard({macro}: Props) {
         </IconButton>
       </Flex>
       {/** Trigger Display */}
-      <Flex w="100%">
-        <Text>{macro.trigger}</Text>
+      <Flex w="100%" gap="4px">
+        {macro.trigger.map((element:string, index:number) =>
+          <Kbd key={index}>{element}</Kbd>
+        )}
       </Flex>
       <Divider/>
       {/** Misc */}
       <Flex w="100%" alignItems="center" justifyContent="space-between">
-        <Link href="/editview">
-          <Button leftIcon={<EditIcon />} isDisabled>Edit</Button>
+        <Link href={"/editview/" + collectionIndex + "/" + index.toString()}>
+          <Button leftIcon={<EditIcon />}>Edit</Button>
         </Link>
-        <Switch defaultChecked={macro.isActive} isDisabled/>
+        <Switch defaultChecked={macro.isActive} onChange={onToggle}/>
       </Flex>
     </VStack>
   )
