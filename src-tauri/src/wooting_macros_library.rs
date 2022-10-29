@@ -365,8 +365,6 @@ pub fn run_this(config: &ApplicationConfig) {
     };
 
 
-    //let mut events = Vec::new();
-
     //TODO: make this a grab instead of listen
     let (schan, rchan) = channel();
     let _listener = thread::spawn(move || {
