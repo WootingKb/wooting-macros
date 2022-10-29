@@ -9,5 +9,6 @@ export interface Collection {
     name: string,
     isActive: boolean,
     macros: Macro[],
+    icon: string,
 }
 
