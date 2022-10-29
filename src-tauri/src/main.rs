@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use tauri::App;
 
-use crate::wooting_macros_library::run_this;
+use crate::wooting_macros_library::*;
 
 //use crate::wooting_macros_library;
 
@@ -26,20 +26,23 @@ pub struct ApplicationConfig {
     pub startup_delay: u64,
 }
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+
 
 fn main() {
+    tauri::Builder::default()
+        // This is where you pass in your commands
+        .invoke_handler(tauri::generate_handler![export_frontend])
+        .run(tauri::generate_context!())
+        .expect("failed to run app");
+
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![import_frontend])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
-        let mut config: ApplicationConfig = ApplicationConfig {
+
+    let mut config: ApplicationConfig = ApplicationConfig {
         use_input_grab: false,
         startup_delay: 3,
     };
@@ -52,18 +55,18 @@ fn main() {
             File::create("config.json").unwrap()
         }
     };
-    let mut data = String::new();
-
-    match file.read_to_string(&mut data) {
-        Ok(T) => {
-            println!("Loaded the file");
-            let config: ApplicationConfig =
-                //TODO: rewrite this
-                serde_json::from_str(&data).expect("JSON was not well-formatted");
-            println!("{:#?}", config);
-        }
-        Err(E) => {}
-    }
+    // let mut data = String::new();
+    //
+    // match file.read_to_string(&mut data) {
+    //     Ok(T) => {
+    //         println!("Loaded the file");
+    //         let config: ApplicationConfig =
+    //             //TODO: rewrite this
+    //             serde_json::from_str(&data).expect("JSON was not well-formatted");
+    //         println!("{:#?}", config);
+    //     }
+    //     Err(E) => {}
+    // }
 
     run_this(&config)
 }
