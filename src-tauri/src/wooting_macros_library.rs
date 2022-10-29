@@ -26,7 +26,7 @@ pub enum MacroType {
 /// * `press_duration` - time::Duration for how long the key should stay pressed for (currently not implemented or used)
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 struct KeyPress {
-    keypress: rdev::Key,
+    keypress: u32,
     press_duration: Delay,
 }
 
@@ -40,10 +40,10 @@ impl KeyPress {
 
     /// Executes the actual keypress according to what it should be
     fn execute_key_down(&self) {
-        send(&EventType::KeyPress(self.keypress));
+        //send(&EventType::KeyPress(self.keypress));
         //thread::sleep(self.press_duration);
 
-        self.execute_key_up(&self.keypress);
+        //self.execute_key_up(&self.keypress);
     }
 }
 
@@ -108,7 +108,6 @@ pub enum ActionEventType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum TriggerEventType {
     KeyPressEvent { data: KeyPress },
-
 }
 
 /// The list of events that are currently happening (basically a list of all keys or buttons currently being pressed).
@@ -177,25 +176,25 @@ impl MacroData {
                         sequence: vec![
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::ControlLeft,
+                                    keypress: 10,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KeyV,
+                                    keypress: 15,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                         ],
                         trigger: TriggerEventType::KeyPressEvent {
                             data: KeyPress {
-                                keypress: rdev::Key::SemiColon,
+                                keypress: 12,
 
                                 press_duration: 50,
-                            }
+                            },
                         },
                         active: true,
                     }],
@@ -210,32 +209,32 @@ impl MacroData {
                             sequence: vec![
                                 ActionEventType::KeyPressEvent {
                                     data: KeyPress {
-                                        keypress: rdev::Key::KeyL,
+                                        keypress: 14,
 
                                         press_duration: 50,
-                                    }
+                                    },
                                 },
                                 ActionEventType::KeyPressEvent {
                                     data: KeyPress {
-                                        keypress: rdev::Key::KeyO,
+                                        keypress: 15,
 
                                         press_duration: 50,
-                                    }
+                                    },
                                 },
                                 ActionEventType::KeyPressEvent {
                                     data: KeyPress {
-                                        keypress: rdev::Key::KeyL,
+                                        keypress: 16,
 
                                         press_duration: 50,
-                                    }
+                                    },
                                 },
                             ],
                             trigger: TriggerEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KpMultiply,
+                                    keypress: 11,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                             active: true,
                         },
@@ -243,17 +242,17 @@ impl MacroData {
                             name: "Svorka".to_string(),
                             sequence: vec![ActionEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KeyS,
+                                    keypress: 13,
 
                                     press_duration: 50,
-                                }
+                                },
                             }],
                             trigger: TriggerEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KpMinus,
+                                    keypress: 14,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                             active: true,
                         },
@@ -263,12 +262,12 @@ impl MacroData {
             ],
         };
 
-        let j = serde_json::to_string(&self).unwrap();
+        let j = serde_json::to_string_pretty(&self).unwrap();
 
 
         println!("{}", j);
-    }
 
+    }
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
@@ -364,25 +363,25 @@ pub fn run_this(config: &ApplicationConfig) {
                     sequence: vec![
                         ActionEventType::KeyPressEvent {
                             data: KeyPress {
-                                keypress: rdev::Key::ControlLeft,
+                                keypress: 12,
 
                                 press_duration: 50,
-                            }
+                            },
                         },
                         ActionEventType::KeyPressEvent {
                             data: KeyPress {
-                                keypress: rdev::Key::KeyV,
+                                keypress: 13,
 
                                 press_duration: 50,
-                            }
+                            },
                         },
                     ],
                     trigger: TriggerEventType::KeyPressEvent {
                         data: KeyPress {
-                            keypress: rdev::Key::SemiColon,
+                            keypress: 14,
 
                             press_duration: 50,
-                        }
+                        },
                     },
                     active: true,
                 }],
@@ -397,32 +396,32 @@ pub fn run_this(config: &ApplicationConfig) {
                         sequence: vec![
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KeyL,
+                                    keypress: 14,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KeyO,
+                                    keypress: 13,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                             ActionEventType::KeyPressEvent {
                                 data: KeyPress {
-                                    keypress: rdev::Key::KeyL,
+                                    keypress: 12,
 
                                     press_duration: 50,
-                                }
+                                },
                             },
                         ],
                         trigger: TriggerEventType::KeyPressEvent {
                             data: KeyPress {
-                                keypress: rdev::Key::KpMultiply,
+                                keypress: 22,
 
                                 press_duration: 50,
-                            }
+                            },
                         },
                         active: true,
                     },
@@ -430,17 +429,17 @@ pub fn run_this(config: &ApplicationConfig) {
                         name: "Svorka".to_string(),
                         sequence: vec![ActionEventType::KeyPressEvent {
                             data: KeyPress {
-                                keypress: rdev::Key::KeyS,
+                                keypress: 23,
 
                                 press_duration: 50,
-                            }
+                            },
                         }],
                         trigger: TriggerEventType::KeyPressEvent {
                             data: KeyPress {
-                                keypress: rdev::Key::KpMinus,
+                                keypress: 24,
 
                                 press_duration: 50,
-                            }
+                            },
                         },
                         active: true,
                     },
