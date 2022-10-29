@@ -39,6 +39,11 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![push_frontend_first])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+
     let mut config: ApplicationConfig = ApplicationConfig {
         use_input_grab: false,
         startup_delay: 3,
