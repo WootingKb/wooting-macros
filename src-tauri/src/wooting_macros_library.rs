@@ -157,6 +157,17 @@ pub struct Macro {
 //     }
 // }
 
+#[tauri::command]
+pub fn export_frontend(data: MacroData) {
+    data.export_data();
+}
+
+#[tauri::command]
+pub fn import_frontend(mut data: MacroData, input: MacroData) {
+    data.import_data(input);
+}
+
+
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct MacroData(Vec<Collection>);
@@ -164,115 +175,19 @@ pub struct MacroData(Vec<Collection>);
 impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
-    //TODO: MAKE THIS WORK
     pub fn export_data(&self) {
-        let mut testing_macro_full: MacroData = MacroData {
-            0: vec![
-                Collection {
-                    name: "Main group".to_string(),
-                    icon: 'i'.to_string(),
-                    items: vec![Macro {
-                        name: "Paste".to_string(),
-                        sequence: vec![
-                            ActionEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: 10,
-
-                                    press_duration: 50,
-                                },
-                            },
-                            ActionEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: 15,
-
-                                    press_duration: 50,
-                                },
-                            },
-                        ],
-                        trigger: TriggerEventType::KeyPressEvent {
-                            data: KeyPress {
-                                keypress: 12,
-
-                                press_duration: 50,
-                            },
-                        },
-                        active: true,
-                    }],
-                    active: true,
-                },
-                Collection {
-                    name: "Fun macro group".to_string(),
-                    icon: 'i'.to_string(),
-                    items: vec![
-                        Macro {
-                            name: "Havo".to_string(),
-                            sequence: vec![
-                                ActionEventType::KeyPressEvent {
-                                    data: KeyPress {
-                                        keypress: 14,
-
-                                        press_duration: 50,
-                                    },
-                                },
-                                ActionEventType::KeyPressEvent {
-                                    data: KeyPress {
-                                        keypress: 15,
-
-                                        press_duration: 50,
-                                    },
-                                },
-                                ActionEventType::KeyPressEvent {
-                                    data: KeyPress {
-                                        keypress: 16,
-
-                                        press_duration: 50,
-                                    },
-                                },
-                            ],
-                            trigger: TriggerEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: 11,
-
-                                    press_duration: 50,
-                                },
-                            },
-                            active: true,
-                        },
-                        Macro {
-                            name: "Svorka".to_string(),
-                            sequence: vec![ActionEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: 13,
-
-                                    press_duration: 50,
-                                },
-                            }],
-                            trigger: TriggerEventType::KeyPressEvent {
-                                data: KeyPress {
-                                    keypress: 14,
-
-                                    press_duration: 50,
-                                },
-                            },
-                            active: true,
-                        },
-                    ],
-                    active: true,
-                },
-            ],
-        };
-
-        let j = serde_json::to_string_pretty(&self).unwrap();
-
-
-        println!("{}", j);
-
+        std::fs::write(
+            "./data_json.json",
+            serde_json::to_string_pretty(&self).unwrap(),
+        ).unwrap()
     }
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
-    //TODO: MAKE THIS WORK
-    pub fn import_data(self, input: MacroData) {}
+    pub fn import_data(&mut self, input: MacroData) {
+        *self = input;
+        self.export_data()
+    }
 }
 //
 // impl std::fmt::Display for MacroData {
@@ -535,7 +450,7 @@ fn get_user_input(display_text: String) -> String {
 //         _ => Some(event),
 //     }
 // }
-
+#[tauri::command]
 fn callback_listen_only(event: Event) {
     println!("My callback {:?}", event);
 }

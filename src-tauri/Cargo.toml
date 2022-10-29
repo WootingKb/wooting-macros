@@ -2,7 +2,7 @@
 name = "wooting-macros"
 version = "0.1.0"
 description = "Macro software made by Wooting."
-authors = ["you"]
+authors = ["David Manca, Khang"]
 license = ""
 repository = ""
 edition = "2021"
