@@ -1,1 +1,106 @@
-[]
+[
+  {
+    "name": "Main group",
+    "icon": "i",
+    "items": [
+      {
+        "name": "Paste",
+        "sequence": [
+          {
+            "KeyPressEvent": {
+              "data": {
+                "keypress": 12,
+                "press_duration": 50
+              }
+            }
+          },
+          {
+            "KeyPressEvent": {
+              "data": {
+                "keypress": 13,
+                "press_duration": 50
+              }
+            }
+          }
+        ],
+        "trigger": {
+          "KeyPressEvent": {
+            "data": {
+              "keypress": 14,
+              "press_duration": 50
+            }
+          }
+        },
+        "active": true
+      }
+    ],
+    "active": true
+  },
+  {
+    "name": "Fun macro group",
+    "icon": "i",
+    "items": [
+      {
+        "name": "Havo",
+        "sequence": [
+          {
+            "KeyPressEvent": {
+              "data": {
+                "keypress": 14,
+                "press_duration": 50
+              }
+            }
+          },
+          {
+            "KeyPressEvent": {
+              "data": {
+                "keypress": 13,
+                "press_duration": 50
+              }
+            }
+          },
+          {
+            "KeyPressEvent": {
+              "data": {
+                "keypress": 12,
+                "press_duration": 50
+              }
+            }
+          }
+        ],
+        "trigger": {
+          "KeyPressEvent": {
+            "data": {
+              "keypress": 22,
+              "press_duration": 50
+            }
+          }
+        },
+        "active": true
+      },
+      {
+        "name": "Svorka",
+        "sequence": [
+          {
+            "KeyPressEvent": {
+              "data": {
+                "keypress": 23,
+                "press_duration": 50
+              }
+            }
+          }
+        ],
+        "trigger": {
+          "KeyPressEvent": {
+            "data": {
+              "keypress": 24,
+              "press_duration": 50
+            }
+          }
+        },
+        "active": true
+      }
+    ],
+    "active": true
+  }
+]

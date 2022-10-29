@@ -1,6 +1,7 @@
-use std::{result, thread, time};
+use std::{fs, result, thread, time};
 use std::collections::HashMap;
 use std::fmt::{format, Formatter};
+use std::fs::File;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
@@ -164,10 +165,18 @@ pub fn export_frontend(data: MacroData) -> String {
 }
 
 #[tauri::command]
+pub fn push_frontend_first() -> String {
+    let path = "./data_json.json";
+    let data = fs::read_to_string(path).expect("Unable to read file");
+    let res: serde_json::Value = serde_json::from_str(&data).expect("Unable to parse");
+
+    res.to_string()
+}
+
+#[tauri::command]
 pub fn import_frontend(mut data: MacroData, input: MacroData) {
     data.import_data(input);
 }
-
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -180,11 +189,11 @@ impl MacroData {
         std::fs::write(
             "./data_json.json",
             serde_json::to_string_pretty(&self).unwrap(),
-        ).unwrap();
+        )
+            .unwrap();
 
         serde_json::to_string_pretty(&self).unwrap()
     }
-
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
@@ -264,6 +273,8 @@ pub struct Collection {
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
     println!("Character {}: {}", 'c', 'c' as u32);
+
+    push_frontend_first();
 
     // let testing_action = ActionEventType::SystemEvent {
     //     action: Action {
@@ -369,6 +380,7 @@ pub fn run_this(config: &ApplicationConfig) {
         ],
     };
 
+    //testing_macro_full.export_data();
 
     //TODO: make this a grab instead of listen
     let (schan, rchan) = channel();
@@ -453,7 +465,7 @@ fn get_user_input(display_text: String) -> String {
 //         _ => Some(event),
 //     }
 // }
-#[tauri::command]
+
 fn callback_listen_only(event: Event) {
     println!("My callback {:?}", event);
 }
