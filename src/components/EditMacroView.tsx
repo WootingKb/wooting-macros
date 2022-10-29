@@ -53,7 +53,6 @@ const EditMacroView = ({collections}: Props) => {
     const onSaveButtonPress = () => {
         if (match) {
             collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, isActive: true, trigger: triggerKeys, sequence: ""}
-            console.log(collections[parseInt(params.cid)].macros[parseInt(params.mid)])
         }
         setLocation("/")
     }

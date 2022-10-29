@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd } from '@chakra-ui/react'
+import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../types'
 import { Link } from 'wouter'
@@ -7,9 +7,10 @@ type Props = {
   macro: Macro
   index: number
   collectionIndex: number
+  onDelete: (index:number) => any
 }
 
-function MacroCard({macro, index, collectionIndex}: Props) {
+function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
 
   const onToggle = (event:any) => {
     macro.isActive = event.target.checked
@@ -25,10 +26,15 @@ function MacroCard({macro, index, collectionIndex}: Props) {
             </svg>
             <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
-        <IconButton aria-label='Kebab Menu Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-          </svg>} variant="link" isDisabled>
-        </IconButton>
+        <Menu>
+          <MenuButton as={IconButton} aria-label='Kebab Menu Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+            </svg>} variant="link">
+          </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => onDelete(index)}>Delete</MenuItem>
+            </MenuList>
+        </Menu>
       </Flex>
       {/** Trigger Display */}
       <Flex w="100%" gap="4px">

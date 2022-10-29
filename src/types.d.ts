@@ -21,10 +21,10 @@ export interface Keypress {
     press_duration: number
 }
 
-export interface KeyPressEvent {
-    data: Keypress
-}
 
-export type TriggerEventType = KeyPressEvent | undefined
+export type TriggerEventType = 
+| {type: "KeyPressEvent", data: Keypress}
 
-export type ActionEventType = KeyPressEvent | undefined
+export type ActionEventType =
+| {type: "KeyPressEvent", data: Keypress}
+| {type: "Delay", value: number}

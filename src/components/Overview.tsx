@@ -53,6 +53,17 @@ function Overview({collections}: Props) {
         onCloseRenameCollection()
     }
 
+    const onCollectionDelete = () => {
+        collections.splice(collectionIndex, 1)
+        collections[0].isActive = true
+        setCollectionIndex(0)
+    }
+
+    const onMacroDelete = (macroIndex:number) => {
+        collections[collectionIndex].macros.splice(macroIndex, 1)
+        setCollectionName("reset")
+    }
+
     return (
         <HStack minH="100vh" spacing="0">
             {/** Left Side Panel */}
@@ -86,7 +97,7 @@ function Overview({collections}: Props) {
                     <Button leftIcon={<AddIcon />} isDisabled>
                         Import Macros
                     </Button>
-                    <Button leftIcon={<AddIcon />} isDisabled>
+                    <Button leftIcon={<AddIcon />} isDisabled={collectionIndex <= 0} onClick={onCollectionDelete}>
                         Delete Collection
                     </Button>
                     </HStack>
@@ -98,7 +109,7 @@ function Overview({collections}: Props) {
                 </Link>
                 </Flex>
                 <Flex w="100%" direction="row" wrap="wrap" gap="1" p="8px">
-                {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard macro={macro} index={index} key={index} collectionIndex={collectionIndex}/>)}
+                {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard macro={macro} index={index} key={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>)}
                 </Flex>
             </VStack>
             {/** New Collection Modal */}
