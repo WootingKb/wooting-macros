@@ -29,7 +29,7 @@ pub struct ApplicationConfig {
 fn main() {
     tauri::Builder::default()
         // This is where you pass in your commands
-        .invoke_handler(tauri::generate_handler![wooting_macros_library::export_frontend])
+        .invoke_handler(tauri::generate_handler![export_frontend])
         .run(tauri::generate_context!())
         .expect("failed to run app");
 
