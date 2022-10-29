@@ -158,8 +158,9 @@ pub struct Macro {
 // }
 
 #[tauri::command]
-pub fn export_frontend(data: MacroData) {
-    data.export_data();
+pub fn export_frontend(data: MacroData) -> String {
+    let data_return = data.export_data();
+    data_return
 }
 
 #[tauri::command]
@@ -175,20 +176,24 @@ pub struct MacroData(Vec<Collection>);
 impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) {
+    pub fn export_data(&self) -> String {
         std::fs::write(
             "./data_json.json",
             serde_json::to_string_pretty(&self).unwrap(),
-        ).unwrap()
+        ).unwrap();
+
+        serde_json::to_string_pretty(&self).unwrap()
     }
+
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
     pub fn import_data(&mut self, input: MacroData) {
         *self = input;
-        self.export_data()
+        self.export_data();
     }
 }
+
 //
 // impl std::fmt::Display for MacroData {
 //     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
