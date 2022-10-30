@@ -18,6 +18,7 @@ use crate::wooting_macros_library::*;
 //use crate::wooting_macros_library;
 
 mod wooting_macros_library;
+mod hid_table;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "PascalCase")]
