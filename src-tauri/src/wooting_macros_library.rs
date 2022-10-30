@@ -21,7 +21,7 @@ pub enum MacroType {
     MultiLevel { data: Macro },
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 struct KeyPress {
     keypress: u32,
     press_duration: Delay,
@@ -131,7 +131,14 @@ impl MacroData {
 
     /// Extracts the data
     fn extract_triggers(&self) {
-        let mut triggers: TriggerDataHash;
+        let mut testing: HashMap<Vec<KeyPress>, Macro> = HashMap::new();
+        testing.insert(vec![], Macro {
+            name: "".to_string(),
+            sequence: vec![],
+            trigger: TriggerEventType::KeyPressEvent { data: vec![] },
+            active: false,
+        });
+
 
         //convert to enum of rdev
 
@@ -150,7 +157,6 @@ impl MacroData {
     }
 }
 
-type TriggerDataHash = HashMap<Vec<KeyPress>, Macro>;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
