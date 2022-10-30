@@ -1,13 +1,21 @@
-import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack } from '@chakra-ui/react'
+import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../types'
 import { Link } from 'wouter'
 
 type Props = {
   macro: Macro
+  index: number
+  collectionIndex: number
+  onDelete: (index:number) => any
 }
 
-function MacroCard({macro}: Props) {
+function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
+
+  const onToggle = (event:any) => {
+    macro.isActive = event.target.checked
+  }
+
   return (
     <VStack w="33%" border="1px" rounded="md" p="3" spacing="8px">
       {/** Header */}
@@ -18,22 +26,29 @@ function MacroCard({macro}: Props) {
             </svg>
             <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
-        <IconButton aria-label='Kebab Menu Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-          </svg>} variant="link" isDisabled>
-        </IconButton>
+        <Menu>
+          <MenuButton as={IconButton} aria-label='Kebab Menu Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+            </svg>} variant="link">
+          </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => onDelete(index)}>Delete</MenuItem>
+            </MenuList>
+        </Menu>
       </Flex>
       {/** Trigger Display */}
-      <Flex w="100%">
-        <Text>{macro.trigger}</Text>
+      <Flex w="100%" gap="4px">
+        {macro.trigger.map((element:string, index:number) =>
+          <Kbd key={index}>{element}</Kbd>
+        )}
       </Flex>
       <Divider/>
       {/** Misc */}
       <Flex w="100%" alignItems="center" justifyContent="space-between">
-        <Link href="/editview">
-          <Button leftIcon={<EditIcon />} isDisabled>Edit</Button>
+        <Link href={"/editview/" + collectionIndex + "/" + index.toString()}>
+          <Button leftIcon={<EditIcon />}>Edit</Button>
         </Link>
-        <Switch defaultChecked={macro.isActive} isDisabled/>
+        <Switch defaultChecked={macro.isActive} onChange={onToggle}/>
       </Flex>
     </VStack>
   )

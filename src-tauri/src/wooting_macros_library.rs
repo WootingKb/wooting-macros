@@ -1,6 +1,7 @@
-use std::{result, thread, time};
+use std::{fs, result, thread, time};
 use std::collections::HashMap;
 use std::fmt::{format, Formatter};
+use std::fs::File;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
@@ -164,10 +165,18 @@ pub fn export_frontend(data: MacroData) -> String {
 }
 
 #[tauri::command]
+pub fn push_frontend_first() -> Result<String, String> {
+    let path = "./data_json.json";
+    let data = fs::read_to_string(path).expect("Unable to read file");
+    let res: serde_json::Value = serde_json::from_str(&data).expect("Unable to parse");
+
+    Ok(res.to_string())
+}
+
+#[tauri::command]
 pub fn import_frontend(mut data: MacroData, input: MacroData) {
     data.import_data(input);
 }
-
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -180,11 +189,11 @@ impl MacroData {
         std::fs::write(
             "./data_json.json",
             serde_json::to_string_pretty(&self).unwrap(),
-        ).unwrap();
+        )
+            .unwrap();
 
         serde_json::to_string_pretty(&self).unwrap()
     }
-
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
@@ -221,14 +230,14 @@ impl MacroData {
 ///MacroGroup is a group of macros. It can be active or inactive. Contains an icon and a name.
 /// * `name` - String based name of the MacroGroup
 /// * `icon` - Placeholder for now
-/// * `items` - Macros (vector) that belong to a group
+/// * `macros` - Macros (vector) that belong to a group
 /// * `active` - Whether they should be executable
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
     name: String,
     //TODO: base64 encoding
     icon: String,
-    items: Vec<Macro>,
+    macros: Vec<Macro>,
     active: bool,
 }
 //
@@ -239,12 +248,12 @@ pub struct Collection {
 //
 //         buffer_text += format!(
 //             "There are {} macros in the group {}.\n",
-//             &self.items.len(),
+//             &self.macros.len(),
 //             &self.name
 //         )
 //             .as_str();
 //
-//         for i in &self.items {
+//         for i in &self.macros {
 //             buffer_text += format!(
 //                 "========\n\tMacro # {}\n\tMacroName: {}\tActive: {}",
 //                 number, i.name, i.active
@@ -265,6 +274,8 @@ pub struct Collection {
 pub fn run_this(config: &ApplicationConfig) {
     println!("Character {}: {}", 'c', 'c' as u32);
 
+    // push_frontend_first();
+
     // let testing_action = ActionEventType::SystemEvent {
     //     action: Action {
     //         action: 'd',
@@ -278,7 +289,7 @@ pub fn run_this(config: &ApplicationConfig) {
             Collection {
                 name: "Main group".to_string(),
                 icon: 'i'.to_string(),
-                items: vec![Macro {
+                macros: vec![Macro {
                     name: "Paste".to_string(),
                     sequence: vec![
                         ActionEventType::KeyPressEvent {
@@ -310,7 +321,7 @@ pub fn run_this(config: &ApplicationConfig) {
             Collection {
                 name: "Fun macro group".to_string(),
                 icon: 'i'.to_string(),
-                items: vec![
+                macros: vec![
                     Macro {
                         name: "Havo".to_string(),
                         sequence: vec![
@@ -369,6 +380,7 @@ pub fn run_this(config: &ApplicationConfig) {
         ],
     };
 
+    //testing_macro_full.export_data();
 
     //TODO: make this a grab instead of listen
     let (schan, rchan) = channel();
@@ -453,7 +465,7 @@ fn get_user_input(display_text: String) -> String {
 //         _ => Some(event),
 //     }
 // }
-#[tauri::command]
+
 fn callback_listen_only(event: Event) {
     println!("My callback {:?}", event);
 }

@@ -1,14 +1,15 @@
 import { Input, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Alert, AlertIcon, AlertTitle, AlertDescription, Kbd } from '@chakra-ui/react'
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
-import { Link, useLocation } from 'wouter';
+import { Link, useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
-import { Macro } from "../types";
+import { Collection, Macro } from "../types";
 
 type Props = {
-  macros: Macro[]
+  collections: Collection[]
 }
 
-const AddMacroView = ({macros}: Props) => {
+const AddMacroView = ({collections}: Props) => {
+    const [match, params] = useRoute("/macroview/:cid");
     const [recording, setRecording] = useState(false)
     const [macroName, setMacroName] = useState("Macro Name")
     const [triggerKeys, setTriggerKeys] = useState<string[]>([])
@@ -37,7 +38,9 @@ const AddMacroView = ({macros}: Props) => {
     }
 
     const onSaveButtonPress = () => {
-        macros.push({name: macroName, isActive: true, trigger: triggerKeys, sequence: ""})
+        if (match) {
+            collections[parseInt(params.cid)].macros.push({name: macroName, isActive: true, trigger: triggerKeys, sequence: ""})
+        }
         setLocation("/")
     }
 
@@ -61,7 +64,7 @@ const AddMacroView = ({macros}: Props) => {
                         <Input variant='unstyled' placeholder='Macro Name' isRequired onChange={onMacroNameChange}/>
                     </Flex>
                 </Flex>
-                <Button isDisabled={!(triggerKeys.length > 0)} onClick={onSaveButtonPress}>Save Macro</Button>
+                <Button colorScheme="yellow" isDisabled={!(triggerKeys.length > 0)} onClick={onSaveButtonPress}>Save Macro</Button>
             </HStack>
             {/** Trigger Area */}
             <VStack spacing="16px">
@@ -73,7 +76,7 @@ const AddMacroView = ({macros}: Props) => {
                                 </Alert>
                 }
             </VStack>
-            <HStack>
+            <HStack spacing="4px">
                 {triggerKeys.map((key:string, index:number) => 
                     <Kbd key={index}>{key}</Kbd>
                 )}
