@@ -128,26 +128,24 @@ impl MacroData {
         self.export_data();
     }
 
-    // /// Extracts the data
-    // fn extract_triggers(&self){
-    //     let mut triggers: TriggerDataHash;
-    //
-    //     //convert to enum of rdev
-    //
-    //
-    //     for search in self.0{
-    //         for trig in search.macros {
-    //             match trig.trigger {
-    //                 TriggerEventType::KeyPressEvent {data} => {
-    //                     //
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    /// Extracts the data
+    fn extract_triggers(&self) {
+        let mut triggers: TriggerDataHash;
+
+        //convert to enum of rdev
+
+
+        for search in &self.0 {
+            for trig in &search.macros {
+                match &trig.trigger {
+                    TriggerEventType::KeyPressEvent { data } => {}
+                }
+            }
+        }
+    }
 }
 
-// type TriggerDataHash = HashMap<>;
+type TriggerDataHash = HashMap<Vec<KeyPress>, Macro>;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
