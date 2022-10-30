@@ -25,10 +25,12 @@
         ],
         "trigger": {
           "KeyPressEvent": {
-            "data": {
-              "keypress": 14,
-              "press_duration": 50
-            }
+            "data": [
+              {
+                "keypress": 14,
+                "press_duration": 50
+              }
+            ]
           }
         },
         "active": true
@@ -70,10 +72,12 @@
         ],
         "trigger": {
           "KeyPressEvent": {
-            "data": {
-              "keypress": 22,
-              "press_duration": 50
-            }
+            "data": [
+              {
+                "keypress": 22,
+                "press_duration": 50
+              }
+            ]
           }
         },
         "active": true
@@ -92,10 +96,12 @@
         ],
         "trigger": {
           "KeyPressEvent": {
-            "data": {
-              "keypress": 24,
-              "press_duration": 50
-            }
+            "data": [
+              {
+                "keypress": 24,
+                "press_duration": 50
+              }
+            ]
           }
         },
         "active": true

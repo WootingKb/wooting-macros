@@ -28,15 +28,15 @@ pub struct ApplicationConfig {
 }
 
 fn main() {
-    tauri::Builder::default()
-        // This is where you pass in your commands
-        .invoke_handler(tauri::generate_handler![
-            export_frontend,
-            import_frontend,
-            push_frontend_first
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    // tauri::Builder::default()
+    //     // This is where you pass in your commands
+    //     .invoke_handler(tauri::generate_handler![
+    //         export_frontend,
+    //         import_frontend,
+    //         push_frontend_first
+    //     ])
+    //     .run(tauri::generate_context!())
+    //     .expect("error while running tauri application");
 
     let mut config: ApplicationConfig = ApplicationConfig {
         use_input_grab: false,

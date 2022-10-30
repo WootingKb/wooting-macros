@@ -2,6 +2,7 @@ use std::{fs, result, thread, time};
 use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
+use std::hash::Hash;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::time::Duration;
@@ -53,7 +54,9 @@ pub enum ActionEventType {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum TriggerEventType {
-    KeyPressEvent { data: KeyPress },
+    KeyPressEvent {
+        data: Vec<KeyPress>,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -124,7 +127,27 @@ impl MacroData {
         *self = input;
         self.export_data();
     }
+
+    // /// Extracts the data
+    // fn extract_triggers(&self){
+    //     let mut triggers: TriggerDataHash;
+    //
+    //     //convert to enum of rdev
+    //
+    //
+    //     for search in self.0{
+    //         for trig in search.macros {
+    //             match trig.trigger {
+    //                 TriggerEventType::KeyPressEvent {data} => {
+    //                     //
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }
+
+// type TriggerDataHash = HashMap<>;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
@@ -138,8 +161,110 @@ pub struct Collection {
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
+    // let mut testing_macro_full: MacroData = MacroData {
+    //     0: vec![
+    //         Collection {
+    //             name: "Main group".to_string(),
+    //             icon: 'i'.to_string(),
+    //             macros: vec![Macro {
+    //                 name: "Paste".to_string(),
+    //                 sequence: vec![
+    //                     ActionEventType::KeyPressEvent {
+    //                         data: KeyPress {
+    //                             keypress: 12,
+    //
+    //                             press_duration: 50,
+    //                         },
+    //                     },
+    //                     ActionEventType::KeyPressEvent {
+    //                         data: KeyPress {
+    //                             keypress: 13,
+    //
+    //                             press_duration: 50,
+    //                         },
+    //                     },
+    //                 ],
+    //                 trigger: TriggerEventType::KeyPressEvent {
+    //                     data: vec![KeyPress {
+    //                         keypress: 14,
+    //
+    //                         press_duration: 50,
+    //                     }],
+    //                 },
+    //                 active: true,
+    //             }],
+    //             active: true,
+    //         },
+    //         Collection {
+    //             name: "Fun macro group".to_string(),
+    //             icon: 'i'.to_string(),
+    //             macros: vec![
+    //                 Macro {
+    //                     name: "Havo".to_string(),
+    //                     sequence: vec![
+    //                         ActionEventType::KeyPressEvent {
+    //                             data: KeyPress {
+    //                                 keypress: 14,
+    //
+    //                                 press_duration: 50,
+    //                             },
+    //                         },
+    //                         ActionEventType::KeyPressEvent {
+    //                             data: KeyPress {
+    //                                 keypress: 13,
+    //
+    //                                 press_duration: 50,
+    //                             },
+    //                         },
+    //                         ActionEventType::KeyPressEvent {
+    //                             data: KeyPress {
+    //                                 keypress: 12,
+    //
+    //                                 press_duration: 50,
+    //                             },
+    //                         },
+    //                     ],
+    //                     trigger: TriggerEventType::KeyPressEvent {
+    //                         data: vec![KeyPress {
+    //                             keypress: 22,
+    //
+    //                             press_duration: 50,
+    //                         }],
+    //                     },
+    //                     active: true,
+    //                 },
+    //                 Macro {
+    //                     name: "Svorka".to_string(),
+    //                     sequence: vec![ActionEventType::KeyPressEvent {
+    //                         data: KeyPress {
+    //                             keypress: 23,
+    //
+    //                             press_duration: 50,
+    //                         },
+    //                     }],
+    //                     trigger: TriggerEventType::KeyPressEvent {
+    //                         data: vec![KeyPress {
+    //                             keypress: 24,
+    //
+    //                             press_duration: 50,
+    //                         }],
+    //                     },
+    //                     active: true,
+    //                 },
+    //             ],
+    //             active: true,
+    //         },
+    //     ],
+    // };
+
+    //testing_macro_full.export_data();
+
     // Get data from the config file.
     let mut testing_macro_full: MacroData = push_backend_first();
+
+    // Serve to the frontend.
+    push_frontend_first();
+
 
     //TODO: make this a grab instead of listen
     let (schan, rchan) = channel();
@@ -176,7 +301,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 }
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {
-                    println!("{}, {}", delta_x, delta_y)
+
                 }
             }
         }
@@ -184,6 +309,7 @@ pub fn run_this(config: &ApplicationConfig) {
     }
     //TODO: Make a translation table to a hashmap from a keycode HID compatible -> library rdev enums.
 }
+
 
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
