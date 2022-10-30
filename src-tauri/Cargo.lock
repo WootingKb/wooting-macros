@@ -4192,14 +4192,14 @@ dependencies = [
 name = "wooting-macros"
 version = "0.1.0"
 dependencies = [
-    "halfbrown",
-    "idasen-cli",
-    "lazy_static",
-    "rdev",
-    "serde",
-    "serde_json",
-    "tauri",
-    "tauri-build",
+ "halfbrown",
+ "idasen-cli",
+ "lazy_static",
+ "rdev",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
 ]
 
 [[package]]

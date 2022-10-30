@@ -5,7 +5,8 @@ use lazy_static::lazy_static;
 use rdev::Key;
 
 lazy_static! {
-static ref SCANCODE_MAP: HashMap<u32, rdev::Key> = {
+#[derive(Debug, PartialEq)]
+pub static ref SCANCODE_MAP: HashMap<u32, rdev::Key> = {
     let mut scancode: HashMap<u32, rdev::Key> = HashMap::new();
         scancode.insert(0x04, rdev::Key::KeyA); //US_A
         scancode.insert(0x05, rdev::Key::KeyB); //US_B
@@ -119,9 +120,9 @@ static ref SCANCODE_MAP: HashMap<u32, rdev::Key> = {
         scancode.insert(0x63, rdev::Key::Dot); //NUMPAD_DECIMAL
 
         scancode.insert(0x64, rdev::Key::IntlBackslash); //INTL_BACKSLASH
-        scancode.insert(0x65, rdev::Key::Key); //CONTEXT_MENU
-        scancode.insert(0x66, rdev::Key::Key); //POWER
-        scancode.insert(0x67, rdev::Key::Key); //NUMPAD_EQUAL
+        scancode.insert(0x65, rdev::Key::Function); //CONTEXT_MENU
+
+        // scancode.insert(0x67, rdev::Key::Key); //NUMPAD_EQUAL
 
         // scancode.insert(0x68, rdev::Key::Key); //F13
         // scancode.insert(0x69, rdev::Key::Key); //F14
@@ -141,7 +142,8 @@ static ref SCANCODE_MAP: HashMap<u32, rdev::Key> = {
         //
         // scancode.insert(0x75, rdev::Key::Key); //HELP
         //
-        // //scancode.insert(0x77, 0x0000); //SELECT
+        // scancode.insert(0x66, rdev::Key::Key); //POWER
+        // scancode.insert(0x77, 0x0000); //SELECT
         //
         // scancode.insert(0x79, rdev::Key::Key); //AGAIN
         // scancode.insert(0x7a, rdev::Key::Key); //UNDO

@@ -10,7 +10,8 @@ use std::time::Duration;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 
-use crate::ApplicationConfig;
+use crate::{ApplicationConfig, hid_table};
+use crate::hid_table::*;
 
 #[derive(Debug)]
 pub enum MacroType {
@@ -138,7 +139,11 @@ impl MacroData {
         for search in &self.0 {
             for trig in &search.macros {
                 match &trig.trigger {
-                    TriggerEventType::KeyPressEvent { data } => {}
+                    TriggerEventType::KeyPressEvent { data } => {
+                        let temp = data.iter().for_each(|x| {
+                            let temp2 = hid_table::SCANCODE_MAP[&x.keypress];
+                        });
+                    }
                 }
             }
         }
