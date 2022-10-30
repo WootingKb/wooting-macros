@@ -131,7 +131,7 @@ impl MacroData {
 
     /// Extracts the data
     fn extract_triggers(&self) {
-        let mut testing: HashMap<Vec<KeyPress>, Macro> = HashMap::new();
+        let mut testing: TriggerHash = HashMap::new();
         testing.insert(vec![], Macro {
             name: "".to_string(),
             sequence: vec![],
@@ -157,6 +157,8 @@ impl MacroData {
     }
 }
 
+///Hash list
+type TriggerHash = HashMap<Vec<KeyPress>, Macro>;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
