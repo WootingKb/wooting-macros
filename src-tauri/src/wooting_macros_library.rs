@@ -213,6 +213,10 @@ pub fn run_this(config: &ApplicationConfig) {
     //==================================================
 
     //TODO: make this a grab instead of listen
+    //TODO: try to make this interact better (cleanup the code a bit)
+    //TODO: make the pressed keys vector and compare to the hashmap
+    //TODO: try to execute the macros in order (make the executor)
+    //TODO: async the executor of the presses
     let (schan, rchan) = channel();
     let _listener = thread::spawn(move || {
         listen(move |event| {
