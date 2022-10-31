@@ -55,9 +55,7 @@ pub enum ActionEventType {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum TriggerEventType {
-    KeyPressEvent {
-        data: Vec<KeyPress>,
-    },
+    KeyPressEvent { data: Vec<KeyPress> },
 }
 
 #[derive(Debug, Clone)]
@@ -124,34 +122,32 @@ impl MacroData {
 
     /// Imports data from the frontend (when updated) to update the background data structure
     /// This overwrites the datastructure
-    pub fn import_data(&mut self, input: MacroData) {
+    pub fn import_data(&mut self, input: MacroData) -> TriggerHash {
         *self = input;
         self.export_data();
+        self.extract_triggers()
     }
 
     /// Extracts the data
-    fn extract_triggers(&self) {
+    fn extract_triggers(&self) -> TriggerHash {
         let mut trigger_hash_list: TriggerHash = HashMap::new();
-
-
-        //convert to enum of rdev
-
 
         for search in &self.0 {
             for trig in &search.macros {
                 match &trig.trigger {
                     TriggerEventType::KeyPressEvent { data } => {
-                        trigger_hash_list.insert(data.clone(), trig.clone());
+                        trigger_hash_list.insert(data.clone(), &trig);
                     }
                 }
             }
         }
-        println!("{:#?}", trigger_hash_list);
+
+        trigger_hash_list
     }
 }
 
 ///Hash list
-type TriggerHash = HashMap<Vec<KeyPress>, Macro>;
+type TriggerHash<'a> = HashMap<Vec<KeyPress>, &'a Macro>;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
@@ -165,100 +161,39 @@ pub struct Collection {
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
-    // let mut testing_macro_full: MacroData = MacroData {
-    //     0: vec![
-    //         Collection {
-    //             name: "Main group".to_string(),
-    //             icon: 'i'.to_string(),
-    //             macros: vec![Macro {
-    //                 name: "Paste".to_string(),
-    //                 sequence: vec![
-    //                     ActionEventType::KeyPressEvent {
-    //                         data: KeyPress {
-    //                             keypress: 12,
-    //
-    //                             press_duration: 50,
-    //                         },
-    //                     },
-    //                     ActionEventType::KeyPressEvent {
-    //                         data: KeyPress {
-    //                             keypress: 13,
-    //
-    //                             press_duration: 50,
-    //                         },
-    //                     },
-    //                 ],
-    //                 trigger: TriggerEventType::KeyPressEvent {
-    //                     data: vec![KeyPress {
-    //                         keypress: 14,
+    // let mut incoming_test: MacroData = MacroData {
+    //     0: vec![Collection {
+    //         name: "LOL".to_string(),
+    //         icon: 'i'.to_string(),
+    //         macros: vec![Macro {
+    //             name: "Newer string".to_string(),
+    //             sequence: vec![
+    //                 ActionEventType::KeyPressEvent {
+    //                     data: KeyPress {
+    //                         keypress: 12,
     //
     //                         press_duration: 50,
-    //                     }],
-    //                 },
-    //                 active: true,
-    //             }],
-    //             active: true,
-    //         },
-    //         Collection {
-    //             name: "Fun macro group".to_string(),
-    //             icon: 'i'.to_string(),
-    //             macros: vec![
-    //                 Macro {
-    //                     name: "Havo".to_string(),
-    //                     sequence: vec![
-    //                         ActionEventType::KeyPressEvent {
-    //                             data: KeyPress {
-    //                                 keypress: 14,
-    //
-    //                                 press_duration: 50,
-    //                             },
-    //                         },
-    //                         ActionEventType::KeyPressEvent {
-    //                             data: KeyPress {
-    //                                 keypress: 13,
-    //
-    //                                 press_duration: 50,
-    //                             },
-    //                         },
-    //                         ActionEventType::KeyPressEvent {
-    //                             data: KeyPress {
-    //                                 keypress: 12,
-    //
-    //                                 press_duration: 50,
-    //                             },
-    //                         },
-    //                     ],
-    //                     trigger: TriggerEventType::KeyPressEvent {
-    //                         data: vec![KeyPress {
-    //                             keypress: 22,
-    //
-    //                             press_duration: 50,
-    //                         }],
     //                     },
-    //                     active: true,
     //                 },
-    //                 Macro {
-    //                     name: "Svorka".to_string(),
-    //                     sequence: vec![ActionEventType::KeyPressEvent {
-    //                         data: KeyPress {
-    //                             keypress: 23,
+    //                 ActionEventType::KeyPressEvent {
+    //                     data: KeyPress {
+    //                         keypress: 13,
     //
-    //                             press_duration: 50,
-    //                         },
-    //                     }],
-    //                     trigger: TriggerEventType::KeyPressEvent {
-    //                         data: vec![KeyPress {
-    //                             keypress: 24,
-    //
-    //                             press_duration: 50,
-    //                         }],
+    //                         press_duration: 50,
     //                     },
-    //                     active: true,
     //                 },
     //             ],
+    //             trigger: TriggerEventType::KeyPressEvent {
+    //                 data: vec![KeyPress {
+    //                     keypress: 14,
+    //
+    //                     press_duration: 50,
+    //                 }],
+    //             },
     //             active: true,
-    //         },
-    //     ],
+    //         }],
+    //         active: true,
+    //     }],
     // };
 
     //testing_macro_full.export_data();
@@ -269,8 +204,13 @@ pub fn run_this(config: &ApplicationConfig) {
     // Serve to the frontend.
     push_frontend_first();
 
-    testing_macro_full.extract_triggers();
+    // Get the triggers linked correctly
+    let triggers = testing_macro_full.export_data();
 
+    //Print for a check (triggers)
+    println!("{:#?}", triggers);
+
+    //==================================================
 
     //TODO: make this a grab instead of listen
     let (schan, rchan) = channel();
@@ -306,16 +246,13 @@ pub fn run_this(config: &ApplicationConfig) {
                     println!("MB Released:{:?}", s)
                 }
                 EventType::MouseMove { x, y } => (),
-                EventType::Wheel { delta_x, delta_y } => {
-
-                }
+                EventType::Wheel { delta_x, delta_y } => {}
             }
         }
         events.pop();
     }
     //TODO: Make a translation table to a hashmap from a keycode HID compatible -> library rdev enums.
 }
-
 
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
