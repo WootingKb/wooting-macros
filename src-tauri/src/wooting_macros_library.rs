@@ -217,6 +217,7 @@ pub fn run_this(config: &ApplicationConfig) {
     //TODO: make the pressed keys vector and compare to the hashmap
     //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
+    //
     let (schan, rchan) = channel();
     let _listener = thread::spawn(move || {
         listen(move |event| {
