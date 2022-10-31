@@ -205,7 +205,7 @@ pub fn run_this(config: &ApplicationConfig) {
     push_frontend_first();
 
     // Get the triggers linked correctly
-    let triggers = testing_macro_full.export_data();
+    let triggers = testing_macro_full.extract_triggers();
 
     //Print for a check (triggers)
     println!("{:#?}", triggers);
