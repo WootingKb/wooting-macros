@@ -131,13 +131,7 @@ impl MacroData {
 
     /// Extracts the data
     fn extract_triggers(&self) {
-        let mut testing: TriggerHash = HashMap::new();
-        testing.insert(vec![], Macro {
-            name: "".to_string(),
-            sequence: vec![],
-            trigger: TriggerEventType::KeyPressEvent { data: vec![] },
-            active: false,
-        });
+        let mut trigger_hash_list: TriggerHash = HashMap::new();
 
 
         //convert to enum of rdev
@@ -147,13 +141,12 @@ impl MacroData {
             for trig in &search.macros {
                 match &trig.trigger {
                     TriggerEventType::KeyPressEvent { data } => {
-                        let temp = data.iter().for_each(|x| {
-                            let temp2 = hid_table::SCANCODE_MAP[&x.keypress];
-                        });
+                        trigger_hash_list.insert(data.clone(), trig.clone());
                     }
                 }
             }
         }
+        println!("{:#?}", trigger_hash_list);
     }
 }
 
@@ -275,6 +268,8 @@ pub fn run_this(config: &ApplicationConfig) {
 
     // Serve to the frontend.
     push_frontend_first();
+
+    testing_macro_full.extract_triggers();
 
 
     //TODO: make this a grab instead of listen
