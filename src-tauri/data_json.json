@@ -4,7 +4,7 @@
     "icon": "i",
     "macros": [
       {
-        "name": "Paste",
+        "name": "TESTING THIS",
         "sequence": [
           {
             "KeyPressEvent": {
@@ -28,6 +28,10 @@
             "data": [
               {
                 "keypress": 14,
+                "press_duration": 50
+              },
+              {
+                "keypress": 16,
                 "press_duration": 50
               }
             ]
