@@ -20,14 +20,14 @@ function Overview({collections}: Props) {
     useEffect(() => {
         for (let i = 0; i < collections.length; i++) {
             const collection = collections[i];
-            if (collection.isActive) {
+            if (collection.active) {
                 setCollectionIndex(i)
             }
         }
     }, [])
 
     const onAddCollectionButtonPress = () => {
-        collections.push({name: collectionName, isActive: false, macros: [], icon:""})
+        collections.push({name: collectionName, active: false, macros: [], icon:""})
         onCloseNewCollection()
     }
 
@@ -39,9 +39,9 @@ function Overview({collections}: Props) {
         for (let i = 0; i < collections.length; i++) {
             const collection = collections[i];
             if (i == newActiveIndex) {
-                collection.isActive = true
+                collection.active = true
             } else {
-                collection.isActive = false
+                collection.active = false
             }
         }
 
@@ -55,7 +55,7 @@ function Overview({collections}: Props) {
 
     const onCollectionDelete = () => {
         collections.splice(collectionIndex, 1)
-        collections[0].isActive = true
+        collections[0].active = true
         setCollectionIndex(0)
     }
 

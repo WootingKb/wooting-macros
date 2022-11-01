@@ -1,17 +1,13 @@
 export interface Macro {
     name: string,
-    isActive: boolean,
-    trigger: string[]
+    active: boolean,
+    trigger: TriggerEventType,
     sequence: any,
 }
 
-// need to unify with backend on types
-// need easy way to get trigger keys
-// currently backend has TriggerEventType as a single keypress event, but we need up to 4 keys
-
 export interface Collection {
     name: string,
-    isActive: boolean,
+    active: boolean,
     macros: Macro[],
     icon: string,
 }
@@ -21,9 +17,8 @@ export interface Keypress {
     press_duration: number
 }
 
-
 export type TriggerEventType = 
-| {type: "KeyPressEvent", data: Keypress}
+| {type: "KeyPressEvent", data: Keypress[]}
 
 export type ActionEventType =
 | {type: "KeyPressEvent", data: Keypress}
