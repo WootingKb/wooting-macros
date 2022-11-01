@@ -41,6 +41,7 @@ type Delay = u32;
 //TODO: Make a hashmap that links to trigger:&macro
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type")]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
@@ -54,6 +55,7 @@ pub enum ActionEventType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type")]
 pub enum TriggerEventType {
     KeyPressEvent { data: Vec<KeyPress> },
 }
@@ -75,6 +77,11 @@ pub struct Macro {
     active: bool,
 }
 
+
+// get_configuration(): string
+// set_configuration(string)
+
+
 #[tauri::command]
 pub fn export_frontend(data: MacroData) -> String {
     let data_return = data.export_data();
@@ -82,12 +89,13 @@ pub fn export_frontend(data: MacroData) -> String {
 }
 
 #[tauri::command]
-pub fn push_frontend_first() -> Result<String, String> {
+pub fn push_frontend_first() -> MacroData {
     let path = "./data_json.json";
     let data = fs::read_to_string(path).expect("Unable to read file");
-    let res: serde_json::Value = serde_json::from_str(&data).expect("Unable to parse");
+    let res = serde_json::from_str::<MacroData>(&data).expect("Unable to parse");
 
-    Ok(res.to_string())
+    // serde_json::to_string(&res).expect("Unable to serialize")
+    res
 }
 
 fn push_backend_first() -> MacroData {

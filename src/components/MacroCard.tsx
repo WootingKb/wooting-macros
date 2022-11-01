@@ -49,9 +49,9 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
       </Flex>
       {/** Trigger Display */}
       <Flex w="100%" gap="4px">
-        {/* {trigger?.data.map((key:Keypress, index:number) =>
+        {trigger?.data.map((key:Keypress, index:number) =>
           <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
-        )} */}
+        )}
       </Flex>
       <Divider/>
       {/** Misc */}

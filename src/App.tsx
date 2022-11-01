@@ -13,11 +13,13 @@ function App() {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    invoke<string>("push_frontend_first").then((res) => {
-      let temp:Collection[] = JSON.parse(res)
-      setCollections(temp)
+    invoke<Collection[]>("push_frontend_first").then((res) => {
 
-      if (collections.length == 0) {
+      // let temp:Collection[] = JSON.parse(res)
+      console.log(res)
+      setCollections(res)
+
+      if (res.length == 0) {
         setCollections([
           {name:"Default", icon: "i", active: true, macros:[]}
         ])

@@ -7,17 +7,21 @@ enum HidCategory {
 }
 
 export interface HidInfo {
+  // -> HID Number 
   byte: number
+  // -> displayName
   id: string
+  webKeyId: string
+
+  // DELETE
   category: HidCategory
   icon?: string
-  vkCode: number
-  webKeyId: string
+  vkCode?: number
 }
 
 export class Hid {
-  static get A(): HidInfo { return {byte: 1, id: 'A', category: HidCategory.General, vkCode: 65, webKeyId: "KeyA" } }
-  static get B(): HidInfo { return {byte: 2, id: 'B', category: HidCategory.General, vkCode: 66, webKeyId: "KeyB" } }
+  static get A(): HidInfo { return {byte: 4, id: 'A', category: HidCategory.General, webKeyId: "KeyA" } }
+  static get B(): HidInfo { return {byte: 2, id: 'B', category: HidCategory.General, webKeyId: "KeyB" } }
   static get C(): HidInfo { return {byte: 3, id: 'C', category: HidCategory.General, vkCode: 67, webKeyId: "KeyC" } }
   static get D(): HidInfo { return {byte: 4, id: 'D', category: HidCategory.General, vkCode: 68, webKeyId: "KeyD" } }
   static get E(): HidInfo { return {byte: 5, id: 'E', category: HidCategory.General, vkCode: 69, webKeyId: "KeyE" } }
@@ -243,6 +247,6 @@ export const webCodeHIDLookup = new Map<string, HidInfo>(
 )
 export const HIDLookup = new Map<number, HidInfo>(
   Hid.all
-    .filter(hid => hid.vkCode !== undefined)
-    .map(hid => [hid.vkCode!, hid])
+    .filter(hid => hid.byte !== undefined)
+    .map(hid => [hid.byte!, hid])
 )
