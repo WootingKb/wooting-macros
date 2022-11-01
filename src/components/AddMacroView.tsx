@@ -1,9 +1,9 @@
 import { Input, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Alert, AlertIcon, AlertTitle, AlertDescription, Kbd } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { EditIcon } from '@chakra-ui/icons'
 import { Link, useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
 import { Collection, Keypress } from "../types";
-import { HidInfo, webCodeHIDLookup } from '../HIDmap';
+import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 
 type Props = {
   collections: Collection[]
@@ -19,7 +19,11 @@ const AddMacroView = ({collections}: Props) => {
     const addTriggerKey = (event:any) => {
         event.preventDefault()
         console.log(event)
-        let keypress:Keypress = { keypress:event.code, press_duration:0}
+        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        if (HIDcode == undefined) { return }
+
+        let keypress:Keypress = { keypress:HIDcode, press_duration:0}
+
         setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
         if (triggerKeys.length == 3) { setRecording(false) }
     }
@@ -82,7 +86,7 @@ const AddMacroView = ({collections}: Props) => {
             </VStack>
             <HStack spacing="4px">
                 {triggerKeys.map((key:Keypress, index:number) => 
-                    <Kbd key={index}>{webCodeHIDLookup.get(key.keypress.toString())?.id}</Kbd>
+                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
                 )}
             </HStack>
         </VStack>

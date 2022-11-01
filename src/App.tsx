@@ -28,7 +28,7 @@ function App() {
     }).catch(e => {
       console.error(e)
     })
-  }, [collections])
+  }, [])
 
   // Loading State is required, since getting data from the backend is async - Update Loading Screen
   if (isLoading) {

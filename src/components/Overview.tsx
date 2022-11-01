@@ -27,7 +27,7 @@ function Overview({collections}: Props) {
     }, [])
 
     const onAddCollectionButtonPress = () => {
-        collections.push({name: collectionName, active: false, macros: [], icon:""})
+        collections.push({active: false, icon:"i", macros: [], name: collectionName })
         onCloseNewCollection()
     }
 

@@ -1,8 +1,9 @@
-import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
+import { Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { Keypress, Macro } from '../types'
+import { Keypress, Macro, TriggerEventType } from '../types'
 import { Link } from 'wouter'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { HIDLookup } from '../HIDmap';
 
 type Props = {
   macro: Macro
@@ -12,11 +13,14 @@ type Props = {
 }
 
 function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
+  const [trigger, setTrigger] = useState<TriggerEventType>()
 
   useEffect(() => {
     console.log(macro)
     console.log(macro.trigger)
-    console.log(macro.trigger.data)
+    setTrigger(macro.trigger)
+    let temp:Keypress[] = macro.trigger.data
+    console.log(temp)
   }, [])
 
   const onToggle = (event:any) => {
@@ -45,9 +49,8 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
       </Flex>
       {/** Trigger Display */}
       <Flex w="100%" gap="4px">
-        {/* {macro.trigger.data.toString()} */}
-        {/* {macro.trigger.data.map((element:Keypress, index:number) =>
-          <Kbd key={index}>{element.keypress}</Kbd>
+        {/* {trigger?.data.map((key:Keypress, index:number) =>
+          <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
         )} */}
       </Flex>
       <Divider/>

@@ -3,7 +3,7 @@ import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import { Link, useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
 import { Collection, Keypress, Macro } from "../types";
-import { webCodeHIDLookup } from '../HIDmap';
+import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 
 type Props = {
   collections: Collection[]
@@ -31,7 +31,13 @@ const EditMacroView = ({collections}: Props) => {
 
     const addTriggerKey = (event:any) => {
         event.preventDefault()
-        setTriggerKeys(triggerKeys => [...triggerKeys, event.key])
+
+        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        if (HIDcode == undefined) { return }
+
+        let keypress:Keypress = { keypress:HIDcode, press_duration:0}
+
+        setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
         if (triggerKeys.length == 3) { setRecording(false) }
     }
 
@@ -94,7 +100,7 @@ const EditMacroView = ({collections}: Props) => {
             </VStack>
             <HStack spacing="4px">
                 {triggerKeys.map((key:Keypress, index:number) => 
-                    <Kbd key={index}>{webCodeHIDLookup.get(key.keypress.toString())?.id}</Kbd>
+                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
                 )}
             </HStack>
         </VStack>

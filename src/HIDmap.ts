@@ -117,7 +117,17 @@ export class Hid {
   static get NUMSUBTRACT(): HidInfo { return {byte: 92, id: 'Numpad Subtract', category: HidCategory.Numpad, vkCode: 109, webKeyId: "NumpadSubtract" } }
   static get NUMADD(): HidInfo { return {byte: 93, id: 'Numpad Add', category: HidCategory.Numpad, vkCode: 107, webKeyId: "NumpadAdd" } }
   static get NUMENTER(): HidInfo { return {byte: 94, id: 'Numpad Enter', category: HidCategory.Numpad, vkCode: 13, webKeyId: "NumpadEnter" } }
-  static get NUMDECIMAL(): HidInfo { return {byte: 95, id: 'Numpad Decimal', category: HidCategory.Numpad, vkCode: 46, webKeyId: "NumpadDecimal" } }
+  static get NUMDECIMAL(): HidInfo { return {byte: 95, id: 'Numpad Decimal', category: HidCategory.Numpad, vkCode: 110, webKeyId: "NumpadDecimal" } }
+
+  static get SHIFTL(): HidInfo { return {byte: 96, id: 'Left Shift', category: HidCategory.LeftModifier, vkCode: 16, webKeyId: "ShiftLeft" } }
+  static get CONTROLL(): HidInfo { return {byte: 97, id: 'Left Control', category: HidCategory.LeftModifier, vkCode: 17, webKeyId: "ControlLeft" } }
+  static get ALTL(): HidInfo { return {byte: 98, id: 'Left Alt', category: HidCategory.LeftModifier, vkCode: 18, webKeyId: "AltLeft" } }
+  static get METAL(): HidInfo { return {byte: 99, id: 'Left Meta', category: HidCategory.LeftModifier, vkCode: 91, webKeyId: "MetaLeft" } }
+
+  static get SHIFTR(): HidInfo { return {byte: 100, id: 'Right Shift', category: HidCategory.RightModifier, vkCode: 16, webKeyId: "ShiftRight" } }
+  static get CONTROLR(): HidInfo { return {byte: 101, id: 'Right Control', category: HidCategory.RightModifier, vkCode: 17, webKeyId: "ControlRight" } }
+  static get ALTR(): HidInfo { return {byte: 102, id: 'Right Alt', category: HidCategory.RightModifier, vkCode: 18, webKeyId: "AltRight" } }
+  static get METAR(): HidInfo { return {byte: 103, id: 'Right Meta', category: HidCategory.RightModifier, vkCode: 92, webKeyId: "MetaRight" } }
 
   static readonly all: HidInfo[] = [
     Hid.A,
@@ -215,6 +225,14 @@ export class Hid {
     Hid.NUMADD,
     Hid.NUMENTER,
     Hid.NUMDECIMAL,
+    Hid.SHIFTL,
+    Hid.CONTROLL,
+    Hid.ALTL,
+    Hid.METAL,
+    Hid.SHIFTR,
+    Hid.CONTROLR,
+    Hid.ALTR,
+    Hid.METAR,
   ]
 }
 
@@ -222,4 +240,9 @@ export const webCodeHIDLookup = new Map<string, HidInfo>(
   Hid.all
     .filter(hid => hid.webKeyId !== undefined)
     .map(hid => [hid.webKeyId!, hid])
+)
+export const HIDLookup = new Map<number, HidInfo>(
+  Hid.all
+    .filter(hid => hid.vkCode !== undefined)
+    .map(hid => [hid.vkCode!, hid])
 )
