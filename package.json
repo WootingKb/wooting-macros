@@ -12,10 +12,10 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/react": "^2.3.6",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@tauri-apps/api": "^1.1.0",
-    "framer-motion": "^6",
+    "framer-motion": "^7.6.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "wouter": "^2.8.0-alpha.2"

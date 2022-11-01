@@ -19,7 +19,7 @@ const AddMacroView = ({collections}: Props) => {
     const addTriggerKey = (event:any) => {
         event.preventDefault()
         console.log(event)
-        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
         if (HIDcode == undefined) { return }
 
         let keypress:Keypress = { keypress:HIDcode, press_duration:0}
@@ -86,7 +86,7 @@ const AddMacroView = ({collections}: Props) => {
             </VStack>
             <HStack spacing="4px">
                 {triggerKeys.map((key:Keypress, index:number) => 
-                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
+                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
                 )}
             </HStack>
         </VStack>
