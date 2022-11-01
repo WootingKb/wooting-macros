@@ -1,7 +1,9 @@
-import { Box, Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
+import { Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { Macro } from '../types'
+import { Keypress, Macro, TriggerEventType } from '../types'
 import { Link } from 'wouter'
+import { useEffect, useState } from 'react'
+import { HIDLookup } from '../HIDmap';
 
 type Props = {
   macro: Macro
@@ -11,9 +13,18 @@ type Props = {
 }
 
 function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
+  const [trigger, setTrigger] = useState<TriggerEventType>()
+
+  useEffect(() => {
+    console.log(macro)
+    console.log(macro.trigger)
+    setTrigger(macro.trigger)
+    let temp:Keypress[] = macro.trigger.data
+    console.log(temp)
+  }, [])
 
   const onToggle = (event:any) => {
-    macro.isActive = event.target.checked
+    macro.active = event.target.checked
   }
 
   return (
@@ -38,8 +49,8 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
       </Flex>
       {/** Trigger Display */}
       <Flex w="100%" gap="4px">
-        {macro.trigger.map((element:string, index:number) =>
-          <Kbd key={index}>{element}</Kbd>
+        {trigger?.data.map((key:Keypress, index:number) =>
+          <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
         )}
       </Flex>
       <Divider/>
@@ -48,7 +59,7 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
         <Link href={"/editview/" + collectionIndex + "/" + index.toString()}>
           <Button leftIcon={<EditIcon />}>Edit</Button>
         </Link>
-        <Switch defaultChecked={macro.isActive} onChange={onToggle}/>
+        <Switch defaultChecked={macro.active} onChange={onToggle}/>
       </Flex>
     </VStack>
   )

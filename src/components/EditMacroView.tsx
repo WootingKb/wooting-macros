@@ -2,7 +2,8 @@ import { Input, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Al
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import { Link, useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
-import { Collection, Macro } from "../types";
+import { Collection, Keypress, Macro } from "../types";
+import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 
 type Props = {
   collections: Collection[]
@@ -12,7 +13,7 @@ const EditMacroView = ({collections}: Props) => {
     const [match, params] = useRoute("/editview/:cid/:mid");
     const [recording, setRecording] = useState(false)
     const [macroName, setMacroName] = useState("")
-    const [triggerKeys, setTriggerKeys] = useState<string[]>([])
+    const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [location, setLocation] = useLocation();
 
     let macro:Macro
@@ -21,7 +22,7 @@ const EditMacroView = ({collections}: Props) => {
         if (match) {
             macro = collections[parseInt(params.cid)].macros[parseInt(params.mid)]
             setMacroName(macro.name)
-            setTriggerKeys(macro.trigger)
+            setTriggerKeys(macro.trigger.data)
         } else {
             // return to home, but this should not be triggered
             setLocation("/")
@@ -29,7 +30,14 @@ const EditMacroView = ({collections}: Props) => {
     }, [])
 
     const addTriggerKey = (event:any) => {
-        setTriggerKeys(triggerKeys => [...triggerKeys, event.key])
+        event.preventDefault()
+
+        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        if (HIDcode == undefined) { return }
+
+        let keypress:Keypress = { keypress:HIDcode, press_duration:0}
+
+        setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
         if (triggerKeys.length == 3) { setRecording(false) }
     }
 
@@ -52,7 +60,7 @@ const EditMacroView = ({collections}: Props) => {
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, isActive: true, trigger: triggerKeys, sequence: ""}
+            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: ""}
         }
         setLocation("/")
     }
@@ -91,8 +99,8 @@ const EditMacroView = ({collections}: Props) => {
                 }
             </VStack>
             <HStack spacing="4px">
-                {triggerKeys.map((key:string, index:number) => 
-                    <Kbd key={index}>{key}</Kbd>
+                {triggerKeys.map((key:Keypress, index:number) => 
+                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
                 )}
             </HStack>
         </VStack>

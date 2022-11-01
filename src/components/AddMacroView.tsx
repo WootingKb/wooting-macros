@@ -1,8 +1,9 @@
 import { Input, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Alert, AlertIcon, AlertTitle, AlertDescription, Kbd } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { EditIcon } from '@chakra-ui/icons'
 import { Link, useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
-import { Collection, Macro } from "../types";
+import { Collection, Keypress } from "../types";
+import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 
 type Props = {
   collections: Collection[]
@@ -12,11 +13,18 @@ const AddMacroView = ({collections}: Props) => {
     const [match, params] = useRoute("/macroview/:cid");
     const [recording, setRecording] = useState(false)
     const [macroName, setMacroName] = useState("Macro Name")
-    const [triggerKeys, setTriggerKeys] = useState<string[]>([])
+    const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [location, setLocation] = useLocation();
 
     const addTriggerKey = (event:any) => {
-        setTriggerKeys(triggerKeys => [...triggerKeys, event.key])
+        event.preventDefault()
+        console.log(event)
+        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        if (HIDcode == undefined) { return }
+
+        let keypress:Keypress = { keypress:HIDcode, press_duration:0}
+
+        setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
         if (triggerKeys.length == 3) { setRecording(false) }
     }
 
@@ -39,7 +47,7 @@ const AddMacroView = ({collections}: Props) => {
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros.push({name: macroName, isActive: true, trigger: triggerKeys, sequence: ""})
+            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: ""})
         }
         setLocation("/")
     }
@@ -77,8 +85,8 @@ const AddMacroView = ({collections}: Props) => {
                 }
             </VStack>
             <HStack spacing="4px">
-                {triggerKeys.map((key:string, index:number) => 
-                    <Kbd key={index}>{key}</Kbd>
+                {triggerKeys.map((key:Keypress, index:number) => 
+                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
                 )}
             </HStack>
         </VStack>
