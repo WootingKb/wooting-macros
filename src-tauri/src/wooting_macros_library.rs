@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
 use std::hash::Hash;
+use std::intrinsics::truncf32;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::sync::RwLock;
@@ -110,12 +111,16 @@ fn check_key(incoming_key: &Key) {
     let app_state = APPLICATION_STATE.data.read().unwrap();
 
     for collections in &app_state.0 {
-        for macros in &collections.macros {
-            match &macros.trigger {
-                TriggerEventType::KeyPressEvent { data: trigger } => {
-                    for i in trigger {
-                        if SCANCODE_MAP[&i.keypress] == *incoming_key {
-                            println!("FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}", macros.name)
+        if collections.active == true {
+            for macros in &collections.macros {
+                if macros.active == true {
+                    match &macros.trigger {
+                        TriggerEventType::KeyPressEvent { data: trigger } => {
+                            for i in trigger {
+                                if SCANCODE_MAP[&i.keypress] == *incoming_key {
+                                    println!("FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}", macros.name)
+                                }
+                            }
                         }
                     }
                 }
