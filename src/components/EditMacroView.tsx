@@ -1,9 +1,9 @@
-import { Input, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Alert, AlertIcon, AlertTitle, AlertDescription, Kbd } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
-import { Link, useLocation, useRoute } from 'wouter';
 import { useEffect, useState } from 'react';
+import { Link, useLocation, useRoute } from 'wouter';
 import { Collection, Keypress, Macro } from "../types";
 import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
+import { Input, Button, Flex, HStack, VStack, Text, Alert, AlertIcon, Kbd } from '@chakra-ui/react'
+import { EditIcon } from '@chakra-ui/icons'
 
 type Props = {
   collections: Collection[]
@@ -16,10 +16,9 @@ const EditMacroView = ({collections}: Props) => {
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [location, setLocation] = useLocation();
 
-    let macro:Macro
-
     useEffect(() => {
         if (match) {
+            let macro:Macro
             macro = collections[parseInt(params.cid)].macros[parseInt(params.mid)]
             setMacroName(macro.name)
             setTriggerKeys(macro.trigger.data)
@@ -32,10 +31,10 @@ const EditMacroView = ({collections}: Props) => {
     const addTriggerKey = (event:any) => {
         event.preventDefault()
 
-        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
         if (HIDcode == undefined) { return }
 
-        let keypress:Keypress = { keypress:HIDcode, press_duration:0}
+        let keypress:Keypress = { keypress:HIDcode, press_duration:0 }
 
         setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
         if (triggerKeys.length == 3) { setRecording(false) }
@@ -45,23 +44,23 @@ const EditMacroView = ({collections}: Props) => {
         if (!recording) { return }
         // Does not get mouse input for trigger        
         window.addEventListener("keydown", addTriggerKey, false)
+        // TODO: stop backend trigger listening
         return () => {
             window.removeEventListener("keydown", addTriggerKey, false)
+            // TODO: start backend trigger listening
         }
     }, [addTriggerKey])
 
     const onRecordButtonPress = () => {
-        if (!recording) {
-            setTriggerKeys([])
-        }
-        
+        if (!recording) { setTriggerKeys([]) }
         setRecording(!recording)
     }
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: ""}
+            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
         }
+        // update backend here
         setLocation("/")
     }
 
@@ -71,12 +70,9 @@ const EditMacroView = ({collections}: Props) => {
 
     return (
         <VStack minH="100vh" spacing="16px">
+            {/** Header */}
             <HStack w="100%" p="4" borderBottom="1px">
-                <Link href='/'>
-                    <Button>
-                        Back
-                    </Button>
-                </Link>
+                <Link href='/'><Button>Back</Button></Link>
                 <Flex w="100%" justifyContent="space-between">
                     <Flex w="100%" gap="8px">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">

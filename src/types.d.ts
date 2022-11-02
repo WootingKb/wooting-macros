@@ -14,7 +14,7 @@ export interface Macro {
     name: string,
     active: boolean,
     trigger: TriggerEventType,
-    sequence: any,
+    sequence: ActionEventType[],
 }
 
 export interface Collection {

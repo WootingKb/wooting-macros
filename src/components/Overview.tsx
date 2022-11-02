@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import MacroCard from "./MacroCard";
 import { Collection, Macro } from "../types";
 import { Link } from 'wouter';
 import CollectionButton from './CollectionButton';
+import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
+import { AddIcon, EditIcon } from '@chakra-ui/icons'
 
 type Props = {
     collections: Collection[]
@@ -28,11 +28,13 @@ function Overview({collections}: Props) {
 
     const onAddCollectionButtonPress = () => {
         collections.push({active: false, icon:"i", macros: [], name: collectionName })
+        // update backend here
         onCloseNewCollection()
     }
 
     const onCollectionNameChange = (event:any) => {
         setCollectionName(event.target.value)
+        // update backend here
     }
 
     const onCollectionButtonPress = (newActiveIndex:number) => {
@@ -51,17 +53,20 @@ function Overview({collections}: Props) {
     const onRenameCollection = () => {
         collections[collectionIndex].name = collectionName
         onCloseRenameCollection()
+        // update backend here
     }
 
     const onCollectionDelete = () => {
         collections.splice(collectionIndex, 1)
         collections[0].active = true
         setCollectionIndex(0)
+        // update backend here
     }
 
     const onMacroDelete = (macroIndex:number) => {
         collections[collectionIndex].macros.splice(macroIndex, 1)
         setCollectionName("reset")
+        // update backend here
     }
 
     return (
