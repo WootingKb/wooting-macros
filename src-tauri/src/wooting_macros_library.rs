@@ -166,11 +166,11 @@ impl MacroDataState {
 }
 
 
-type Collections = Vec<Collection>;
+//type Collections = Vec<Collection>;
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct MacroData(pub Collections);
+pub struct MacroData(pub Vec<Collection>);
 
 
 impl MacroData {
