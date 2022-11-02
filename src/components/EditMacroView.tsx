@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useRoute } from 'wouter';
 import { Collection, Keypress, Macro } from "../types";
 import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
@@ -28,7 +28,7 @@ const EditMacroView = ({collections}: Props) => {
         }
     }, [])
 
-    const addTriggerKey = (event:any) => {
+    const addTriggerKey = (event:KeyboardEvent) => {
         event.preventDefault()
 
         let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
@@ -64,7 +64,7 @@ const EditMacroView = ({collections}: Props) => {
         setLocation("/")
     }
 
-    const onMacroNameChange = (event:any) => {
+    const onMacroNameChange = (event:BaseSyntheticEvent) => {
         setMacroName(event.target.value)
     }
 

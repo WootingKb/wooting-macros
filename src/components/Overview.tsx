@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import MacroCard from "./MacroCard";
 import { Collection, Macro } from "../types";
 import { Link } from 'wouter';
@@ -16,6 +16,7 @@ function Overview({collections}: Props) {
     const { isOpen: isOpenRenameCollection, onOpen: onOpenRenameCollection, onClose: onCloseRenameCollection } = useDisclosure()
     const [collectionName, setCollectionName] = useState("")
     const [collectionIndex, setCollectionIndex] = useState(0)
+    const [canUseCollectionName, setCanUseCollectionName] = useState(false)
 
     useEffect(() => {
         for (let i = 0; i < collections.length; i++) {
@@ -32,9 +33,19 @@ function Overview({collections}: Props) {
         onCloseNewCollection()
     }
 
-    const onCollectionNameChange = (event:any) => {
-        setCollectionName(event.target.value)
-        // update backend here
+    const onCollectionNameChange = (event:BaseSyntheticEvent) => {
+        let newName:string = event.target.value
+        newName = newName.trim()
+
+        setCollectionName(newName)
+        for (let i = 0; i < collections.length; i++) {
+            const collection = collections[i];
+            if (collection.name.toUpperCase() === newName.toUpperCase()) {
+                setCanUseCollectionName(false)
+                return
+            }
+        }
+        setCanUseCollectionName(true)
     }
 
     const onCollectionButtonPress = (newActiveIndex:number) => {
@@ -124,7 +135,7 @@ function Overview({collections}: Props) {
                 <ModalHeader>Create New Collection</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Input variant='unstyled' placeholder='Collection Name' isRequired onChange={onCollectionNameChange}/>
+                    <Input variant='unstyled' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder='Collection Name'/>
                 </ModalBody>
                 <ModalFooter>
                     <Button mr={3} onClick={onCloseNewCollection}>
@@ -141,7 +152,7 @@ function Overview({collections}: Props) {
                 <ModalHeader>Rename Collection</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Input variant='unstyled' isRequired onChange={onCollectionNameChange} placeholder={collections[collectionIndex].name}/>
+                    <Input variant='flushed' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder={collections[collectionIndex].name}/>
                 </ModalBody>
                 <ModalFooter>
                     <Button mr={3} onClick={onCloseRenameCollection}>
