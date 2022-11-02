@@ -1,4 +1,5 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
+import { invoke } from "@tauri-apps/api/tauri";
 import MacroCard from "./MacroCard";
 import { Collection, Macro } from "../types";
 import { Link } from 'wouter';
@@ -28,8 +29,14 @@ function Overview({collections}: Props) {
     }, [])
 
     const onAddCollectionButtonPress = () => {
+        console.log("add collection button pressed")
         collections.push({active: false, icon:"i", macros: [], name: collectionName })
         // update backend here
+        invoke("set_configuration", { frontendData: collections }).then((res) => {
+            console.log(res)
+        }).catch(e => {
+        console.error(e)
+        })
         onCloseNewCollection()
     }
 

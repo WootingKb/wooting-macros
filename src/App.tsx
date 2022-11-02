@@ -9,22 +9,13 @@ import EditMacroView from "./components/EditMacroView";
 import {Collection} from "./types";
 
 function App() {
-    const [collections, setCollections] = useState<Collection[]>([])
-    const [isLoading, setLoading] = useState(true);
+  const [collections, setCollections] = useState<Collection[]>([])
+  const [isLoading, setLoading] = useState(true);
 
-    useEffect(() => {
-        invoke<Collection[]>("get_configuration").then((res) => {
-
-            // let temp:Collection[] = JSON.parse(res)
-            console.log(res)
-            setCollections(res)
-
-            if (res.length == 0) {
-                setCollections([
-                    {name: "Default", icon: "i", active: true, macros: []}
-                ])
-                // update backend
-      }
+  useEffect(() => {
+    invoke<Collection[]>("get_configuration").then((res) => {
+      console.log(res)
+      setCollections(res)
 
       setLoading(false)
     }).catch(e => {
