@@ -23,9 +23,9 @@ pub enum MacroType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-struct KeyPress {
-    keypress: u32,
-    press_duration: Delay,
+pub struct KeyPress {
+    pub keypress: u32,
+    pub press_duration: Delay,
 }
 
 impl KeyPress {
@@ -37,7 +37,7 @@ impl KeyPress {
 }
 
 ///Delay for the sequence
-type Delay = u32;
+pub type Delay = u32;
 
 //TODO: Make a hashmap that links to trigger:&macro
 
@@ -62,7 +62,7 @@ pub enum TriggerEventType {
 }
 
 #[derive(Debug, Clone)]
-struct EventList(Vec<rdev::Key>);
+pub struct EventList(Vec<rdev::Key>);
 
 #[derive(Debug, Clone)]
 pub struct Action {
@@ -72,20 +72,25 @@ pub struct Action {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Macro {
-    name: String,
-    sequence: Vec<ActionEventType>,
-    trigger: TriggerEventType,
-    active: bool,
+    pub name: String,
+    pub sequence: Vec<ActionEventType>,
+    pub trigger: TriggerEventType,
+    pub active: bool,
 }
 
 
 #[tauri::command]
+//TODO: rename to get_configuration
 pub fn get_configuration() -> MacroData {
-    MacroData::initialize_backend()
+    MacroData::read_data()
 }
 
 #[tauri::command]
-pub fn set_configuration(input: MacroData) {}
+//TODO: rename to set_configuration
+pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
+    let mut state_guard = state.data.write().unwrap();
+    *state_guard = frontend_data;
+}
 
 // pub fn export_frontend(data: MacroData) -> String {
 //     let data_return = data.export_data();
@@ -116,9 +121,11 @@ pub fn set_configuration(input: MacroData) {}
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct MacroData(Vec<Collection>);
+pub struct MacroData(pub Vec<Collection>);
 
-pub struct MacroDataState(pub RwLock<MacroData>);
+pub struct MacroDataState {
+    pub data: RwLock<MacroData>,
+}
 
 impl MacroData {
     // /// This exports data for the frontend to process it.
@@ -158,8 +165,10 @@ impl MacroData {
     //     trigger_hash_list
     // }
 
-    pub fn initialize_backend() -> MacroData {
+    pub fn read_data() -> MacroData {
         let path = "./data_json.json";
+
+        //TODO: Make this create a new file when needed.
         let data = fs::read_to_string(path).unwrap();
 
         let deserialized: MacroData = serde_json::from_str(&data).unwrap();
@@ -168,15 +177,15 @@ impl MacroData {
 }
 
 ///Hash list
-type TriggerHash<'a> = HashMap<Vec<KeyPress>, &'a Macro>;
+pub type TriggerHash<'a> = HashMap<Vec<KeyPress>, &'a Macro>;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
-    name: String,
+    pub name: String,
     //TODO: base64 encoding
-    icon: String,
-    macros: Vec<Macro>,
-    active: bool,
+    pub icon: String,
+    pub macros: Vec<Macro>,
+    pub active: bool,
 }
 
 ///Main loop for now (of the library)
@@ -220,7 +229,7 @@ pub fn run_this(config: &ApplicationConfig) {
     //testing_macro_full.export_data();
 
     // Get data from the config file.
-    let mut testing_macro_full: MacroData = MacroData::initialize_backend();
+    let mut testing_macro_full: MacroData = MacroData::read_data();
 
     // // Serve to the frontend.
     // push_frontend_first();
