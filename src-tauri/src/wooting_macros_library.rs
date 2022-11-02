@@ -11,7 +11,7 @@ use std::time::Duration;
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
-use tauri::State;
+use tauri::{Config, State};
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
@@ -80,7 +80,6 @@ pub struct Macro {
     pub active: bool,
 }
 
-
 #[tauri::command]
 /// Gets the configuration from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
@@ -93,12 +92,15 @@ pub fn get_configuration(state: tauri::State<MacroDataState>) -> MacroData {
 /// Sets the configuration from frontend and updates the state for everything on backend.
 pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: Vec<Collection>) {
     let mut tauri_state = state.data.write().unwrap();
-    *tauri_state = MacroData { 0: frontend_data.clone() };
+    *tauri_state = MacroData {
+        0: frontend_data.clone(),
+    };
     tauri_state.export_data();
 
-
     let mut app_state = APPLICATION_STATE.data.write().unwrap();
-    *app_state = MacroData { 0: frontend_data.clone() };
+    *app_state = MacroData {
+        0: frontend_data.clone(),
+    };
 }
 
 /// Function for a manual write of config changes from the backend side. Just a test.
@@ -120,7 +122,10 @@ fn check_key(incoming_key: &Key) {
                         TriggerEventType::KeyPressEvent { data: trigger } => {
                             for i in trigger {
                                 if SCANCODE_MAP[&i.keypress] == *incoming_key {
-                                    println!("FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}", macros.name)
+                                    println!(
+                                        "FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}",
+                                        macros.name
+                                    )
                                 }
                             }
                         }
@@ -160,21 +165,23 @@ fn check_key(incoming_key: &Key) {
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct MacroDataState {
     pub data: RwLock<MacroData>,
+    pub config: RwLock<ApplicationConfig>,
 }
 
 impl MacroDataState {
     pub fn new() -> Self {
-        MacroDataState { data: RwLock::from(MacroData::read_data()) }
+        MacroDataState {
+            data: RwLock::from(MacroData::read_data()),
+            config: RwLock::from(ApplicationConfig::read_data()),
+        }
     }
 }
-
 
 //type Collections = Vec<Collection>;
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct MacroData(pub Vec<Collection>);
-
 
 impl MacroData {
     /// This exports data for the frontend to process it.
@@ -222,17 +229,17 @@ impl MacroData {
             active: true,
         }]);
 
-
         //TODO: Make this create a new file when needed.
         let data = {
             match fs::read_to_string(path) {
-                Ok(T) => { T }
+                Ok(T) => T,
                 Err(E) => {
                     println!("{}", E);
                     std::fs::write(
                         "../data_json.json",
                         serde_json::to_string_pretty(&incoming_test).unwrap(),
-                    ).unwrap();
+                    )
+                        .unwrap();
 
                     let output = fs::read_to_string(path).unwrap();
                     println!("{}", output);
@@ -246,7 +253,6 @@ impl MacroData {
         deserialized
     }
 }
-
 
 ///Hash list
 pub type TriggerHash<'a> = HashMap<Vec<KeyPress>, &'a Macro>;
@@ -299,7 +305,10 @@ pub fn run_this(config: &ApplicationConfig) {
     //testing_macro_full.export_data();
 
     // Get data from the config file.
-    println!("READING DATA ORIGINAL:\n{:#?}\n====\nORIGINAL FILE READ.", APPLICATION_STATE.data.read().unwrap());
+    println!(
+        "READING DATA ORIGINAL:\n{:#?}\n====\nORIGINAL FILE READ.",
+        APPLICATION_STATE.data.read().unwrap()
+    );
 
     //println!("WRITING DATA");
 
@@ -307,7 +316,6 @@ pub fn run_this(config: &ApplicationConfig) {
     //set_data_write_manually_backend(incoming_test);
 
     //println!("READING MODIFIED DATA:\n{:#?}\n====\nMODIFIED FILE READ.", APPLICATION_STATE.data.read().unwrap());
-
 
     // let mut testing_macro_full: MacroData = get_configuration(APPLICATION_STATE);
     // println!("{:#?}", testing_macro_full);
@@ -322,6 +330,11 @@ pub fn run_this(config: &ApplicationConfig) {
     //println!("{:#?}", testing_macro_full);
 
     //println!("{:#?}", &APPLICATION_STATE.read().unwrap().data);
+
+    println!(
+        "PRINTING CONFIG:\n{:#?}",
+        APPLICATION_STATE.config.read().unwrap()
+    );
 
     //==================================================
 

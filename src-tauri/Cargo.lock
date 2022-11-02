@@ -216,20 +216,20 @@ version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "facdd04d55eac5647dbe190e85d8e858cd5a7b439f336469c36d4c33589e41ab"
 dependencies = [
- "async-trait",
- "bitflags",
- "bluez-async",
- "cocoa 0.24.0",
- "dashmap",
- "dbus",
- "futures",
- "libc",
- "log",
- "objc",
- "static_assertions",
- "thiserror",
- "tokio",
- "tokio-stream",
+    "async-trait",
+    "bitflags",
+    "bluez-async",
+    "cocoa 0.24.1",
+    "dashmap",
+    "dbus",
+    "futures",
+    "libc",
+    "log",
+    "objc",
+    "static_assertions",
+    "thiserror",
+    "tokio",
+    "tokio-stream",
  "uuid 0.8.2",
  "windows 0.33.0",
 ]
@@ -242,9 +242,9 @@ checksum = "572f695136211188308f16ad2ca5c851a712c464060ae6974944458eb83880ba"
 
 [[package]]
 name = "bytemuck"
-version = "1.12.1"
+version = "1.12.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f5715e491b5a1598fc2bef5a606847b5dc1d48ea625bd3c02c00de8285591da"
+checksum = "5aec14f5d4e6e3f927cd0c81f72e5710d95ee9019fbeb4b3021193867491bfd8"
 
 [[package]]
 name = "byteorder"
@@ -395,18 +395,18 @@ dependencies = [
 
 [[package]]
 name = "cocoa"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f63902e9223530efb4e26ccd0cf55ec30d592d3b42e21a28defc42a9586e832"
+checksum = "f425db7937052c684daec3bd6375c8abe2d146dca4b8b143d6db777c39138f3a"
 dependencies = [
- "bitflags",
- "block",
- "cocoa-foundation",
- "core-foundation 0.9.3",
- "core-graphics 0.22.3",
- "foreign-types",
- "libc",
- "objc",
+    "bitflags",
+    "block",
+    "cocoa-foundation",
+    "core-foundation 0.9.3",
+    "core-graphics 0.22.3",
+    "foreign-types",
+    "libc",
+    "objc",
 ]
 
 [[package]]
@@ -894,8 +894,8 @@ version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f82b0f4c27ad9f8bfd1f3208d882da2b09c301bc1c828fd3a00d0216d2fbbff6"
 dependencies = [
- "crc32fast",
- "miniz_oxide",
+    "crc32fast",
+    "miniz_oxide 0.5.4",
 ]
 
 [[package]]
@@ -1779,7 +1779,16 @@ version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "96590ba8f175222643a85693f33d26e9c8a015f599c216509b1a6894af675d34"
 dependencies = [
- "adler",
+    "adler",
+]
+
+[[package]]
+name = "miniz_oxide"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b275950c28b37e794e8c55d88aeb5e139d0ce23fdbbeda68f8d7174abdf9e8fa"
+dependencies = [
+    "adler",
 ]
 
 [[package]]
@@ -1788,27 +1797,27 @@ version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5d732bc30207a6423068df043e3d02e0735b155ad7ce1a6f76fe2baa5b158de"
 dependencies = [
- "libc",
- "log",
- "wasi 0.11.0+wasi-snapshot-preview1",
+    "libc",
+    "log",
+    "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.42.0",
 ]
 
 [[package]]
 name = "native-tls"
-version = "0.2.10"
+version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd7e2f3618557f980e0b17e8856252eee3c97fa12c54dff0ca290fb6266ca4a9"
+checksum = "07226173c32f2926027b63cce4bcd8076c3552846cbe7925f3aaffeac0a3b92e"
 dependencies = [
- "lazy_static",
- "libc",
- "log",
- "openssl",
- "openssl-probe",
- "openssl-sys",
- "schannel",
- "security-framework",
- "security-framework-sys",
+    "lazy_static",
+    "libc",
+    "log",
+    "openssl",
+    "openssl-probe",
+    "openssl-sys",
+    "schannel",
+    "security-framework",
+    "security-framework-sys",
  "tempfile",
 ]
 
@@ -2313,14 +2322,14 @@ dependencies = [
 
 [[package]]
 name = "png"
-version = "0.17.6"
+version = "0.17.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f0e7f4c94ec26ff209cee506314212639d6c91b80afb82984819fafce9df01c"
+checksum = "5d708eaf860a19b19ce538740d2b4bdeeb8337fa53f7738455e706623ad5c638"
 dependencies = [
- "bitflags",
- "crc32fast",
- "flate2",
- "miniz_oxide",
+    "bitflags",
+    "crc32fast",
+    "flate2",
+    "miniz_oxide 0.6.2",
 ]
 
 [[package]]
@@ -2649,9 +2658,9 @@ dependencies = [
 
 [[package]]
 name = "scoped-tls"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea6a9290e3c9cf0f18145ef7ffa62d68ee0bf5fcd651017e586dc7fd5da448c2"
+checksum = "e1cf6437eb19a8f4a6cc0f7dca544973b0b78843adbfeb3683d1a94a0024a294"
 
 [[package]]
 name = "scopeguard"
@@ -3055,44 +3064,44 @@ version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "43336f5d1793543ba96e2a1e75f3a5c7dcd592743be06a0ab3a190f4fcb4b934"
 dependencies = [
- "bitflags",
- "cairo-rs",
- "cc",
- "cocoa 0.24.0",
- "core-foundation 0.9.3",
- "core-graphics 0.22.3",
- "crossbeam-channel",
- "dispatch",
- "gdk",
- "gdk-pixbuf",
- "gdk-sys",
- "gdkx11-sys",
- "gio",
- "glib",
+    "bitflags",
+    "cairo-rs",
+    "cc",
+    "cocoa 0.24.1",
+    "core-foundation 0.9.3",
+    "core-graphics 0.22.3",
+    "crossbeam-channel",
+    "dispatch",
+    "gdk",
+    "gdk-pixbuf",
+    "gdk-sys",
+    "gdkx11-sys",
+    "gio",
+    "glib",
  "glib-sys",
  "gtk",
  "image",
  "instant",
  "jni",
- "lazy_static",
- "libc",
- "log",
- "ndk",
- "ndk-context",
- "ndk-sys",
- "objc",
- "once_cell",
- "parking_lot",
- "paste",
- "png 0.17.6",
- "raw-window-handle",
- "scopeguard",
- "serde",
- "unicode-segmentation",
- "uuid 1.2.1",
- "windows 0.39.0",
- "windows-implement",
- "x11-dl",
+    "lazy_static",
+    "libc",
+    "log",
+    "ndk",
+    "ndk-context",
+    "ndk-sys",
+    "objc",
+    "once_cell",
+    "parking_lot",
+    "paste",
+    "png 0.17.7",
+    "raw-window-handle",
+    "scopeguard",
+    "serde",
+    "unicode-segmentation",
+    "uuid 1.2.1",
+    "windows 0.39.0",
+    "windows-implement",
+    "x11-dl",
 ]
 
 [[package]]
@@ -3112,19 +3121,19 @@ version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "efbf22abd61d95ca9b2becd77f9db4c093892f73e8a07d21d8b0b2bf71a7bcea"
 dependencies = [
- "anyhow",
- "attohttpc",
- "cocoa 0.24.0",
- "dirs-next",
- "embed_plist",
- "encoding_rs",
- "flate2",
- "futures-util",
- "glib",
- "glob",
- "gtk",
- "heck 0.4.0",
- "http",
+    "anyhow",
+    "attohttpc",
+    "cocoa 0.24.1",
+    "dirs-next",
+    "embed_plist",
+    "encoding_rs",
+    "flate2",
+    "futures-util",
+    "glib",
+    "glob",
+    "gtk",
+    "heck 0.4.0",
+    "http",
  "ignore",
  "notify-rust",
  "objc",
@@ -3181,22 +3190,22 @@ version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "356fa253e40ae4d6ff02075011f2f2bb4066f5c9d8c1e16ca6912d7b75903ba6"
 dependencies = [
- "base64",
- "brotli",
- "ico",
- "json-patch",
- "plist",
- "png 0.17.6",
- "proc-macro2",
- "quote",
- "regex",
- "semver 1.0.14",
- "serde",
- "serde_json",
- "sha2",
- "tauri-utils",
- "thiserror",
- "time",
+    "base64",
+    "brotli",
+    "ico",
+    "json-patch",
+    "plist",
+    "png 0.17.7",
+    "proc-macro2",
+    "quote",
+    "regex",
+    "semver 1.0.14",
+    "serde",
+    "serde_json",
+    "sha2",
+    "tauri-utils",
+    "thiserror",
+    "time",
  "uuid 1.2.1",
  "walkdir",
 ]
@@ -3242,17 +3251,17 @@ version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28dce920995fd49907aa9bea7249ed1771454f11f7611924c920a1f75fb614d4"
 dependencies = [
- "cocoa 0.24.0",
- "gtk",
- "percent-encoding",
- "rand 0.8.5",
- "raw-window-handle",
- "tauri-runtime",
- "tauri-utils",
- "uuid 1.2.1",
- "webkit2gtk",
- "webview2-com",
- "windows 0.39.0",
+    "cocoa 0.24.1",
+    "gtk",
+    "percent-encoding",
+    "rand 0.8.5",
+    "raw-window-handle",
+    "tauri-runtime",
+    "tauri-utils",
+    "uuid 1.2.1",
+    "webkit2gtk",
+    "webview2-com",
+    "windows 0.39.0",
  "wry",
 ]
 
@@ -4208,19 +4217,19 @@ version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff5c1352b4266fdf92c63479d2f58ab4cd29dc4e78fbc1b62011ed1227926945"
 dependencies = [
- "base64",
- "block",
- "cocoa 0.24.0",
- "core-graphics 0.22.3",
- "crossbeam-channel",
- "gdk",
- "gio",
- "glib",
- "gtk",
- "html5ever",
- "http",
- "kuchiki",
- "libc",
+    "base64",
+    "block",
+    "cocoa 0.24.1",
+    "core-graphics 0.22.3",
+    "crossbeam-channel",
+    "gdk",
+    "gio",
+    "glib",
+    "gtk",
+    "html5ever",
+    "http",
+    "kuchiki",
+    "libc",
  "log",
  "objc",
  "objc_id",

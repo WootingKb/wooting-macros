@@ -6,6 +6,7 @@
 
 extern crate core;
 
+use std::{fs, thread, time};
 use std::fs::File;
 use std::io::Read;
 use std::sync::RwLock;
@@ -22,17 +23,61 @@ use crate::wooting_macros_library::*;
 mod hid_table;
 mod wooting_macros_library;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct ApplicationConfig {
     pub use_input_grab: bool,
     pub startup_delay: u64,
 }
 
+impl ApplicationConfig {
+    pub fn read_data() -> ApplicationConfig {
+        let path = "../config.json";
+
+        let default_config: ApplicationConfig = ApplicationConfig {
+            use_input_grab: false,
+            startup_delay: 0,
+        };
+
+        //TODO: Make this create a new file when needed.
+        let data = {
+            match fs::read_to_string(path) {
+                Ok(T) => T,
+                Err(E) => {
+                    eprintln!("{}", E);
+                    std::fs::write(
+                        "../config.json",
+                        serde_json::to_string_pretty(&default_config).unwrap(),
+                    )
+                        .unwrap();
+
+                    let output = fs::read_to_string(path).unwrap();
+                    println!("{}", output);
+
+                    output
+                }
+            }
+        };
+
+        let deserialized: ApplicationConfig = match serde_json::from_str(&data) {
+            Ok(T) => T,
+            Err(E) => {
+                println!("{}", E);
+                std::fs::write(
+                    "../config.json",
+                    serde_json::to_string_pretty(&default_config).unwrap(),
+                )
+                    .unwrap();
+                thread::sleep(time::Duration::from_secs(2));
+                serde_json::from_str(&data).unwrap()
+            }
+        };
+        deserialized
+    }
+}
+
 lazy_static! {
-    pub static ref APPLICATION_STATE: MacroDataState = {
-        MacroDataState::new()
-    };
+    pub static ref APPLICATION_STATE: MacroDataState = { MacroDataState::new() };
 }
 
 fn main() {
@@ -45,7 +90,6 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
 
     // let mut data = String::new();
     //
@@ -60,12 +104,8 @@ fn main() {
     //     Err(E) => {}
     // }
 
-
-
-
     run_this(&get_config())
 }
-
 
 pub fn get_config() -> ApplicationConfig {
     let mut config: ApplicationConfig = ApplicationConfig {
@@ -73,12 +113,12 @@ pub fn get_config() -> ApplicationConfig {
         startup_delay: 3,
     };
 
-    let mut file = match File::open("config.json") {
+    let mut file = match File::open("../../config.json") {
         Ok(T) => T,
         Err(E) => {
             eprintln!("Error parsing the file {}", E);
             println!("Error finding the config.json file.\nPlease place one in the root directory. Using default configuration (safe).\nCreating an empty file.\n");
-            File::create("config.json").unwrap()
+            File::create("../../config.json").unwrap()
         }
     };
     config
