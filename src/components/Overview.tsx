@@ -49,16 +49,13 @@ function Overview({collections}: Props) {
     }
 
     const onCollectionButtonPress = (newActiveIndex:number) => {
-        for (let i = 0; i < collections.length; i++) {
-            const collection = collections[i];
-            if (i == newActiveIndex) {
-                collection.active = true
-            } else {
-                collection.active = false
-            }
-        }
-
         setCollectionIndex(newActiveIndex)
+    }
+
+    const onCollectionToggle = (index:number) => {
+        collections[index].active = !collections[index].active
+        setCanUseCollectionName(!canUseCollectionName)
+        // update backend here
     }
 
     const onRenameCollection = () => {
@@ -85,7 +82,7 @@ function Overview({collections}: Props) {
             {/** Left Side Panel */}
             <VStack borderRight="1px" h="100vh" p="4">
                 {collections.map((collection:Collection, index:number) => 
-                    <CollectionButton collection={collection} index={index} key={index} onClick={onCollectionButtonPress}/>
+                    <CollectionButton collection={collection} index={index} key={index} isFocused={index == collectionIndex} setFocus={onCollectionButtonPress} toggleCollection={onCollectionToggle}/>
                 )}
                 <Button colorScheme="yellow" leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
                     New Collection

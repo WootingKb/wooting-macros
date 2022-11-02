@@ -9,7 +9,7 @@ type Props = {
   macro: Macro
   index: number
   collectionIndex: number
-  onDelete: (index:number) => any
+  onDelete: (index:number) => void
 }
 
 function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
