@@ -8,6 +8,7 @@ use std::sync::mpsc::channel;
 use std::sync::RwLock;
 use std::time::Duration;
 
+use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 
@@ -80,13 +81,12 @@ pub struct Macro {
 
 
 #[tauri::command]
-//TODO: rename to get_configuration
-pub fn get_configuration() -> MacroData {
-    MacroData::read_data()
+pub fn get_configuration(state: tauri::State<MacroDataState>) -> MacroData {
+    let test = state.data.read().unwrap();
+    test.clone()
 }
 
 #[tauri::command]
-//TODO: rename to set_configuration
 pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
     let mut state_guard = state.data.write().unwrap();
     *state_guard = frontend_data;
@@ -119,13 +119,31 @@ pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: Mac
 //     data.import_data(input);
 // }
 
-///MacroData is the main data structure that contains all macro data.
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct MacroData(pub Vec<Collection>);
+//
+// lazy_static! {
+//     pub static ref APPLICATION_STATE: RwLock<MacroDataState> = {
+//         RwLock::new(MacroDataState{data: MacroData::read_data().into()})
+//     };
+// }
 
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct MacroDataState {
     pub data: RwLock<MacroData>,
 }
+
+impl MacroDataState {
+    pub fn new() -> Self {
+        MacroDataState { data: RwLock::from(MacroData::read_data()) }
+    }
+}
+
+
+type Collections = Vec<Collection>;
+
+///MacroData is the main data structure that contains all macro data.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MacroData(pub Collections);
+
 
 impl MacroData {
     // /// This exports data for the frontend to process it.
@@ -231,6 +249,7 @@ pub fn run_this(config: &ApplicationConfig) {
     // Get data from the config file.
     let mut testing_macro_full: MacroData = MacroData::read_data();
 
+
     // // Serve to the frontend.
     // push_frontend_first();
     //
@@ -238,7 +257,9 @@ pub fn run_this(config: &ApplicationConfig) {
     // let triggers = testing_macro_full.extract_triggers();
 
     //Print for a check (triggers)
-    println!("{:#?}", testing_macro_full);
+    //println!("{:#?}", testing_macro_full);
+
+    //println!("{:#?}", &APPLICATION_STATE.read().unwrap().data);
 
     //==================================================
 
@@ -250,7 +271,11 @@ pub fn run_this(config: &ApplicationConfig) {
     //
     let (schan, rchan) = channel();
     let _listener = thread::spawn(move || {
-        //let trigger_hash = trigger_hash_inner.read().unwrap();
+        //TESTING
+        //let trigger_hash = &APPLICATION_STATE.read().unwrap().data;
+
+        //println!("{:#?}", trigger_hash);
+
         listen(move |event| {
             schan
                 .send(event)

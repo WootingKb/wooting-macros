@@ -31,7 +31,7 @@ pub struct ApplicationConfig {
 fn main() {
     tauri::Builder::default()
         // This is where you pass in your commands
-        .manage(MacroDataState { data: RwLock::new(wooting_macros_library::MacroData::read_data().into()) })
+        .manage(MacroDataState::new())
         .invoke_handler(tauri::generate_handler![
             get_configuration,
             set_configuration
@@ -39,19 +39,7 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    let mut config: ApplicationConfig = ApplicationConfig {
-        use_input_grab: false,
-        startup_delay: 3,
-    };
 
-    let mut file = match File::open("config.json") {
-        Ok(T) => T,
-        Err(E) => {
-            eprintln!("Error parsing the file {}", E);
-            println!("Error finding the config.json file.\nPlease place one in the root directory. Using default configuration (safe).\nCreating an empty file.\n");
-            File::create("config.json").unwrap()
-        }
-    };
     // let mut data = String::new();
     //
     // match file.read_to_string(&mut data) {
@@ -65,5 +53,23 @@ fn main() {
     //     Err(E) => {}
     // }
 
-    run_this(&config)
+    run_this(&get_config())
+}
+
+
+pub fn get_config() -> ApplicationConfig {
+    let mut config: ApplicationConfig = ApplicationConfig {
+        use_input_grab: false,
+        startup_delay: 3,
+    };
+
+    let mut file = match File::open("config.json") {
+        Ok(T) => T,
+        Err(E) => {
+            eprintln!("Error parsing the file {}", E);
+            println!("Error finding the config.json file.\nPlease place one in the root directory. Using default configuration (safe).\nCreating an empty file.\n");
+            File::create("config.json").unwrap()
+        }
+    };
+    config
 }
