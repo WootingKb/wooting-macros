@@ -4,7 +4,7 @@ use std::fmt::{format, Formatter};
 use std::fs::File;
 use std::hash::Hash;
 use std::str::{Bytes, FromStr};
-use std::sync::mpsc::channel;
+use std::sync::mpsc::{channel, SendError};
 use std::sync::RwLock;
 use std::time::Duration;
 
@@ -268,47 +268,43 @@ pub struct Collection {
 
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
-pub fn run_this(config: &ApplicationConfig) {
-    let mut incoming_test: MacroData = MacroData(vec![Collection {
-        name: "LOL".to_string(),
-        icon: 'i'.to_string(),
-        macros: vec![Macro {
-            name: "Newer string".to_string(),
-            sequence: vec![
-                ActionEventType::KeyPressEvent {
-                    data: KeyPress {
-                        keypress: 12,
-
-                        press_duration: 50,
-                    },
-                },
-                ActionEventType::KeyPressEvent {
-                    data: KeyPress {
-                        keypress: 13,
-
-                        press_duration: 50,
-                    },
-                },
-            ],
-            trigger: TriggerEventType::KeyPressEvent {
-                data: vec![KeyPress {
-                    keypress: 5,
-
-                    press_duration: 50,
-                }],
-            },
-            active: true,
-        }],
-        active: true,
-    }]);
+pub fn run_this() {
+    // let mut incoming_test: MacroData = MacroData(vec![Collection {
+    //     name: "LOL".to_string(),
+    //     icon: 'i'.to_string(),
+    //     macros: vec![Macro {
+    //         name: "Newer string".to_string(),
+    //         sequence: vec![
+    //             ActionEventType::KeyPressEvent {
+    //                 data: KeyPress {
+    //                     keypress: 12,
+    //
+    //                     press_duration: 50,
+    //                 },
+    //             },
+    //             ActionEventType::KeyPressEvent {
+    //                 data: KeyPress {
+    //                     keypress: 13,
+    //
+    //                     press_duration: 50,
+    //                 },
+    //             },
+    //         ],
+    //         trigger: TriggerEventType::KeyPressEvent {
+    //             data: vec![KeyPress {
+    //                 keypress: 5,
+    //
+    //                 press_duration: 50,
+    //             }],
+    //         },
+    //         active: true,
+    //     }],
+    //     active: true,
+    // }]);
 
     //testing_macro_full.export_data();
 
     // Get data from the config file.
-    println!(
-        "READING DATA ORIGINAL:\n{:#?}\n====\nORIGINAL FILE READ.",
-        APPLICATION_STATE.data.read().unwrap()
-    );
 
     //println!("WRITING DATA");
 
@@ -331,11 +327,6 @@ pub fn run_this(config: &ApplicationConfig) {
 
     //println!("{:#?}", &APPLICATION_STATE.read().unwrap().data);
 
-    println!(
-        "PRINTING CONFIG:\n{:#?}",
-        APPLICATION_STATE.config.read().unwrap()
-    );
-
     //==================================================
 
     //TODO: make this a grab instead of listen
@@ -344,57 +335,102 @@ pub fn run_this(config: &ApplicationConfig) {
     //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
     //
-    let (schan, rchan) = channel();
-    let _listener = thread::spawn(move || {
-        //TESTING
-        //let trigger_hash = APPLICATION_STATE.data.read().unwrap();
 
-        //println!("{:#?}", trigger_hash);
-
-        listen(move |event| {
-            schan
-                .send(event)
-                .unwrap_or_else(|e| println!("Could not send event {:?}", e));
-        })
-            .expect("Could not listen");
-    });
-
-    let mut events = Vec::new();
-
-    for event in rchan.iter() {
-        events.push(event);
-
-        for i in &events {
-            //println!("{:?}", events.len());
-            match i.event_type {
-                EventType::KeyPress(s) => {
-                    //TODO: Make this a hashtable or smth
-                    println!("Pressed: {:?}", s);
-
-                    if s == Key::KpMultiply {
-                        println!("WRITING DATA");
-
-                        set_data_write_manually_backend(incoming_test.clone());
-
-                        println!("NEW CONFIG LOADED?");
+    match APPLICATION_STATE.config.read().unwrap().use_input_grab {
+        true => {
+            let mut events = Vec::new();
+            let (schan, rchan) = channel();
+            let _grabber = thread::spawn(move || {
+                grab(move |event| match schan.send(event.clone()) {
+                    Ok(T) => {
+                        match &event.event_type {
+                            //TODO: Make this hash the trigger keys
+                            EventType::KeyPress(Key::Comma) => {
+                                println!("BLOCKING THE COMMA");
+                                None
+                            }
+                            _ => Some(event)
+                        }
                     }
-                    check_key(&s);
+                    Err(_) => { None }
+                })
+            });
+
+
+            for event in rchan.iter() {
+                events.push(event);
+
+                for i in &events {
+                    //println!("{:?}", events.len());
+                    match i.event_type {
+                        EventType::KeyPress(s) => {
+                            //TODO: Make this a hashtable or smth
+                            println!("Pressed: {:?}", s);
+                            check_key(&s);
+                        }
+                        EventType::KeyRelease(s) => {
+                            println!("Released: {:?}", s)
+                        }
+                        EventType::ButtonPress(s) => {
+                            println!("MB Pressed:{:?}", s)
+                        }
+                        EventType::ButtonRelease(s) => {
+                            println!("MB Released:{:?}", s)
+                        }
+                        EventType::MouseMove { x, y } => (),
+                        EventType::Wheel { delta_x, delta_y } => {}
+                    }
                 }
-                EventType::KeyRelease(s) => {
-                    println!("Released: {:?}", s)
-                }
-                EventType::ButtonPress(s) => {
-                    println!("MB Pressed:{:?}", s)
-                }
-                EventType::ButtonRelease(s) => {
-                    println!("MB Released:{:?}", s)
-                }
-                EventType::MouseMove { x, y } => (),
-                EventType::Wheel { delta_x, delta_y } => {}
+                events.pop();
             }
         }
-        events.pop();
+        false => {
+            let mut events = Vec::new();
+
+            let (schan, rchan) = channel();
+            let _listener = thread::spawn(move || {
+                //TESTING
+                //let trigger_hash = APPLICATION_STATE.data.read().unwrap();
+
+                //println!("{:#?}", trigger_hash);
+
+                listen(move |event| {
+                    schan
+                        .send(event)
+                        .unwrap_or_else(|e| println!("Could not send event {:?}", e));
+                })
+                    .expect("Could not listen");
+            });
+
+            for event in rchan.iter() {
+                events.push(event);
+
+                for i in &events {
+                    //println!("{:?}", events.len());
+                    match i.event_type {
+                        EventType::KeyPress(s) => {
+                            //TODO: Make this a hashtable or smth
+                            println!("Pressed: {:?}", s);
+                            check_key(&s);
+                        }
+                        EventType::KeyRelease(s) => {
+                            println!("Released: {:?}", s)
+                        }
+                        EventType::ButtonPress(s) => {
+                            println!("MB Pressed:{:?}", s)
+                        }
+                        EventType::ButtonRelease(s) => {
+                            println!("MB Released:{:?}", s)
+                        }
+                        EventType::MouseMove { x, y } => (),
+                        EventType::Wheel { delta_x, delta_y } => {}
+                    }
+                }
+                events.pop();
+            }
+        }
     }
+
     //TODO: Make a translation table to a hashmap from a keycode HID compatible -> library rdev enums.
 }
 
@@ -421,19 +457,18 @@ fn get_user_input(display_text: String) -> String {
     buffer.trim().to_string()
 }
 
-//
-// fn callback_grab_win_osx(event: Event) -> Option<Event> {
-//     println!("My callback {:?}", event);
-//
-//     match event.event_type {
-//         EventType::KeyPress(Key::Comma) => {
-//             println!("Comma pressed");
-//             None
-//         }
-//         //EventType::KeyPress(Key::Kp7)
-//         _ => Some(event),
-//     }
-// }
+fn callback_grab_win_osx(event: Event) -> Option<Event> {
+    println!("My callback {:?}", event);
+
+    match event.event_type {
+        EventType::KeyPress(Key::Comma) => {
+            println!("Comma pressed");
+            None
+        }
+        //EventType::KeyPress(Key::Kp7)
+        _ => Some(event),
+    }
+}
 
 fn callback_listen_only(event: Event) {
     println!("My callback {:?}", event);

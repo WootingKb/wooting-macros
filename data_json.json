@@ -43,5 +43,11 @@
     "icon": "i",
     "macros": [],
     "active": false
+  },
+  {
+    "name": "simon_test",
+    "icon": "i",
+    "macros": [],
+    "active": false
   }
 ]
