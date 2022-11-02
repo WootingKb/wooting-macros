@@ -5,6 +5,7 @@ use std::fs::File;
 use std::hash::Hash;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
+use std::sync::RwLock;
 use std::time::Duration;
 
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
@@ -78,79 +79,91 @@ pub struct Macro {
 }
 
 
-// get_configuration(): string
-// set_configuration(string)
-
-
 #[tauri::command]
-pub fn export_frontend(data: MacroData) -> String {
-    let data_return = data.export_data();
-    data_return
+pub fn get_configuration() -> MacroData {
+    MacroData::initialize_backend()
 }
 
 #[tauri::command]
-pub fn push_frontend_first() -> MacroData {
-    let path = "./data_json.json";
-    let data = fs::read_to_string(path).expect("Unable to read file");
-    let res = serde_json::from_str::<MacroData>(&data).expect("Unable to parse");
+pub fn set_configuration(input: MacroData) {}
 
-    // serde_json::to_string(&res).expect("Unable to serialize")
-    res
-}
+// pub fn export_frontend(data: MacroData) -> String {
+//     let data_return = data.export_data();
+//     data_return
+// }
 
-fn push_backend_first() -> MacroData {
-    let path = "./data_json.json";
-    let data = fs::read_to_string(path).expect("Unable to read file");
+// pub fn push_frontend_first() -> MacroData {
+//     let path = "./data_json.json";
+//     let data = fs::read_to_string(path).expect("Unable to read file");
+//     let res = serde_json::from_str::<MacroData>(&data).expect("Unable to parse");
+//
+//     // serde_json::to_string(&res).expect("Unable to serialize")
+//     res
+// }
 
-    let deserialized: MacroData = serde_json::from_str(&data).unwrap();
-    deserialized
-}
+// fn push_backend_first() -> MacroData {
+//     let path = "./data_json.json";
+//     let data = fs::read_to_string(path).expect("Unable to read file");
+//
+//     let deserialized: MacroData = serde_json::from_str(&data).unwrap();
+//     deserialized
+// }
 
-#[tauri::command]
-pub fn import_frontend(mut data: MacroData, input: MacroData) {
-    data.import_data(input);
-}
+// #[tauri::command]
+// pub fn import_frontend(mut data: MacroData, input: MacroData) {
+//     data.import_data(input);
+// }
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct MacroData(Vec<Collection>);
 
+pub struct MacroDataState(pub RwLock<MacroData>);
+
 impl MacroData {
-    /// This exports data for the frontend to process it.
-    /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) -> String {
-        std::fs::write(
-            "./data_json.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        )
-            .unwrap();
+    // /// This exports data for the frontend to process it.
+    // /// Basically sends the entire struct to the frontend
+    // pub fn export_data(&self) -> String {
+    //     std::fs::write(
+    //         "./data_json.json",
+    //         serde_json::to_string_pretty(&self).unwrap(),
+    //     )
+    //         .unwrap();
+    //
+    //     serde_json::to_string_pretty(&self).unwrap()
+    // }
 
-        serde_json::to_string_pretty(&self).unwrap()
-    }
+    // /// Imports data from the frontend (when updated) to update the background data structure
+    // /// This overwrites the datastructure
+    // pub fn import_data(&mut self, input: MacroData) -> TriggerHash {
+    //     *self = input;
+    //     self.export_data();
+    //     self.extract_triggers()
+    // }
 
-    /// Imports data from the frontend (when updated) to update the background data structure
-    /// This overwrites the datastructure
-    pub fn import_data(&mut self, input: MacroData) -> TriggerHash {
-        *self = input;
-        self.export_data();
-        self.extract_triggers()
-    }
+    // /// Extracts the data
+    // fn extract_triggers(&self) -> TriggerHash {
+    //     let mut trigger_hash_list: TriggerHash = HashMap::new();
+    //
+    //     for search in &self.0 {
+    //         for trig in &search.macros {
+    //             match &trig.trigger {
+    //                 TriggerEventType::KeyPressEvent { data } => {
+    //                     trigger_hash_list.insert(data.clone(), &trig);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     trigger_hash_list
+    // }
 
-    /// Extracts the data
-    fn extract_triggers(&self) -> TriggerHash {
-        let mut trigger_hash_list: TriggerHash = HashMap::new();
+    pub fn initialize_backend() -> MacroData {
+        let path = "./data_json.json";
+        let data = fs::read_to_string(path).unwrap();
 
-        for search in &self.0 {
-            for trig in &search.macros {
-                match &trig.trigger {
-                    TriggerEventType::KeyPressEvent { data } => {
-                        trigger_hash_list.insert(data.clone(), &trig);
-                    }
-                }
-            }
-        }
-
-        trigger_hash_list
+        let deserialized: MacroData = serde_json::from_str(&data).unwrap();
+        deserialized
     }
 }
 
@@ -207,16 +220,16 @@ pub fn run_this(config: &ApplicationConfig) {
     //testing_macro_full.export_data();
 
     // Get data from the config file.
-    let mut testing_macro_full: MacroData = push_backend_first();
+    let mut testing_macro_full: MacroData = MacroData::initialize_backend();
 
-    // Serve to the frontend.
-    push_frontend_first();
-
-    // Get the triggers linked correctly
-    let triggers = testing_macro_full.extract_triggers();
+    // // Serve to the frontend.
+    // push_frontend_first();
+    //
+    // // Get the triggers linked correctly
+    // let triggers = testing_macro_full.extract_triggers();
 
     //Print for a check (triggers)
-    println!("{:#?}", triggers);
+    println!("{:#?}", testing_macro_full);
 
     //==================================================
 
@@ -228,6 +241,7 @@ pub fn run_this(config: &ApplicationConfig) {
     //
     let (schan, rchan) = channel();
     let _listener = thread::spawn(move || {
+        //let trigger_hash = trigger_hash_inner.read().unwrap();
         listen(move |event| {
             schan
                 .send(event)

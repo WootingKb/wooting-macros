@@ -8,6 +8,7 @@ extern crate core;
 
 use std::fs::File;
 use std::io::Read;
+use std::sync::RwLock;
 
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -28,15 +29,15 @@ pub struct ApplicationConfig {
 }
 
 fn main() {
-    tauri::Builder::default()
-        // This is where you pass in your commands
-        .invoke_handler(tauri::generate_handler![
-            export_frontend,
-            import_frontend,
-            push_frontend_first
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    // tauri::Builder::default()
+    //     // This is where you pass in your commands
+    //     .manage(MacroDataState(RwLock::new(MacroData::initialize_backend())))
+    //     .invoke_handler(tauri::generate_handler![
+    //         get_configuration,
+    //         set_configuration
+    //     ])
+    //     .run(tauri::generate_context!())
+    //     .expect("error while running tauri application");
 
     let mut config: ApplicationConfig = ApplicationConfig {
         use_input_grab: false,
