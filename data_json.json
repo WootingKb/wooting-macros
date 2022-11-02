@@ -19,35 +19,5 @@
       }
     ],
     "active": true
-  },
-  {
-    "name": "OMGF",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  },
-  {
-    "name": "HAHA",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  },
-  {
-    "name": "test",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  },
-  {
-    "name": "ADASD",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  },
-  {
-    "name": "simon_test",
-    "icon": "i",
-    "macros": [],
-    "active": false
   }
 ]
