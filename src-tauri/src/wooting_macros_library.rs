@@ -181,7 +181,7 @@ impl MacroData {
     /// Basically sends the entire struct to the frontend
     pub fn export_data(&self) {
         std::fs::write(
-            "./data_json.json",
+            "../data_json.json",
             serde_json::to_string_pretty(&self).unwrap(),
         )
             .unwrap();
@@ -213,7 +213,7 @@ impl MacroData {
     // }
 
     pub fn read_data() -> MacroData {
-        let path = "./data_json.json";
+        let path = "../data_json.json";
 
         let incoming_test: MacroData = MacroData(vec![Collection {
             name: "Default".to_string(),
@@ -230,7 +230,7 @@ impl MacroData {
                 Err(E) => {
                     println!("{}", E);
                     std::fs::write(
-                        "./data_json.json",
+                        "../data_json.json",
                         serde_json::to_string_pretty(&incoming_test).unwrap(),
                     ).unwrap();
 

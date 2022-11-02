@@ -37,5 +37,11 @@
     "icon": "i",
     "macros": [],
     "active": false
+  },
+  {
+    "name": "ADASD",
+    "icon": "i",
+    "macros": [],
+    "active": false
   }
 ]
