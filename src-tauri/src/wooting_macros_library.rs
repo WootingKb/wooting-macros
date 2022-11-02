@@ -11,8 +11,9 @@ use std::time::Duration;
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
+use tauri::State;
 
-use crate::{ApplicationConfig, hid_table};
+use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
 
 #[derive(Debug)]
@@ -81,17 +82,47 @@ pub struct Macro {
 
 
 #[tauri::command]
+/// Gets the configuration from current state and sends to frontend.
+/// The state gets it from the config file at bootup.
 pub fn get_configuration(state: tauri::State<MacroDataState>) -> MacroData {
     let test = state.data.read().unwrap();
     test.clone()
 }
 
 #[tauri::command]
+/// Sets the configuration from frontend and updates the state for everything on backend.
 pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
-    let mut state_guard = state.data.write().unwrap();
-    *state_guard = frontend_data;
+    let mut tauri_state = state.data.write().unwrap();
+    *tauri_state = frontend_data.clone();
+    let mut app_state = state.data.write().unwrap();
+    *app_state = frontend_data.clone();
 }
 
+/// Function for a manual write of config changes from the backend side. Just a test.
+/// Not meant to be used.
+pub fn set_data_write_manually_backend(frontend_data: MacroData) {
+    let mut app_state = APPLICATION_STATE.data.write().unwrap();
+    *app_state = frontend_data.clone();
+    app_state.clone().export_data();
+}
+
+fn check_key(incoming_key: &Key) {
+    let app_state = APPLICATION_STATE.data.read().unwrap();
+
+    for collections in &app_state.0 {
+        for macros in &collections.macros {
+            match &macros.trigger {
+                TriggerEventType::KeyPressEvent { data: trigger } => {
+                    for i in trigger {
+                        if SCANCODE_MAP[&i.keypress] == *incoming_key {
+                            println!("FOUND THE TRIGGER, WOULD EXECUTE!!")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 // pub fn export_frontend(data: MacroData) -> String {
 //     let data_return = data.export_data();
 //     data_return
@@ -119,13 +150,6 @@ pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: Mac
 //     data.import_data(input);
 // }
 
-//
-// lazy_static! {
-//     pub static ref APPLICATION_STATE: RwLock<MacroDataState> = {
-//         RwLock::new(MacroDataState{data: MacroData::read_data().into()})
-//     };
-// }
-
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct MacroDataState {
     pub data: RwLock<MacroData>,
@@ -146,17 +170,15 @@ pub struct MacroData(pub Collections);
 
 
 impl MacroData {
-    // /// This exports data for the frontend to process it.
-    // /// Basically sends the entire struct to the frontend
-    // pub fn export_data(&self) -> String {
-    //     std::fs::write(
-    //         "./data_json.json",
-    //         serde_json::to_string_pretty(&self).unwrap(),
-    //     )
-    //         .unwrap();
-    //
-    //     serde_json::to_string_pretty(&self).unwrap()
-    // }
+    /// This exports data for the frontend to process it.
+    /// Basically sends the entire struct to the frontend
+    pub fn export_data(&self) {
+        std::fs::write(
+            "./data_json.json",
+            serde_json::to_string_pretty(&self).unwrap(),
+        )
+            .unwrap();
+    }
 
     // /// Imports data from the frontend (when updated) to update the background data structure
     // /// This overwrites the datastructure
@@ -194,6 +216,7 @@ impl MacroData {
     }
 }
 
+
 ///Hash list
 pub type TriggerHash<'a> = HashMap<Vec<KeyPress>, &'a Macro>;
 
@@ -209,46 +232,56 @@ pub struct Collection {
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
-    // let mut incoming_test: MacroData = MacroData {
-    //     0: vec![Collection {
-    //         name: "LOL".to_string(),
-    //         icon: 'i'.to_string(),
-    //         macros: vec![Macro {
-    //             name: "Newer string".to_string(),
-    //             sequence: vec![
-    //                 ActionEventType::KeyPressEvent {
-    //                     data: KeyPress {
-    //                         keypress: 12,
-    //
-    //                         press_duration: 50,
-    //                     },
-    //                 },
-    //                 ActionEventType::KeyPressEvent {
-    //                     data: KeyPress {
-    //                         keypress: 13,
-    //
-    //                         press_duration: 50,
-    //                     },
-    //                 },
-    //             ],
-    //             trigger: TriggerEventType::KeyPressEvent {
-    //                 data: vec![KeyPress {
-    //                     keypress: 14,
-    //
-    //                     press_duration: 50,
-    //                 }],
-    //             },
-    //             active: true,
-    //         }],
-    //         active: true,
-    //     }],
-    // };
+    let mut incoming_test: MacroData = MacroData {
+        0: vec![Collection {
+            name: "LOL".to_string(),
+            icon: 'i'.to_string(),
+            macros: vec![Macro {
+                name: "Newer string".to_string(),
+                sequence: vec![
+                    ActionEventType::KeyPressEvent {
+                        data: KeyPress {
+                            keypress: 12,
+
+                            press_duration: 50,
+                        },
+                    },
+                    ActionEventType::KeyPressEvent {
+                        data: KeyPress {
+                            keypress: 13,
+
+                            press_duration: 50,
+                        },
+                    },
+                ],
+                trigger: TriggerEventType::KeyPressEvent {
+                    data: vec![KeyPress {
+                        keypress: 14,
+
+                        press_duration: 50,
+                    }],
+                },
+                active: true,
+            }],
+            active: true,
+        }],
+    };
 
     //testing_macro_full.export_data();
 
     // Get data from the config file.
-    let mut testing_macro_full: MacroData = MacroData::read_data();
+    println!("READING DATA ORIGINAL:\n{:#?}\n====\nORIGINAL FILE READ.", APPLICATION_STATE.data.read().unwrap());
 
+    //println!("WRITING DATA");
+
+    //thread::sleep(time::Duration::from_secs(20));
+    //set_data_write_manually_backend(incoming_test);
+
+    //println!("READING MODIFIED DATA:\n{:#?}\n====\nMODIFIED FILE READ.", APPLICATION_STATE.data.read().unwrap());
+
+
+    // let mut testing_macro_full: MacroData = get_configuration(APPLICATION_STATE);
+    // println!("{:#?}", testing_macro_full);
 
     // // Serve to the frontend.
     // push_frontend_first();
@@ -272,7 +305,7 @@ pub fn run_this(config: &ApplicationConfig) {
     let (schan, rchan) = channel();
     let _listener = thread::spawn(move || {
         //TESTING
-        //let trigger_hash = &APPLICATION_STATE.read().unwrap().data;
+        //let trigger_hash = APPLICATION_STATE.data.read().unwrap();
 
         //println!("{:#?}", trigger_hash);
 
@@ -295,7 +328,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 EventType::KeyPress(s) => {
                     //TODO: Make this a hashtable or smth
                     println!("Pressed: {:?}", s);
-                    //testing_macro_full.check_key(&s);
+                    check_key(&s);
                 }
                 EventType::KeyRelease(s) => {
                     println!("Released: {:?}", s)
