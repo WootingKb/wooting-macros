@@ -115,7 +115,7 @@ fn check_key(incoming_key: &Key) {
                 TriggerEventType::KeyPressEvent { data: trigger } => {
                     for i in trigger {
                         if SCANCODE_MAP[&i.keypress] == *incoming_key {
-                            println!("FOUND THE TRIGGER, WOULD EXECUTE!!")
+                            println!("FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}", macros.name)
                         }
                     }
                 }
@@ -208,8 +208,34 @@ impl MacroData {
     pub fn read_data() -> MacroData {
         let path = "./data_json.json";
 
+        let incoming_test: MacroData = MacroData {
+            0: vec![Collection {
+                name: "Default".to_string(),
+                icon: 'i'.to_string(),
+                macros: vec![],
+                active: true,
+            }],
+        };
+
+
         //TODO: Make this create a new file when needed.
-        let data = fs::read_to_string(path).unwrap();
+        let data = {
+            match fs::read_to_string(path) {
+                Ok(T) => { T }
+                Err(E) => {
+                    println!("{}", E);
+                    std::fs::write(
+                        "./data_json.json",
+                        serde_json::to_string_pretty(&incoming_test).unwrap(),
+                    ).unwrap();
+
+                    let output = fs::read_to_string(path).unwrap();
+                    println!("{}", output);
+
+                    output
+                }
+            }
+        };
 
         let deserialized: MacroData = serde_json::from_str(&data).unwrap();
         deserialized
@@ -256,7 +282,7 @@ pub fn run_this(config: &ApplicationConfig) {
                 ],
                 trigger: TriggerEventType::KeyPressEvent {
                     data: vec![KeyPress {
-                        keypress: 14,
+                        keypress: 5,
 
                         press_duration: 50,
                     }],
@@ -328,6 +354,14 @@ pub fn run_this(config: &ApplicationConfig) {
                 EventType::KeyPress(s) => {
                     //TODO: Make this a hashtable or smth
                     println!("Pressed: {:?}", s);
+
+                    if s == Key::KpMultiply {
+                        println!("WRITING DATA");
+
+                        set_data_write_manually_backend(incoming_test.clone());
+
+                        println!("NEW CONFIG LOADED?");
+                    }
                     check_key(&s);
                 }
                 EventType::KeyRelease(s) => {
