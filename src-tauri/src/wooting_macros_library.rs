@@ -337,6 +337,7 @@ pub fn run_this() {
     //
 
 
+
     match APPLICATION_STATE.config.read().unwrap().use_input_grab {
         true => {
             let mut events = Vec::new();
