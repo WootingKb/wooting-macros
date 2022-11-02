@@ -1,9 +1,9 @@
-import { Input, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Alert, AlertIcon, AlertTitle, AlertDescription, Kbd } from '@chakra-ui/react'
-import { EditIcon } from '@chakra-ui/icons'
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { Link, useLocation, useRoute } from 'wouter';
-import { useEffect, useState } from 'react';
 import { Collection, Keypress } from "../types";
 import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
+import { Input, Button, Flex, HStack, VStack, Text, Alert, AlertIcon, Kbd } from '@chakra-ui/react'
+import { EditIcon } from '@chakra-ui/icons'
 
 type Props = {
   collections: Collection[]
@@ -16,13 +16,13 @@ const AddMacroView = ({collections}: Props) => {
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [location, setLocation] = useLocation();
 
-    const addTriggerKey = (event:any) => {
+    const addTriggerKey = (event:KeyboardEvent) => {
         event.preventDefault()
-        console.log(event)
-        let HIDcode = webCodeHIDLookup.get(event.code)?.vkCode
+        
+        let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
         if (HIDcode == undefined) { return }
 
-        let keypress:Keypress = { keypress:HIDcode, press_duration:0}
+        let keypress:Keypress = { keypress:HIDcode, press_duration:0 }
 
         setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
         if (triggerKeys.length == 3) { setRecording(false) }
@@ -32,38 +32,35 @@ const AddMacroView = ({collections}: Props) => {
         if (!recording) { return }
         // Does not get mouse input for trigger        
         window.addEventListener("keydown", addTriggerKey, false)
+        // TODO: stop backend trigger listening
         return () => {
             window.removeEventListener("keydown", addTriggerKey, false)
+            // TODO: start backend trigger listening
         }
     }, [addTriggerKey])
 
     const onRecordButtonPress = () => {
-        if (!recording) {
-            setTriggerKeys([])
-        }
-        
+        if (!recording) { setTriggerKeys([]) }
         setRecording(!recording)
     }
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: ""})
+            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: []})
         }
+        // update backend here
         setLocation("/")
     }
 
-    const onMacroNameChange = (event:any) => {
+    const onMacroNameChange = (event:BaseSyntheticEvent) => {
         setMacroName(event.target.value)
     }
 
     return (
         <VStack minH="100vh" spacing="16px">
+            {/** Header */}
             <HStack w="100%" p="4" borderBottom="1px">
-                <Link href='/'>
-                    <Button>
-                        Back
-                    </Button>
-                </Link>
+                <Link href='/'><Button>Back</Button></Link>
                 <Flex w="100%" justifyContent="space-between">
                     <Flex w="100%" gap="8px">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
@@ -78,15 +75,16 @@ const AddMacroView = ({collections}: Props) => {
             <VStack spacing="16px">
                 <Text fontWeight="semibold" fontSize="xl">Trigger Key(s)</Text>
                 <Button leftIcon={<EditIcon />} onClick={onRecordButtonPress} colorScheme={recording ? 'red' : 'gray'}>Record</Button>
-                {recording &&   <Alert status='info' rounded="md">
-                                    <AlertIcon />
-                                    Input recording in progress.
-                                </Alert>
+                {recording && 
+                    <Alert status='info' rounded="md">
+                        <AlertIcon />
+                        Input recording in progress.
+                    </Alert>
                 }
             </VStack>
             <HStack spacing="4px">
                 {triggerKeys.map((key:Keypress, index:number) => 
-                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
+                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
                 )}
             </HStack>
         </VStack>

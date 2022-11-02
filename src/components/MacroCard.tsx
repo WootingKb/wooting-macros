@@ -9,27 +9,24 @@ type Props = {
   macro: Macro
   index: number
   collectionIndex: number
-  onDelete: (index:number) => any
+  onDelete: (index:number) => void
 }
 
 function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
-  const [trigger, setTrigger] = useState<TriggerEventType>()
+  const [trigger, setTrigger] = useState<Keypress[]>()
 
   useEffect(() => {
-    console.log(macro)
-    console.log(macro.trigger)
-    setTrigger(macro.trigger)
-    let temp:Keypress[] = macro.trigger.data
-    console.log(temp)
-  }, [])
+    setTrigger(macro.trigger.data)
+  }, [macro.trigger.data])
 
   const onToggle = (event:any) => {
     macro.active = event.target.checked
+    // update backend
   }
 
   return (
     <VStack w="33%" border="1px" rounded="md" p="3" spacing="8px">
-      {/** Header */}
+      {/** Top Row */}
       <Flex w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
@@ -47,14 +44,14 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
             </MenuList>
         </Menu>
       </Flex>
-      {/** Trigger Display */}
+      {/** Trigger Keys Display */}
       <Flex w="100%" gap="4px">
-        {trigger?.data.map((key:Keypress, index:number) =>
-          <Kbd key={index}>{HIDLookup.get(key.keypress)?.id}</Kbd>
+        {trigger?.map((key:Keypress, index:number) =>
+          <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
         )}
       </Flex>
       <Divider/>
-      {/** Misc */}
+      {/** Buttons */}
       <Flex w="100%" alignItems="center" justifyContent="space-between">
         <Link href={"/editview/" + collectionIndex + "/" + index.toString()}>
           <Button leftIcon={<EditIcon />}>Edit</Button>

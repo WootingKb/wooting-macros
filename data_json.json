@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Default",
+    "icon": "i",
+    "macros": [
+      {
+        "name": "Macro Name",
+        "sequence": [],
+        "trigger": {
+          "type": "KeyPressEvent",
+          "data": [
+            {
+              "keypress": 7,
+              "press_duration": 0
+            }
+          ]
+        },
+        "active": true
+      }
+    ],
+    "active": true
+  },
+  {
+    "name": "OMGF",
+    "icon": "i",
+    "macros": [],
+    "active": false
+  },
+  {
+    "name": "HAHA",
+    "icon": "i",
+    "macros": [],
+    "active": false
+  },
+  {
+    "name": "test",
+    "icon": "i",
+    "macros": [],
+    "active": false
+  },
+  {
+    "name": "ADASD",
+    "icon": "i",
+    "macros": [],
+    "active": false
+  }
+]

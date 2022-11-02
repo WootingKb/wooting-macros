@@ -1,137 +1,149 @@
-enum HidCategory {
-  General,
-  LeftModifier,
-  RightModifier,
-  Numpad,
-  Misc,
-}
-
 export interface HidInfo {
-  // -> HID Number 
-  byte: number
-  // -> displayName
-  id: string
+  HIDcode: number
+  displayString: string
   webKeyId: string
-
-  // DELETE
-  category: HidCategory
-  icon?: string
-  vkCode?: number
 }
 
 export class Hid {
-  static get A(): HidInfo { return {byte: 4, id: 'A', category: HidCategory.General, webKeyId: "KeyA" } }
-  static get B(): HidInfo { return {byte: 2, id: 'B', category: HidCategory.General, webKeyId: "KeyB" } }
-  static get C(): HidInfo { return {byte: 3, id: 'C', category: HidCategory.General, vkCode: 67, webKeyId: "KeyC" } }
-  static get D(): HidInfo { return {byte: 4, id: 'D', category: HidCategory.General, vkCode: 68, webKeyId: "KeyD" } }
-  static get E(): HidInfo { return {byte: 5, id: 'E', category: HidCategory.General, vkCode: 69, webKeyId: "KeyE" } }
-  static get F(): HidInfo { return {byte: 6, id: 'F', category: HidCategory.General, vkCode: 70, webKeyId: "KeyF" } }
-  static get G(): HidInfo { return {byte: 7, id: 'G', category: HidCategory.General, vkCode: 71, webKeyId: "KeyG" } }
-  static get H(): HidInfo { return {byte: 8, id: 'H', category: HidCategory.General, vkCode: 72, webKeyId: "KeyH" } }
-  static get I(): HidInfo { return {byte: 9, id: 'I', category: HidCategory.General, vkCode: 73, webKeyId: "KeyI" } }
-  static get J(): HidInfo { return {byte: 10, id: 'J', category: HidCategory.General, vkCode: 74, webKeyId: "KeyJ" } }
-  static get K(): HidInfo { return {byte: 11, id: 'K', category: HidCategory.General, vkCode: 75, webKeyId: "KeyK" } }
-  static get L(): HidInfo { return {byte: 12, id: 'L', category: HidCategory.General, vkCode: 76, webKeyId: "KeyL" } }
-  static get M(): HidInfo { return {byte: 13, id: 'M', category: HidCategory.General, vkCode: 77, webKeyId: "KeyM" } }
-  static get N(): HidInfo { return {byte: 14, id: 'N', category: HidCategory.General, vkCode: 78, webKeyId: "KeyN" } }
-  static get O(): HidInfo { return {byte: 15, id: 'O', category: HidCategory.General, vkCode: 79, webKeyId: "KeyO" } }
-  static get P(): HidInfo { return {byte: 16, id: 'P', category: HidCategory.General, vkCode: 80, webKeyId: "KeyP" } }
-  static get Q(): HidInfo { return {byte: 17, id: 'Q', category: HidCategory.General, vkCode: 81, webKeyId: "KeyQ" } }
-  static get R(): HidInfo { return {byte: 18, id: 'R', category: HidCategory.General, vkCode: 82, webKeyId: "KeyR" } }
-  static get S(): HidInfo { return {byte: 19, id: 'S', category: HidCategory.General, vkCode: 83, webKeyId: "KeyS" } }
-  static get T(): HidInfo { return {byte: 20, id: 'T', category: HidCategory.General, vkCode: 84, webKeyId: "KeyT" } }
-  static get U(): HidInfo { return {byte: 21, id: 'U', category: HidCategory.General, vkCode: 85, webKeyId: "KeyU" } }
-  static get V(): HidInfo { return {byte: 22, id: 'V', category: HidCategory.General, vkCode: 86, webKeyId: "KeyV" } }
-  static get W(): HidInfo { return {byte: 23, id: 'W', category: HidCategory.General, vkCode: 87, webKeyId: "KeyW" } }
-  static get X(): HidInfo { return {byte: 24, id: 'X', category: HidCategory.General, vkCode: 88, webKeyId: "KeyX" } }
-  static get Y(): HidInfo { return {byte: 25, id: 'Y', category: HidCategory.General, vkCode: 89, webKeyId: "KeyY" } }
-  static get Z(): HidInfo { return {byte: 26, id: 'Z', category: HidCategory.General, vkCode: 90, webKeyId: "KeyZ" } }
+  static get A(): HidInfo { return {HIDcode: 4, displayString: 'A', webKeyId: "KeyA" } }
+  static get B(): HidInfo { return {HIDcode: 5, displayString: 'B', webKeyId: "KeyB" } }
+  static get C(): HidInfo { return {HIDcode: 6, displayString: 'C', webKeyId: "KeyC" } }
+  static get D(): HidInfo { return {HIDcode: 7, displayString: 'D', webKeyId: "KeyD" } }
+  static get E(): HidInfo { return {HIDcode: 8, displayString: 'E', webKeyId: "KeyE" } }
+  static get F(): HidInfo { return {HIDcode: 9, displayString: 'F', webKeyId: "KeyF" } }
+
+  static get G(): HidInfo { return {HIDcode: 10, displayString: 'G', webKeyId: "KeyG" } }
+  static get H(): HidInfo { return {HIDcode: 11, displayString: 'H', webKeyId: "KeyH" } }
+  static get I(): HidInfo { return {HIDcode: 12, displayString: 'I', webKeyId: "KeyI" } }
+  static get J(): HidInfo { return {HIDcode: 13, displayString: 'J', webKeyId: "KeyJ" } }
+  static get K(): HidInfo { return {HIDcode: 14, displayString: 'K', webKeyId: "KeyK" } }
+  static get L(): HidInfo { return {HIDcode: 15, displayString: 'L', webKeyId: "KeyL" } }
+  static get M(): HidInfo { return {HIDcode: 16, displayString: 'M', webKeyId: "KeyM" } }
+  static get N(): HidInfo { return {HIDcode: 17, displayString: 'N', webKeyId: "KeyN" } }
+  static get O(): HidInfo { return {HIDcode: 18, displayString: 'O', webKeyId: "KeyO" } }
+  static get P(): HidInfo { return {HIDcode: 19, displayString: 'P', webKeyId: "KeyP" } }
+
+  static get Q(): HidInfo { return {HIDcode: 20, displayString: 'Q', webKeyId: "KeyQ" } }
+  static get R(): HidInfo { return {HIDcode: 21, displayString: 'R', webKeyId: "KeyR" } }
+  static get S(): HidInfo { return {HIDcode: 22, displayString: 'S', webKeyId: "KeyS" } }
+  static get T(): HidInfo { return {HIDcode: 23, displayString: 'T', webKeyId: "KeyT" } }
+  static get U(): HidInfo { return {HIDcode: 24, displayString: 'U', webKeyId: "KeyU" } }
+  static get V(): HidInfo { return {HIDcode: 25, displayString: 'V', webKeyId: "KeyV" } }
+  static get W(): HidInfo { return {HIDcode: 26, displayString: 'W', webKeyId: "KeyW" } }
+  static get X(): HidInfo { return {HIDcode: 27, displayString: 'X', webKeyId: "KeyX" } }
+  static get Y(): HidInfo { return {HIDcode: 28, displayString: 'Y', webKeyId: "KeyY" } }
+  static get Z(): HidInfo { return {HIDcode: 29, displayString: 'Z', webKeyId: "KeyZ" } }
   
-  static get N0(): HidInfo { return {byte: 27, id: '0', category: HidCategory.General, vkCode: 48, webKeyId: "Digit0" } }
-  static get N1(): HidInfo { return {byte: 28, id: '1', category: HidCategory.General, vkCode: 49, webKeyId: "Digit1" } }
-  static get N2(): HidInfo { return {byte: 29, id: '2', category: HidCategory.General, vkCode: 50, webKeyId: "Digit2" } }
-  static get N3(): HidInfo { return {byte: 30, id: '3', category: HidCategory.General, vkCode: 51, webKeyId: "Digit3" } }
-  static get N4(): HidInfo { return {byte: 31, id: '4', category: HidCategory.General, vkCode: 52, webKeyId: "Digit4" } }
-  static get N5(): HidInfo { return {byte: 32, id: '5', category: HidCategory.General, vkCode: 53, webKeyId: "Digit5" } }
-  static get N6(): HidInfo { return {byte: 33, id: '6', category: HidCategory.General, vkCode: 54, webKeyId: "Digit6" } }
-  static get N7(): HidInfo { return {byte: 34, id: '7', category: HidCategory.General, vkCode: 55, webKeyId: "Digit7" } }
-  static get N8(): HidInfo { return {byte: 35, id: '8', category: HidCategory.General, vkCode: 56, webKeyId: "Digit8" } }
-  static get N9(): HidInfo { return {byte: 36, id: '9', category: HidCategory.General, vkCode: 57, webKeyId: "Digit9" } }
+  static get N1(): HidInfo { return {HIDcode: 30, displayString: '1', webKeyId: "Digit1" } }
+  static get N2(): HidInfo { return {HIDcode: 31, displayString: '2', webKeyId: "Digit2" } }
+  static get N3(): HidInfo { return {HIDcode: 32, displayString: '3', webKeyId: "Digit3" } }
+  static get N4(): HidInfo { return {HIDcode: 33, displayString: '4', webKeyId: "Digit4" } }
+  static get N5(): HidInfo { return {HIDcode: 34, displayString: '5', webKeyId: "Digit5" } }
+  static get N6(): HidInfo { return {HIDcode: 35, displayString: '6', webKeyId: "Digit6" } }
+  static get N7(): HidInfo { return {HIDcode: 36, displayString: '7', webKeyId: "Digit7" } }
+  static get N8(): HidInfo { return {HIDcode: 37, displayString: '8', webKeyId: "Digit8" } }
+  static get N9(): HidInfo { return {HIDcode: 38, displayString: '9', webKeyId: "Digit9" } }
+  static get N0(): HidInfo { return {HIDcode: 39, displayString: '0', webKeyId: "Digit0" } }
 
-  static get NP0(): HidInfo { return {byte: 37, id: '0', category: HidCategory.Numpad, vkCode: 96, webKeyId: "Numpad0" } }
-  static get NP1(): HidInfo { return {byte: 38, id: '1', category: HidCategory.Numpad, vkCode: 97, webKeyId: "Numpad1" } }
-  static get NP2(): HidInfo { return {byte: 39, id: '2', category: HidCategory.Numpad, vkCode: 98, webKeyId: "Numpad2" } }
-  static get NP3(): HidInfo { return {byte: 40, id: '3', category: HidCategory.Numpad, vkCode: 99, webKeyId: "Numpad3" } }
-  static get NP4(): HidInfo { return {byte: 41, id: '4', category: HidCategory.Numpad, vkCode: 100, webKeyId: "Numpad4" } }
-  static get NP5(): HidInfo { return {byte: 42, id: '5', category: HidCategory.Numpad, vkCode: 101, webKeyId: "Numpad5" } }
-  static get NP6(): HidInfo { return {byte: 43, id: '6', category: HidCategory.Numpad, vkCode: 102, webKeyId: "Numpad6" } }
-  static get NP7(): HidInfo { return {byte: 44, id: '7', category: HidCategory.Numpad, vkCode: 103, webKeyId: "Numpad7" } }
-  static get NP8(): HidInfo { return {byte: 45, id: '8', category: HidCategory.Numpad, vkCode: 104, webKeyId: "Numpad8" } }
-  static get NP9(): HidInfo { return {byte: 46, id: '9', category: HidCategory.Numpad, vkCode: 105, webKeyId: "Numpad9" } }
+  static get ENTER(): HidInfo { return {HIDcode: 40, displayString: 'Enter', webKeyId: "Enter" } }
+  static get ESCAPE(): HidInfo { return {HIDcode: 41, displayString: 'Escape', webKeyId: "Escape" } }
+  static get BACKSPACE(): HidInfo { return {HIDcode: 42, displayString: 'Backspace', webKeyId: "Backspace" } }
+  static get TAB(): HidInfo { return {HIDcode: 43, displayString: 'Tab', webKeyId: "Tab" } }
+  static get SPACE(): HidInfo { return {HIDcode: 44, displayString: 'Space', webKeyId: "Space" } }
+  static get MINUS(): HidInfo { return {HIDcode: 45, displayString: '-', webKeyId: "Minus" } }
+  static get EQUAL(): HidInfo { return {HIDcode: 46, displayString: '=', webKeyId: "Equal" } }
+  static get BRACKETL(): HidInfo { return {HIDcode: 47, displayString: '[', webKeyId: "BracketLeft" } }
+  static get BRACKETR(): HidInfo { return {HIDcode: 48, displayString: ']', webKeyId: "BracketRight" } }
+  static get BACKSLASH(): HidInfo { return {HIDcode: 49, displayString: '\\', webKeyId: "Backslash" } }
 
-  static get ENTER(): HidInfo { return {byte: 47, id: 'Enter', category: HidCategory.General, vkCode: 13, webKeyId: "Enter" } }
-  static get ESCAPE(): HidInfo { return {byte: 48, id: 'Escape', category: HidCategory.General, vkCode: 27, webKeyId: "Escape" } }
-  static get BACKSPACE(): HidInfo { return {byte: 49, id: 'Backspace', category: HidCategory.General, vkCode: 8, webKeyId: "Backspace" } }
-  static get TAB(): HidInfo { return {byte: 50, id: 'Tab', category: HidCategory.General, vkCode: 9, webKeyId: "Tab" } }
-  static get SPACE(): HidInfo { return {byte: 51, id: 'Space', category: HidCategory.General, vkCode: 32, webKeyId: "Space" } }
-  static get MINUS(): HidInfo { return {byte: 52, id: '-', category: HidCategory.General, vkCode: 189, webKeyId: "Minus" } }
-  static get EQUAL(): HidInfo { return {byte: 53, id: '=', category: HidCategory.General, vkCode: 187, webKeyId: "Equal" } }
-  static get BRACKETL(): HidInfo { return {byte: 54, id: '[', category: HidCategory.General, vkCode: 219, webKeyId: "BracketLeft" } }
-  static get BRACKETR(): HidInfo { return {byte: 55, id: ']', category: HidCategory.General, vkCode: 221, webKeyId: "BracketRight" } }
-  static get BACKSLASH(): HidInfo { return {byte: 56, id: '\\', category: HidCategory.General, vkCode: 220, webKeyId: "Backslash" } }
-  static get SEMICOLON(): HidInfo { return {byte: 57, id: ';', category: HidCategory.General, vkCode: 186, webKeyId: "Semicolon" } }
-  static get QUOTE(): HidInfo { return {byte: 58, id: '"', category: HidCategory.General, vkCode: 222, webKeyId: "Quote" } }
-  static get BACKQUOTE(): HidInfo { return {byte: 59, id: '`', category: HidCategory.General, vkCode: 192, webKeyId: "Backquote" } }
-  static get COMMA(): HidInfo { return {byte: 60, id: ',', category: HidCategory.General, vkCode: 188, webKeyId: "Comma" } }
-  static get PERIOD(): HidInfo { return {byte: 61, id: '.', category: HidCategory.General, vkCode: 190, webKeyId: "Period" } }
-  static get SLASH(): HidInfo { return {byte: 62, id: '/', category: HidCategory.General, vkCode: 191, webKeyId: "Slash" } }
-  static get CAPSLOCK(): HidInfo { return {byte: 63, id: 'Caps Lock', category: HidCategory.General, vkCode: 20, webKeyId: "CapsLock" } }
+  static get SEMICOLON(): HidInfo { return {HIDcode: 51, displayString: ';', webKeyId: "Semicolon" } }
+  static get QUOTE(): HidInfo { return {HIDcode: 52, displayString: '"', webKeyId: "Quote" } }
+  static get BACKQUOTE(): HidInfo { return {HIDcode: 53, displayString: '`', webKeyId: "Backquote" } }
+  static get COMMA(): HidInfo { return {HIDcode: 54, displayString: ',', webKeyId: "Comma" } }
+  static get PERIOD(): HidInfo { return {HIDcode: 55, displayString: '.', webKeyId: "Period" } }
+  static get SLASH(): HidInfo { return {HIDcode: 56, displayString: '/', webKeyId: "Slash" } }
+  static get CAPSLOCK(): HidInfo { return {HIDcode: 57, displayString: 'Caps Lock', webKeyId: "CapsLock" } }
+  static get F1(): HidInfo { return {HIDcode: 58, displayString: 'F1', webKeyId: "F1" } }
+  static get F2(): HidInfo { return {HIDcode: 59, displayString: 'F2', webKeyId: "F2" } }
 
-  static get F1(): HidInfo { return {byte: 64, id: 'F1', category: HidCategory.General, vkCode: 112, webKeyId: "F1" } }
-  static get F2(): HidInfo { return {byte: 65, id: 'F2', category: HidCategory.General, vkCode: 113, webKeyId: "F2" } }
-  static get F3(): HidInfo { return {byte: 66, id: 'F3', category: HidCategory.General, vkCode: 114, webKeyId: "F3" } }
-  static get F4(): HidInfo { return {byte: 67, id: 'F4', category: HidCategory.General, vkCode: 115, webKeyId: "F4" } }
-  static get F5(): HidInfo { return {byte: 68, id: 'F5', category: HidCategory.General, vkCode: 116, webKeyId: "F5" } }
-  static get F6(): HidInfo { return {byte: 69, id: 'F6', category: HidCategory.General, vkCode: 117, webKeyId: "F6" } }
-  static get F7(): HidInfo { return {byte: 70, id: 'F7', category: HidCategory.General, vkCode: 118, webKeyId: "F7" } }
-  static get F8(): HidInfo { return {byte: 71, id: 'F8', category: HidCategory.General, vkCode: 119, webKeyId: "F8" } }
-  static get F9(): HidInfo { return {byte: 72, id: 'F9', category: HidCategory.General, vkCode: 120, webKeyId: "F9" } }
-  static get F10(): HidInfo { return {byte: 73, id: 'F10', category: HidCategory.General, vkCode: 121, webKeyId: "F10" } }
-  static get F11(): HidInfo { return {byte: 74, id: 'F11', category: HidCategory.General, vkCode: 122, webKeyId: "F11" } }
-  static get F12(): HidInfo { return {byte: 75, id: 'F12', category: HidCategory.General, vkCode: 123, webKeyId: "F12" } }
-
-  static get PRINTSCREEN(): HidInfo { return {byte: 76, id: 'Print Screen', category: HidCategory.General, vkCode: 44, webKeyId: "PrintScreen" } }
-  static get SCROLLLOCK(): HidInfo { return {byte: 77, id: 'Scroll Lock', category: HidCategory.General, vkCode: 145, webKeyId: "ScrollLock" } }
-  static get PAUSE(): HidInfo { return {byte: 78, id: 'Pause', category: HidCategory.General, vkCode: 19, webKeyId: "Pause" } }
-  static get INSERT(): HidInfo { return {byte: 79, id: 'Insert', category: HidCategory.General, vkCode: 45, webKeyId: "Insert" } }
-  static get HOME(): HidInfo { return {byte: 80, id: 'Home', category: HidCategory.General, vkCode: 36, webKeyId: "Home" } }
-  static get PAGEUP(): HidInfo { return {byte: 81, id: 'Page Up', category: HidCategory.General, vkCode: 33, webKeyId: "PageUp" } }
-  static get DELETE(): HidInfo { return {byte: 82, id: 'Delete', category: HidCategory.General, vkCode: 46, webKeyId: "Delete" } }
-  static get END(): HidInfo { return {byte: 83, id: 'End', category: HidCategory.General, vkCode: 35, webKeyId: "End" } }
-  static get PAGEDOWN(): HidInfo { return {byte: 84, id: 'Page Down', category: HidCategory.General, vkCode: 34, webKeyId: "PageDown" } }
-
-  static get ARROWR(): HidInfo { return {byte: 85, id: 'Right Arrow', category: HidCategory.General, vkCode: 39, webKeyId: "ArrowRight" } }
-  static get ARROWL(): HidInfo { return {byte: 86, id: 'Left Arrow', category: HidCategory.General, vkCode: 37, webKeyId: "ArrowLeft" } }
-  static get ARROWD(): HidInfo { return {byte: 87, id: 'Down Arrow', category: HidCategory.General, vkCode: 40, webKeyId: "ArrowDown" } }
-  static get ARROWU(): HidInfo { return {byte: 88, id: 'Up Arrow', category: HidCategory.General, vkCode: 38, webKeyId: "ArrowUp" } }
+  static get F3(): HidInfo { return {HIDcode: 60, displayString: 'F3', webKeyId: "F3" } }
+  static get F4(): HidInfo { return {HIDcode: 61, displayString: 'F4', webKeyId: "F4" } }
+  static get F5(): HidInfo { return {HIDcode: 62, displayString: 'F5', webKeyId: "F5" } }
+  static get F6(): HidInfo { return {HIDcode: 63, displayString: 'F6', webKeyId: "F6" } }
+  static get F7(): HidInfo { return {HIDcode: 64, displayString: 'F7', webKeyId: "F7" } }
+  static get F8(): HidInfo { return {HIDcode: 65, displayString: 'F8', webKeyId: "F8" } }
+  static get F9(): HidInfo { return {HIDcode: 66, displayString: 'F9', webKeyId: "F9" } }
+  static get F10(): HidInfo { return {HIDcode: 67, displayString: 'F10', webKeyId: "F10" } }
+  static get F11(): HidInfo { return {HIDcode: 68, displayString: 'F11', webKeyId: "F11" } }
+  static get F12(): HidInfo { return {HIDcode: 69, displayString: 'F12', webKeyId: "F12" } }
   
-  static get NUMLOCK(): HidInfo { return {byte: 89, id: 'Num Lock', category: HidCategory.Numpad, vkCode: 44, webKeyId: "NumLock" } }
-  static get NUMDIVIDE(): HidInfo { return {byte: 90, id: 'Numpad Divide', category: HidCategory.Numpad, vkCode: 111, webKeyId: "NumpadDivide" } }
-  static get NUMMULTIPLY(): HidInfo { return {byte: 91, id: 'Numpad Multiply', category: HidCategory.Numpad, vkCode: 106, webKeyId: "NumpadMultiply" } }
-  static get NUMSUBTRACT(): HidInfo { return {byte: 92, id: 'Numpad Subtract', category: HidCategory.Numpad, vkCode: 109, webKeyId: "NumpadSubtract" } }
-  static get NUMADD(): HidInfo { return {byte: 93, id: 'Numpad Add', category: HidCategory.Numpad, vkCode: 107, webKeyId: "NumpadAdd" } }
-  static get NUMENTER(): HidInfo { return {byte: 94, id: 'Numpad Enter', category: HidCategory.Numpad, vkCode: 13, webKeyId: "NumpadEnter" } }
-  static get NUMDECIMAL(): HidInfo { return {byte: 95, id: 'Numpad Decimal', category: HidCategory.Numpad, vkCode: 110, webKeyId: "NumpadDecimal" } }
+  static get PRINTSCREEN(): HidInfo { return {HIDcode: 70, displayString: 'Print Screen', webKeyId: "PrintScreen" } }
+  static get SCROLLLOCK(): HidInfo { return {HIDcode: 71, displayString: 'Scroll Lock', webKeyId: "ScrollLock" } }
+  static get PAUSE(): HidInfo { return {HIDcode: 72, displayString: 'Pause', webKeyId: "Pause" } }
+  static get INSERT(): HidInfo { return {HIDcode: 73, displayString: 'Insert', webKeyId: "Insert" } }
+  static get HOME(): HidInfo { return {HIDcode: 74, displayString: 'Home', webKeyId: "Home" } }
+  static get PAGEUP(): HidInfo { return {HIDcode: 75, displayString: 'Page Up', webKeyId: "PageUp" } }
+  static get DELETE(): HidInfo { return {HIDcode: 76, displayString: 'Delete', webKeyId: "Delete" } }
+  static get END(): HidInfo { return {HIDcode: 77, displayString: 'End', webKeyId: "End" } }
+  static get PAGEDOWN(): HidInfo { return {HIDcode: 78, displayString: 'Page Down', webKeyId: "PageDown" } }
+  static get ARROWR(): HidInfo { return {HIDcode: 79, displayString: 'Right Arrow', webKeyId: "ArrowRight" } }
 
-  static get SHIFTL(): HidInfo { return {byte: 96, id: 'Left Shift', category: HidCategory.LeftModifier, vkCode: 16, webKeyId: "ShiftLeft" } }
-  static get CONTROLL(): HidInfo { return {byte: 97, id: 'Left Control', category: HidCategory.LeftModifier, vkCode: 17, webKeyId: "ControlLeft" } }
-  static get ALTL(): HidInfo { return {byte: 98, id: 'Left Alt', category: HidCategory.LeftModifier, vkCode: 18, webKeyId: "AltLeft" } }
-  static get METAL(): HidInfo { return {byte: 99, id: 'Left Meta', category: HidCategory.LeftModifier, vkCode: 91, webKeyId: "MetaLeft" } }
+  static get ARROWL(): HidInfo { return {HIDcode: 80, displayString: 'Left Arrow', webKeyId: "ArrowLeft" } }
+  static get ARROWD(): HidInfo { return {HIDcode: 81, displayString: 'Down Arrow', webKeyId: "ArrowDown" } }
+  static get ARROWU(): HidInfo { return {HIDcode: 82, displayString: 'Up Arrow', webKeyId: "ArrowUp" } }
+  static get NUMLOCK(): HidInfo { return {HIDcode: 83, displayString: 'Num Lock', webKeyId: "NumLock" } }
+  static get NUMDIVIDE(): HidInfo { return {HIDcode: 84, displayString: 'Numpad Divide', webKeyId: "NumpadDivide" } }
+  static get NUMMULTIPLY(): HidInfo { return {HIDcode: 85, displayString: 'Numpad Multiply', webKeyId: "NumpadMultiply" } }
+  static get NUMSUBTRACT(): HidInfo { return {HIDcode: 86, displayString: 'Numpad Subtract', webKeyId: "NumpadSubtract" } }
+  static get NUMADD(): HidInfo { return {HIDcode: 87, displayString: 'Numpad Add', webKeyId: "NumpadAdd" } }
+  static get NUMENTER(): HidInfo { return {HIDcode: 88, displayString: 'Numpad Enter', webKeyId: "NumpadEnter" } }
+  static get NP1(): HidInfo { return {HIDcode: 89, displayString: '1', webKeyId: "Numpad1" } }
 
-  static get SHIFTR(): HidInfo { return {byte: 100, id: 'Right Shift', category: HidCategory.RightModifier, vkCode: 16, webKeyId: "ShiftRight" } }
-  static get CONTROLR(): HidInfo { return {byte: 101, id: 'Right Control', category: HidCategory.RightModifier, vkCode: 17, webKeyId: "ControlRight" } }
-  static get ALTR(): HidInfo { return {byte: 102, id: 'Right Alt', category: HidCategory.RightModifier, vkCode: 18, webKeyId: "AltRight" } }
-  static get METAR(): HidInfo { return {byte: 103, id: 'Right Meta', category: HidCategory.RightModifier, vkCode: 92, webKeyId: "MetaRight" } }
+  static get NP2(): HidInfo { return {HIDcode: 90, displayString: '2', webKeyId: "Numpad2" } }
+  static get NP3(): HidInfo { return {HIDcode: 91, displayString: '3', webKeyId: "Numpad3" } }
+  static get NP4(): HidInfo { return {HIDcode: 92, displayString: '4', webKeyId: "Numpad4" } }
+  static get NP5(): HidInfo { return {HIDcode: 93, displayString: '5', webKeyId: "Numpad5" } }
+  static get NP6(): HidInfo { return {HIDcode: 94, displayString: '6', webKeyId: "Numpad6" } }
+  static get NP7(): HidInfo { return {HIDcode: 95, displayString: '7', webKeyId: "Numpad7" } }
+  static get NP8(): HidInfo { return {HIDcode: 96, displayString: '8', webKeyId: "Numpad8" } }
+  static get NP9(): HidInfo { return {HIDcode: 97, displayString: '9', webKeyId: "Numpad9" } }
+  static get NP0(): HidInfo { return {HIDcode: 98, displayString: '0', webKeyId: "Numpad0" } }
+  static get NUMDECIMAL(): HidInfo { return {HIDcode: 99, displayString: 'Numpad Decimal', webKeyId: "NumpadDecimal" } }
+
+  /** KEYS TO ADD
+   * Internation Backslash
+   * Context Menu
+   * Power
+   * Numpad Equal
+   * F13 - 24
+   * Open
+   * Help
+   * Again
+   * Undo
+   * Cut
+   * Copy
+   * Paste
+   * Find
+   * Volume Mute
+   * Volume Up
+   * Volume Down
+   * Numpad Comma
+   * International RO
+   * Kana Mode
+   * International Yen
+   * Convert
+   * NonConvert
+   * Lang1 - 4
+   */
+
+  static get CONTROLL(): HidInfo { return {HIDcode: 224, displayString: 'Left Control', webKeyId: "ControlLeft" } }
+  static get SHIFTL(): HidInfo { return {HIDcode: 225, displayString: 'Left Shift', webKeyId: "ShiftLeft" } }
+  static get ALTL(): HidInfo { return {HIDcode: 226, displayString: 'Left Alt', webKeyId: "AltLeft" } }
+  static get METAL(): HidInfo { return {HIDcode: 227, displayString: 'Left Meta', webKeyId: "MetaLeft" } }
+  static get CONTROLR(): HidInfo { return {HIDcode: 228, displayString: 'Right Control', webKeyId: "ControlRight" } }
+  static get SHIFTR(): HidInfo { return {HIDcode: 229, displayString: 'Right Shift', webKeyId: "ShiftRight" } }
+  static get ALTR(): HidInfo { return {HIDcode: 230, displayString: 'Right Alt', webKeyId: "AltRight" } }
+  static get METAR(): HidInfo { return {HIDcode: 231, displayString: 'Right Meta', webKeyId: "MetaRight" } }
 
   static readonly all: HidInfo[] = [
     Hid.A,
@@ -247,6 +259,6 @@ export const webCodeHIDLookup = new Map<string, HidInfo>(
 )
 export const HIDLookup = new Map<number, HidInfo>(
   Hid.all
-    .filter(hid => hid.byte !== undefined)
-    .map(hid => [hid.byte!, hid])
+    .filter(hid => hid.HIDcode !== undefined)
+    .map(hid => [hid.HIDcode!, hid])
 )

@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
+import { invoke } from "@tauri-apps/api/tauri";
 import MacroCard from "./MacroCard";
 import { Collection, Macro } from "../types";
 import { Link } from 'wouter';
 import CollectionButton from './CollectionButton';
+import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
+import { AddIcon, EditIcon } from '@chakra-ui/icons'
 
 type Props = {
     collections: Collection[]
@@ -16,6 +17,7 @@ function Overview({collections}: Props) {
     const { isOpen: isOpenRenameCollection, onOpen: onOpenRenameCollection, onClose: onCloseRenameCollection } = useDisclosure()
     const [collectionName, setCollectionName] = useState("")
     const [collectionIndex, setCollectionIndex] = useState(0)
+    const [canUseCollectionName, setCanUseCollectionName] = useState(false)
 
     useEffect(() => {
         for (let i = 0; i < collections.length; i++) {
@@ -27,41 +29,59 @@ function Overview({collections}: Props) {
     }, [])
 
     const onAddCollectionButtonPress = () => {
+        console.log("add collection button pressed")
         collections.push({active: false, icon:"i", macros: [], name: collectionName })
+        // update backend here
+        invoke("set_configuration", { frontendData: collections }).then((res) => {
+            console.log(res)
+        }).catch(e => {
+        console.error(e)
+        })
         onCloseNewCollection()
     }
 
-    const onCollectionNameChange = (event:any) => {
-        setCollectionName(event.target.value)
+    const onCollectionNameChange = (event:BaseSyntheticEvent) => {
+        let newName:string = event.target.value
+        newName = newName.trim()
+
+        setCollectionName(newName)
+        for (let i = 0; i < collections.length; i++) {
+            const collection = collections[i];
+            if (collection.name.toUpperCase() === newName.toUpperCase()) {
+                setCanUseCollectionName(false)
+                return
+            }
+        }
+        setCanUseCollectionName(true)
     }
 
     const onCollectionButtonPress = (newActiveIndex:number) => {
-        for (let i = 0; i < collections.length; i++) {
-            const collection = collections[i];
-            if (i == newActiveIndex) {
-                collection.active = true
-            } else {
-                collection.active = false
-            }
-        }
-
         setCollectionIndex(newActiveIndex)
+    }
+
+    const onCollectionToggle = (index:number) => {
+        collections[index].active = !collections[index].active
+        setCanUseCollectionName(!canUseCollectionName)
+        // update backend here
     }
 
     const onRenameCollection = () => {
         collections[collectionIndex].name = collectionName
         onCloseRenameCollection()
+        // update backend here
     }
 
     const onCollectionDelete = () => {
         collections.splice(collectionIndex, 1)
         collections[0].active = true
         setCollectionIndex(0)
+        // update backend here
     }
 
     const onMacroDelete = (macroIndex:number) => {
         collections[collectionIndex].macros.splice(macroIndex, 1)
         setCollectionName("reset")
+        // update backend here
     }
 
     return (
@@ -69,7 +89,7 @@ function Overview({collections}: Props) {
             {/** Left Side Panel */}
             <VStack borderRight="1px" h="100vh" p="4">
                 {collections.map((collection:Collection, index:number) => 
-                    <CollectionButton collection={collection} index={index} key={index} onClick={onCollectionButtonPress}/>
+                    <CollectionButton collection={collection} index={index} key={index} isFocused={index == collectionIndex} setFocus={onCollectionButtonPress} toggleCollection={onCollectionToggle}/>
                 )}
                 <Button colorScheme="yellow" leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
                     New Collection
@@ -119,7 +139,7 @@ function Overview({collections}: Props) {
                 <ModalHeader>Create New Collection</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Input variant='unstyled' placeholder='Collection Name' isRequired onChange={onCollectionNameChange}/>
+                    <Input variant='unstyled' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder='Collection Name'/>
                 </ModalBody>
                 <ModalFooter>
                     <Button mr={3} onClick={onCloseNewCollection}>
@@ -136,7 +156,7 @@ function Overview({collections}: Props) {
                 <ModalHeader>Rename Collection</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Input variant='unstyled' isRequired onChange={onCollectionNameChange} placeholder={collections[collectionIndex].name}/>
+                    <Input variant='flushed' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder={collections[collectionIndex].name}/>
                 </ModalBody>
                 <ModalFooter>
                     <Button mr={3} onClick={onCloseRenameCollection}>

@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import {useEffect, useState} from "react";
+import {invoke} from "@tauri-apps/api/tauri";
 import "./App.css";
-import { Flex } from '@chakra-ui/react'
-import { Route } from "wouter";
+import {Flex} from '@chakra-ui/react'
+import {Route} from "wouter";
 import Overview from "./components/Overview";
 import AddMacroView from "./components/AddMacroView";
 import EditMacroView from "./components/EditMacroView";
-import { Collection } from "./types";
+import {Collection} from "./types";
 
 function App() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    invoke<Collection[]>("push_frontend_first").then((res) => {
-
-      // let temp:Collection[] = JSON.parse(res)
+    invoke<Collection[]>("get_configuration").then((res) => {
       console.log(res)
       setCollections(res)
-
-      if (res.length == 0) {
-        setCollections([
-          {name:"Default", icon: "i", active: true, macros:[]}
-        ])
-        // update backend
-      }
 
       setLoading(false)
     }).catch(e => {
