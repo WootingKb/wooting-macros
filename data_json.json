@@ -19,5 +19,11 @@
       }
     ],
     "active": true
+  },
+  {
+    "name": "sfasdfasdasdf",
+    "icon": "i",
+    "macros": [],
+    "active": false
   }
 ]

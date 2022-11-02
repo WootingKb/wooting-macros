@@ -48,13 +48,17 @@ pub type Delay = u32;
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
+    //KeyON
+    //KeyOFF
     //SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
     DiscordCommand {},
+    //IKEADesk
+    //MouseMovement
     UnicodeDirect {},
     Delay { data: Delay },
-    //TODO: Move the delay after here as an action
+
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
