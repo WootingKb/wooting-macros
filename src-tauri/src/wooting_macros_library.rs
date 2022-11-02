@@ -91,11 +91,12 @@ pub fn get_configuration(state: tauri::State<MacroDataState>) -> MacroData {
 
 #[tauri::command]
 /// Sets the configuration from frontend and updates the state for everything on backend.
-pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
+pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: Vec<Collection>) {
     let mut tauri_state = state.data.write().unwrap();
-    *tauri_state = frontend_data.clone();
+
+    *tauri_state = MacroData { 0: frontend_data.clone() };
     let mut app_state = state.data.write().unwrap();
-    *app_state = frontend_data.clone();
+    *app_state = MacroData { 0: frontend_data.clone() };
 }
 
 /// Function for a manual write of config changes from the backend side. Just a test.
@@ -109,7 +110,7 @@ pub fn set_data_write_manually_backend(frontend_data: MacroData) {
 fn check_key(incoming_key: &Key) {
     let app_state = APPLICATION_STATE.data.read().unwrap();
 
-    for collections in &app_state.collections {
+    for collections in &app_state.0 {
         if collections.active == true {
             for macros in &collections.macros {
                 if macros.active == true {
@@ -170,9 +171,7 @@ impl MacroDataState {
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct MacroData {
-    pub collections: Vec<Collection>,
-}
+pub struct MacroData(pub Vec<Collection>);
 
 
 impl MacroData {
@@ -214,14 +213,12 @@ impl MacroData {
     pub fn read_data() -> MacroData {
         let path = "./data_json.json";
 
-        let incoming_test: MacroData = MacroData {
-            collections: vec![Collection {
-                name: "Default".to_string(),
-                icon: 'i'.to_string(),
-                macros: vec![],
-                active: true,
-            }],
-        };
+        let incoming_test: MacroData = MacroData(vec![Collection {
+            name: "Default".to_string(),
+            icon: 'i'.to_string(),
+            macros: vec![],
+            active: true,
+        }]);
 
 
         //TODO: Make this create a new file when needed.
@@ -264,40 +261,38 @@ pub struct Collection {
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this(config: &ApplicationConfig) {
-    let mut incoming_test: MacroData = MacroData {
-        collections: vec![Collection {
-            name: "LOL".to_string(),
-            icon: 'i'.to_string(),
-            macros: vec![Macro {
-                name: "Newer string".to_string(),
-                sequence: vec![
-                    ActionEventType::KeyPressEvent {
-                        data: KeyPress {
-                            keypress: 12,
-
-                            press_duration: 50,
-                        },
-                    },
-                    ActionEventType::KeyPressEvent {
-                        data: KeyPress {
-                            keypress: 13,
-
-                            press_duration: 50,
-                        },
-                    },
-                ],
-                trigger: TriggerEventType::KeyPressEvent {
-                    data: vec![KeyPress {
-                        keypress: 5,
+    let mut incoming_test: MacroData = MacroData(vec![Collection {
+        name: "LOL".to_string(),
+        icon: 'i'.to_string(),
+        macros: vec![Macro {
+            name: "Newer string".to_string(),
+            sequence: vec![
+                ActionEventType::KeyPressEvent {
+                    data: KeyPress {
+                        keypress: 12,
 
                         press_duration: 50,
-                    }],
+                    },
                 },
-                active: true,
-            }],
+                ActionEventType::KeyPressEvent {
+                    data: KeyPress {
+                        keypress: 13,
+
+                        press_duration: 50,
+                    },
+                },
+            ],
+            trigger: TriggerEventType::KeyPressEvent {
+                data: vec![KeyPress {
+                    keypress: 5,
+
+                    press_duration: 50,
+                }],
+            },
             active: true,
         }],
-    };
+        active: true,
+    }]);
 
     //testing_macro_full.export_data();
 
