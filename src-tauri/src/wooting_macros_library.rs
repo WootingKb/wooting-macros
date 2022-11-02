@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
 use std::hash::Hash;
-use std::intrinsics::truncf32;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::channel;
 use std::sync::RwLock;
