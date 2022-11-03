@@ -83,15 +83,15 @@ lazy_static! {
 fn main() {
     //TODO: Async run the backend.
 
-    // tauri::Builder::default()
-    //     // This is where you pass in your commands
-    //     .manage(MacroDataState::new())
-    //     .invoke_handler(tauri::generate_handler![
-    //         get_configuration,
-    //         set_configuration
-    //     ])
-    //     .run(tauri::generate_context!())
-    //     .expect("error while running tauri application");
+    tauri::Builder::default()
+        // This is where you pass in your commands
+        .manage(MacroDataState::new())
+        .invoke_handler(tauri::generate_handler![
+            get_configuration,
+            set_configuration
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 
     // let mut data = String::new();
     //

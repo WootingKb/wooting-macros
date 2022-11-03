@@ -4,6 +4,7 @@ import { Collection, Keypress } from "../types";
 import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 import { Input, Button, Flex, HStack, VStack, Text, Alert, AlertIcon, Kbd } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
+import { updateBackendConfig } from '../utils';
 
 type Props = {
   collections: Collection[]
@@ -49,6 +50,7 @@ const AddMacroView = ({collections}: Props) => {
             collections[parseInt(params.cid)].macros.push({name: macroName, active: true, trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: []})
         }
         // update backend here
+        updateBackendConfig(collections)
         setLocation("/")
     }
 

@@ -6,6 +6,7 @@ import { Link } from 'wouter';
 import CollectionButton from './CollectionButton';
 import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { updateBackendConfig } from '../utils';
 
 type Props = {
     collections: Collection[]
@@ -17,7 +18,7 @@ function Overview({collections}: Props) {
     const { isOpen: isOpenRenameCollection, onOpen: onOpenRenameCollection, onClose: onCloseRenameCollection } = useDisclosure()
     const [collectionName, setCollectionName] = useState("")
     const [collectionIndex, setCollectionIndex] = useState(0)
-    const [canUseCollectionName, setCanUseCollectionName] = useState(false)
+    const [canUseCollectionName, setCanUseCollectionName] = useState(true)
 
     useEffect(() => {
         for (let i = 0; i < collections.length; i++) {
@@ -31,12 +32,7 @@ function Overview({collections}: Props) {
     const onAddCollectionButtonPress = () => {
         console.log("add collection button pressed")
         collections.push({active: false, icon:"i", macros: [], name: collectionName })
-        // update backend here
-        invoke("set_configuration", { frontendData: collections }).then((res) => {
-            console.log(res)
-        }).catch(e => {
-        console.error(e)
-        })
+        updateBackendConfig(collections)
         onCloseNewCollection()
     }
 
@@ -62,26 +58,26 @@ function Overview({collections}: Props) {
     const onCollectionToggle = (index:number) => {
         collections[index].active = !collections[index].active
         setCanUseCollectionName(!canUseCollectionName)
-        // update backend here
+        updateBackendConfig(collections)
     }
 
     const onRenameCollection = () => {
         collections[collectionIndex].name = collectionName
         onCloseRenameCollection()
-        // update backend here
+        updateBackendConfig(collections)
     }
 
     const onCollectionDelete = () => {
         collections.splice(collectionIndex, 1)
         collections[0].active = true
         setCollectionIndex(0)
-        // update backend here
+        updateBackendConfig(collections)
     }
 
     const onMacroDelete = (macroIndex:number) => {
         collections[collectionIndex].macros.splice(macroIndex, 1)
         setCollectionName("reset")
-        // update backend here
+        updateBackendConfig(collections)
     }
 
     return (
@@ -136,10 +132,10 @@ function Overview({collections}: Props) {
             <Modal isOpen={isOpenNewCollection} onClose={onCloseNewCollection}>
                 <ModalOverlay />
                 <ModalContent>
-                <ModalHeader>Create New Collection</ModalHeader>
+                <ModalHeader>Give it a unique name</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Input variant='unstyled' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder='Collection Name'/>
+                    <Input variant='flushed' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder='Collection Name'/>
                 </ModalBody>
                 <ModalFooter>
                     <Button mr={3} onClick={onCloseNewCollection}>
@@ -153,7 +149,7 @@ function Overview({collections}: Props) {
             <Modal isOpen={isOpenRenameCollection} onClose={onCloseRenameCollection}>
                 <ModalOverlay />
                 <ModalContent>
-                <ModalHeader>Rename Collection</ModalHeader>
+                <ModalHeader>Changed your mind?</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     <Input variant='flushed' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder={collections[collectionIndex].name}/>
