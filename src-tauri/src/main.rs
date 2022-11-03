@@ -83,28 +83,15 @@ lazy_static! {
 fn main() {
     //TODO: Async run the backend.
 
-    // tauri::Builder::default()
-    //     // This is where you pass in your commands
-    //     .manage(MacroDataState::new())
-    //     .invoke_handler(tauri::generate_handler![
-    //         get_configuration,
-    //         set_configuration
-    //     ])
-    //     .run(tauri::generate_context!())
-    //     .expect("error while running tauri application");
-
-    // let mut data = String::new();
-    //
-    // match file.read_to_string(&mut data) {
-    //     Ok(T) => {
-    //         println!("Loaded the file");
-    //         let config: ApplicationConfig =
-    //             //TODO: rewrite this
-    //             serde_json::from_str(&data).expect("JSON was not well-formatted");
-    //         println!("{:#?}", config);
-    //     }
-    //     Err(E) => {}
-    // }
+    tauri::Builder::default()
+        // This is where you pass in your commands
+        .manage(MacroDataState::new())
+        .invoke_handler(tauri::generate_handler![
+            get_configuration,
+            set_configuration
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 
     run_this();
 }
