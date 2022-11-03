@@ -94,17 +94,13 @@ pub fn get_configuration(state: tauri::State<MacroDataState>) -> MacroData {
 
 #[tauri::command]
 /// Sets the configuration from frontend and updates the state for everything on backend.
-pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: Vec<Collection>) {
+pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
     let mut tauri_state = state.data.write().unwrap();
-    *tauri_state = MacroData {
-        0: frontend_data.clone(),
-    };
+    *tauri_state = frontend_data.clone();
     tauri_state.export_data();
 
     let mut app_state = APPLICATION_STATE.data.write().unwrap();
-    *app_state = MacroData {
-        0: frontend_data.clone(),
-    };
+    *app_state = frontend_data;
 }
 
 /// Function for a manual write of config changes from the backend side. Just a test.
