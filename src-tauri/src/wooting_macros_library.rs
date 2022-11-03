@@ -85,11 +85,31 @@ pub struct Macro {
 }
 
 #[tauri::command]
-/// Gets the configuration from current state and sends to frontend.
+/// Gets the application config from the current state and sends to frontend.
+/// The state gets it from the config file at bootup.
+pub fn get_config(state: tauri::State<MacroDataState>) -> ApplicationConfig {
+    let config_data_state = state.config.read().unwrap();
+    config_data_state.clone()
+}
+
+#[tauri::command]
+/// Gets the application config from the current state and sends to frontend.
+/// The state gets it from the config file at bootup.
+pub fn set_config(state: tauri::State<MacroDataState>, config: ApplicationConfig) {
+    let mut tauri_state = state.config.write().unwrap();
+    *tauri_state = config.clone();
+    tauri_state.export_data();
+
+    let mut app_state = APPLICATION_STATE.config.write().unwrap();
+    *app_state = config;
+}
+
+#[tauri::command]
+/// Gets the macro data from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
 pub fn get_macros(state: tauri::State<MacroDataState>) -> MacroData {
-    let test = state.data.read().unwrap();
-    test.clone()
+    let macro_data_state = state.data.read().unwrap();
+    macro_data_state.clone()
 }
 
 #[tauri::command]

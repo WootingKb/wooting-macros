@@ -74,6 +74,16 @@ impl ApplicationConfig {
         };
         deserialized
     }
+
+    /// This exports data for the frontend to process it.
+    /// Basically sends the entire struct to the frontend
+    pub fn export_data(&self) {
+        std::fs::write(
+            "../config.json",
+            serde_json::to_string_pretty(&self).unwrap(),
+        )
+            .unwrap();
+    }
 }
 
 lazy_static! {
@@ -88,28 +98,13 @@ fn main() {
         .manage(MacroDataState::new())
         .invoke_handler(tauri::generate_handler![
             get_macros,
-            set_macros
+            set_macros,
+            get_config,
+            set_config
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
 
     run_this();
-}
-
-pub fn get_config() -> ApplicationConfig {
-    let mut config: ApplicationConfig = ApplicationConfig {
-        use_input_grab: false,
-        startup_delay: 3,
-    };
-
-    let mut file = match File::open("../../config.json") {
-        Ok(T) => T,
-        Err(E) => {
-            eprintln!("Error parsing the file {}", E);
-            println!("Error finding the config.json file.\nPlease place one in the root directory. Using default configuration (safe).\nCreating an empty file.\n");
-            File::create("../../config.json").unwrap()
-        }
-    };
-    config
 }
