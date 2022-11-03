@@ -87,8 +87,8 @@ fn main() {
         // This is where you pass in your commands
         .manage(MacroDataState::new())
         .invoke_handler(tauri::generate_handler![
-            get_configuration,
-            set_configuration
+            get_macros,
+            set_macros
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

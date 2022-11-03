@@ -87,14 +87,14 @@ pub struct Macro {
 #[tauri::command]
 /// Gets the configuration from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub fn get_configuration(state: tauri::State<MacroDataState>) -> MacroData {
+pub fn get_macros(state: tauri::State<MacroDataState>) -> MacroData {
     let test = state.data.read().unwrap();
     test.clone()
 }
 
 #[tauri::command]
 /// Sets the configuration from frontend and updates the state for everything on backend.
-pub fn set_configuration(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
+pub fn set_macros(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
     let mut tauri_state = state.data.write().unwrap();
     *tauri_state = frontend_data.clone();
     tauri_state.export_data();
