@@ -93,18 +93,6 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    // let mut data = String::new();
-    //
-    // match file.read_to_string(&mut data) {
-    //     Ok(T) => {
-    //         println!("Loaded the file");
-    //         let config: ApplicationConfig =
-    //             //TODO: rewrite this
-    //             serde_json::from_str(&data).expect("JSON was not well-formatted");
-    //         println!("{:#?}", config);
-    //     }
-    //     Err(E) => {}
-    // }
 
     run_this();
 }

@@ -48,13 +48,17 @@ pub type Delay = u32;
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
+    //KeyON
+    //KeyOFF
     //SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
     DiscordCommand {},
+    //IKEADesk
+    //MouseMovement
     UnicodeDirect {},
     Delay { data: Delay },
-    //TODO: Move the delay after here as an action
+
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -135,32 +139,6 @@ fn check_key(incoming_key: &Key) {
         }
     }
 }
-// pub fn export_frontend(data: MacroData) -> String {
-//     let data_return = data.export_data();
-//     data_return
-// }
-
-// pub fn push_frontend_first() -> MacroData {
-//     let path = "./data_json.json";
-//     let data = fs::read_to_string(path).expect("Unable to read file");
-//     let res = serde_json::from_str::<MacroData>(&data).expect("Unable to parse");
-//
-//     // serde_json::to_string(&res).expect("Unable to serialize")
-//     res
-// }
-
-// fn push_backend_first() -> MacroData {
-//     let path = "./data_json.json";
-//     let data = fs::read_to_string(path).expect("Unable to read file");
-//
-//     let deserialized: MacroData = serde_json::from_str(&data).unwrap();
-//     deserialized
-// }
-
-// #[tauri::command]
-// pub fn import_frontend(mut data: MacroData, input: MacroData) {
-//     data.import_data(input);
-// }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct MacroDataState {
@@ -177,11 +155,12 @@ impl MacroDataState {
     }
 }
 
-//type Collections = Vec<Collection>;
+
+type Collections = Vec<Collection>;
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct MacroData(pub Vec<Collection>);
+pub struct MacroData(pub Collections);
 
 impl MacroData {
     /// This exports data for the frontend to process it.
@@ -269,72 +248,13 @@ pub struct Collection {
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this() {
-    // let mut incoming_test: MacroData = MacroData(vec![Collection {
-    //     name: "LOL".to_string(),
-    //     icon: 'i'.to_string(),
-    //     macros: vec![Macro {
-    //         name: "Newer string".to_string(),
-    //         sequence: vec![
-    //             ActionEventType::KeyPressEvent {
-    //                 data: KeyPress {
-    //                     keypress: 12,
-    //
-    //                     press_duration: 50,
-    //                 },
-    //             },
-    //             ActionEventType::KeyPressEvent {
-    //                 data: KeyPress {
-    //                     keypress: 13,
-    //
-    //                     press_duration: 50,
-    //                 },
-    //             },
-    //         ],
-    //         trigger: TriggerEventType::KeyPressEvent {
-    //             data: vec![KeyPress {
-    //                 keypress: 5,
-    //
-    //                 press_duration: 50,
-    //             }],
-    //         },
-    //         active: true,
-    //     }],
-    //     active: true,
-    // }]);
-
-    //testing_macro_full.export_data();
-
-    // Get data from the config file.
-
-    //println!("WRITING DATA");
-
-    //thread::sleep(time::Duration::from_secs(20));
-    //set_data_write_manually_backend(incoming_test);
-
-    //println!("READING MODIFIED DATA:\n{:#?}\n====\nMODIFIED FILE READ.", APPLICATION_STATE.data.read().unwrap());
-
-    // let mut testing_macro_full: MacroData = get_configuration(APPLICATION_STATE);
-    // println!("{:#?}", testing_macro_full);
-
-    // // Serve to the frontend.
-    // push_frontend_first();
-    //
-    // // Get the triggers linked correctly
-    // let triggers = testing_macro_full.extract_triggers();
-
-    //Print for a check (triggers)
-    //println!("{:#?}", testing_macro_full);
-
-    //println!("{:#?}", &APPLICATION_STATE.read().unwrap().data);
-
     //==================================================
-
     //TODO: make this a grab instead of listen
     //TODO: try to make this interact better (cleanup the code a bit)
     //TODO: make the pressed keys vector and compare to the hashmap
     //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
-    //
+
 
     match APPLICATION_STATE.config.read().unwrap().use_input_grab {
         true => {
@@ -349,13 +269,12 @@ pub fn run_this() {
                                 println!("BLOCKING THE COMMA");
                                 None
                             }
-                            _ => Some(event)
+                            _ => Some(event),
                         }
                     }
-                    Err(_) => { None }
+                    Err(_) => None,
                 })
             });
-
 
             for event in rchan.iter() {
                 events.push(event);
@@ -389,11 +308,6 @@ pub fn run_this() {
 
             let (schan, rchan) = channel();
             let _listener = thread::spawn(move || {
-                //TESTING
-                //let trigger_hash = APPLICATION_STATE.data.read().unwrap();
-
-                //println!("{:#?}", trigger_hash);
-
                 listen(move |event| {
                     schan
                         .send(event)
@@ -457,40 +371,4 @@ fn get_user_input(display_text: String) -> String {
     buffer.trim().to_string()
 }
 
-fn callback_grab_win_osx(event: Event) -> Option<Event> {
-    println!("My callback {:?}", event);
 
-    match event.event_type {
-        EventType::KeyPress(Key::Comma) => {
-            println!("Comma pressed");
-            None
-        }
-        //EventType::KeyPress(Key::Kp7)
-        _ => Some(event),
-    }
-}
-
-fn callback_listen_only(event: Event) {
-    println!("My callback {:?}", event);
-}
-
-// fn execute_special_function(input: &MacroGroup) -> MacroGroup {
-//     let device_state = DeviceState::new();
-//     let mut key_watched_send: Keycode = Keycode::A;
-//
-//     let mut _guard = device_state.on_key_down(move |key_watched| {
-//         println!("Down: {:#?}", key_watched);
-//         //key_watched_send = key_watched.clone();
-//
-//         check_key(&input, &key_watched);
-//
-//
-//     });
-//
-//     let _guard = device_state.on_key_up(|key| {
-//         println!("Up: {:#?}", key);
-//     });
-//
-//
-//     loop {}
-// }
