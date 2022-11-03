@@ -20,6 +20,7 @@ rdev = { version = "0.5.1", features = ["unstable_grab", "serde", "serialize"] }
 halfbrown = { version = "0.1.15", features = ["serde"] }
 idasen-cli = "0.1.0"
 lazy_static = "1.4.0"
+tokio = { version = "1.21.2", features = ["full"] }
 
 [features]
 # by default Tauri runs in production mode

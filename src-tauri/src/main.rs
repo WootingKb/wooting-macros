@@ -15,10 +15,9 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use tauri::App;
+use tokio::*;
 
 use crate::wooting_macros_library::*;
-
-//use crate::wooting_macros_library;
 
 mod hid_table;
 mod wooting_macros_library;
@@ -92,18 +91,18 @@ lazy_static! {
 
 fn main() {
     //TODO: Async run the backend.
-
-    tauri::Builder::default()
-        // This is where you pass in your commands
-        .manage(MacroDataState::new())
-        .invoke_handler(tauri::generate_handler![
-            get_macros,
-            set_macros,
-            get_config,
-            set_config
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    //
+    // tauri::Builder::default()
+    //     // This is where you pass in your commands
+    //     .manage(MacroDataState::new())
+    //     .invoke_handler(tauri::generate_handler![
+    //         get_macros,
+    //         set_macros,
+    //         get_config,
+    //         set_config
+    //     ])
+    //     .run(tauri::generate_context!())
+    //     .expect("error while running tauri application");
 
 
     run_this();

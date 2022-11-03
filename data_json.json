@@ -1,26 +1,5 @@
 [
   {
-    "name": "Default",
-    "icon": "i",
-    "macros": [
-      {
-        "name": "auto run",
-        "sequence": [],
-        "trigger": {
-          "type": "KeyPressEvent",
-          "data": [
-            {
-              "keypress": 26,
-              "press_duration": 0
-            }
-          ]
-        },
-        "active": true
-      }
-    ],
-    "active": true
-  },
-  {
     "name": "Fortnite",
     "icon": "i",
     "macros": [],

@@ -16,12 +16,12 @@ use tauri::{Config, State};
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum MacroType {
-    Single { data: Macro },
-    Repeating { data: Macro },
-    OnHold { data: Macro },
-    MultiLevel { data: Macro },
+    Single,
+    Repeating,
+    OnHold,
+    MultiLevel,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -80,6 +80,7 @@ pub struct Action {
 pub struct Macro {
     pub name: String,
     pub sequence: Vec<ActionEventType>,
+    pub macro_type: MacroType,
     pub trigger: TriggerEventType,
     pub active: bool,
 }
@@ -271,96 +272,97 @@ pub fn run_this() {
     //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
 
-
-    match APPLICATION_STATE.config.read().unwrap().use_input_grab {
-        true => {
-            let mut events = Vec::new();
-            let (schan, rchan) = channel();
-            let _grabber = thread::spawn(move || {
-                grab(move |event| match schan.send(event.clone()) {
-                    Ok(T) => {
-                        match &event.event_type {
-                            //TODO: Make this hash the trigger keys
-                            EventType::KeyPress(Key::Comma) => {
-                                println!("BLOCKING THE COMMA");
-                                None
+    loop {
+        match APPLICATION_STATE.config.read().unwrap().use_input_grab {
+            true => {
+                let mut events = Vec::new();
+                let (schan, rchan) = channel();
+                let _grabber = thread::spawn(move || {
+                    grab(move |event| match schan.send(event.clone()) {
+                        Ok(T) => {
+                            match &event.event_type {
+                                //TODO: Make this hash the trigger keys
+                                EventType::KeyPress(Key::Comma) => {
+                                    println!("BLOCKING THE COMMA");
+                                    None
+                                }
+                                _ => Some(event),
                             }
-                            _ => Some(event),
+                        }
+                        Err(_) => None,
+                    })
+                });
+
+                for event in rchan.iter() {
+                    events.push(event);
+
+                    for i in &events {
+
+                        //println!("{:?}", events.len());
+                        match i.event_type {
+                            EventType::KeyPress(s) => {
+                                //TODO: Make this a hashtable or smth
+                                println!("Pressed: {:?}", s);
+                                check_key(&s);
+                            }
+                            EventType::KeyRelease(s) => {
+                                println!("Released: {:?}", s)
+                            }
+                            EventType::ButtonPress(s) => {
+                                println!("MB Pressed:{:?}", s)
+                            }
+                            EventType::ButtonRelease(s) => {
+                                println!("MB Released:{:?}", s)
+                            }
+                            EventType::MouseMove { x, y } => (),
+                            EventType::Wheel { delta_x, delta_y } => {}
                         }
                     }
-                    Err(_) => None,
-                })
-            });
-
-            for event in rchan.iter() {
-                events.push(event);
-
-                for i in &events {
-                    //println!("{:?}", events.len());
-                    match i.event_type {
-                        EventType::KeyPress(s) => {
-                            //TODO: Make this a hashtable or smth
-                            println!("Pressed: {:?}", s);
-                            check_key(&s);
-                        }
-                        EventType::KeyRelease(s) => {
-                            println!("Released: {:?}", s)
-                        }
-                        EventType::ButtonPress(s) => {
-                            println!("MB Pressed:{:?}", s)
-                        }
-                        EventType::ButtonRelease(s) => {
-                            println!("MB Released:{:?}", s)
-                        }
-                        EventType::MouseMove { x, y } => (),
-                        EventType::Wheel { delta_x, delta_y } => {}
-                    }
+                    events.pop();
                 }
-                events.pop();
             }
-        }
-        false => {
-            let mut events = Vec::new();
+            false => {
+                let mut events = Vec::new();
 
-            let (schan, rchan) = channel();
-            let _listener = thread::spawn(move || {
-                listen(move |event| {
-                    schan
-                        .send(event)
-                        .unwrap_or_else(|e| println!("Could not send event {:?}", e));
-                })
-                    .expect("Could not listen");
-            });
+                let (schan, rchan) = channel();
+                let _listener = thread::spawn(move || {
+                    listen(move |event| {
+                        schan
+                            .send(event)
+                            .unwrap_or_else(|e| println!("Could not send event {:?}", e));
+                    })
+                        .expect("Could not listen");
+                });
 
-            for event in rchan.iter() {
-                events.push(event);
+                for event in rchan.iter() {
+                    events.push(event);
 
-                for i in &events {
-                    //println!("{:?}", events.len());
-                    match i.event_type {
-                        EventType::KeyPress(s) => {
-                            //TODO: Make this a hashtable or smth
-                            println!("Pressed: {:?}", s);
-                            check_key(&s);
+                    for i in &events {
+                        //println!("{:?}", events.len());
+                        match i.event_type {
+                            EventType::KeyPress(s) => {
+                                //TODO: Make this a hashtable or smth
+                                println!("Pressed: {:?}", s);
+                                check_key(&s);
+                            }
+                            EventType::KeyRelease(s) => {
+                                println!("Released: {:?}", s)
+                            }
+                            EventType::ButtonPress(s) => {
+                                println!("MB Pressed:{:?}", s)
+                            }
+                            EventType::ButtonRelease(s) => {
+                                println!("MB Released:{:?}", s)
+                            }
+                            EventType::MouseMove { x, y } => (),
+                            EventType::Wheel { delta_x, delta_y } => {}
                         }
-                        EventType::KeyRelease(s) => {
-                            println!("Released: {:?}", s)
-                        }
-                        EventType::ButtonPress(s) => {
-                            println!("MB Pressed:{:?}", s)
-                        }
-                        EventType::ButtonRelease(s) => {
-                            println!("MB Released:{:?}", s)
-                        }
-                        EventType::MouseMove { x, y } => (),
-                        EventType::Wheel { delta_x, delta_y } => {}
                     }
+                    events.pop();
                 }
-                events.pop();
             }
         }
     }
-
     //TODO: Make a translation table to a hashmap from a keycode HID compatible -> library rdev enums.
 }
 
