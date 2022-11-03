@@ -45,6 +45,7 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
         </Menu>
       </Flex>
       {/** Trigger Keys Display */}
+      <Text fontSize="sm" color="gray.600" alignSelf="self-start">Trigger Keys:</Text>
       <Flex w="100%" gap="4px">
         {trigger?.map((key:Keypress, index:number) =>
           <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>

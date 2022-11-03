@@ -4,13 +4,13 @@
     "icon": "i",
     "macros": [
       {
-        "name": "Macro Name",
+        "name": "auto run",
         "sequence": [],
         "trigger": {
           "type": "KeyPressEvent",
           "data": [
             {
-              "keypress": 7,
+              "keypress": 26,
               "press_duration": 0
             }
           ]
@@ -21,7 +21,13 @@
     "active": true
   },
   {
-    "name": "sfasdfasdasdf",
+    "name": "Fortnite",
+    "icon": "i",
+    "macros": [],
+    "active": false
+  },
+  {
+    "name": "test",
     "icon": "i",
     "macros": [],
     "active": false

@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {invoke} from "@tauri-apps/api/tauri";
+import { appWindow, PhysicalSize } from '@tauri-apps/api/window';
 import "./App.css";
 import {Flex} from '@chakra-ui/react'
 import {Route} from "wouter";
@@ -11,6 +12,8 @@ import {Collection} from "./types";
 function App() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [isLoading, setLoading] = useState(true);
+
+  appWindow.setMinSize(new PhysicalSize(1000, 600));
 
   useEffect(() => {
     invoke<Collection[]>("get_configuration").then((res) => {
@@ -26,7 +29,7 @@ function App() {
   // Loading State is required, since getting data from the backend is async - Update Loading Screen
   if (isLoading) {
     return(
-      <Flex h="100vh">
+      <Flex h="100vh" justifyContent="center" alignItems="center">
         Loading
       </Flex>
     )
