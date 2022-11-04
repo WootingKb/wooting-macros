@@ -8,6 +8,9 @@ import { MacroType } from '../enums';
 import MacroviewHeader from '../components/MacroviewHeader';
 import MacroviewTypeArea from '../components/MacroviewTypeArea';
 import MacroviewTriggerArea from '../components/MacroviewTriggerArea';
+import MacroviewSequenceElementArea from '../components/MacroviewSequenceElementArea';
+import MacroviewSequencingArea from '../components/MacroviewSequencingArea';
+import MacroviewEditElementArea from '../components/MacroviewEditElementArea';
 
 type Props = {
   collections: Collection[]
@@ -79,14 +82,11 @@ const AddMacroView = ({collections}: Props) => {
             <Divider />
             <HStack w="100%" h="full">
                 {/** Left Panel */}
-                <VStack bg="gray.200" w="33%" h="full">
-                </VStack>
+                <MacroviewSequenceElementArea />
                 {/** Center Panel */}
-                <VStack bg="gray.200" w="33%" h="full">
-                </VStack>
+                <MacroviewSequencingArea />
                 {/** Right Panel */}
-                <VStack bg="gray.200" w="33%" h="full">
-                </VStack>
+                <MacroviewEditElementArea />
             </HStack>
         </VStack>
     )

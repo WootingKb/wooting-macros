@@ -11,25 +11,29 @@ type Props = {
 
 const MacroviewTriggerArea = ({recording, triggerKeys, onRecordButtonPress}: Props) => {
   return (
-    <HStack w="50%" h="full" p="4" bg="gray.400">
-        <VStack alignItems="normal" w="full" h="full">
+    <VStack w="50%" h="full" p="4" bg="gray.400" spacing="16px">
+        <HStack w="100%" justifyContent="space-between">
+            <Text fontWeight="semibold" fontSize="xl">Trigger Key(s)</Text>
             {recording && 
-                <Alert status='info' rounded="md" h="32px">
+                <Alert status='info' rounded="md" h="28px" w="55%">
                     <AlertIcon />
                     Input recording in progress.
                 </Alert>
             }
-            <Text fontWeight="semibold" fontSize="xl">Trigger Key(s)</Text>
-            <HStack spacing="4px">
-                {triggerKeys.map((key:Keypress, index:number) => 
-                    <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
-                    )}
-            </HStack>
-        </VStack>
-        <VStack maxWidth="50%" alignItems="normal">
-            <Button leftIcon={<EditIcon />} onClick={onRecordButtonPress} colorScheme={recording ? 'red' : 'gray'}>Record</Button>
-        </VStack>
-    </HStack>
+        </HStack>
+        <HStack w="100%" justifyContent="space-between">
+            <VStack alignItems="normal" w="full" h="full">
+                <HStack spacing="4px">
+                    {triggerKeys.map((key:Keypress, index:number) => 
+                        <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
+                        )}
+                </HStack>
+            </VStack>
+            <VStack alignItems="normal">
+                <Button leftIcon={<EditIcon />} onClick={onRecordButtonPress} colorScheme={recording ? 'red' : 'gray'}>Record</Button>
+            </VStack>
+        </HStack>
+    </VStack>
   )
 }
 
