@@ -4,7 +4,7 @@ type Props = {}
 
 const MacroviewEditElementArea = (props: Props) => {
   return (
-    <VStack bg="gray.200" w="33%" h="full">
+    <VStack bg="gray.200" w="25%" h="full">
     </VStack>
   )
 }
