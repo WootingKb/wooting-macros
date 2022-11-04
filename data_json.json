@@ -1,8 +1,10 @@
-[
-  {
-    "name": "Fortnite",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  }
-]
+{
+  "data": [
+    {
+      "name": "Fortnite",
+      "icon": "i",
+      "macros": [],
+      "active": false
+    }
+  ]
+}
