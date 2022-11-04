@@ -4,7 +4,7 @@ import { Collection, Keypress } from "../types";
 import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 import { Input, Button, Flex, HStack, VStack, Text, Alert, AlertIcon, Kbd, Divider, IconButton } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { updateBackendConfig } from '../utils';
+import { checkIfStringIsNumeric, updateBackendConfig } from '../utils';
 import { MacroType } from '../enums';
 
 type Props = {
@@ -17,6 +17,7 @@ const AddMacroView = ({collections}: Props) => {
     const [macroName, setMacroName] = useState("Macro Name")
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [location, setLocation] = useLocation();
+    const [selectedMacroType, setSelectedMacroType] = useState(0)
 
     const addTriggerKey = (event:KeyboardEvent) => {
         event.preventDefault()
@@ -46,9 +47,13 @@ const AddMacroView = ({collections}: Props) => {
         setRecording(!recording)
     }
 
+    const onMacroTypeButtonPress = (index:number) => {
+        setSelectedMacroType(index)
+    }
+
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, macro_type: MacroType[MacroType.Single], trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: []})
+            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, macro_type: MacroType[selectedMacroType], trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: []})
         }
         // update backend here
         updateBackendConfig(collections)
@@ -80,10 +85,9 @@ const AddMacroView = ({collections}: Props) => {
                     <VStack spacing="16px" alignItems="normal" h="full">
                         <Text fontWeight="semibold" fontSize="xl">Macro Type</Text>
                         <HStack>
-                            <IconButton icon={<EditIcon />} aria-label="macro type button"></IconButton>
-                            <IconButton icon={<EditIcon />} aria-label="macro type button"></IconButton>
-                            <IconButton icon={<EditIcon />} aria-label="macro type button"></IconButton>
-                            <IconButton icon={<EditIcon />} aria-label="macro type button"></IconButton>
+                            {(Object.keys(MacroType) as Array<keyof typeof MacroType>).filter(checkIfStringIsNumeric).map((type:any, index:number) => 
+                                <IconButton icon={<EditIcon />} aria-label="macro type button" bg={selectedMacroType == type ? "yellow.200" : "gray.100"} onClick={() => onMacroTypeButtonPress(type)} key={index}></IconButton>
+                            )}
                         </HStack>
                     </VStack>
                     <VStack maxWidth="50%" alignItems="normal" h="full">

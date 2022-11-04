@@ -9,3 +9,9 @@ export const updateBackendConfig = (collections: Collection[]) => {
         console.error(e)
     })
 }
+
+export const checkIfStringIsNumeric: (text:string) => boolean = function (
+    value:string
+) : boolean {
+    return isNaN(Number(value)) === false
+}

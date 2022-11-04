@@ -17,6 +17,7 @@ const EditMacroView = ({collections}: Props) => {
     const [macroName, setMacroName] = useState("")
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [location, setLocation] = useLocation();
+    const [selectedMacroType, setSelectedMacroType] = useState(0)
 
     useEffect(() => {
         if (match) {
@@ -60,11 +61,15 @@ const EditMacroView = ({collections}: Props) => {
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, macro_type: MacroType[MacroType.Single], trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
+            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, macro_type: MacroType[selectedMacroType], trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
         }
         // update backend here
         updateBackendConfig(collections)
         setLocation("/")
+    }
+
+    const onMacroTypeButtonPress = (index:number) => {
+        setSelectedMacroType(index)
     }
 
     const onMacroNameChange = (event:BaseSyntheticEvent) => {

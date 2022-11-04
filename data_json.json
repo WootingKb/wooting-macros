@@ -5,9 +5,9 @@
       "icon": "i",
       "macros": [
         {
-          "name": "trest",
+          "name": "testing type",
           "sequence": [],
-          "macro_type": "Single",
+          "macro_type": "OnHold",
           "trigger": {
             "type": "KeyPressEvent",
             "data": [
@@ -21,6 +21,28 @@
               },
               {
                 "keypress": 7,
+                "press_duration": 0
+              }
+            ]
+          },
+          "active": true
+        }
+      ],
+      "active": false
+    },
+    {
+      "name": "overwatch",
+      "icon": "i",
+      "macros": [
+        {
+          "name": "t4est2",
+          "sequence": [],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 30,
                 "press_duration": 0
               }
             ]
