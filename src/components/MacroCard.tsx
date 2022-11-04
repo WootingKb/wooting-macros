@@ -1,18 +1,20 @@
 import { Button, Flex, Text, IconButton, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { Keypress, Macro } from '../types'
+import { Collection, Keypress, Macro } from '../types'
 import { Link } from 'wouter'
 import { useEffect, useState } from 'react'
 import { HIDLookup } from '../HIDmap';
+import { updateBackendConfig } from '../utils'
 
 type Props = {
+  collections: Collection[]
   macro: Macro
   index: number
   collectionIndex: number
   onDelete: (index:number) => void
 }
 
-function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
+function MacroCard({collections, macro, index, collectionIndex, onDelete}: Props) {
   const [trigger, setTrigger] = useState<Keypress[]>()
 
   useEffect(() => {
@@ -22,6 +24,7 @@ function MacroCard({macro, index, collectionIndex, onDelete}: Props) {
   const onToggle = (event:any) => {
     macro.active = event.target.checked
     // update backend
+    updateBackendConfig(collections)
   }
 
   return (

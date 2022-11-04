@@ -124,7 +124,7 @@ function Overview({collections}: Props) {
                 </Link>
                 </Flex>
                 <Flex w="100%" direction="row" wrap="wrap" gap="1" p="8px">
-                {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard macro={macro} index={index} key={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>)}
+                {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard collections={collections} macro={macro} index={index} key={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>)}
                 </Flex>
             </VStack>
             {/** New Collection Modal */}
