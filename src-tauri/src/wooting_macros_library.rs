@@ -135,7 +135,7 @@ pub fn set_data_write_manually_backend(frontend_data: MacroData) {
 fn check_key(incoming_key: &Key) {
     let app_state = APPLICATION_STATE.data.read().unwrap();
 
-    for collections in &app_state.0 {
+    for collections in &app_state.data {
         if collections.active == true {
             for macros in &collections.macros {
                 if macros.active == true {
@@ -177,7 +177,9 @@ type Collections = Vec<Collection>;
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct MacroData(pub Collections);
+pub struct MacroData {
+    pub data: Collections,
+}
 
 impl MacroData {
     /// This exports data for the frontend to process it.
@@ -218,12 +220,14 @@ impl MacroData {
     pub fn read_data() -> MacroData {
         let path = "../data_json.json";
 
-        let incoming_test: MacroData = MacroData(vec![Collection {
-            name: "Default".to_string(),
-            icon: 'i'.to_string(),
-            macros: vec![],
-            active: true,
-        }]);
+        let incoming_test: MacroData = MacroData {
+            data: vec![Collection {
+                name: "Default".to_string(),
+                icon: 'i'.to_string(),
+                macros: vec![],
+                active: true,
+            }]
+        };
 
         //TODO: Make this create a new file when needed.
         let data = {
