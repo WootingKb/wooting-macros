@@ -4,9 +4,9 @@ import { appWindow, PhysicalSize } from '@tauri-apps/api/window';
 import "./App.css";
 import {Flex} from '@chakra-ui/react'
 import {Route} from "wouter";
-import Overview from "./components/Overview";
-import AddMacroView from "./components/AddMacroView";
-import EditMacroView from "./components/EditMacroView";
+import Overview from "./views/Overview";
+import AddMacroView from "./views/AddMacroView";
+import EditMacroView from "./views/EditMacroView";
 import {Collection, MacroData} from "./types";
 
 function App() {

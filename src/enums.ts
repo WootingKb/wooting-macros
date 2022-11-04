@@ -4,3 +4,8 @@ export enum MacroType {
     OnHold,
     MultiLevel,
 }
+
+export enum MacroviewState {
+    Creating,
+    Editing,
+}

@@ -1,9 +1,8 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
-import { invoke } from "@tauri-apps/api/tauri";
-import MacroCard from "./MacroCard";
+import MacroCard from "../components/MacroCard";
 import { Collection, Macro } from "../types";
 import { Link } from 'wouter';
-import CollectionButton from './CollectionButton';
+import CollectionButton from '../components/CollectionButton';
 import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import { updateBackendConfig } from '../utils';
