@@ -1,5 +1,3 @@
-// import { MacroType } from "./enums"
-
 export interface Keypress {
     keypress: number
     press_duration: number
@@ -12,12 +10,6 @@ export type ActionEventType =
 | {type: "KeyPressEvent", data: Keypress}
 | {type: "Delay", value: number}
 
-export type MacroType =
-| {type: "Single"}
-| {type: "Repeating"}
-| {type: "OnHold"}
-| {type: "MultiLevel"}
-
 export interface MacroData {
     data: Collection[]
 }
@@ -25,7 +17,7 @@ export interface MacroData {
 export interface Macro {
     name: string,
     active: boolean,
-    macro_type: MacroType,
+    macro_type: string,
     trigger: TriggerEventType,
     sequence: ActionEventType[],
 }

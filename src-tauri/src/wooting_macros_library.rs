@@ -18,10 +18,10 @@ use crate::hid_table::*;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum MacroType {
-    Single(),
-    Repeating(),
-    OnHold(),
-    MultiLevel(),
+    Single,
+    Repeating,
+    OnHold,
+    MultiLevel,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]

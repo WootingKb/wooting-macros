@@ -1,9 +1,33 @@
 {
   "data": [
     {
-      "name": "Fortnite",
+      "name": "Default",
       "icon": "i",
-      "macros": [],
+      "macros": [
+        {
+          "name": "trest",
+          "sequence": [],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 4,
+                "press_duration": 0
+              },
+              {
+                "keypress": 22,
+                "press_duration": 0
+              },
+              {
+                "keypress": 7,
+                "press_duration": 0
+              }
+            ]
+          },
+          "active": true
+        }
+      ],
       "active": false
     }
   ]

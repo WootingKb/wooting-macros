@@ -5,6 +5,7 @@ import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 import { Input, Button, Flex, HStack, VStack, Text, Alert, AlertIcon, Kbd } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { updateBackendConfig } from '../utils';
+import { MacroType } from '../enums';
 
 type Props = {
   collections: Collection[]
@@ -59,7 +60,7 @@ const EditMacroView = ({collections}: Props) => {
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, macro_type: { type: "Single" }, trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
+            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, macro_type: MacroType[MacroType.Single], trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
         }
         // update backend here
         updateBackendConfig(collections)
