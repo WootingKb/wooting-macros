@@ -271,6 +271,7 @@ pub fn run_this() {
     //TODO: make the pressed keys vector and compare to the hashmap
     //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
+    //TODO: io-uring async read files and write files
 
     loop {
         match APPLICATION_STATE.config.read().unwrap().use_input_grab {
