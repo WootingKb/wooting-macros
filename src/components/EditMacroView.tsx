@@ -59,7 +59,7 @@ const EditMacroView = ({collections}: Props) => {
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
+            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, macro_type: { type: "Single" }, trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
         }
         // update backend here
         updateBackendConfig(collections)

@@ -1,6 +1,6 @@
 import { Button, Flex, Text, IconButton, useColorMode, Switch, Divider, VStack, Kbd, Menu, MenuButton, MenuList, MenuItem, MenuItemOption, MenuGroup, MenuOptionGroup, MenuDivider, } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { Keypress, Macro, TriggerEventType } from '../types'
+import { Keypress, Macro } from '../types'
 import { Link } from 'wouter'
 import { useEffect, useState } from 'react'
 import { HIDLookup } from '../HIDmap';

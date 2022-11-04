@@ -7,7 +7,7 @@ import {Route} from "wouter";
 import Overview from "./components/Overview";
 import AddMacroView from "./components/AddMacroView";
 import EditMacroView from "./components/EditMacroView";
-import {Collection} from "./types";
+import {Collection, MacroData} from "./types";
 
 function App() {
   const [collections, setCollections] = useState<Collection[]>([])
@@ -16,9 +16,9 @@ function App() {
   appWindow.setMinSize(new PhysicalSize(1000, 600));
 
   useEffect(() => {
-    invoke<Collection[]>("get_configuration").then((res) => {
+    invoke<MacroData>("get_macros").then((res) => {
       console.log(res)
-      setCollections(res)
+      setCollections(res.data)
 
       setLoading(false)
     }).catch(e => {
