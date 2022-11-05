@@ -18,19 +18,19 @@ const MacroviewSequenceElementArea = (props: Props) => {
 
             <TabPanels>
                 <TabPanel>
-                <p>one!</p>
+                <Text>All goes here</Text>
                 </TabPanel>
                 <TabPanel>
-                <p>two!</p>
+                <Text>Keyboard keys goes here</Text>
                 </TabPanel>
                 <TabPanel>
-                <p>three!</p>
+                <Text>Mouse buttons goes here</Text>
                 </TabPanel>
                 <TabPanel>
-                <p>four!</p>
+                <Text>System commands go here</Text>
                 </TabPanel>
                 <TabPanel>
-                <p>five!</p>
+                <Text>Plugin commands go here, in a dropdown; each dropdown is for a specific application</Text>
                 </TabPanel>
             </TabPanels>
         </Tabs>
