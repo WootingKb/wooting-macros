@@ -1,15 +1,17 @@
-import { VStack, HStack, Text, Button, Divider, Box } from '@chakra-ui/react'
+import { VStack, HStack, Text, Button, Divider } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { DndContext, useSensor, PointerSensor } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import Sortable from './Sortable'
+import { ActionEventType } from '../types'
 
 type Props = {
-
+  sequenceList: ActionEventType[]
+  onSequenceChange: () => void
 }
 
-const MacroviewSequencingArea = ({}: Props) => {
+const MacroviewSequencingArea = ({sequenceList, onSequenceChange}: Props) => {
   const [items, setItems] = useState([
     {
       id: "1",

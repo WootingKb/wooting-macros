@@ -28,7 +28,7 @@ function MacroCard({collections, macro, index, collectionIndex, onDelete}: Props
   }
 
   return (
-    <VStack w="33%" border="1px" rounded="md" p="3" spacing="8px">
+    <VStack w={["49%", "33%"]} border="1px" rounded="md" p="3" m="auto" spacing="8px">
       {/** Top Row */}
       <Flex w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px">

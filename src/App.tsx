@@ -13,7 +13,7 @@ function App() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [isLoading, setLoading] = useState(true);
 
-  appWindow.setMinSize(new PhysicalSize(1000, 600));
+  appWindow.setMinSize(new PhysicalSize(800, 600));
 
   useEffect(() => {
     invoke<MacroData>("get_macros").then((res) => {
@@ -26,7 +26,7 @@ function App() {
     })
   }, [])
 
-  // Loading State is required, since getting data from the backend is async - Update Loading Screen
+  // TODO: Update Loading Screen & investigate loading time of application prior to loading screen taking effect
   if (isLoading) {
     return(
       <Flex h="100vh" justifyContent="center" alignItems="center">

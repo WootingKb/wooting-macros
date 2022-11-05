@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useLocation, useRoute } from 'wouter';
-import { Collection, Keypress, Macro } from "../types";
+import { ActionEventType, Collection, Keypress, Macro } from "../types";
 import { webCodeHIDLookup } from '../HIDmap';
 import { HStack, VStack, Divider } from '@chakra-ui/react'
 import { updateBackendConfig } from '../utils';
@@ -21,6 +21,7 @@ const EditMacroView = ({collections}: Props) => {
     const [recording, setRecording] = useState(false)
     const [macroName, setMacroName] = useState("")
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
+    const [sequenceList, setSequenceList] = useState<ActionEventType[]>([])
     const [location, setLocation] = useLocation();
     const [selectedMacroType, setSelectedMacroType] = useState(0)
 
@@ -81,6 +82,10 @@ const EditMacroView = ({collections}: Props) => {
         setLocation("/")
     }
 
+    const onSequenceChange = () => {
+
+    }
+
     return (
         <VStack minH="100vh" spacing="16px">
             {/** Header */}
@@ -94,11 +99,11 @@ const EditMacroView = ({collections}: Props) => {
             <Divider />
             <HStack w="100%" h="full">
                 {/** Left Panel */}
-                <MacroviewSequenceElementArea />
+                <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Center Panel */}
-                <MacroviewSequencingArea />
+                <MacroviewSequencingArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Right Panel */}
-                <MacroviewEditElementArea />
+                <MacroviewEditElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
             </HStack>
         </VStack>
     )

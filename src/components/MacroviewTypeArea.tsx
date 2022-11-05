@@ -19,9 +19,9 @@ const MacroviewTypeArea = ({selectedMacroType, onMacroTypeButtonPress}: Props) =
                 )}
             </HStack>
         </VStack>
-        <VStack maxWidth="50%" alignItems="normal" h="full">
-            <Text fontWeight="semibold" fontSize="lg">{MacroType[selectedMacroType]}</Text>
-            <Text fontSize="md">The macro will loop itself after it finishes until the trigger key(s) is pressed again.</Text>
+        <VStack spacing="16px" alignItems="normal" h="full">
+            <Text fontWeight="semibold" fontSize="xl">{MacroType[selectedMacroType]}</Text>
+            <Text fontSize={['sm', 'md', 'lg', 'xl']}>The macro will loop itself after it finishes until the trigger key(s) is pressed again.</Text>
         </VStack>
     </HStack>
   )

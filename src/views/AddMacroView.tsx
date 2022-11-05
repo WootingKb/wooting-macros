@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useLocation, useRoute } from 'wouter';
-import { Collection, Keypress } from "../types";
+import { ActionEventType, Collection, Keypress } from "../types";
 import { webCodeHIDLookup, HIDLookup } from '../HIDmap';
 import { HStack, VStack, Divider } from '@chakra-ui/react'
 import { updateBackendConfig } from '../utils';
@@ -21,8 +21,15 @@ const AddMacroView = ({collections}: Props) => {
     const [recording, setRecording] = useState(false)
     const [macroName, setMacroName] = useState("Macro Name")
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
+    const [sequenceList, setSequenceList] = useState<ActionEventType[]>([])
     const [location, setLocation] = useLocation();
     const [selectedMacroType, setSelectedMacroType] = useState(0)
+
+    // need to add state for Sequence, i.e. list of sequence elements
+    // sequence elements are added to the list from the SequenceElementArea component
+    // the list of sequence elements are passed to the SequencingArea component, where they are rendered out in a sortable list
+    // this sortable display allows the elements to be moved around within the list, thus the SequencingArea component can also edit the list
+    // the EditElementArea can also modify the list, but only info about the currently selected element within the list (list element onclick changes selected element)
 
     const addTriggerKey = (event:KeyboardEvent) => {
         event.preventDefault()
@@ -62,11 +69,15 @@ const AddMacroView = ({collections}: Props) => {
 
     const onSaveButtonPress = () => {
         if (match) {
-            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, macro_type: MacroType[selectedMacroType], trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: []})
+            collections[parseInt(params.cid)].macros.push({name: macroName, active: true, macro_type: MacroType[selectedMacroType], trigger:{ type: "KeyPressEvent", data: triggerKeys }, sequence: sequenceList})
         }
         // update backend here
         updateBackendConfig(collections)
         setLocation("/")
+    }
+
+    const onSequenceChange = () => {
+
     }
 
     return (
@@ -82,11 +93,11 @@ const AddMacroView = ({collections}: Props) => {
             <Divider />
             <HStack w="100%" h="full">
                 {/** Left Panel */}
-                <MacroviewSequenceElementArea />
+                <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Center Panel */}
-                <MacroviewSequencingArea />
+                <MacroviewSequencingArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Right Panel */}
-                <MacroviewEditElementArea />
+                <MacroviewEditElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
             </HStack>
         </VStack>
     )

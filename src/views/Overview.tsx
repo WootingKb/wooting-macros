@@ -3,7 +3,7 @@ import MacroCard from "../components/MacroCard";
 import { Collection, Macro } from "../types";
 import { Link } from 'wouter';
 import CollectionButton from '../components/CollectionButton';
-import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input } from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input, Grid, GridItem } from '@chakra-ui/react'
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import { updateBackendConfig } from '../utils';
 
@@ -80,13 +80,13 @@ function Overview({collections}: Props) {
     }
 
     return (
-        <HStack minH="100vh" spacing="0">
+        <HStack minH="100vh" spacing="0" overflow="hidden">
             {/** Left Side Panel */}
-            <VStack borderRight="1px" h="100vh" p="4">
+            <VStack borderRight="1px" h="100vh" p="4" w={["20%"]}>
                 {collections.map((collection:Collection, index:number) => 
                     <CollectionButton collection={collection} index={index} key={index} isFocused={index == collectionIndex} setFocus={onCollectionButtonPress} toggleCollection={onCollectionToggle}/>
                 )}
-                <Button colorScheme="yellow" leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
+                <Button colorScheme="yellow" size={["sm", "md", "lg"]} leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
                     New Collection
                 </Button>
                 <Button onClick={toggleColorMode}>
@@ -106,24 +106,24 @@ function Overview({collections}: Props) {
                     <IconButton aria-label="Collection Edit Button" icon={<EditIcon />} variant="ghost" isDisabled={collectionIndex <= 0} onClick={onOpenRenameCollection}/>
                     </HStack>
                     <HStack w="100%">
-                    <Button leftIcon={<AddIcon />} isDisabled>
+                    <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
                         Export Collection
                     </Button>
-                    <Button leftIcon={<AddIcon />} isDisabled>
+                    <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
                         Import Macros
                     </Button>
-                    <Button leftIcon={<AddIcon />} isDisabled={collectionIndex <= 0} onClick={onCollectionDelete}>
+                    <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled={collectionIndex <= 0} onClick={onCollectionDelete}>
                         Delete Collection
                     </Button>
                     </HStack>
                 </VStack>
                 <Link href={'/macroview/' + collectionIndex}>
-                    <Button colorScheme="yellow" leftIcon={<AddIcon />}>
+                    <Button colorScheme="yellow" leftIcon={<AddIcon />} size={["sm", "md", "lg"]}>
                         Add Macro
                     </Button>
                 </Link>
                 </Flex>
-                <Flex w="100%" direction="row" wrap="wrap" gap="1" p="8px">
+                <Flex w="100%" direction="row" wrap="wrap" justifyContent="flex-start" gap="1" p="1">
                 {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard collections={collections} macro={macro} index={index} key={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>)}
                 </Flex>
             </VStack>
