@@ -1,4 +1,5 @@
 use std::{fs, result, thread, time};
+use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
@@ -58,7 +59,6 @@ pub enum ActionEventType {
     //MouseMovement
     UnicodeDirect {},
     Delay { data: Delay },
-
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -172,7 +172,6 @@ impl MacroDataState {
     }
 }
 
-
 type Collections = Vec<Collection>;
 
 ///MacroData is the main data structure that contains all macro data.
@@ -226,7 +225,7 @@ impl MacroData {
                 icon: 'i'.to_string(),
                 macros: vec![],
                 active: true,
-            }]
+            }],
         };
 
         //TODO: Make this create a new file when needed.
@@ -266,6 +265,9 @@ pub struct Collection {
     pub active: bool,
 }
 
+
+pub fn execute_macro() {}
+
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this() {
@@ -276,20 +278,24 @@ pub fn run_this() {
     //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
+    //TODO: move all the plugins to its separate files (also with action keytype)
 
     loop {
         match APPLICATION_STATE.config.read().unwrap().use_input_grab {
             true => {
                 let mut events = Vec::new();
+                let mut pressed_keys: Vec<rdev::Key> = Vec::new();
+
+
                 let (schan, rchan) = channel();
                 let _grabber = thread::spawn(move || {
                     grab(move |event| match schan.send(event.clone()) {
                         Ok(T) => {
+                            let mut keys_pressed: Vec<rdev::Key>;
                             match &event.event_type {
                                 //TODO: Make this hash the trigger keys
-                                EventType::KeyPress(Key::Comma) => {
-                                    println!("BLOCKING THE COMMA");
-                                    None
+                                EventType::KeyPress(key) => {
+                                    Some(event)
                                 }
                                 _ => Some(event),
                             }
@@ -302,16 +308,19 @@ pub fn run_this() {
                     events.push(event);
 
                     for i in &events {
-
                         //println!("{:?}", events.len());
-                        match i.event_type {
+                        match &i.event_type {
                             EventType::KeyPress(s) => {
                                 //TODO: Make this a hashtable or smth
+                                pressed_keys.push(s.clone());
+                                println!("{:#?}", pressed_keys);
                                 println!("Pressed: {:?}", s);
                                 check_key(&s);
                             }
                             EventType::KeyRelease(s) => {
-                                println!("Released: {:?}", s)
+                                println!("Released: {:?}", s);
+                                pressed_keys.retain(|x| x != s);
+                                println!("{:#?}", pressed_keys);
                             }
                             EventType::ButtonPress(s) => {
                                 println!("MB Pressed:{:?}", s)
@@ -344,7 +353,7 @@ pub fn run_this() {
 
                     for i in &events {
                         //println!("{:?}", events.len());
-                        match i.event_type {
+                        match &i.event_type {
                             EventType::KeyPress(s) => {
                                 //TODO: Make this a hashtable or smth
                                 println!("Pressed: {:?}", s);
@@ -393,5 +402,3 @@ fn get_user_input(display_text: String) -> String {
         .expect("Invalid type");
     buffer.trim().to_string()
 }
-
-

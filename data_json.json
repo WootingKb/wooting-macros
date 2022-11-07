@@ -5,9 +5,9 @@
       "icon": "i",
       "macros": [
         {
-          "name": "testing type",
+          "name": "Havo",
           "sequence": [],
-          "macro_type": "OnHold",
+          "macro_type": "Repeating",
           "trigger": {
             "type": "KeyPressEvent",
             "data": [
@@ -22,62 +22,9 @@
               {
                 "keypress": 7,
                 "press_duration": 0
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test6",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 4,
-                "press_duration": 0
               },
               {
-                "keypress": 22,
-                "press_duration": 0
-              },
-              {
-                "keypress": 23,
-                "press_duration": 0
-              },
-              {
-                "keypress": 8,
-                "press_duration": 0
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test3",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 34,
-                "press_duration": 0
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test7",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 29,
+                "keypress": 9,
                 "press_duration": 0
               }
             ]
@@ -85,29 +32,7 @@
           "active": true
         }
       ],
-      "active": false
-    },
-    {
-      "name": "overwatch",
-      "icon": "i",
-      "macros": [
-        {
-          "name": "t4est2",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 30,
-                "press_duration": 0
-              }
-            ]
-          },
-          "active": true
-        }
-      ],
-      "active": false
+      "active": true
     }
   ]
 }
