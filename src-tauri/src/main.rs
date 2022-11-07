@@ -89,9 +89,13 @@ lazy_static! {
     pub static ref APPLICATION_STATE: MacroDataState = { MacroDataState::new() };
 }
 
+// lazy_static! {
+//     pub static ref KEYS_PRESSED: M = { MacroDataState::new() };
+// }
+
 fn main() {
     //TODO: Async run the backend.
-    //
+
     // tauri::Builder::default()
     //     // This is where you pass in your commands
     //     .manage(MacroDataState::new())

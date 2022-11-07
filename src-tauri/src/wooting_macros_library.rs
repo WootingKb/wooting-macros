@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
 use std::hash::Hash;
+use std::ptr::hash;
 use std::str::{Bytes, FromStr};
 use std::sync::mpsc::{channel, SendError};
 use std::sync::RwLock;
@@ -30,6 +31,7 @@ pub struct KeyPress {
     pub keypress: u32,
     pub press_duration: Delay,
 }
+
 
 impl KeyPress {
     fn execute_key_up(&self, key_to_release: &rdev::Key) {
@@ -131,31 +133,31 @@ pub fn set_data_write_manually_backend(frontend_data: MacroData) {
     *app_state = frontend_data.clone();
     app_state.clone().export_data();
 }
-
-fn check_key(incoming_key: &Key) {
-    let app_state = APPLICATION_STATE.data.read().unwrap();
-
-    for collections in &app_state.data {
-        if collections.active == true {
-            for macros in &collections.macros {
-                if macros.active == true {
-                    match &macros.trigger {
-                        TriggerEventType::KeyPressEvent { data: trigger } => {
-                            for i in trigger {
-                                if SCANCODE_MAP[&i.keypress] == *incoming_key {
-                                    println!(
-                                        "FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}",
-                                        macros.name
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+//
+// fn check_key(incoming_key: &Vec<rdev::Key>) {
+//     let app_state = APPLICATION_STATE.data.read().unwrap();
+//
+//     for collections in &app_state.data {
+//         if collections.active == true {
+//             for macros in &collections.macros {
+//                 if macros.active == true {
+//                     match &macros.trigger {
+//                         TriggerEventType::KeyPressEvent { data: trigger } => {
+//                             for i in trigger {
+//                                 if SCANCODE_MAP[&i.keypress] == *incoming_key {
+//                                     println!(
+//                                         "FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}",
+//                                         macros.name
+//                                     )
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct MacroDataState {
@@ -171,6 +173,14 @@ impl MacroDataState {
         }
     }
 }
+
+// ///Hash list
+// #[derive(Debug, Clone, Hash, Eq, PartialEq)]
+// pub struct TriggerHash<'a> {
+//     trigger_table: HashMap<Vec<rdev::Key>, &'a Macro>,
+// }
+
+type TriggerCheck<'a> = Vec<(u32, rdev::Key, &'a Macro)>;
 
 type Collections = Vec<Collection>;
 
@@ -199,22 +209,26 @@ impl MacroData {
     //     self.extract_triggers()
     // }
 
-    // /// Extracts the data
-    // fn extract_triggers(&self) -> TriggerHash {
-    //     let mut trigger_hash_list: TriggerHash = HashMap::new();
-    //
-    //     for search in &self.0 {
-    //         for trig in &search.macros {
-    //             match &trig.trigger {
-    //                 TriggerEventType::KeyPressEvent { data } => {
-    //                     trigger_hash_list.insert(data.clone(), &trig);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     trigger_hash_list
-    // }
+    /// Extracts the data. This is a helper function for now.
+    fn extract_triggers(&self) -> TriggerCheck {
+        //vector of keys
+        let mut tuple: TriggerCheck = vec![];
+
+
+        for search in &self.data {
+            for macros in &search.macros {
+                match &macros.trigger {
+                    TriggerEventType::KeyPressEvent { data: trigger } => {
+                        //trigger_hash_list.insert(4, &self.data[0].macros[0]);
+
+                        //println!("Trigger list:\n{:#?}", trigger_hash_list);
+                    }
+                }
+            }
+        }
+
+        tuple
+    }
 
     pub fn read_data() -> MacroData {
         let path = "../data_json.json";
@@ -253,9 +267,6 @@ impl MacroData {
     }
 }
 
-///Hash list
-pub type TriggerHash<'a> = HashMap<Vec<KeyPress>, &'a Macro>;
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
     pub name: String,
@@ -264,7 +275,6 @@ pub struct Collection {
     pub macros: Vec<Macro>,
     pub active: bool,
 }
-
 
 pub fn execute_macro() {}
 
@@ -281,11 +291,17 @@ pub fn run_this() {
     //TODO: move all the plugins to its separate files (also with action keytype)
 
     loop {
+        //Trigger hashes
+        let hash_info = APPLICATION_STATE.data.read().unwrap().clone();
+
+        let hash_info = hash_info.extract_triggers();
+
+        println!("{:#?}", hash_info);
+
         match APPLICATION_STATE.config.read().unwrap().use_input_grab {
             true => {
                 let mut events = Vec::new();
                 let mut pressed_keys: Vec<rdev::Key> = Vec::new();
-
 
                 let (schan, rchan) = channel();
                 let _grabber = thread::spawn(move || {
@@ -294,9 +310,7 @@ pub fn run_this() {
                             let mut keys_pressed: Vec<rdev::Key>;
                             match &event.event_type {
                                 //TODO: Make this hash the trigger keys
-                                EventType::KeyPress(key) => {
-                                    Some(event)
-                                }
+                                EventType::KeyPress(key) => Some(event),
                                 _ => Some(event),
                             }
                         }
@@ -313,9 +327,16 @@ pub fn run_this() {
                             EventType::KeyPress(s) => {
                                 //TODO: Make this a hashtable or smth
                                 pressed_keys.push(s.clone());
+
+                                //let result = hash_info[&s.clone()];
+
+
+                                //println!("{}", number);
+
+
                                 println!("{:#?}", pressed_keys);
                                 println!("Pressed: {:?}", s);
-                                check_key(&s);
+                                //check_key(&pressed_keys);
                             }
                             EventType::KeyRelease(s) => {
                                 println!("Released: {:?}", s);
@@ -357,7 +378,8 @@ pub fn run_this() {
                             EventType::KeyPress(s) => {
                                 //TODO: Make this a hashtable or smth
                                 println!("Pressed: {:?}", s);
-                                check_key(&s);
+
+                                //check_key(&s);
                             }
                             EventType::KeyRelease(s) => {
                                 println!("Released: {:?}", s)

@@ -7,7 +7,7 @@
         {
           "name": "Havo",
           "sequence": [],
-          "macro_type": "Repeating",
+          "macro_type": "Single",
           "trigger": {
             "type": "KeyPressEvent",
             "data": [
@@ -16,15 +16,15 @@
                 "press_duration": 0
               },
               {
-                "keypress": 22,
-                "press_duration": 0
-              },
-              {
                 "keypress": 7,
                 "press_duration": 0
               },
               {
                 "keypress": 9,
+                "press_duration": 0
+              },
+              {
+                "keypress": 2,
                 "press_duration": 0
               }
             ]
