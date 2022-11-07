@@ -29,7 +29,6 @@ function Overview({collections}: Props) {
     }, [])
 
     const onAddCollectionButtonPress = () => {
-        console.log("add collection button pressed")
         collections.push({active: false, icon:"i", macros: [], name: collectionName })
         updateBackendConfig(collections)
         onCloseNewCollection()
@@ -75,7 +74,7 @@ function Overview({collections}: Props) {
 
     const onMacroDelete = (macroIndex:number) => {
         collections[collectionIndex].macros.splice(macroIndex, 1)
-        setCollectionName("reset")
+        setCanUseCollectionName(!canUseCollectionName)
         updateBackendConfig(collections)
     }
 
@@ -94,38 +93,42 @@ function Overview({collections}: Props) {
                 </Button>
             </VStack>
             {/** Main Panel */}
-            <VStack minH="100vh" w="100%">
+            <VStack w="100%" h="100vh">
                 <Flex justifyContent="space-between" alignItems="center" p="4" borderBottom="1px" w="100%">
-                <VStack>
-                    <HStack w="100%">
-                    <IconButton aria-label='Collection Icon Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
-                    </svg>} variant="ghost" isDisabled>
-                    </IconButton>
-                    <Text fontWeight="bold" fontSize="xl">{collections[collectionIndex].name}</Text>
-                    <IconButton aria-label="Collection Edit Button" icon={<EditIcon />} variant="ghost" isDisabled={collectionIndex <= 0} onClick={onOpenRenameCollection}/>
-                    </HStack>
-                    <HStack w="100%">
-                    <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
-                        Export Collection
-                    </Button>
-                    <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
-                        Import Macros
-                    </Button>
-                    <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled={collectionIndex <= 0} onClick={onCollectionDelete}>
-                        Delete Collection
-                    </Button>
-                    </HStack>
-                </VStack>
-                <Link href={'/macroview/' + collectionIndex}>
-                    <Button colorScheme="yellow" leftIcon={<AddIcon />} size={["sm", "md", "lg"]}>
-                        Add Macro
-                    </Button>
-                </Link>
+                    <VStack>
+                        <HStack w="100%">
+                        <IconButton aria-label='Collection Icon Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
+                        </svg>} variant="ghost" isDisabled>
+                        </IconButton>
+                        <Text fontWeight="bold" fontSize="xl">{collections[collectionIndex].name}</Text>
+                        <IconButton aria-label="Collection Edit Button" icon={<EditIcon />} variant="ghost" isDisabled={collectionIndex <= 0} onClick={onOpenRenameCollection}/>
+                        </HStack>
+                        <HStack w="100%">
+                        <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
+                            Export Collection
+                        </Button>
+                        <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
+                            Import Macros
+                        </Button>
+                        <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled={collectionIndex <= 0} onClick={onCollectionDelete}>
+                            Delete Collection
+                        </Button>
+                        </HStack>
+                    </VStack>
+                    <Link href={'/macroview/' + collectionIndex}>
+                        <Button colorScheme="yellow" leftIcon={<AddIcon />} size={["sm", "md", "lg"]}>
+                            Add Macro
+                        </Button>
+                    </Link>
                 </Flex>
-                <Flex w="100%" direction="row" wrap="wrap" justifyContent="flex-start" gap="1" p="1">
-                {collections[collectionIndex].macros.map((macro:Macro, index:number) => <MacroCard collections={collections} macro={macro} index={index} key={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>)}
-                </Flex>
+                <Grid w="100%" templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']} p="1" gap="1" overflowY="auto">
+                    {collections[collectionIndex].macros.map((macro:Macro, index:number) =>
+                    <GridItem w="100%" key={index}>
+                        <MacroCard collections={collections} macro={macro} index={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>
+                    </GridItem>
+                    )}
+                </Grid>
             </VStack>
             {/** New Collection Modal */}
             <Modal isOpen={isOpenNewCollection} onClose={onCloseNewCollection}>

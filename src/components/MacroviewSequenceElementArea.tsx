@@ -1,6 +1,8 @@
 import { Text, VStack, Input, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { ActionEventType } from '../types'
 import { AddIcon } from '@chakra-ui/icons'
+import { Hid, HidInfo } from '../HIDmap'
+import SequenceElementButton from './SequenceElementButton'
 
 type Props = {
   sequenceList: ActionEventType[]
@@ -35,6 +37,9 @@ const MacroviewSequenceElementArea = ({sequenceList, onSequenceChange}: Props) =
                 </TabPanel>
                 <TabPanel>
                 <Text>Keyboard keys goes here</Text>
+                {Hid.all.map((HIDinfo: HidInfo, index:number) =>
+                  <SequenceElementButton key={index}/>
+                )}
                 </TabPanel>
                 <TabPanel>
                 <Text>Mouse buttons goes here</Text>
