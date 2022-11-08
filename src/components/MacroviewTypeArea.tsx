@@ -1,6 +1,6 @@
 import { EditIcon } from '@chakra-ui/icons'
-import { HStack, VStack, IconButton, Text } from '@chakra-ui/react'
-import { MacroType } from '../enums'
+import { HStack, VStack, IconButton, Text, Divider } from '@chakra-ui/react'
+import { MacroType, MacroTypeDefinitions } from '../enums'
 import { checkIfStringIsNonNumeric } from '../utils'
 
 type Props = {
@@ -10,18 +10,19 @@ type Props = {
 
 const MacroviewTypeArea = ({selectedMacroType, onMacroTypeButtonPress}: Props) => {
   return (
-    <HStack w="50%" h="full" p="4" justifyContent="space-between" bg="gray.300">
-        <VStack spacing="16px" alignItems="normal" h="full">
-            <Text fontWeight="semibold" fontSize="xl">Macro Type</Text>
+    <HStack w="50%" h="full" py="4px" px="16px" border='1px' borderColor='gray.200' rounded="md" spacing="16px">
+        <VStack w="fit-content" alignItems="normal">
+            <Text fontWeight="semibold" fontSize={['sm', 'md']}>Macro Type</Text>
             <HStack>
                 {(Object.keys(MacroType) as Array<keyof typeof MacroType>).filter(checkIfStringIsNonNumeric).map((value:string, index:number) => 
-                    <IconButton icon={<EditIcon />} aria-label="macro type button" bg={MacroType[selectedMacroType] === value ? "yellow.200" : "gray.100"} onClick={() => onMacroTypeButtonPress(index)} key={index}></IconButton>
+                    <IconButton icon={<EditIcon />} aria-label="macro type button" size="lg" bg={MacroType[selectedMacroType] === value ? "yellow.200" : "gray.100"} onClick={() => onMacroTypeButtonPress(index)} key={index}></IconButton>
                 )}
             </HStack>
         </VStack>
-        <VStack spacing="16px" alignItems="normal" h="full">
-            <Text fontWeight="semibold" fontSize="xl">{MacroType[selectedMacroType]}</Text>
-            <Text fontSize={['sm', 'md', 'lg', 'xl']}>The macro will loop itself after it finishes until the trigger key(s) is pressed again.</Text>
+        <Divider orientation='vertical' />
+        <VStack w="full" h="full" alignItems="normal" justifyContent="center">
+            <Text fontWeight="semibold" fontSize={['md', 'lg', 'xl']}>{MacroType[selectedMacroType]}</Text>
+            <Text fontSize={['sm', 'md', 'lg', 'xl']}>{MacroTypeDefinitions[selectedMacroType]}</Text>
         </VStack>
     </HStack>
   )

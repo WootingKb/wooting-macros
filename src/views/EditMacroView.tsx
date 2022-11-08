@@ -16,6 +16,8 @@ type Props = {
   collections: Collection[]
 }
 
+// create a context around application, instead of useRoute; or multiple contexts
+
 const EditMacroView = ({collections}: Props) => {
     const [match, params] = useRoute("/editview/:cid/:mid");
     const [recording, setRecording] = useState(false)
@@ -82,22 +84,23 @@ const EditMacroView = ({collections}: Props) => {
         setLocation("/")
     }
 
-    const onSequenceChange = () => {
-
+    const onSequenceChange = (newList: ActionEventType[]) => {
+        console.log(newList)
+        setSequenceList(newList)
     }
 
     return (
-        <VStack minH="100vh" spacing="16px">
+        <VStack minH="100vh" spacing="0px" overflow="hidden">
             {/** Header */}
             <MacroviewHeader triggerKeys={triggerKeys} macroName={macroName} isEditing={true} onMacroNameChange={onMacroNameChange} onSaveButtonPress={onSaveButtonPress}/>
-            <HStack w="100%" spacing="0px">
+            <HStack w="100%" h={130} spacing="8px" p="8px">
                 {/** Macro Type Area */}
                 <MacroviewTypeArea selectedMacroType={selectedMacroType} onMacroTypeButtonPress={onMacroTypeButtonPress}/>
                 {/** Trigger Area */}
                 <MacroviewTriggerArea recording={recording} triggerKeys={triggerKeys} onRecordButtonPress={onRecordButtonPress}/>
             </HStack>
             <Divider />
-            <HStack w="100%" h="full">
+            <HStack w="100%" h="calc(100% - 204px)" borderTop="1px" borderColor="gray.200">
                 {/** Left Panel */}
                 <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Center Panel */}

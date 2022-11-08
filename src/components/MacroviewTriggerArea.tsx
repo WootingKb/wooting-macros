@@ -1,5 +1,5 @@
 import { EditIcon } from '@chakra-ui/icons'
-import { HStack, VStack, Alert, AlertIcon, Kbd, Button, Text } from '@chakra-ui/react'
+import { HStack, VStack, Alert, AlertIcon, Kbd, Button, Text, Divider } from '@chakra-ui/react'
 import { HIDLookup } from '../HIDmap'
 import { Keypress } from '../types'
 
@@ -11,19 +11,20 @@ type Props = {
 
 const MacroviewTriggerArea = ({recording, triggerKeys, onRecordButtonPress}: Props) => {
   return (
-    <VStack w="50%" h="full" p="4" bg="gray.400" spacing="16px">
+    <VStack w="50%" h="full" py="4px" px="16px" border='1px' borderColor='gray.200' rounded="md" spacing="16px" justifyContent="center">
         <HStack w="100%" justifyContent="space-between">
-            <Text fontWeight="semibold" fontSize="xl">Trigger Key(s)</Text>
+            <Text fontWeight="semibold" fontSize={['sm', 'md']}>Trigger Key(s)</Text>
             {recording && 
-                <Alert status='info' rounded="md" h="28px" w="55%">
+                <Alert status='info' colorScheme="yellow" rounded="md" h="28px" w="55%">
                     <AlertIcon />
                     Input recording in progress.
                 </Alert>
             }
         </HStack>
+        <Divider />
         <HStack w="100%" justifyContent="space-between">
             <VStack alignItems="normal" w="full" h="full">
-                <HStack spacing="4px">
+                <HStack spacing="4px" h="full">
                     {triggerKeys.map((key:Keypress, index:number) => 
                         <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
                         )}

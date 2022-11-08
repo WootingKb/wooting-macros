@@ -8,7 +8,7 @@ import { ActionEventType } from '../types'
 
 type Props = {
   sequenceList: ActionEventType[]
-  onSequenceChange: () => void
+  onSequenceChange: (newList: ActionEventType[]) => void
 }
 
 const MacroviewSequencingArea = ({sequenceList, onSequenceChange}: Props) => {

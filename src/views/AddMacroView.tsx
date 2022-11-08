@@ -76,21 +76,22 @@ const AddMacroView = ({collections}: Props) => {
         setLocation("/")
     }
 
-    const onSequenceChange = () => {
-
+    const onSequenceChange = (newList: ActionEventType[]) => {
+        console.log(newList)
+        setSequenceList(newList)
     }
 
     return (
-        <VStack h="100%" overflow="hidden">
+        <VStack h="100%" spacing="0px" overflow="hidden">
             {/** Header */}
             <MacroviewHeader triggerKeys={triggerKeys} macroName={""} isEditing={false} onMacroNameChange={onMacroNameChange} onSaveButtonPress={onSaveButtonPress}/>
-            <HStack w="100%" h={180} spacing="0px">
+            <HStack w="100%" h={130} spacing="8px" p="8px">
                 {/** Macro Type Area */}
                 <MacroviewTypeArea selectedMacroType={selectedMacroType} onMacroTypeButtonPress={onMacroTypeButtonPress}/>
                 {/** Trigger Area */}
                 <MacroviewTriggerArea recording={recording} triggerKeys={triggerKeys} onRecordButtonPress={onRecordButtonPress}/>
             </HStack>
-            <HStack w="100%" h="calc(100% - 254px)">
+            <HStack w="100%" h="calc(100% - 204px)" borderTop="1px" borderColor="gray.200">
                 {/** Left Panel */}
                 <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Center Panel */}
