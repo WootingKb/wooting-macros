@@ -12,6 +12,7 @@ use std::time::Duration;
 
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
+use rdev::EventType::KeyPress;
 use serde::Serialize;
 use tauri::{Config, State};
 
@@ -27,21 +28,21 @@ pub enum MacroType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-pub struct KeyPress {
+pub struct KeyboardKeypress {
     pub keypress: u32,
     pub press_duration: Delay,
 }
-
-impl KeyPress {
-    fn execute_key_up(&self, key_to_release: &rdev::Key) {
-        send(&EventType::KeyRelease(*key_to_release));
-    }
-
-    fn execute_key_down(&self) {}
-}
+//
+// impl KeyboardKeypress {
+//     fn execute_key_up(&self, key_to_release: &rdev::Key) {
+//         send();
+//     }
+//
+//     fn execute_key_down(&self) {}
+// }
 
 ///Delay for the sequence
-pub type Delay = u32;
+pub type Delay = u64;
 
 //TODO: Make a hashmap that links to trigger:&macro
 
@@ -49,7 +50,7 @@ pub type Delay = u32;
 #[serde(tag = "type")]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
-    KeyPressEvent { data: KeyPress },
+    KeyPressEvent { data: KeyboardKeypress },
     //KeyON
     //KeyOFF
     //SystemEvent { action: Action },
@@ -65,7 +66,7 @@ pub enum ActionEventType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum TriggerEventType {
-    KeyPressEvent { data: Vec<KeyPress> },
+    KeyPressEvent { data: Vec<KeyboardKeypress> },
 }
 
 #[derive(Debug, Clone)]
@@ -74,7 +75,7 @@ pub struct EventList(Vec<rdev::Key>);
 #[derive(Debug, Clone)]
 pub struct Action {
     pub action: char,
-    pub press_wait_delay_after: time::Duration,
+    pub press_wait_delay_after: Delay,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -315,7 +316,22 @@ pub struct Collection {
     pub active: bool,
 }
 
-pub fn execute_macro() {}
+pub fn execute_macro(macros: &Macro) {
+    for sequence in &macros.sequence {
+        match sequence {
+            ActionEventType::KeyPressEvent { data } => {
+                send(&KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+            }
+            ActionEventType::PhillipsHueCommand { .. } => {}
+            ActionEventType::OBS { .. } => {}
+            ActionEventType::DiscordCommand { .. } => {}
+            ActionEventType::UnicodeDirect { .. } => {}
+            ActionEventType::Delay { data } => {
+                thread::sleep(time::Duration::from_millis(*data))
+            }
+        }
+    }
+}
 
 ///Main loop for now (of the library)
 /// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
@@ -374,7 +390,8 @@ pub fn run_this() {
                                                         let converted_keys: Vec<rdev::Key> = trigger_key.iter().map(|x| SCANCODE_TO_RDEV[&x.keypress]).collect();
 
                                                         if pressed_keys == converted_keys {
-                                                            println!("MACRO READY TO EXECUTE")
+                                                            execute_macro(&macros);
+                                                            println!("MACRO READY TO EXECUTE");
                                                         }
                                                         // if &events.first() == trigger_key.first(){
                                                         //

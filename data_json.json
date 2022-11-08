@@ -6,7 +6,22 @@
       "macros": [
         {
           "name": "Havo",
-          "sequence": [],
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 12,
+                "press_duration": 50
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 50
+              }
+            }
+          ],
           "macro_type": "Single",
           "trigger": {
             "type": "KeyPressEvent",
