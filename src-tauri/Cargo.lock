@@ -288,8 +288,8 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa0e3586af56b3bfa51fca452bd56e8dbbbd5d8d81cbf0b7e4e35b695b537eb8"
 dependencies = [
-    "serde",
-    "toml",
+ "serde",
+ "toml",
 ]
 
 [[package]]
@@ -1318,8 +1318,8 @@ version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff8ba437813c5a31783dd9a21ce4f555583dc9b048af6bd2b12217394ed9c199"
 dependencies = [
-    "hashbrown",
-    "serde",
+ "hashbrown",
+ "serde",
 ]
 
 [[package]]
@@ -1928,8 +1928,8 @@ version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f6058e64324c71e02bc2b150e4f3bc8286db6c83092132ffa3f6b1eab0f9def5"
 dependencies = [
-    "hermit-abi",
-    "libc",
+ "hermit-abi",
+ "libc",
 ]
 
 [[package]]
@@ -2164,8 +2164,8 @@ version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a528564cc62c19a7acac4d81e01f39e53e25e17b934878f4c6d25cc2836e62f8"
 dependencies = [
-    "thiserror",
-    "ucd-trie",
+ "thiserror",
+ "ucd-trie",
 ]
 
 [[package]]
@@ -2538,9 +2538,9 @@ version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e076559ef8e241f2ae3479e36f97bd5741c0330689e217ad51ce2c76808b868a"
 dependencies = [
-    "aho-corasick",
-    "memchr",
-    "regex-syntax",
+ "aho-corasick",
+ "memchr",
+ "regex-syntax",
 ]
 
 [[package]]
@@ -3173,14 +3173,14 @@ version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ef796f49abc98e6de0abe1b655120addc9d82363d8fc2304e71a4177c25e783c"
 dependencies = [
-    "anyhow",
-    "cargo_toml",
-    "heck 0.4.0",
-    "json-patch",
-    "semver 1.0.14",
-    "serde_json",
-    "tauri-utils",
-    "winres",
+ "anyhow",
+ "cargo_toml",
+ "heck 0.4.0",
+ "json-patch",
+ "semver 1.0.14",
+ "serde_json",
+ "tauri-utils",
+ "winres",
 ]
 
 [[package]]
@@ -3189,15 +3189,15 @@ version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afcb77cf7bfe3d8f886e73a7fa6157587d015c599671180b76595c1aef175ba8"
 dependencies = [
-    "base64",
-    "brotli",
-    "ico",
-    "json-patch",
-    "plist",
-    "png 0.17.7",
-    "proc-macro2",
-    "quote",
-    "regex",
+ "base64",
+ "brotli",
+ "ico",
+ "json-patch",
+ "plist",
+ "png 0.17.7",
+ "proc-macro2",
+ "quote",
+ "regex",
  "semver 1.0.14",
  "serde",
  "serde_json",
@@ -3215,12 +3215,12 @@ version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f24f481b0b2acfc288ac78755f00ebea53992c7365a165af64cb5ae00806edea"
 dependencies = [
-    "heck 0.4.0",
-    "proc-macro2",
-    "quote",
-    "syn",
-    "tauri-codegen",
-    "tauri-utils",
+ "heck 0.4.0",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "tauri-codegen",
+ "tauri-utils",
 ]
 
 [[package]]
@@ -3270,22 +3270,22 @@ version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d64c9a09ba1538b8e67ae8c78c10904f36ce38d364bf7f089ec807032a826b02"
 dependencies = [
-    "brotli",
-    "ctor",
-    "glob",
-    "heck 0.4.0",
-    "html5ever",
-    "infer",
-    "json-patch",
-    "kuchiki",
-    "memchr",
-    "phf 0.10.1",
-    "proc-macro2",
-    "quote",
-    "semver 1.0.14",
-    "serde",
-    "serde_json",
-    "serde_with",
+ "brotli",
+ "ctor",
+ "glob",
+ "heck 0.4.0",
+ "html5ever",
+ "infer",
+ "json-patch",
+ "kuchiki",
+ "memchr",
+ "phf 0.10.1",
+ "proc-macro2",
+ "quote",
+ "semver 1.0.14",
+ "serde",
+ "serde_json",
+ "serde_with",
  "thiserror",
  "url",
  "walkdir",
@@ -3394,10 +3394,10 @@ version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a561bf4617eebd33bca6434b988f39ed798e527f51a1e797d0ee4f61c0a38376"
 dependencies = [
-    "itoa 1.0.4",
-    "serde",
-    "time-core",
-    "time-macros",
+ "itoa 1.0.4",
+ "serde",
+ "time-core",
+ "time-macros",
 ]
 
 [[package]]
@@ -3412,7 +3412,7 @@ version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d967f99f534ca7e495c575c62638eebc2898a8c84c119b89e250477bc4ba16b2"
 dependencies = [
-    "time-core",
+ "time-core",
 ]
 
 [[package]]

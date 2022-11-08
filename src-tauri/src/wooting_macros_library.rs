@@ -12,7 +12,6 @@ use std::time::Duration;
 
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
-use rdev::EventType::KeyPress;
 use serde::Serialize;
 use tauri::{Config, State};
 
@@ -28,7 +27,7 @@ pub enum MacroType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-pub struct KeyboardKeypress {
+pub struct KeyPress {
     pub keypress: u32,
     pub press_duration: Delay,
 }
@@ -50,7 +49,7 @@ pub type Delay = u64;
 #[serde(tag = "type")]
 pub enum ActionEventType {
     //TODO: rewrite the tuples into structs
-    KeyPressEvent { data: KeyboardKeypress },
+    KeyPressEvent { data: KeyPress },
     //KeyON
     //KeyOFF
     //SystemEvent { action: Action },
@@ -66,7 +65,7 @@ pub enum ActionEventType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum TriggerEventType {
-    KeyPressEvent { data: Vec<KeyboardKeypress> },
+    KeyPressEvent { data: Vec<KeyPress> },
 }
 
 #[derive(Debug, Clone)]
@@ -320,7 +319,7 @@ pub fn execute_macro(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
             ActionEventType::KeyPressEvent { data } => {
-                send(&KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
             }
             ActionEventType::PhillipsHueCommand { .. } => {}
             ActionEventType::OBS { .. } => {}
