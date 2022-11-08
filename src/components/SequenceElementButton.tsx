@@ -1,10 +1,18 @@
-import React from 'react'
+import { Button } from '@chakra-ui/react'
 
-type Props = {}
+type Props = {
+  displayText: string
+}
 
-const SequenceElementButton = (props: Props) => {
+const SequenceElementButton = ({displayText}: Props) => {
+  // when a user presses a sequence element button, it adds a sequence element to the sequence (list)
+  // info required:
+  // type, e.g. KeypressEvent, ActionEvent
+  //
   return (
-    <div>SequenceElementButton</div>
+    <Button colorScheme="yellow" size={["sm"]}>
+      {displayText}
+    </Button>
   )
 }
 

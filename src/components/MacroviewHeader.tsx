@@ -13,7 +13,7 @@ type Props = {
 
 const MacroviewHeader = ({triggerKeys, macroName, isEditing, onMacroNameChange, onSaveButtonPress}: Props) => {
   return (
-    <HStack w="100%" p="4" spacing="16px">
+    <HStack w="100%" h={74} p="2" spacing="16px">
         <Link href='/'><Button>Back</Button></Link>
         <Flex w="100%" justifyContent="space-between">
             <Flex w="100%" gap="8px">

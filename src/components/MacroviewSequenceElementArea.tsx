@@ -1,4 +1,4 @@
-import { Text, VStack, Input, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Text, VStack, Input, Tabs, TabList, TabPanels, Tab, TabPanel, SimpleGrid } from '@chakra-ui/react'
 import { ActionEventType } from '../types'
 import { AddIcon } from '@chakra-ui/icons'
 import { Hid, HidInfo } from '../HIDmap'
@@ -15,14 +15,12 @@ const MacroviewSequenceElementArea = ({sequenceList, onSequenceChange}: Props) =
   // It will have a filtering system, or a search system, or both
 
   // the components rendered will be uniform, but the data associated with each "button" corresponds to a single "thing"
-
-  // TODO: create a new component, SequenceElement, that displays and holds information about "what can be in a sequence"
-
+  
   return (
-    <VStack bg="gray.200" w="33%" h="full" p="4px" alignItems="normal">
+    <VStack bg="gray.200" w="33%" h="100%" p="4px" alignItems="normal">
         <Text fontWeight="semibold" fontSize="xl">Sequence Elements</Text>
         <Input variant="outline" borderColor="gray.400" placeholder='Search' />
-        <Tabs w="100%" size='sm' variant='soft-rounded' isFitted defaultIndex={0}>
+        <Tabs w="100%" h="100%" size='sm' variant='soft-rounded' isFitted defaultIndex={0}>
             <TabList>
                 <Tab><AddIcon /></Tab>
                 <Tab><AddIcon /></Tab>
@@ -31,15 +29,16 @@ const MacroviewSequenceElementArea = ({sequenceList, onSequenceChange}: Props) =
                 <Tab><AddIcon /></Tab>
             </TabList>
 
-            <TabPanels>
+            <TabPanels w="100%" h="calc(100% - 100px)" overflowY="auto">
                 <TabPanel>
                 <Text>All goes here</Text>
                 </TabPanel>
-                <TabPanel>
-                <Text>Keyboard keys goes here</Text>
-                {Hid.all.map((HIDinfo: HidInfo, index:number) =>
-                  <SequenceElementButton key={index}/>
-                )}
+                <TabPanel w="full" p="4px" h="100%">
+                  <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
+                    {Hid.all.map((HIDinfo: HidInfo, index:number) =>
+                      <SequenceElementButton key={index} displayText={HIDinfo.displayString}/>
+                    )}
+                  </SimpleGrid>
                 </TabPanel>
                 <TabPanel>
                 <Text>Mouse buttons goes here</Text>
