@@ -6,15 +6,7 @@
       "macros": [
         {
           "name": "Havo",
-          "sequence": [
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 225,
-                "press_duration": 50
-              }
-            }
-          ],
+          "sequence": [],
           "macro_type": "Single",
           "trigger": {
             "type": "KeyPressEvent",
@@ -45,9 +37,62 @@
             ]
           },
           "active": true
+        },
+        {
+          "name": "MacroTesting",
+          "sequence": [],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 14,
+                "press_duration": 0
+              },
+              {
+                "keypress": 13,
+                "press_duration": 0
+              },
+              {
+                "keypress": 12,
+                "press_duration": 0
+              }
+            ]
+          },
+          "active": true
         }
       ],
       "active": true
+    },
+    {
+      "name": "New Colection2",
+      "icon": "i",
+      "macros": [
+        {
+          "name": "Macro Name",
+          "sequence": [],
+          "macro_type": "Repeating",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 4,
+                "press_duration": 0
+              },
+              {
+                "keypress": 5,
+                "press_duration": 0
+              },
+              {
+                "keypress": 6,
+                "press_duration": 0
+              }
+            ]
+          },
+          "active": true
+        }
+      ],
+      "active": false
     }
   ]
 }
