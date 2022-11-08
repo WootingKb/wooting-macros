@@ -10,14 +10,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 12,
-                "press_duration": 50
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 13,
+                "keypress": 225,
                 "press_duration": 50
               }
             }

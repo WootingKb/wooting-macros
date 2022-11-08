@@ -43,12 +43,10 @@ pub struct KeyPress {
 ///Delay for the sequence
 pub type Delay = u64;
 
-//TODO: Make a hashmap that links to trigger:&macro
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
-    //TODO: rewrite the tuples into structs
     KeyPressEvent { data: KeyPress },
     //KeyON
     //KeyOFF
@@ -144,6 +142,7 @@ pub fn set_data_write_manually_backend(frontend_data: MacroData) {
     *app_state = frontend_data.clone();
     app_state.clone().export_data();
 }
+
 //
 // fn check_key(incoming_key: &Vec<rdev::Key>) {
 //     let app_state = APPLICATION_STATE.data.read().unwrap();
@@ -281,7 +280,6 @@ impl MacroData {
             }],
         };
 
-        //TODO: Make this create a new file when needed.
         let data = {
             match fs::read_to_string(path) {
                 Ok(T) => T,
@@ -338,8 +336,6 @@ pub fn run_this() {
     //==================================================
     //TODO: make this a grab instead of listen
     //TODO: try to make this interact better (cleanup the code a bit)
-    //TODO: make the pressed keys vector and compare to the hashmap
-    //TODO: try to execute the macros in order (make the executor)
     //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
     //TODO: move all the plugins to its separate files (also with action keytype)
@@ -361,7 +357,7 @@ pub fn run_this() {
                         Ok(T) => {
                             let mut keys_pressed: Vec<rdev::Key>;
                             match &event.event_type {
-                                //TODO: Make this hash the trigger keys
+                                //TODO: Grab and discard the trigger actually
                                 EventType::KeyPress(key) => Some(event),
                                 _ => Some(event),
                             }
@@ -444,7 +440,6 @@ pub fn run_this() {
                         //println!("{:?}", events.len());
                         match &i.event_type {
                             EventType::KeyPress(s) => {
-                                //TODO: Make this a hashtable or smth
                                 println!("Pressed: {:?}", s);
 
                                 //check_key(&s);
@@ -467,9 +462,9 @@ pub fn run_this() {
             }
         }
     }
-    //TODO: Make a translation table to a hashmap from a keycode HID compatible -> library rdev enums.
 }
 
+//TODO: Release the key actually?
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
     match simulate(event_type) {
