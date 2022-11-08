@@ -1,5 +1,5 @@
 use std::{fs, result, thread, time};
-use std::borrow::BorrowMut;
+use std::borrow::{Borrow, BorrowMut};
 use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
@@ -31,7 +31,6 @@ pub struct KeyPress {
     pub keypress: u32,
     pub press_duration: Delay,
 }
-
 
 impl KeyPress {
     fn execute_key_up(&self, key_to_release: &rdev::Key) {
@@ -85,6 +84,18 @@ pub struct Macro {
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
     pub active: bool,
+}
+
+impl Macro {
+    fn new() -> Macro {
+        Macro {
+            name: "".to_string(),
+            sequence: vec![],
+            macro_type: MacroType::Single,
+            trigger: TriggerEventType::KeyPressEvent { data: vec![] },
+            active: false,
+        }
+    }
 }
 
 #[tauri::command]
@@ -180,7 +191,7 @@ impl MacroDataState {
 //     trigger_table: HashMap<Vec<rdev::Key>, &'a Macro>,
 // }
 
-type TriggerCheck<'a> = Vec<(u32, rdev::Key, &'a Macro)>;
+type TriggersExtracted<'a> = Vec<(Vec<u32>, Vec<rdev::Key>, &'a Macro)>;
 
 type Collections = Vec<Collection>;
 
@@ -209,27 +220,55 @@ impl MacroData {
     //     self.extract_triggers()
     // }
 
-    /// Extracts the data. This is a helper function for now.
-    fn extract_triggers(&self) -> TriggerCheck {
-        //vector of keys
-        let mut tuple: TriggerCheck = vec![];
+    /*
+        /// Extracts the data. This is a helper function for now.
+        fn extract_triggers(&self) -> TriggersExtracted {
+            //vector of keys
+            let mut output: TriggersExtracted = vec![];
+            // let mut add_keys: Vec<u32> = vec![];
+            // let mut add_keys_converted: Vec<rdev::Key> = vec![];
+            // let mut macro_to_add: &Macro = &Macro::new();
 
 
-        for search in &self.data {
-            for macros in &search.macros {
-                match &macros.trigger {
-                    TriggerEventType::KeyPressEvent { data: trigger } => {
-                        //trigger_hash_list.insert(4, &self.data[0].macros[0]);
+            let mut tuple: TriggersExtracted = vec![];
+            for groups in &self.data {
+                for macros in &groups.macros{
+                    let mut macro_to_add: Macro = Macro{
+                        name: "".to_string(),
+                        sequence: vec![],
+                        macro_type: MacroType::Single,
+                        trigger: TriggerEventType::KeyPressEvent { data: vec![] },
+                        active: false
+                    };
 
-                        //println!("Trigger list:\n{:#?}", trigger_hash_list);
-                    }
+                        macro_to_add = &macros;
+
+                        let mut add_keys: Vec<u32> = vec![];
+                        let mut add_keys_converted: Vec<rdev::Key> = vec![];
+
+                        match &macros.trigger {
+                            TriggerEventType::KeyPressEvent { data: key } => {
+                                for individual_keys in key{
+                                    add_keys.push(individual_keys.keypress);
+                                    add_keys_converted.push(SCANCODE_TO_RDEV[&individual_keys.keypress]);
+
+
+
+                                }
+                            }
+                        }
+                        output.push((add_keys.clone(), add_keys_converted.clone(), macro_to_add));
+
+
                 }
+
             }
+
+            println!("Macro Output Struct\n{:#?}", output);
+
+            tuple
         }
-
-        tuple
-    }
-
+    */
     pub fn read_data() -> MacroData {
         let path = "../data_json.json";
 
@@ -292,11 +331,9 @@ pub fn run_this() {
 
     loop {
         //Trigger hashes
-        let hash_info = APPLICATION_STATE.data.read().unwrap().clone();
+        let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
 
-        let hash_info = hash_info.extract_triggers();
-
-        println!("{:#?}", hash_info);
+        //println!("{:#?}", trigger_overview);
 
         match APPLICATION_STATE.config.read().unwrap().use_input_grab {
             true => {
@@ -324,30 +361,45 @@ pub fn run_this() {
                     for i in &events {
                         //println!("{:?}", events.len());
                         match &i.event_type {
-                            EventType::KeyPress(s) => {
+                            EventType::KeyPress(listened_key) => {
                                 //TODO: Make this a hashtable or smth
-                                pressed_keys.push(s.clone());
+                                pressed_keys.push(listened_key.clone());
 
-                                //let result = hash_info[&s.clone()];
+                                for collections in &trigger_overview.data {
+                                    if collections.active == true {
+                                        for macros in &collections.macros {
+                                            if macros.active == true {
+                                                match &macros.trigger {
+                                                    TriggerEventType::KeyPressEvent { data: trigger_key } => {
+                                                        let converted_keys: Vec<rdev::Key> = trigger_key.iter().map(|x| SCANCODE_TO_RDEV[&x.keypress]).collect();
 
-
-                                //println!("{}", number);
-
+                                                        if pressed_keys == converted_keys {
+                                                            println!("MACRO READY TO EXECUTE")
+                                                        }
+                                                        // if &events.first() == trigger_key.first(){
+                                                        //
+                                                        // }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
 
                                 println!("{:#?}", pressed_keys);
-                                println!("Pressed: {:?}", s);
+                                println!("Pressed: {:?}", listened_key);
                                 //check_key(&pressed_keys);
                             }
-                            EventType::KeyRelease(s) => {
-                                println!("Released: {:?}", s);
-                                pressed_keys.retain(|x| x != s);
+                            EventType::KeyRelease(listened_key) => {
+                                println!("Released: {:?}", listened_key);
+                                pressed_keys.retain(|x| x != listened_key);
                                 println!("{:#?}", pressed_keys);
                             }
-                            EventType::ButtonPress(s) => {
-                                println!("MB Pressed:{:?}", s)
+                            EventType::ButtonPress(listened_key) => {
+                                println!("MB Pressed:{:?}", listened_key)
                             }
-                            EventType::ButtonRelease(s) => {
-                                println!("MB Released:{:?}", s)
+                            EventType::ButtonRelease(listened_key) => {
+                                println!("MB Released:{:?}", listened_key)
                             }
                             EventType::MouseMove { x, y } => (),
                             EventType::Wheel { delta_x, delta_y } => {}

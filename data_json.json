@@ -12,19 +12,26 @@
             "type": "KeyPressEvent",
             "data": [
               {
-                "keypress": 4,
+                "keypress": 51,
+                "press_duration": 0
+              }
+            ]
+          },
+          "active": true
+        },
+        {
+          "name": "multiple macro",
+          "sequence": [],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 227,
                 "press_duration": 0
               },
               {
-                "keypress": 7,
-                "press_duration": 0
-              },
-              {
-                "keypress": 9,
-                "press_duration": 0
-              },
-              {
-                "keypress": 2,
+                "keypress": 6,
                 "press_duration": 0
               }
             ]

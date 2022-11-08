@@ -184,7 +184,6 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, rdev::Key> = {
 
 }
 
-
 // lazy_static! {
 // #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
 // pub static ref SCANCODE_TO_HID: HashMap<rdev::Key, u32> = {
