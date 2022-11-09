@@ -1,10 +1,11 @@
 import { VStack, HStack, Text, Button, Divider } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { DndContext, useSensor, PointerSensor } from '@dnd-kit/core'
+import { DndContext } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
-import { useState } from 'react'
-import Sortable from './Sortable'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { useEffect, useState } from 'react'
 import { ActionEventType } from '../types'
+import SequenceElementDraggableDisplay from './SequenceElementDraggableDisplay'
 
 type Props = {
   sequenceList: ActionEventType[]
@@ -12,26 +13,23 @@ type Props = {
 }
 
 const MacroviewSequencingArea = ({sequenceList, onSequenceChange}: Props) => {
-  const [items, setItems] = useState([
-    {
-      id: "1",
-      name: "sequence element 1"
-    },
-    {
-      id: "2",
-      name: "sequence element 2"
-    },
-    {
-      id: "3",
-      name: "sequence element 3"
-    },
-    {
-      id: "4",
-      name: "sequence element 4"
-    },
-  ])
 
-  const sensors = [useSensor(PointerSensor)]
+  // TODO: add context so that MacroviewSequenceElementArea, MacroviewSequencingArea, and MacroviewEditArea share the same "list of sequence elements, with IDs"
+
+
+  // only needs sequenceList to populate a separate list of items, so that we have IDs
+  const [items, setItems] = useState<{ id:number, element: ActionEventType }[]>([])
+
+  useEffect(() => {
+    // take sequence list and populate new list with IDs
+    console.log("refreshed")
+    let temp: { id:number, element: ActionEventType }[] = []
+    for (let i = 0; i < sequenceList.length; i++) {
+      const sequenceElement = sequenceList[i];
+      temp.push({id: i, element:sequenceElement})
+    }
+    setItems(temp)
+  }, [])
 
   const handleDrag = (event:any) => {
     if (event.active.id !== event.over.id) {
@@ -54,27 +52,18 @@ const MacroviewSequencingArea = ({sequenceList, onSequenceChange}: Props) => {
       </HStack>
       <Divider />
       {/** Timeline */}
-      <VStack>
-        <DndContext
-          sensors={sensors}
-          onDragEnd={handleDrag}
-        >
-          <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
+      <DndContext
+        onDragEnd={handleDrag}
+        modifiers={[restrictToVerticalAxis]}
+      >
+        <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
+          <VStack w="100%" overflowY="auto" overflowX="hidden">
             {items.map((item:any, index:number) =>
-              <Sortable id={item.id} text={item.name} key={index} />
+              <SequenceElementDraggableDisplay elementID={item.id} properties={item.element} key={index} />
             )}
-          </SortableContext>
-        </DndContext>
-
-        {/**
-         * needs to be a Scrollable, Sortable list
-         * each sequence element can be moved around
-         * each delay sequence elements can also be moved around
-         * any non-delay sequence elements that are not separated by a delay are grouped together
-         * groups can be moved as a whole, or individual elements can be pulled out of a group
-         * there can be no delays within a group, all actions start at the same time (but not necessarily take the same amount of time)
-         */}
-      </VStack>
+          </VStack>
+        </SortableContext>
+      </DndContext>
     </VStack>
   )
 }

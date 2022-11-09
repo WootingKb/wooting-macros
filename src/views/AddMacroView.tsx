@@ -19,6 +19,7 @@ type Props = {
 const AddMacroView = ({collections}: Props) => {
     const [match, params] = useRoute("/macroview/:cid");
     const [recording, setRecording] = useState(false)
+    const [temp, setTemp] = useState(false)
     const [macroName, setMacroName] = useState("Macro Name")
     const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
     const [sequenceList, setSequenceList] = useState<ActionEventType[]>([])
@@ -76,9 +77,8 @@ const AddMacroView = ({collections}: Props) => {
         setLocation("/")
     }
 
-    const onSequenceChange = (newList: ActionEventType[]) => {
-        console.log(newList)
-        setSequenceList(newList)
+    const onSequenceChange = () => {
+        setTemp(!temp)
     }
 
     return (
@@ -91,7 +91,7 @@ const AddMacroView = ({collections}: Props) => {
                 {/** Trigger Area */}
                 <MacroviewTriggerArea recording={recording} triggerKeys={triggerKeys} onRecordButtonPress={onRecordButtonPress}/>
             </HStack>
-            <HStack w="100%" h="calc(100% - 204px)" borderTop="1px" borderColor="gray.200">
+            <HStack w="100%" h="calc(100% - 190px)" borderTop="1px" borderColor="gray.200">
                 {/** Left Panel */}
                 <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Center Panel */}

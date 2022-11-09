@@ -8,7 +8,7 @@ export type TriggerEventType =
 
 export type ActionEventType =
 | {type: "KeyPressEvent", data: Keypress}
-| {type: "Delay", value: number}
+| {type: "Delay", data: number}
 
 export interface MacroData {
     data: Collection[]

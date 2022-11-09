@@ -100,7 +100,7 @@ const EditMacroView = ({collections}: Props) => {
                 <MacroviewTriggerArea recording={recording} triggerKeys={triggerKeys} onRecordButtonPress={onRecordButtonPress}/>
             </HStack>
             <Divider />
-            <HStack w="100%" h="calc(100% - 204px)" borderTop="1px" borderColor="gray.200">
+            <HStack w="100%" h="calc(100% - 190px)" borderTop="1px" borderColor="gray.200">
                 {/** Left Panel */}
                 <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
                 {/** Center Panel */}

@@ -10,22 +10,16 @@ type Props = {
 }
 
 const MacroviewSequenceElementArea = ({sequenceList, onSequenceChange}: Props) => {
-  const temp:ActionEventType[] = sequenceList
-
-  // The Sequence Element area houses "buttons" that users can press to add a specific element, e.g. keyboard key or action, to the sequence
-  // It will have a filtering system, or a search system, or both
-
-  // the components rendered will be uniform, but the data associated with each "button" corresponds to a single "thing"
   
-  const onSequenceElementButtonPress = (text:string) => {
+  const onSequenceElementButtonPress = (text:string, properties:ActionEventType) => {
     console.log("pressed sequence element " + text)
+    sequenceList.push(properties)
   }
-
 
   return (
     <VStack w="33%" h="100%" p="8px" alignItems="normal" borderRight='1px' borderColor='gray.200'>
         <Text fontWeight="semibold" fontSize={['sm', 'md']}>Sequence Elements</Text>
-        <Input h="40px" variant="outline" borderColor="gray.400" placeholder='Search' />
+        <Input minH="35px" variant="outline" borderColor="gray.400" placeholder='Search' />
         <Tabs w="100%" h="100%" size='sm' variant="soft-rounded" isFitted defaultIndex={0} colorScheme="yellow">
             <TabList>
                 <Tab><AddIcon /></Tab>
@@ -43,7 +37,7 @@ const MacroviewSequenceElementArea = ({sequenceList, onSequenceChange}: Props) =
               <TabPanel w="full" p="4px" h="100%">
                 <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
                   {Hid.all.map((HIDinfo: HidInfo, index:number) =>
-                    <SequenceElementButton key={index} displayText={HIDinfo.displayString} onClick={onSequenceElementButtonPress}/>
+                    <SequenceElementButton key={index} displayText={HIDinfo.displayString} properties={{ type: "KeyPressEvent", data: {keypress: HIDinfo.HIDcode, press_duration: 1}}} onClick={onSequenceElementButtonPress}/>
                   )}
                 </SimpleGrid>
               </TabPanel>
