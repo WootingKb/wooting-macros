@@ -27,9 +27,17 @@ pub enum MacroType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+pub enum KeyType {
+    Down,
+    Up,
+    DownUp,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub struct KeyPress {
     pub keypress: u32,
     pub press_duration: Delay,
+    pub keytype: KeyType,
 }
 //
 // impl KeyboardKeypress {
