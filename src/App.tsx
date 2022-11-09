@@ -1,52 +1,31 @@
-import {useEffect, useState} from "react";
-import {invoke} from "@tauri-apps/api/tauri";
-import { appWindow, PhysicalSize } from '@tauri-apps/api/window';
-import "./App.css";
-import {Flex} from '@chakra-ui/react'
-import {Route} from "wouter";
-import Overview from "./views/Overview";
-import AddMacroView from "./views/AddMacroView";
-import EditMacroView from "./views/EditMacroView";
-import {Collection, MacroData} from "./types";
+import { appWindow, PhysicalSize } from '@tauri-apps/api/window'
+import { Flex } from '@chakra-ui/react'
+import Overview from './views/Overview'
+import AddMacroView from './views/AddMacroView'
+import EditMacroView from './views/EditMacroView'
+import { ViewState } from './enums'
+import { useApplicationContext } from './contexts/applicationContext'
 
 function App() {
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [isLoading, setLoading] = useState(true);
-
-  appWindow.setMinSize(new PhysicalSize(800, 600));
-
-  useEffect(() => {
-    invoke<MacroData>("get_macros").then((res) => {
-      console.log(res)
-      setCollections(res.data)
-
-      setLoading(false)
-    }).catch(e => {
-      console.error(e)
-    })
-  }, [])
+  const { viewState, initComplete } = useApplicationContext()
+  appWindow.setMinSize(new PhysicalSize(800, 600))
 
   // TODO: Update Loading Screen & investigate loading time of application prior to loading screen taking effect
-  if (isLoading) {
-    return(
+  if (!initComplete) {
+    return (
       <Flex h="100vh" justifyContent="center" alignItems="center">
         Loading
       </Flex>
     )
   }
+
   return (
     <Flex h="100vh" direction="column">
-      <Route path="/">
-        <Overview collections={collections}/>
-      </Route>
-      <Route path="/macroview/:cid">
-        <AddMacroView collections={collections}/>
-      </Route>
-      <Route path="/editview/:cid/:mid">
-        <EditMacroView collections={collections}/>
-      </Route>
+      {viewState === ViewState.Overview && <Overview />}
+      {viewState === ViewState.Addview && <AddMacroView />}
+      {viewState === ViewState.Editview && <EditMacroView />}
     </Flex>
-  );
+  )
 }
 
-export default App;
+export default App

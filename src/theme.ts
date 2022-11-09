@@ -8,13 +8,13 @@ const breakpoints = {
   md: '1280px',
   lg: '1536px',
   xl: '1700px',
-  '2xl': '1920px',
+  '2xl': '1920px'
 }
 
 // 2. Add your color mode config
 const config: ThemeConfig = {
   initialColorMode: 'light',
-  useSystemColorMode: false,
+  useSystemColorMode: false
 }
 
 // 3. extend the theme

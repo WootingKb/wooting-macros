@@ -1,171 +1,191 @@
-import { BaseSyntheticEvent, useEffect, useState } from 'react'
-import MacroCard from "../components/MacroCard";
-import { Collection, Macro } from "../types";
-import { Link } from 'wouter';
-import CollectionButton from '../components/CollectionButton';
-import { Box, Button, Flex, HStack, useColorMode, VStack, Text, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, Input, Grid, GridItem } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import MacroCard from '../components/overview/MacroCard'
+import { Collection, Macro } from '../types'
+import CollectionButton from '../components/overview/CollectionButton'
+import {
+  Button,
+  Flex,
+  HStack,
+  useColorMode,
+  VStack,
+  Text,
+  IconButton,
+  useDisclosure,
+  Grid,
+  GridItem
+} from '@chakra-ui/react'
 import { AddIcon, EditIcon } from '@chakra-ui/icons'
-import { updateBackendConfig } from '../utils';
+import { updateBackendConfig } from '../utils'
+import { useApplicationContext } from '../contexts/applicationContext'
+import { ViewState } from '../enums'
+import CollectionModal from '../components/overview/CollectionModal'
+import { useSelectedCollection } from '../contexts/selectors'
 
-type Props = {
-    collections: Collection[]
-}
+type Props = {}
 
-function Overview({collections}: Props) {
-    const { colorMode, toggleColorMode } = useColorMode()
-    const { isOpen: isOpenNewCollection, onOpen: onOpenNewCollection, onClose: onCloseNewCollection } = useDisclosure()
-    const { isOpen: isOpenRenameCollection, onOpen: onOpenRenameCollection, onClose: onCloseRenameCollection } = useDisclosure()
-    const [collectionName, setCollectionName] = useState("")
-    const [collectionIndex, setCollectionIndex] = useState(0)
-    const [canUseCollectionName, setCanUseCollectionName] = useState(true)
+function Overview({}: Props) {
+  const {
+    collections,
+    selection,
+    changeSelectedCollectionIndex,
+    changeSelectedMacroIndex,
+    changeViewState
+  } = useApplicationContext()
+  const currentCollection: Collection = useSelectedCollection()
+  const { colorMode, toggleColorMode } = useColorMode()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isRenamingCollection, setIsRenamingCollection] = useState(false)
 
-    useEffect(() => {
-        for (let i = 0; i < collections.length; i++) {
-            const collection = collections[i];
-            if (collection.active) {
-                setCollectionIndex(i)
-            }
-        }
-    }, [])
+  useEffect(() => {
+    changeSelectedMacroIndex(-1) // none selected
+  }, [])
 
-    const onAddCollectionButtonPress = () => {
-        collections.push({active: false, icon:"i", macros: [], name: collectionName })
-        updateBackendConfig(collections)
-        onCloseNewCollection()
-    }
+  const onCollectionButtonPress = (newActiveIndex: number) => {
+    changeSelectedCollectionIndex(newActiveIndex)
+  }
 
-    const onCollectionNameChange = (event:BaseSyntheticEvent) => {
-        let newName:string = event.target.value
-        newName = newName.trim()
+  const onCollectionToggle = (index: number) => {
+    collections[index].active = !collections[index].active
+    setIsRenamingCollection(!isRenamingCollection)
+    updateBackendConfig(collections)
+  }
 
-        setCollectionName(newName)
-        for (let i = 0; i < collections.length; i++) {
-            const collection = collections[i];
-            if (collection.name.toUpperCase() === newName.toUpperCase()) {
-                setCanUseCollectionName(false)
-                return
-            }
-        }
-        setCanUseCollectionName(true)
-    }
+  const onCollectionDelete = () => {
+    collections.splice(selection.collectionIndex, 1)
+    collections[0].active = true
+    changeSelectedCollectionIndex(0)
+    updateBackendConfig(collections)
+  }
 
-    const onCollectionButtonPress = (newActiveIndex:number) => {
-        setCollectionIndex(newActiveIndex)
-    }
+  const onMacroDelete = (macroIndex: number) => {
+    collections[selection.collectionIndex].macros.splice(macroIndex, 1)
+    setIsRenamingCollection(!isRenamingCollection)
+    updateBackendConfig(collections)
+  }
 
-    const onCollectionToggle = (index:number) => {
-        collections[index].active = !collections[index].active
-        setCanUseCollectionName(!canUseCollectionName)
-        updateBackendConfig(collections)
-    }
+  return (
+    <HStack minH="100vh" spacing="0" overflow="hidden">
+      {/** Left Side Panel */}
+      <VStack borderRight="1px" h="100vh" p="4" w={['20%']}>
+        {collections.map((collection: Collection, index: number) => (
+          <CollectionButton
+            collection={collection}
+            index={index}
+            key={index}
+            isFocused={index == selection.collectionIndex}
+            setFocus={onCollectionButtonPress}
+            toggleCollection={onCollectionToggle}
+          />
+        ))}
+        <Button
+          colorScheme="yellow"
+          size={['sm', 'md', 'lg']}
+          leftIcon={<AddIcon />}
+          onClick={() => {
+            setIsRenamingCollection(false)
+            onOpen()
+          }}
+        >
+          New Collection
+        </Button>
+        <Button onClick={toggleColorMode}>
+          Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+        </Button>
+      </VStack>
+      {/** Main Panel */}
+      <VStack w="100%" h="100vh">
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          p="4"
+          borderBottom="1px"
+          w="100%"
+        >
+          <VStack>
+            <HStack w="100%">
+              <IconButton
+                aria-label="Collection Icon Button"
+                icon={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    width="24px"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"
+                    />
+                  </svg>
+                }
+                variant="ghost"
+                isDisabled
+              ></IconButton>
+              <Text fontWeight="bold" fontSize="xl">
+                {currentCollection.name}
+              </Text>
+              <IconButton
+                aria-label="Collection Edit Button"
+                icon={<EditIcon />}
+                variant="ghost"
+                isDisabled={selection.collectionIndex <= 0}
+                onClick={() => {
+                  setIsRenamingCollection(true)
+                  onOpen()
+                }}
+              />
+            </HStack>
+            <HStack w="100%">
+              <Button leftIcon={<AddIcon />} size={['sm', 'md']} isDisabled>
+                Export Collection
+              </Button>
+              <Button leftIcon={<AddIcon />} size={['sm', 'md']} isDisabled>
+                Import Macros
+              </Button>
+              <Button
+                leftIcon={<AddIcon />}
+                size={['sm', 'md']}
+                isDisabled={selection.collectionIndex <= 0}
+                onClick={onCollectionDelete}
+              >
+                Delete Collection
+              </Button>
+            </HStack>
+          </VStack>
+          <Button
+            colorScheme="yellow"
+            leftIcon={<AddIcon />}
+            size={['sm', 'md', 'lg']}
+            onClick={() => changeViewState(ViewState.Addview)}
+          >
+            Add Macro
+          </Button>
+        </Flex>
+        <Grid
+          w="100%"
+          templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
+          p="1"
+          gap="1"
+          overflowY="auto"
+        >
+          {currentCollection.macros.map((macro: Macro, index: number) => (
+            <GridItem w="100%" key={index}>
+              <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
+            </GridItem>
+          ))}
+        </Grid>
+      </VStack>
 
-    const onRenameCollection = () => {
-        collections[collectionIndex].name = collectionName
-        onCloseRenameCollection()
-        updateBackendConfig(collections)
-    }
-
-    const onCollectionDelete = () => {
-        collections.splice(collectionIndex, 1)
-        collections[0].active = true
-        setCollectionIndex(0)
-        updateBackendConfig(collections)
-    }
-
-    const onMacroDelete = (macroIndex:number) => {
-        collections[collectionIndex].macros.splice(macroIndex, 1)
-        setCanUseCollectionName(!canUseCollectionName)
-        updateBackendConfig(collections)
-    }
-
-    return (
-        <HStack minH="100vh" spacing="0" overflow="hidden">
-            {/** Left Side Panel */}
-            <VStack borderRight="1px" h="100vh" p="4" w={["20%"]}>
-                {collections.map((collection:Collection, index:number) => 
-                    <CollectionButton collection={collection} index={index} key={index} isFocused={index == collectionIndex} setFocus={onCollectionButtonPress} toggleCollection={onCollectionToggle}/>
-                )}
-                <Button colorScheme="yellow" size={["sm", "md", "lg"]} leftIcon={<AddIcon />} onClick={onOpenNewCollection}>
-                    New Collection
-                </Button>
-                <Button onClick={toggleColorMode}>
-                    Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-                </Button>
-            </VStack>
-            {/** Main Panel */}
-            <VStack w="100%" h="100vh">
-                <Flex justifyContent="space-between" alignItems="center" p="4" borderBottom="1px" w="100%">
-                    <VStack>
-                        <HStack w="100%">
-                        <IconButton aria-label='Collection Icon Button' icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="24px">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
-                        </svg>} variant="ghost" isDisabled>
-                        </IconButton>
-                        <Text fontWeight="bold" fontSize="xl">{collections[collectionIndex].name}</Text>
-                        <IconButton aria-label="Collection Edit Button" icon={<EditIcon />} variant="ghost" isDisabled={collectionIndex <= 0} onClick={onOpenRenameCollection}/>
-                        </HStack>
-                        <HStack w="100%">
-                        <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
-                            Export Collection
-                        </Button>
-                        <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled>
-                            Import Macros
-                        </Button>
-                        <Button leftIcon={<AddIcon />} size={["sm", "md"]} isDisabled={collectionIndex <= 0} onClick={onCollectionDelete}>
-                            Delete Collection
-                        </Button>
-                        </HStack>
-                    </VStack>
-                    <Link href={'/macroview/' + collectionIndex}>
-                        <Button colorScheme="yellow" leftIcon={<AddIcon />} size={["sm", "md", "lg"]}>
-                            Add Macro
-                        </Button>
-                    </Link>
-                </Flex>
-                <Grid w="100%" templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']} p="1" gap="1" overflowY="auto">
-                    {collections[collectionIndex].macros.map((macro:Macro, index:number) =>
-                    <GridItem w="100%" key={index}>
-                        <MacroCard collections={collections} macro={macro} index={index} collectionIndex={collectionIndex} onDelete={onMacroDelete}/>
-                    </GridItem>
-                    )}
-                </Grid>
-            </VStack>
-            {/** New Collection Modal */}
-            <Modal isOpen={isOpenNewCollection} onClose={onCloseNewCollection}>
-                <ModalOverlay />
-                <ModalContent>
-                <ModalHeader>Give it a unique name</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                    <Input variant='flushed' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder='Collection Name'/>
-                </ModalBody>
-                <ModalFooter>
-                    <Button mr={3} onClick={onCloseNewCollection}>
-                    Close
-                    </Button>
-                    <Button colorScheme="yellow" onClick={onAddCollectionButtonPress}>Create</Button>
-                </ModalFooter>
-                </ModalContent>
-            </Modal>
-            {/** Rename Collection Modal */}
-            <Modal isOpen={isOpenRenameCollection} onClose={onCloseRenameCollection}>
-                <ModalOverlay />
-                <ModalContent>
-                <ModalHeader>Changed your mind?</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                    <Input variant='flushed' isRequired isInvalid={!canUseCollectionName} onChange={onCollectionNameChange} placeholder={collections[collectionIndex].name}/>
-                </ModalBody>
-                <ModalFooter>
-                    <Button mr={3} onClick={onCloseRenameCollection}>
-                    Close
-                    </Button>
-                    <Button colorScheme="yellow" onClick={onRenameCollection}>Rename</Button>
-                </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </HStack>
-    )
+      <CollectionModal
+        isRenaming={isRenamingCollection}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
+    </HStack>
+  )
 }
 
 export default Overview

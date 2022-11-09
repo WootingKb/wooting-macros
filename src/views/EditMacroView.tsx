@@ -1,115 +1,150 @@
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
-import { useLocation, useRoute } from 'wouter';
-import { ActionEventType, Collection, Keypress, Macro } from "../types";
-import { webCodeHIDLookup } from '../HIDmap';
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
+import { ActionEventType, Collection, Keypress, Macro } from '../types'
+import { webCodeHIDLookup } from '../HIDmap'
 import { HStack, VStack, Divider } from '@chakra-ui/react'
-import { updateBackendConfig } from '../utils';
-import { MacroType } from '../enums';
-import MacroviewHeader from '../components/MacroviewHeader';
-import MacroviewTypeArea from '../components/MacroviewTypeArea';
-import MacroviewTriggerArea from '../components/MacroviewTriggerArea';
-import MacroviewEditElementArea from '../components/MacroviewEditElementArea';
-import MacroviewSequenceElementArea from '../components/MacroviewSequenceElementArea';
-import MacroviewSequencingArea from '../components/MacroviewSequencingArea';
+import { updateBackendConfig } from '../utils'
+import { KeyType, MacroType, ViewState } from '../enums'
+import MacroviewHeader from '../components/macroview/MacroviewHeader'
+import MacroviewTypeArea from '../components/macroview/MacroviewTypeArea'
+import MacroviewTriggerArea from '../components/macroview/MacroviewTriggerArea'
+import MacroviewEditElementArea from '../components/macroview/MacroviewEditElementArea'
+import MacroviewSequenceElementArea from '../components/macroview/MacroviewSequenceElementArea'
+import MacroviewSequencingArea from '../components/macroview/MacroviewSequencingArea'
+import { useApplicationContext } from '../contexts/applicationContext'
+import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
 
-type Props = {
-  collections: Collection[]
-}
+type Props = {}
 
-// create a context around application, instead of useRoute; or multiple contexts
+const EditMacroView = ({}: Props) => {
+  const { collections, selection, changeViewState } = useApplicationContext()
 
-const EditMacroView = ({collections}: Props) => {
-    const [match, params] = useRoute("/editview/:cid/:mid");
-    const [recording, setRecording] = useState(false)
-    const [macroName, setMacroName] = useState("")
-    const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
-    const [sequenceList, setSequenceList] = useState<ActionEventType[]>([])
-    const [location, setLocation] = useLocation();
-    const [selectedMacroType, setSelectedMacroType] = useState(0)
+  const currentCollection: Collection = useSelectedCollection()
+  let currentMacro: Macro = useSelectedMacro()
 
-    useEffect(() => {
-        if (match) {
-            let macro:Macro
-            macro = collections[parseInt(params.cid)].macros[parseInt(params.mid)]
-            setMacroName(macro.name)
-            setTriggerKeys(macro.trigger.data)
-        } else {
-            // return to home, but this should not be triggered
-            setLocation("/")
-        }
-    }, [])
+  const [recording, setRecording] = useState(false)
+  const [macroName, setMacroName] = useState('')
+  const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
+  const [sequenceList, setSequenceList] = useState<ActionEventType[]>([])
+  const [selectedMacroType, setSelectedMacroType] = useState(0)
 
-    const addTriggerKey = (event:KeyboardEvent) => {
-        event.preventDefault()
+  useEffect(() => {
+    setMacroName(currentMacro.name)
+    setTriggerKeys(currentMacro.trigger.data)
+  }, [])
 
-        let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
-        if (HIDcode == undefined) { return }
+  const addTriggerKey = (event: KeyboardEvent) => {
+    event.preventDefault()
 
-        let keypress:Keypress = { keypress:HIDcode, press_duration:0 }
-
-        setTriggerKeys(triggerKeys => [...triggerKeys, keypress])
-        if (triggerKeys.length == 3) { setRecording(false) }
+    let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+    if (HIDcode == undefined) {
+      return
     }
 
-    useEffect(() => {
-        if (!recording) { return }
-        // Does not get mouse input for trigger        
-        window.addEventListener("keydown", addTriggerKey, false)
-        // TODO: stop backend trigger listening
-        return () => {
-            window.removeEventListener("keydown", addTriggerKey, false)
-            // TODO: start backend trigger listening
-        }
-    }, [addTriggerKey])
-
-    const onRecordButtonPress = () => {
-        if (!recording) { setTriggerKeys([]) }
-        setRecording(!recording)
+    let keypress: Keypress = {
+      keypress: HIDcode,
+      press_duration: 0,
+      keytype: KeyType[KeyType.Down]
     }
 
-    const onMacroTypeButtonPress = (index:number) => {
-        setSelectedMacroType(index)
+    setTriggerKeys((triggerKeys) => [...triggerKeys, keypress])
+    if (triggerKeys.length == 3) {
+      setRecording(false)
     }
+  }
 
-    const onMacroNameChange = (event:BaseSyntheticEvent) => {
-        setMacroName(event.target.value)
+  useEffect(() => {
+    if (!recording) {
+      return
     }
-
-    const onSaveButtonPress = () => {
-        if (match) {
-            collections[parseInt(params.cid)].macros[parseInt(params.mid)] = {name: macroName, active: true, macro_type: MacroType[selectedMacroType], trigger: { type: "KeyPressEvent", data: triggerKeys }, sequence: []}
-        }
-        // update backend here
-        updateBackendConfig(collections)
-        setLocation("/")
+    // Does not get mouse input for trigger
+    window.addEventListener('keydown', addTriggerKey, false)
+    // TODO: stop backend trigger listening
+    return () => {
+      window.removeEventListener('keydown', addTriggerKey, false)
+      // TODO: start backend trigger listening
     }
+  }, [addTriggerKey])
 
-    const onSequenceChange = (newList: ActionEventType[]) => {
-        console.log(newList)
-        setSequenceList(newList)
+  const onRecordButtonPress = () => {
+    if (!recording) {
+      setTriggerKeys([])
     }
+    setRecording(!recording)
+  }
 
-    return (
-        <VStack minH="100vh" spacing="0px" overflow="hidden">
-            {/** Header */}
-            <MacroviewHeader triggerKeys={triggerKeys} macroName={macroName} isEditing={true} onMacroNameChange={onMacroNameChange} onSaveButtonPress={onSaveButtonPress}/>
-            <HStack w="100%" h={130} spacing="8px" p="8px">
-                {/** Macro Type Area */}
-                <MacroviewTypeArea selectedMacroType={selectedMacroType} onMacroTypeButtonPress={onMacroTypeButtonPress}/>
-                {/** Trigger Area */}
-                <MacroviewTriggerArea recording={recording} triggerKeys={triggerKeys} onRecordButtonPress={onRecordButtonPress}/>
-            </HStack>
-            <Divider />
-            <HStack w="100%" h="calc(100% - 190px)" borderTop="1px" borderColor="gray.200">
-                {/** Left Panel */}
-                <MacroviewSequenceElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
-                {/** Center Panel */}
-                <MacroviewSequencingArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
-                {/** Right Panel */}
-                <MacroviewEditElementArea sequenceList={sequenceList} onSequenceChange={onSequenceChange}/>
-            </HStack>
-        </VStack>
-    )
+  const onMacroTypeButtonPress = (index: number) => {
+    setSelectedMacroType(index)
+  }
+
+  const onMacroNameChange = (event: BaseSyntheticEvent) => {
+    setMacroName(event.target.value)
+  }
+
+  const onSaveButtonPress = () => {
+    currentCollection.macros[selection.macroIndex] = {
+      name: macroName,
+      active: true,
+      macro_type: MacroType[selectedMacroType],
+      trigger: { type: 'KeyPressEvent', data: triggerKeys },
+      sequence: []
+    }
+    changeViewState(ViewState.Overview)
+    updateBackendConfig(collections)
+  }
+
+  const onSequenceChange = (newList: ActionEventType[]) => {
+    console.log(newList)
+    setSequenceList(newList)
+  }
+
+  return (
+    <VStack minH="100vh" spacing="0px" overflow="hidden">
+      {/** Header */}
+      <MacroviewHeader
+        triggerKeys={triggerKeys}
+        macroName={macroName}
+        isEditing={true}
+        onMacroNameChange={onMacroNameChange}
+        onSaveButtonPress={onSaveButtonPress}
+      />
+      <HStack w="100%" h={130} spacing="8px" p="8px">
+        {/** Macro Type Area */}
+        <MacroviewTypeArea
+          selectedMacroType={selectedMacroType}
+          onMacroTypeButtonPress={onMacroTypeButtonPress}
+        />
+        {/** Trigger Area */}
+        <MacroviewTriggerArea
+          recording={recording}
+          triggerKeys={triggerKeys}
+          onRecordButtonPress={onRecordButtonPress}
+        />
+      </HStack>
+      <Divider />
+      <HStack
+        w="100%"
+        h="calc(100% - 190px)"
+        borderTop="1px"
+        borderColor="gray.200"
+      >
+        {/** Left Panel */}
+        <MacroviewSequenceElementArea
+          sequenceList={sequenceList}
+          onSequenceChange={onSequenceChange}
+        />
+        {/** Center Panel */}
+        <MacroviewSequencingArea
+          sequenceList={sequenceList}
+          onSequenceChange={onSequenceChange}
+        />
+        {/** Right Panel */}
+        <MacroviewEditElementArea
+          sequenceList={sequenceList}
+          onSequenceChange={onSequenceChange}
+        />
+      </HStack>
+    </VStack>
+  )
 }
 
 export default EditMacroView
