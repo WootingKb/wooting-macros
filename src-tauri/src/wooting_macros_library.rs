@@ -30,9 +30,8 @@ use crate::plugin::unicode_direct;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum MacroType {
     Single,
-    Repeating,
+    Toggle,
     OnHold,
-    MultiLevel,
 }
 
 ///This enum is the registry for all actions that can be executed
@@ -54,7 +53,10 @@ pub enum ActionEventType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum TriggerEventType {
-    KeyPressEvent { data: Vec<key_press::KeyPress> },
+    KeyPressEvent {
+        data: Vec<key_press::KeyPress>,
+        allow_while_other_keys: bool,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -76,7 +78,7 @@ impl Macro {
             name: "".to_string(),
             sequence: vec![],
             macro_type: MacroType::Single,
-            trigger: TriggerEventType::KeyPressEvent { data: vec![] },
+            trigger: TriggerEventType::KeyPressEvent { data: vec![], allow_while_other_keys: false },
             active: false,
         }
     }
@@ -312,13 +314,17 @@ pub fn execute_macro(macros: &Macro) {
             for sequence in &macros.sequence {
                 match sequence {
                     ActionEventType::KeyPressEvent { data } => match data.keytype {
-                        key_press::KeyType::Down => send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress])),
+                        key_press::KeyType::Down => {
+                            send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
+                        }
                         key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
                             SCANCODE_TO_RDEV[&data.keypress],
                         )),
                         key_press::KeyType::DownUp => {
                             send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                            thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
+                            thread::sleep(time::Duration::from_millis(
+                                *&data.press_duration as u64,
+                            ));
                             send(&rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ));
@@ -328,13 +334,14 @@ pub fn execute_macro(macros: &Macro) {
                     ActionEventType::OBS { .. } => {}
                     ActionEventType::DiscordCommand { .. } => {}
                     ActionEventType::UnicodeDirect { .. } => {}
-                    ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
+                    ActionEventType::Delay { data } => {
+                        thread::sleep(time::Duration::from_millis(*data))
+                    }
                 }
             }
         }
-        MacroType::Repeating => {}
+        MacroType::Toggle => {}
         MacroType::OnHold => {}
-        MacroType::MultiLevel => {}
     }
 }
 
@@ -389,7 +396,7 @@ pub fn run_this() {
                                             if macros.active == true {
                                                 match &macros.trigger {
                                                     TriggerEventType::KeyPressEvent {
-                                                        data: trigger_key,
+                                                        data: trigger_key, ..
                                                     } => {
                                                         let converted_keys: Vec<rdev::Key> =
                                                             trigger_key

@@ -23,10 +23,8 @@ use crate::wooting_macros_library::*;
 
 pub mod plugin;
 
-
 mod hid_table;
 mod wooting_macros_library;
-
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -102,17 +100,17 @@ lazy_static! {
 fn main() {
     //TODO: Async run the backend.
 
-    tauri::Builder::default()
-        // This is where you pass in your commands
-        .manage(MacroDataState::new())
-        .invoke_handler(tauri::generate_handler![
-            get_macros,
-            set_macros,
-            get_config,
-            set_config
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+    // tauri::Builder::default()
+    //     // This is where you pass in your commands
+    //     .manage(MacroDataState::new())
+    //     .invoke_handler(tauri::generate_handler![
+    //         get_macros,
+    //         set_macros,
+    //         get_config,
+    //         set_config
+    //     ])
+    //     .run(tauri::generate_context!())
+    //     .expect("error while running tauri application");
 
     run_this();
 }
