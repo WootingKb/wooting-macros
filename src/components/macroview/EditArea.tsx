@@ -6,7 +6,7 @@ type Props = {
   onSequenceChange: (newList: ActionEventType[]) => void
 }
 
-const MacroviewEditElementArea = ({
+const EditArea = ({
   sequenceList,
   onSequenceChange
 }: Props) => {
@@ -15,4 +15,4 @@ const MacroviewEditElementArea = ({
   )
 }
 
-export default MacroviewEditElementArea
+export default EditArea

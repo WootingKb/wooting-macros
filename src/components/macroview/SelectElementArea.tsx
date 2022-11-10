@@ -20,7 +20,7 @@ type Props = {
   onSequenceChange: (newList: ActionEventType[]) => void
 }
 
-const MacroviewSequenceElementArea = ({
+const SelectElementArea = ({
   sequenceList,
   onSequenceChange
 }: Props) => {
@@ -119,4 +119,4 @@ const MacroviewSequenceElementArea = ({
   )
 }
 
-export default MacroviewSequenceElementArea
+export default SelectElementArea

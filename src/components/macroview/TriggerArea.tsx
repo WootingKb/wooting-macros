@@ -18,7 +18,7 @@ type Props = {
   onRecordButtonPress: () => void
 }
 
-const MacroviewTriggerArea = ({
+const TriggerArea = ({
   recording,
   triggerKeys,
   onRecordButtonPress
@@ -77,4 +77,4 @@ const MacroviewTriggerArea = ({
   )
 }
 
-export default MacroviewTriggerArea
+export default TriggerArea

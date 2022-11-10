@@ -4,12 +4,12 @@ import { webCodeHIDLookup } from '../HIDmap'
 import { HStack, VStack, Divider } from '@chakra-ui/react'
 import { updateBackendConfig } from '../utils'
 import { KeyType, MacroType, ViewState } from '../enums'
-import MacroviewHeader from '../components/macroview/MacroviewHeader'
-import MacroviewTypeArea from '../components/macroview/MacroviewTypeArea'
-import MacroviewTriggerArea from '../components/macroview/MacroviewTriggerArea'
-import MacroviewEditElementArea from '../components/macroview/MacroviewEditElementArea'
-import MacroviewSequenceElementArea from '../components/macroview/MacroviewSequenceElementArea'
-import MacroviewSequencingArea from '../components/macroview/MacroviewSequencingArea'
+import MacroviewHeader from '../components/macroview/Header'
+import MacroTypeArea from '../components/macroview/MacroTypeArea'
+import TriggerArea from '../components/macroview/TriggerArea'
+import EditArea from '../components/macroview/EditArea'
+import SelectElementArea from '../components/macroview/SelectElementArea'
+import SequencingArea from '../components/macroview/SequencingArea'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
 
@@ -107,12 +107,12 @@ const EditMacroView = () => {
       />
       <HStack w="100%" h={130} spacing="8px" p="8px">
         {/** Macro Type Area */}
-        <MacroviewTypeArea
+        <MacroTypeArea
           selectedMacroType={selectedMacroType}
           onMacroTypeButtonPress={onMacroTypeButtonPress}
         />
         {/** Trigger Area */}
-        <MacroviewTriggerArea
+        <TriggerArea
           recording={recording}
           triggerKeys={triggerKeys}
           onRecordButtonPress={onRecordButtonPress}
@@ -126,17 +126,17 @@ const EditMacroView = () => {
         borderColor="gray.200"
       >
         {/** Left Panel */}
-        <MacroviewSequenceElementArea
+        <SelectElementArea
           sequenceList={sequenceList}
           onSequenceChange={onSequenceChange}
         />
         {/** Center Panel */}
-        <MacroviewSequencingArea
+        <SequencingArea
           sequenceList={sequenceList}
           onSequenceChange={onSequenceChange}
         />
         {/** Right Panel */}
-        <MacroviewEditElementArea
+        <EditArea
           sequenceList={sequenceList}
           onSequenceChange={onSequenceChange}
         />

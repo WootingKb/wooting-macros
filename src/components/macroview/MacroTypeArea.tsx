@@ -8,7 +8,7 @@ type Props = {
   onMacroTypeButtonPress: (index: number) => void
 }
 
-const MacroviewTypeArea = ({
+const MacroTypeArea = ({
   selectedMacroType,
   onMacroTypeButtonPress
 }: Props) => {
@@ -59,4 +59,4 @@ const MacroviewTypeArea = ({
   )
 }
 
-export default MacroviewTypeArea
+export default MacroTypeArea

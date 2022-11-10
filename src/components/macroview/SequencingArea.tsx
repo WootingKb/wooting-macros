@@ -16,7 +16,7 @@ type Props = {
   onSequenceChange: (newList: ActionEventType[]) => void
 }
 
-const MacroviewSequencingArea = ({ sequenceList, onSequenceChange }: Props) => {
+const SequencingArea = ({ sequenceList, onSequenceChange }: Props) => {
   // TODO: add context so that MacroviewSequenceElementArea, MacroviewSequencingArea, and MacroviewEditArea share the same "list of sequence elements, with IDs"
 
   // only needs sequenceList to populate a separate list of items, so that we have IDs
@@ -78,4 +78,4 @@ const MacroviewSequencingArea = ({ sequenceList, onSequenceChange }: Props) => {
   )
 }
 
-export default MacroviewSequencingArea
+export default SequencingArea
