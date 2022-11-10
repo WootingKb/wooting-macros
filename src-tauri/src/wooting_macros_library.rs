@@ -326,6 +326,7 @@ pub fn execute_macro(macros: &Macro) {
         match sequence {
             ActionEventType::KeyPressEvent { data } => {
                 send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                send(&rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&data.keypress]));
             }
             ActionEventType::PhillipsHueCommand { .. } => {}
             ActionEventType::OBS { .. } => {}

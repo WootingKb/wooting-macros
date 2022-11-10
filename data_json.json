@@ -30,6 +30,14 @@
                 "press_duration": 1,
                 "keytype": "Down"
               }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 7,
+                "press_duration": 1,
+                "keytype": "Down"
+              }
             }
           ],
           "macro_type": "Single",
@@ -44,178 +52,8 @@
             ]
           },
           "active": true
-        },
-        {
-          "name": "multiple macro",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 227,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 6,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test macro4",
-          "sequence": [],
-          "macro_type": "OnHold",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 29,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test macro 54",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 4,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 22,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 7,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test macro 6",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 30,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 31,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 32,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test macro 9",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 34,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 11,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
-        },
-        {
-          "name": "test macro 8",
-          "sequence": [],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 229,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 77,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
         }
       ],
-      "active": true
-    },
-    {
-      "name": "Collection 2",
-      "icon": "i",
-      "macros": [
-        {
-          "name": "Macro Name",
-          "sequence": [],
-          "macro_type": "Repeating",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 4,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 5,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 6,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ]
-          },
-          "active": true
-        }
-      ],
-      "active": true
-    },
-    {
-      "name": "test",
-      "icon": "i",
-      "macros": [],
       "active": true
     }
   ]
