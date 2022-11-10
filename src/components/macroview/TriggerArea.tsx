@@ -32,10 +32,9 @@ const TriggerArea = ({
       border="1px"
       borderColor="gray.200"
       rounded="md"
-      spacing="16px"
       justifyContent="center"
     >
-      <HStack w="100%" justifyContent="space-between">
+      <HStack w="100%" justifyContent="space-between" minH="28px">
         <Text fontWeight="semibold" fontSize={['sm', 'md']}>
           Trigger Key(s)
         </Text>
@@ -48,7 +47,7 @@ const TriggerArea = ({
             w="55%"
           >
             <AlertIcon />
-            Input recording in progress.
+            <Text fontSize={['2xs', 'xs', 'sm', 'md']}>Input recording in progress.</Text>
           </Alert>
         )}
       </HStack>

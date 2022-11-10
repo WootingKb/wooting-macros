@@ -51,7 +51,7 @@ const MacroTypeArea = ({
         <Text fontWeight="semibold" fontSize={['md', 'lg', 'xl']}>
           {MacroType[selectedMacroType]}
         </Text>
-        <Text fontSize={['sm', 'md', 'lg', 'xl']}>
+        <Text fontSize={['xs', 'sm', 'md', 'lg', 'xl']}>
           {MacroTypeDefinitions[selectedMacroType]}
         </Text>
       </VStack>
