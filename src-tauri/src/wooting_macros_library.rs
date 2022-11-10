@@ -26,6 +26,7 @@ use crate::plugin_phillips_hue;
 use crate::plugin_system_event;
 use crate::plugin_unicode_direct;
 
+///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum MacroType {
     Single,
@@ -34,20 +35,7 @@ pub enum MacroType {
     MultiLevel,
 }
 
-
-
-
-//
-// impl KeyboardKeypress {
-//     fn execute_key_up(&self, key_to_release: &rdev::Key) {
-//         send();
-//     }
-//
-//     fn execute_key_down(&self) {}
-// }
-
-
-
+///This enum is the registry for all actions that can be executed
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
@@ -62,6 +50,7 @@ pub enum ActionEventType {
     Delay { data: plugin_delay::Delay },
 }
 
+/// This enum is the registry for all incoming actions that can be analyzed for macro execution
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum TriggerEventType {
@@ -71,12 +60,7 @@ pub enum TriggerEventType {
 #[derive(Debug, Clone)]
 pub struct EventList(Vec<rdev::Key>);
 
-// #[derive(Debug, Clone)]
-// pub struct Action {
-//     pub action: char,
-//     pub press_wait_delay_after: plugin_key_press::Delay,
-// }
-
+///This is a macro struct. Includes all information a macro needs to run
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Macro {
     pub name: String,
@@ -171,6 +155,7 @@ pub fn set_data_write_manually_backend(frontend_data: MacroData) {
 //     }
 // }
 
+///State of the application in RAM (rwlock).
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct MacroDataState {
     pub data: RwLock<MacroData>,
@@ -178,6 +163,7 @@ pub struct MacroDataState {
 }
 
 impl MacroDataState {
+    ///Generates a new state.
     pub fn new() -> Self {
         MacroDataState {
             data: RwLock::from(MacroData::read_data()),
@@ -194,6 +180,7 @@ impl MacroDataState {
 
 type TriggersExtracted<'a> = Vec<(Vec<u32>, Vec<rdev::Key>, &'a Macro)>;
 
+///Collections are groups of macros.
 type Collections = Vec<Collection>;
 
 ///MacroData is the main data structure that contains all macro data.
@@ -270,6 +257,7 @@ impl MacroData {
             tuple
         }
     */
+    ///Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
     pub fn read_data() -> MacroData {
         let path = "../data_json.json";
 
@@ -306,6 +294,7 @@ impl MacroData {
     }
 }
 
+///Collection struct that defines what a group of macros looks like and what properties it carries
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Collection {
     pub name: String,
@@ -315,6 +304,7 @@ pub struct Collection {
     pub active: bool,
 }
 
+///Executes a given macro (requires a reference to a macro).
 pub fn execute_macro(macros: &Macro) {
     match macros.macro_type {
         MacroType::Single => {
@@ -348,7 +338,6 @@ pub fn execute_macro(macros: &Macro) {
 }
 
 ///Main loop for now (of the library)
-/// * `config` - &ApplicationConfig from the parsed JSON config file of the app.
 pub fn run_this() {
     //==================================================
     //TODO: make this a grab instead of listen
@@ -489,7 +478,7 @@ pub fn run_this() {
     }
 }
 
-//TODO: Release the key actually?
+///Sends an event to the library to execute on an OS level.
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
     match simulate(event_type) {
@@ -502,6 +491,7 @@ fn send(event_type: &EventType) {
     thread::sleep(delay);
 }
 
+///Gets user input on the backend. Dev purposes only.
 fn get_user_input(display_text: String) -> String {
     println!("{}\n", display_text);
 
