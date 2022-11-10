@@ -12,7 +12,7 @@
               "data": {
                 "keypress": 4,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             },
             {
@@ -20,7 +20,7 @@
               "data": {
                 "keypress": 5,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             },
             {
@@ -28,7 +28,7 @@
               "data": {
                 "keypress": 6,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             },
             {
@@ -36,7 +36,7 @@
               "data": {
                 "keypress": 7,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             }
           ],
@@ -47,7 +47,7 @@
               {
                 "keypress": 51,
                 "press_duration": 0,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             ]
           },

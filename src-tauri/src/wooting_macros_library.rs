@@ -28,9 +28,9 @@ pub enum MacroType {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum KeyType {
+    DownUp,
     Down,
     Up,
-    DownUp,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -50,7 +50,6 @@ pub struct KeyPress {
 
 ///Delay for the sequence
 pub type Delay = u64;
-
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
@@ -324,17 +323,24 @@ pub struct Collection {
 pub fn execute_macro(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
-            ActionEventType::KeyPressEvent { data } => {
-                send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                send(&rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&data.keypress]));
-            }
+            ActionEventType::KeyPressEvent { data } => match data.keytype {
+                KeyType::Down => send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress])),
+                KeyType::Up => send(&rdev::EventType::KeyRelease(
+                    SCANCODE_TO_RDEV[&data.keypress],
+                )),
+                KeyType::DownUp => {
+                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                    thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
+                    send(&rdev::EventType::KeyRelease(
+                        SCANCODE_TO_RDEV[&data.keypress],
+                    ));
+                }
+            },
             ActionEventType::PhillipsHueCommand { .. } => {}
             ActionEventType::OBS { .. } => {}
             ActionEventType::DiscordCommand { .. } => {}
             ActionEventType::UnicodeDirect { .. } => {}
-            ActionEventType::Delay { data } => {
-                thread::sleep(time::Duration::from_millis(*data))
-            }
+            ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
         }
     }
 }
@@ -390,8 +396,16 @@ pub fn run_this() {
                                         for macros in &collections.macros {
                                             if macros.active == true {
                                                 match &macros.trigger {
-                                                    TriggerEventType::KeyPressEvent { data: trigger_key } => {
-                                                        let converted_keys: Vec<rdev::Key> = trigger_key.iter().map(|x| SCANCODE_TO_RDEV[&x.keypress]).collect();
+                                                    TriggerEventType::KeyPressEvent {
+                                                        data: trigger_key,
+                                                    } => {
+                                                        let converted_keys: Vec<rdev::Key> =
+                                                            trigger_key
+                                                                .iter()
+                                                                .map(|x| {
+                                                                    SCANCODE_TO_RDEV[&x.keypress]
+                                                                })
+                                                                .collect();
 
                                                         if pressed_keys == converted_keys {
                                                             execute_macro(&macros);
