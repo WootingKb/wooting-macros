@@ -17,6 +17,14 @@ use tauri::{Config, State};
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
+use crate::plugin_delay;
+use crate::plugin_discord;
+use crate::plugin_key_press;
+use crate::plugin_mouse_movement;
+use crate::plugin_obs;
+use crate::plugin_phillips_hue;
+use crate::plugin_system_event;
+use crate::plugin_unicode_direct;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum MacroType {
@@ -26,19 +34,9 @@ pub enum MacroType {
     MultiLevel,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-pub enum KeyType {
-    DownUp,
-    Down,
-    Up,
-}
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-pub struct KeyPress {
-    pub keypress: u32,
-    pub press_duration: Delay,
-    pub keytype: KeyType,
-}
+
+
 //
 // impl KeyboardKeypress {
 //     fn execute_key_up(&self, key_to_release: &rdev::Key) {
@@ -48,15 +46,12 @@ pub struct KeyPress {
 //     fn execute_key_down(&self) {}
 // }
 
-///Delay for the sequence
-pub type Delay = u64;
+
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
-    KeyPressEvent { data: KeyPress },
-    //KeyON
-    //KeyOFF
+    KeyPressEvent { data: plugin_key_press::KeyPress },
     //SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
@@ -64,23 +59,23 @@ pub enum ActionEventType {
     //IKEADesk
     //MouseMovement
     UnicodeDirect {},
-    Delay { data: Delay },
+    Delay { data: plugin_delay::Delay },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum TriggerEventType {
-    KeyPressEvent { data: Vec<KeyPress> },
+    KeyPressEvent { data: Vec<plugin_key_press::KeyPress> },
 }
 
 #[derive(Debug, Clone)]
 pub struct EventList(Vec<rdev::Key>);
 
-#[derive(Debug, Clone)]
-pub struct Action {
-    pub action: char,
-    pub press_wait_delay_after: Delay,
-}
+// #[derive(Debug, Clone)]
+// pub struct Action {
+//     pub action: char,
+//     pub press_wait_delay_after: plugin_key_press::Delay,
+// }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Macro {
@@ -321,27 +316,34 @@ pub struct Collection {
 }
 
 pub fn execute_macro(macros: &Macro) {
-    for sequence in &macros.sequence {
-        match sequence {
-            ActionEventType::KeyPressEvent { data } => match data.keytype {
-                KeyType::Down => send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress])),
-                KeyType::Up => send(&rdev::EventType::KeyRelease(
-                    SCANCODE_TO_RDEV[&data.keypress],
-                )),
-                KeyType::DownUp => {
-                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                    thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                    send(&rdev::EventType::KeyRelease(
-                        SCANCODE_TO_RDEV[&data.keypress],
-                    ));
+    match macros.macro_type {
+        MacroType::Single => {
+            for sequence in &macros.sequence {
+                match sequence {
+                    ActionEventType::KeyPressEvent { data } => match data.keytype {
+                        plugin_key_press::KeyType::Down => send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress])),
+                        plugin_key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
+                            SCANCODE_TO_RDEV[&data.keypress],
+                        )),
+                        plugin_key_press::KeyType::DownUp => {
+                            send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                            thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
+                            send(&rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ));
+                        }
+                    },
+                    ActionEventType::PhillipsHueCommand { .. } => {}
+                    ActionEventType::OBS { .. } => {}
+                    ActionEventType::DiscordCommand { .. } => {}
+                    ActionEventType::UnicodeDirect { .. } => {}
+                    ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
                 }
-            },
-            ActionEventType::PhillipsHueCommand { .. } => {}
-            ActionEventType::OBS { .. } => {}
-            ActionEventType::DiscordCommand { .. } => {}
-            ActionEventType::UnicodeDirect { .. } => {}
-            ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
+            }
         }
+        MacroType::Repeating => {}
+        MacroType::OnHold => {}
+        MacroType::MultiLevel => {}
     }
 }
 

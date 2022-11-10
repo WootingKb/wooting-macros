@@ -21,6 +21,14 @@ use crate::wooting_macros_library::*;
 
 mod hid_table;
 mod wooting_macros_library;
+mod plugin_key_press;
+mod plugin_phillips_hue;
+mod plugin_obs;
+mod plugin_discord;
+mod plugin_unicode_direct;
+mod plugin_delay;
+mod plugin_mouse_movement;
+mod plugin_system_event;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
