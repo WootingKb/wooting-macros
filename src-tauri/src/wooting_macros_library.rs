@@ -17,14 +17,14 @@ use tauri::{Config, State};
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
-use crate::plugin_delay;
-use crate::plugin_discord;
-use crate::plugin_key_press;
-use crate::plugin_mouse_movement;
-use crate::plugin_obs;
-use crate::plugin_phillips_hue;
-use crate::plugin_system_event;
-use crate::plugin_unicode_direct;
+use crate::plugin::delay;
+use crate::plugin::discord;
+use crate::plugin::key_press;
+use crate::plugin::mouse_movement;
+use crate::plugin::obs;
+use crate::plugin::phillips_hue;
+use crate::plugin::system_event;
+use crate::plugin::unicode_direct;
 
 ///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -39,7 +39,7 @@ pub enum MacroType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
-    KeyPressEvent { data: plugin_key_press::KeyPress },
+    KeyPressEvent { data: key_press::KeyPress },
     //SystemEvent { action: Action },
     PhillipsHueCommand {},
     OBS {},
@@ -47,14 +47,14 @@ pub enum ActionEventType {
     //IKEADesk
     //MouseMovement
     UnicodeDirect {},
-    Delay { data: plugin_delay::Delay },
+    Delay { data: delay::Delay },
 }
 
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum TriggerEventType {
-    KeyPressEvent { data: Vec<plugin_key_press::KeyPress> },
+    KeyPressEvent { data: Vec<key_press::KeyPress> },
 }
 
 #[derive(Debug, Clone)]
@@ -304,6 +304,7 @@ pub struct Collection {
     pub active: bool,
 }
 
+//TODO: trait generic this executing
 ///Executes a given macro (requires a reference to a macro).
 pub fn execute_macro(macros: &Macro) {
     match macros.macro_type {
@@ -311,11 +312,11 @@ pub fn execute_macro(macros: &Macro) {
             for sequence in &macros.sequence {
                 match sequence {
                     ActionEventType::KeyPressEvent { data } => match data.keytype {
-                        plugin_key_press::KeyType::Down => send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress])),
-                        plugin_key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
+                        key_press::KeyType::Down => send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress])),
+                        key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
                             SCANCODE_TO_RDEV[&data.keypress],
                         )),
-                        plugin_key_press::KeyType::DownUp => {
+                        key_press::KeyType::DownUp => {
                             send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
                             thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
                             send(&rdev::EventType::KeyRelease(
@@ -344,7 +345,7 @@ pub fn run_this() {
     //TODO: try to make this interact better (cleanup the code a bit)
     //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
-    //TODO: move all the plugins to its separate files (also with action keytype)
+    //TODO: move all the plugin to its separate files (also with action keytype)
 
     loop {
         //Trigger hashes

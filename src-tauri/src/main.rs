@@ -17,18 +17,16 @@ use serde_json;
 use tauri::App;
 use tokio::*;
 
+use plugin::delay;
+
 use crate::wooting_macros_library::*;
+
+pub mod plugin;
+
 
 mod hid_table;
 mod wooting_macros_library;
-mod plugin_key_press;
-mod plugin_phillips_hue;
-mod plugin_obs;
-mod plugin_discord;
-mod plugin_unicode_direct;
-mod plugin_delay;
-mod plugin_mouse_movement;
-mod plugin_system_event;
+
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -104,17 +102,17 @@ lazy_static! {
 fn main() {
     //TODO: Async run the backend.
 
-    // tauri::Builder::default()
-    //     // This is where you pass in your commands
-    //     .manage(MacroDataState::new())
-    //     .invoke_handler(tauri::generate_handler![
-    //         get_macros,
-    //         set_macros,
-    //         get_config,
-    //         set_config
-    //     ])
-    //     .run(tauri::generate_context!())
-    //     .expect("error while running tauri application");
+    tauri::Builder::default()
+        // This is where you pass in your commands
+        .manage(MacroDataState::new())
+        .invoke_handler(tauri::generate_handler![
+            get_macros,
+            set_macros,
+            get_config,
+            set_config
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 
     run_this();
 }
