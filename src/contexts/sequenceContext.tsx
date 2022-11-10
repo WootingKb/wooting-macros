@@ -19,7 +19,7 @@ const SequenceContext = createContext<SequenceState | undefined>(undefined)
 function useSequenceContext() {
   const context = useContext(SequenceContext)
   if (context === undefined) {
-    throw new Error('useSequence must be used within a SequenceProvider')
+    throw new Error('useSequenceContext must be used within a SequenceProvider')
   }
   return context
 }
