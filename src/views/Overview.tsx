@@ -30,7 +30,7 @@ function Overview() {
     changeViewState
   } = useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
-  // const { colorMode, toggleColorMode } = useColorMode()
+  const { colorMode, toggleColorMode } = useColorMode()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isRenamingCollection, setIsRenamingCollection] = useState(false)
 
@@ -86,9 +86,9 @@ function Overview() {
         >
           New Collection
         </Button>
-        {/* <Button onClick={toggleColorMode}>
+        <Button onClick={toggleColorMode}>
           Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-        </Button> */}
+        </Button>
       </VStack>
       {/** Main Panel */}
       <VStack w="100%" h="100vh">

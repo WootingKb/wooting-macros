@@ -23,6 +23,7 @@ const AddMacroView = () => {
   const [macroName, setMacroName] = useState('Macro Name')
   const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
   const [selectedMacroType, setSelectedMacroType] = useState(0)
+  // need state for 'allow_while_other_keys', just a boolean
 
   const addTriggerKey = (event: KeyboardEvent) => {
     event.preventDefault()
@@ -81,7 +82,7 @@ const AddMacroView = () => {
       name: macroName,
       active: true,
       macro_type: MacroType[selectedMacroType],
-      trigger: { type: 'KeyPressEvent', data: triggerKeys },
+      trigger: { type: 'KeyPressEvent', data: triggerKeys, allow_while_other_keys: false },
       sequence: sequenceList
     })
     changeViewState(ViewState.Overview)

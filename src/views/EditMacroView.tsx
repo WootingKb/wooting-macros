@@ -28,6 +28,7 @@ const EditMacroView = () => {
   const [macroName, setMacroName] = useState('')
   const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
   const [selectedMacroType, setSelectedMacroType] = useState(0)
+  // need state for 'allow_while_other_keys', just a boolean
 
   useEffect(() => {
     setMacroName(currentMacro.name)
@@ -90,7 +91,7 @@ const EditMacroView = () => {
       name: macroName,
       active: true,
       macro_type: MacroType[selectedMacroType],
-      trigger: { type: 'KeyPressEvent', data: triggerKeys },
+      trigger: { type: 'KeyPressEvent', data: triggerKeys, allow_while_other_keys: false },
       sequence: sequenceList
     }
     changeViewState(ViewState.Overview)
