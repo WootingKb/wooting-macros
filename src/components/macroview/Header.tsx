@@ -1,6 +1,7 @@
 import { Input, Button, Flex, HStack } from '@chakra-ui/react'
 import { BaseSyntheticEvent } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
+import { useSequenceContext } from '../../contexts/sequenceContext'
 import { ViewState } from '../../enums'
 import { Keypress } from '../../types'
 
@@ -20,10 +21,17 @@ const MacroviewHeader = ({
   onSaveButtonPress
 }: Props) => {
   const { changeViewState } = useApplicationContext()
+  const { overwriteSequence } = useSequenceContext()
 
   return (
     <HStack w="100%" h="60px" px="2" spacing="16px">
-      <Button onClick={() => changeViewState(ViewState.Overview)}>Back</Button>
+      <Button onClick={() => {
+        changeViewState(ViewState.Overview)
+        overwriteSequence([])
+        }}
+      >
+        Back
+      </Button>
       <Flex w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px">
           <svg

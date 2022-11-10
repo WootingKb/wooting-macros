@@ -8,7 +8,7 @@ import {
   useCallback
 } from 'react'
 import { ViewState } from '../enums'
-import { SequenceState, SequenceElement, ActionEventType } from '../types'
+import { SequenceState, SequenceElement } from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedMacro } from './selectors'
 
@@ -41,7 +41,7 @@ function SequenceProvider({ children }: SequenceProviderProps) {
       console.log(temp)
       setSequence(temp)
     }
-  }, [])
+  }, [viewState])
 
   const addToSequence = useCallback(
     (newElement: SequenceElement) => {
