@@ -21,9 +21,7 @@ import { ViewState } from '../enums'
 import CollectionModal from '../components/overview/CollectionModal'
 import { useSelectedCollection } from '../contexts/selectors'
 
-type Props = {}
-
-function Overview({}: Props) {
+function Overview() {
   const {
     collections,
     selection,
@@ -32,7 +30,7 @@ function Overview({}: Props) {
     changeViewState
   } = useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
-  const { colorMode, toggleColorMode } = useColorMode()
+  // const { colorMode, toggleColorMode } = useColorMode()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isRenamingCollection, setIsRenamingCollection] = useState(false)
 
@@ -88,9 +86,9 @@ function Overview({}: Props) {
         >
           New Collection
         </Button>
-        <Button onClick={toggleColorMode}>
+        {/* <Button onClick={toggleColorMode}>
           Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-        </Button>
+        </Button> */}
       </VStack>
       {/** Main Panel */}
       <VStack w="100%" h="100vh">
