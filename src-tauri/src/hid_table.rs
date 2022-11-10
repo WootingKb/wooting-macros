@@ -5,6 +5,7 @@ use lazy_static::lazy_static;
 use rdev::Key;
 
 lazy_static! {
+///Conversion from HID codes to the library backend enums.
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
 pub static ref SCANCODE_TO_RDEV: HashMap<u32, rdev::Key> = {
     let mut scancode: HashMap<u32, rdev::Key> = HashMap::new();
