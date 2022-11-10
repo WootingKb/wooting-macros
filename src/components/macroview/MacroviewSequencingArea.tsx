@@ -27,7 +27,7 @@ const MacroviewSequencingArea = ({ sequenceList, onSequenceChange }: Props) => {
   useEffect(() => {
     // take sequence list and populate new list with IDs
     console.log('refreshed')
-    let temp: { id: number; element: ActionEventType }[] = []
+    const temp: { id: number; element: ActionEventType }[] = []
     for (let i = 0; i < sequenceList.length; i++) {
       const sequenceElement = sequenceList[i]
       temp.push({ id: i, element: sequenceElement })

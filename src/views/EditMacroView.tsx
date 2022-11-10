@@ -13,13 +13,11 @@ import MacroviewSequencingArea from '../components/macroview/MacroviewSequencing
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
 
-type Props = {}
-
-const EditMacroView = ({}: Props) => {
+const EditMacroView = () => {
   const { collections, selection, changeViewState } = useApplicationContext()
 
   const currentCollection: Collection = useSelectedCollection()
-  let currentMacro: Macro = useSelectedMacro()
+  const currentMacro: Macro = useSelectedMacro()
 
   const [recording, setRecording] = useState(false)
   const [macroName, setMacroName] = useState('')
@@ -35,12 +33,12 @@ const EditMacroView = ({}: Props) => {
   const addTriggerKey = (event: KeyboardEvent) => {
     event.preventDefault()
 
-    let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+    const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
     if (HIDcode == undefined) {
       return
     }
 
-    let keypress: Keypress = {
+    const keypress: Keypress = {
       keypress: HIDcode,
       press_duration: 0,
       keytype: KeyType[KeyType.Down]

@@ -13,9 +13,7 @@ import MacroviewEditElementArea from '../components/macroview/MacroviewEditEleme
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection } from '../contexts/selectors'
 
-type Props = {}
-
-const AddMacroView = ({}: Props) => {
+const AddMacroView = () => {
   const { collections, changeViewState } = useApplicationContext()
 
   const currentCollection: Collection = useSelectedCollection()
@@ -30,12 +28,12 @@ const AddMacroView = ({}: Props) => {
   const addTriggerKey = (event: KeyboardEvent) => {
     event.preventDefault()
 
-    let HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+    const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
     if (HIDcode == undefined) {
       return
     }
 
-    let keypress: Keypress = {
+    const keypress: Keypress = {
       keypress: HIDcode,
       press_duration: 0,
       keytype: KeyType[KeyType.Down]
