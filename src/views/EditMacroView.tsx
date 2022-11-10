@@ -11,10 +11,16 @@ import EditArea from '../components/macroview/EditArea'
 import SelectElementArea from '../components/macroview/SelectElementArea'
 import SequencingArea from '../components/macroview/SequencingArea'
 import { useApplicationContext } from '../contexts/applicationContext'
-import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
+import {
+  useSelectedCollection,
+  useSelectedMacro,
+  useSequence
+} from '../contexts/selectors'
+import { SequenceProvider } from '../contexts/sequenceContext'
 
 const EditMacroView = () => {
   const { collections, selection, changeViewState } = useApplicationContext()
+  const sequence = useSequence()
 
   const currentCollection: Collection = useSelectedCollection()
   const currentMacro: Macro = useSelectedMacro()
@@ -22,7 +28,6 @@ const EditMacroView = () => {
   const [recording, setRecording] = useState(false)
   const [macroName, setMacroName] = useState('')
   const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
-  const [sequenceList, setSequenceList] = useState<ActionEventType[]>([])
   const [selectedMacroType, setSelectedMacroType] = useState(0)
 
   useEffect(() => {
@@ -79,20 +84,18 @@ const EditMacroView = () => {
   }
 
   const onSaveButtonPress = () => {
+    const sequenceList: ActionEventType[] = sequence.map(
+      (element) => element.data
+    )
     currentCollection.macros[selection.macroIndex] = {
       name: macroName,
       active: true,
       macro_type: MacroType[selectedMacroType],
       trigger: { type: 'KeyPressEvent', data: triggerKeys },
-      sequence: []
+      sequence: sequenceList
     }
     changeViewState(ViewState.Overview)
     updateBackendConfig(collections)
-  }
-
-  const onSequenceChange = (newList: ActionEventType[]) => {
-    console.log(newList)
-    setSequenceList(newList)
   }
 
   return (
@@ -126,20 +129,11 @@ const EditMacroView = () => {
         borderColor="gray.200"
       >
         {/** Left Panel */}
-        <SelectElementArea
-          sequenceList={sequenceList}
-          onSequenceChange={onSequenceChange}
-        />
+        <SelectElementArea />
         {/** Center Panel */}
-        <SequencingArea
-          sequenceList={sequenceList}
-          onSequenceChange={onSequenceChange}
-        />
+        <SequencingArea />
         {/** Right Panel */}
-        <EditArea
-          sequenceList={sequenceList}
-          onSequenceChange={onSequenceChange}
-        />
+        <EditArea />
       </HStack>
     </VStack>
   )

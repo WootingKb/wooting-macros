@@ -14,22 +14,13 @@ import { AddIcon } from '@chakra-ui/icons'
 import { Hid, HidInfo } from '../../HIDmap'
 import SequenceElementButton from './SequenceElementButton'
 import { KeyType } from '../../enums'
+import { useSequenceContext } from '../../contexts/sequenceContext'
 
-type Props = {
-  sequenceList: ActionEventType[]
-  onSequenceChange: (newList: ActionEventType[]) => void
-}
+const SelectElementArea = () => {
+  const { sequence, addToSequence } = useSequenceContext()
 
-const SelectElementArea = ({
-  sequenceList,
-  onSequenceChange
-}: Props) => {
-  const onSequenceElementButtonPress = (
-    text: string,
-    properties: ActionEventType
-  ) => {
-    console.log('pressed sequence element ' + text)
-    sequenceList.push(properties)
+  const onSequenceElementButtonPress = (properties: ActionEventType) => {
+    addToSequence({ id: sequence.length + 1, data: properties })
   }
 
   return (

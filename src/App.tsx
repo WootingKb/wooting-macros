@@ -5,6 +5,7 @@ import AddMacroView from './views/AddMacroView'
 import EditMacroView from './views/EditMacroView'
 import { ViewState } from './enums'
 import { useApplicationContext } from './contexts/applicationContext'
+import { SequenceProvider } from './contexts/sequenceContext'
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()
@@ -22,8 +23,10 @@ function App() {
   return (
     <Flex h="100vh" direction="column">
       {viewState === ViewState.Overview && <Overview />}
-      {viewState === ViewState.Addview && <AddMacroView />}
-      {viewState === ViewState.Editview && <EditMacroView />}
+      <SequenceProvider>
+        {viewState === ViewState.Addview && <AddMacroView />}
+        {viewState === ViewState.Editview && <EditMacroView />}
+      </SequenceProvider>
     </Flex>
   )
 }

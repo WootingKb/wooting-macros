@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useApplicationContext } from './applicationContext'
 import { Collection } from '../types'
+import { useSequenceContext } from './sequenceContext'
 
 export function useCollections() {
   const context = useApplicationContext()
@@ -22,4 +23,9 @@ export function useSelectedMacro() {
     () => selectedCollection.macros[selection.macroIndex],
     [selectedCollection, selection]
   )
+}
+
+export function useSequence() {
+  const context = useSequenceContext()
+  return context.sequence
 }

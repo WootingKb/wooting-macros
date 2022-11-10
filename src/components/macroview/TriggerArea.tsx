@@ -47,7 +47,9 @@ const TriggerArea = ({
             w="55%"
           >
             <AlertIcon />
-            <Text fontSize={['2xs', 'xs', 'sm', 'md']}>Input recording in progress.</Text>
+            <Text fontSize={['2xs', 'xs', 'sm', 'md']}>
+              Input recording in progress.
+            </Text>
           </Alert>
         )}
       </HStack>

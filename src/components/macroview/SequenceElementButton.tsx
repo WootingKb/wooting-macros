@@ -4,7 +4,7 @@ import { ActionEventType } from '../../types'
 type Props = {
   properties: ActionEventType
   displayText: string
-  onClick: (text: string, type: ActionEventType) => void
+  onClick: (type: ActionEventType) => void
 }
 
 const SequenceElementButton = ({
@@ -17,11 +17,7 @@ const SequenceElementButton = ({
   // type, e.g. KeypressEvent, ActionEvent
   //
   return (
-    <Button
-      colorScheme="yellow"
-      size={['sm']}
-      onClick={() => onClick(displayText, type)}
-    >
+    <Button colorScheme="yellow" size={['sm']} onClick={() => onClick(type)}>
       {displayText}
     </Button>
   )

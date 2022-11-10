@@ -67,8 +67,6 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [setSelection]
   )
 
-  // change macro index
-
   const value = useMemo<AppState>(
     () => ({
       viewState,

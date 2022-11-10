@@ -1,4 +1,4 @@
-import { KeyType, ViewState } from './enums'
+import { ViewState } from './enums'
 
 export interface CurrentSelection {
   collectionIndex: number
@@ -13,6 +13,18 @@ export type AppState = {
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number) => void
   changeViewState: (newState: ViewState) => void
+}
+
+export type SequenceState = {
+  sequence: SequenceElement[]
+  addToSequence: (element: SequenceElement) => void
+  removeFromSequence: (element: SequenceElement) => void
+  overwriteSequence: (newSequence: SequenceElement[]) => void
+}
+
+export interface SequenceElement {
+  id: number
+  data: ActionEventType
 }
 
 export interface Keypress {

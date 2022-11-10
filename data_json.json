@@ -6,7 +6,32 @@
       "macros": [
         {
           "name": "Havo",
-          "sequence": [],
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 4,
+                "press_duration": 1,
+                "keytype": "Down"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 5,
+                "press_duration": 1,
+                "keytype": "Down"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 6,
+                "press_duration": 1,
+                "keytype": "Down"
+              }
+            }
+          ],
           "macro_type": "Single",
           "trigger": {
             "type": "KeyPressEvent",
@@ -185,6 +210,12 @@
           "active": true
         }
       ],
+      "active": true
+    },
+    {
+      "name": "test",
+      "icon": "i",
+      "macros": [],
       "active": true
     }
   ]
