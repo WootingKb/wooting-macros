@@ -7,10 +7,8 @@ import {
   arrayMove
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useEffect, useState } from 'react'
-import { ActionEventType, SequenceElement } from '../../types'
+import { SequenceElement } from '../../types'
 import SequenceElementDraggableDisplay from './SequenceElementDraggableDisplay'
-import { useSequence } from '../../contexts/selectors'
 import { useSequenceContext } from '../../contexts/sequenceContext'
 
 const SequencingArea = () => {

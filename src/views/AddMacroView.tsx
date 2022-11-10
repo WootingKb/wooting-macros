@@ -12,7 +12,6 @@ import SequencingArea from '../components/macroview/SequencingArea'
 import EditArea from '../components/macroview/EditArea'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection, useSequence } from '../contexts/selectors'
-import { SequenceProvider } from '../contexts/sequenceContext'
 
 const AddMacroView = () => {
   const { collections, changeViewState } = useApplicationContext()

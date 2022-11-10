@@ -16,7 +16,6 @@ import {
   useSelectedMacro,
   useSequence
 } from '../contexts/selectors'
-import { SequenceProvider } from '../contexts/sequenceContext'
 
 const EditMacroView = () => {
   const { collections, selection, changeViewState } = useApplicationContext()
