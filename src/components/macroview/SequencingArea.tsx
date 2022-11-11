@@ -50,8 +50,7 @@ const SequencingArea = () => {
           <VStack w="100%" overflowY="auto" overflowX="hidden">
             {sequence.map((element: SequenceElement, index: number) => (
               <SequenceElementDraggableDisplay
-                elementID={element.id}
-                properties={element.data}
+                element={element}
                 key={index}
               />
             ))}

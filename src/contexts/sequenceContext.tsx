@@ -35,7 +35,7 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     } else if (viewState === ViewState.Editview) {
       const temp: SequenceElement[] = currentMacro.sequence.map(
         (element, id) => {
-          return { id: id, data: element }
+          return { id: id + 1, data: element }
         }
       )
       console.log(temp)
