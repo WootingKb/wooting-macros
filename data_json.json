@@ -24,6 +24,10 @@
               }
             },
             {
+              "type": "Delay",
+              "data": 50
+            },
+            {
               "type": "KeyPressEvent",
               "data": {
                 "keypress": 15,

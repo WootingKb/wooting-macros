@@ -1,5 +1,5 @@
-import { Box, Divider, HStack, IconButton } from '@chakra-ui/react'
-import { DeleteIcon, DragHandleIcon, EditIcon } from '@chakra-ui/icons'
+import { Box, Divider, HStack, IconButton, Text } from '@chakra-ui/react'
+import { DeleteIcon, DragHandleIcon, EditIcon, StarIcon, RepeatClockIcon } from '@chakra-ui/icons'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { SequenceElement } from '../../types'
@@ -15,6 +15,7 @@ type Props = {
 // 1. variant for Delay Element required
 
 const SequenceElementDraggableDisplay = ({ element }: Props) => {
+  const [isSmallVariant, setIsSmallVariant] = useState(false) 
   const [displayText, setDisplayText] = useState<string | undefined>('')
   const { selectedElementIndex, removeFromSequence, updateElementIndex } =
     useSequenceContext()
@@ -36,10 +37,12 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
   useEffect(() => {
     switch (element.data.type) {
       case 'KeyPressEvent':
+        setIsSmallVariant(false)
         setDisplayText(HIDLookup.get(element.data.data.keypress)?.displayString)
         break
       case 'Delay':
-        setDisplayText('Delay')
+        setIsSmallVariant(true)
+        setDisplayText(element.data.data.toString() + "ms")
         break
       default:
         break
@@ -50,6 +53,7 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
     if (selectedElementIndex === element.id) {
       return
     }
+    console.log(element.id)
     updateElementIndex(element.id)
   }
 
@@ -66,7 +70,7 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      w="100%"
+      w={isSmallVariant ? "fit-content" : "100%"}
       border="1px"
       rounded="md"
       spacing="0px"
@@ -82,9 +86,13 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
       >
         <DragHandleIcon w={4} h={8} />
       </Box>
-      <Box p="4px" pl="8px" w="100%">
-        {displayText}
-      </Box>
+      <HStack p="4px" px="8px" w="100%">
+        {isSmallVariant && <RepeatClockIcon/>}
+        {!isSmallVariant && <StarIcon/>}
+        <Text>
+          {displayText}
+        </Text>
+      </HStack>
       <Divider orientation="vertical" />
       <HStack p="4px" h="full">
         <IconButton

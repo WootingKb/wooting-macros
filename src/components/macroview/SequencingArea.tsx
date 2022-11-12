@@ -11,8 +11,9 @@ import { SequenceElement } from '../../types'
 import SequenceElementDraggableDisplay from './SequenceElementDraggableDisplay'
 import { useSequenceContext } from '../../contexts/sequenceContext'
 
+// TODO: Record functionality; add delay functionality
 const SequencingArea = () => {
-  const { sequence, overwriteSequence } = useSequenceContext()
+  const { sequence, addToSequence, overwriteSequence } = useSequenceContext()
 
   const handleDrag = (event: any) => {
     if (event.active.id !== event.over.id) {
@@ -26,6 +27,12 @@ const SequencingArea = () => {
     }
   }
 
+  const onAddDelayButtonPress = () => {
+    const delayElement:SequenceElement = {id: sequence.length + 1, data: {type: "Delay", data: 50}}
+
+    addToSequence(delayElement)
+  }
+
   return (
     <VStack w="41%" h="full" p="4px">
       {/** Header */}
@@ -36,7 +43,7 @@ const SequencingArea = () => {
         <Button leftIcon={<EditIcon />} size={['sm', 'md']}>
           Record
         </Button>
-        <Button leftIcon={<EditIcon />} size={['sm', 'md']}>
+        <Button leftIcon={<EditIcon />} size={['sm', 'md']} onClick={onAddDelayButtonPress}>
           Add Delay
         </Button>
       </HStack>
