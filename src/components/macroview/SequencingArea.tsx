@@ -49,10 +49,7 @@ const SequencingArea = () => {
         >
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
             {sequence.map((element: SequenceElement, index: number) => (
-              <SequenceElementDraggableDisplay
-                element={element}
-                key={index}
-              />
+              <SequenceElementDraggableDisplay element={element} key={index} />
             ))}
           </VStack>
         </SortableContext>

@@ -25,9 +25,10 @@ const MacroviewHeader = ({
 
   return (
     <HStack w="100%" h="60px" px="2" spacing="16px">
-      <Button onClick={() => {
-        changeViewState(ViewState.Overview)
-        overwriteSequence([])
+      <Button
+        onClick={() => {
+          changeViewState(ViewState.Overview)
+          overwriteSequence([])
         }}
       >
         Back

@@ -80,7 +80,14 @@ function SequenceProvider({ children }: SequenceProviderProps) {
       overwriteSequence,
       updateElementIndex
     }),
-    [sequence, selectedElementIndex, addToSequence, removeFromSequence, overwriteSequence, updateElementIndex]
+    [
+      sequence,
+      selectedElementIndex,
+      addToSequence,
+      removeFromSequence,
+      overwriteSequence,
+      updateElementIndex
+    ]
   )
 
   return (

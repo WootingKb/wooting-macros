@@ -35,7 +35,11 @@ export interface Keypress {
   keytype: string
 }
 
-export type TriggerEventType = { type: 'KeyPressEvent'; data: Keypress[]; allow_while_other_keys: boolean }
+export type TriggerEventType = {
+  type: 'KeyPressEvent'
+  data: Keypress[]
+  allow_while_other_keys: boolean
+}
 
 export type ActionEventType =
   | { type: 'KeyPressEvent'; data: Keypress }

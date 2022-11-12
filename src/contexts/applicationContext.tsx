@@ -18,7 +18,9 @@ const ApplicationContext = createContext<AppState | undefined>(undefined)
 function useApplicationContext() {
   const context = useContext(ApplicationContext)
   if (context === undefined) {
-    throw new Error('useApplicationContext must be used within a ApplicationProvider')
+    throw new Error(
+      'useApplicationContext must be used within a ApplicationProvider'
+    )
   }
   return context
 }

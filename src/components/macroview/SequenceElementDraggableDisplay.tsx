@@ -16,31 +16,40 @@ type Props = {
 
 const SequenceElementDraggableDisplay = ({ element }: Props) => {
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const { selectedElementIndex, removeFromSequence, updateElementIndex } = useSequenceContext()
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: element.id, transition: null })
+  const { selectedElementIndex, removeFromSequence, updateElementIndex } =
+    useSequenceContext()
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: element.id, transition: null })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.5 : 1
   }
 
   useEffect(() => {
     switch (element.data.type) {
-      case "KeyPressEvent":
+      case 'KeyPressEvent':
         setDisplayText(HIDLookup.get(element.data.data.keypress)?.displayString)
-        break;
-      case "Delay":
-        setDisplayText("Delay")
+        break
+      case 'Delay':
+        setDisplayText('Delay')
         break
       default:
-        break;
+        break
     }
   }, [element.id])
 
   const onEditButtonPress = () => {
-    if (selectedElementIndex === element.id) { return }
+    if (selectedElementIndex === element.id) {
+      return
+    }
     updateElementIndex(element.id)
   }
 
@@ -51,7 +60,6 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
 
     removeFromSequence(element)
   }
-
 
   return (
     <HStack
@@ -65,14 +73,32 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
       bg="white"
       sx={{ cursor: 'auto' }}
     >
-      <Box {...listeners} borderRight="1px" p="4px" h="full" sx={isDragging ? { cursor: 'grabbing' } : { cursor: 'grab' }} >
+      <Box
+        {...listeners}
+        borderRight="1px"
+        p="4px"
+        h="full"
+        sx={isDragging ? { cursor: 'grabbing' } : { cursor: 'grab' }}
+      >
         <DragHandleIcon w={4} h={8} />
       </Box>
-      <Box p="4px" pl="8px" w="100%">{displayText}</Box>
-      <Divider orientation='vertical' />
+      <Box p="4px" pl="8px" w="100%">
+        {displayText}
+      </Box>
+      <Divider orientation="vertical" />
       <HStack p="4px" h="full">
-        <IconButton aria-label='delete-button' icon={<DeleteIcon/>} size={['xs', 'sm']} onClick={onDeleteButtonPress}></IconButton>
-        <IconButton aria-label='edit-button' icon={<EditIcon/>} size={['xs', 'sm']} onClick={onEditButtonPress}></IconButton>
+        <IconButton
+          aria-label="delete-button"
+          icon={<DeleteIcon />}
+          size={['xs', 'sm']}
+          onClick={onDeleteButtonPress}
+        ></IconButton>
+        <IconButton
+          aria-label="edit-button"
+          icon={<EditIcon />}
+          size={['xs', 'sm']}
+          onClick={onEditButtonPress}
+        ></IconButton>
       </HStack>
     </HStack>
   )

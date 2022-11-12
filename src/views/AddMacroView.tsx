@@ -82,7 +82,11 @@ const AddMacroView = () => {
       name: macroName,
       active: true,
       macro_type: MacroType[selectedMacroType],
-      trigger: { type: 'KeyPressEvent', data: triggerKeys, allow_while_other_keys: false },
+      trigger: {
+        type: 'KeyPressEvent',
+        data: triggerKeys,
+        allow_while_other_keys: false
+      },
       sequence: sequenceList
     })
     changeViewState(ViewState.Overview)
