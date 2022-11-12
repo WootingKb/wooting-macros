@@ -29,3 +29,8 @@ export function useSequence() {
   const context = useSequenceContext()
   return context.sequence
 }
+
+export function useSelectedElement() {
+  const context = useSequenceContext()
+  return context.sequence[context.selectedElementIndex - 1]
+}

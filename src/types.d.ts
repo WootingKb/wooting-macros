@@ -17,9 +17,11 @@ export type AppState = {
 
 export type SequenceState = {
   sequence: SequenceElement[]
+  selectedElementIndex: number
   addToSequence: (element: SequenceElement) => void
   removeFromSequence: (element: SequenceElement) => void
   overwriteSequence: (newSequence: SequenceElement[]) => void
+  updateElementIndex: (newIndex: number) => void
 }
 
 export interface SequenceElement {

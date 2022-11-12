@@ -27,6 +27,7 @@ function useSequenceContext() {
 function SequenceProvider({ children }: SequenceProviderProps) {
   const { viewState } = useApplicationContext()
   const [sequence, setSequence] = useState<SequenceElement[]>([])
+  const [selectedElementIndex, setSelectedElementIndex] = useState(0)
   const currentMacro = useSelectedMacro()
 
   useEffect(() => {
@@ -38,7 +39,6 @@ function SequenceProvider({ children }: SequenceProviderProps) {
           return { id: id + 1, data: element }
         }
       )
-      console.log(temp)
       setSequence(temp)
     }
   }, [viewState])
@@ -50,13 +50,12 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     [setSequence]
   )
 
-  const removeFromSequence = useCallback(
-    (element: SequenceElement) => {
-      const index = sequence.indexOf(element, 0)
-      setSequence(sequence.splice(index, 1))
-    },
-    [setSequence]
-  )
+  const removeFromSequence = (element: SequenceElement) => {
+    const temp: SequenceElement[] = [...sequence]
+    const index = temp.indexOf(element, 0)
+    temp.splice(index, 1)
+    setSequence(temp)
+  }
 
   const overwriteSequence = useCallback(
     (newSequence: SequenceElement[]) => {
@@ -65,14 +64,23 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     [setSequence]
   )
 
+  const updateElementIndex = useCallback(
+    (newIndex: number) => {
+      setSelectedElementIndex(newIndex)
+    },
+    [setSelectedElementIndex]
+  )
+
   const value = useMemo<SequenceState>(
     () => ({
       sequence,
+      selectedElementIndex,
       addToSequence,
       removeFromSequence,
-      overwriteSequence
+      overwriteSequence,
+      updateElementIndex
     }),
-    [sequence, addToSequence, removeFromSequence, overwriteSequence]
+    [sequence, selectedElementIndex, addToSequence, removeFromSequence, overwriteSequence, updateElementIndex]
   )
 
   return (

@@ -18,25 +18,25 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 5,
+                "keypress": 16,
                 "press_duration": 1,
-                "keytype": "DownUp"
+                "keytype": "Down"
               }
             },
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 6,
+                "keypress": 15,
                 "press_duration": 1,
-                "keytype": "DownUp"
+                "keytype": "Down"
               }
             },
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 7,
+                "keypress": 17,
                 "press_duration": 1,
-                "keytype": "DownUp"
+                "keytype": "Down"
               }
             }
           ],
