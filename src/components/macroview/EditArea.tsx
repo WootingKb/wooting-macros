@@ -20,7 +20,7 @@ const EditArea = () => {
         )
         break
       case 'Delay':
-        setDisplayText(selectedElement.data.data.toString() + "ms")
+        setDisplayText(selectedElement.data.data.toString() + 'ms')
         break
       default:
         break
