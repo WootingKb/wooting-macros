@@ -34,6 +34,8 @@ pub enum MacroType {
     OnHold,
 }
 
+
+//TODO: SERDE CAMEL CASE RENAME
 ///This enum is the registry for all actions that can be executed
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
@@ -496,6 +498,7 @@ fn send(event_type: &EventType) {
         }
     }
     // Let ths OS catchup (at least MacOS)
+    //TODO: remove the delay at least for windows, mac needs testing
     thread::sleep(delay);
 }
 
