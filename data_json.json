@@ -20,7 +20,7 @@
               "data": {
                 "keypress": 16,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             },
             {
@@ -32,7 +32,7 @@
               "data": {
                 "keypress": 15,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             },
             {
@@ -40,7 +40,7 @@
               "data": {
                 "keypress": 17,
                 "press_duration": 1,
-                "keytype": "Down"
+                "keytype": "DownUp"
               }
             }
           ],
