@@ -23,8 +23,8 @@ function App() {
     <Flex h="100vh" direction="column">
       {viewState === ViewState.Overview && <Overview />}
       <SequenceProvider>
-        {viewState === ViewState.Addview && <Macroview isEditing={false}/>}
-        {viewState === ViewState.Editview && <Macroview isEditing={true}/>}
+        {viewState === ViewState.Addview && <Macroview isEditing={false} />}
+        {viewState === ViewState.Editview && <Macroview isEditing={true} />}
       </SequenceProvider>
     </Flex>
   )

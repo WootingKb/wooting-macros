@@ -1,7 +1,11 @@
 import { VStack, HStack } from '@chakra-ui/react'
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { useApplicationContext } from '../contexts/applicationContext'
-import { useSequence, useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
+import {
+  useSequence,
+  useSelectedCollection,
+  useSelectedMacro
+} from '../contexts/selectors'
 import { KeyType, MacroType, ViewState } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { Keypress, ActionEventType, Collection, Macro } from '../types'
@@ -14,7 +18,7 @@ import SequencingArea from '../components/macroview/SequencingArea'
 import TriggerArea from '../components/macroview/TriggerArea'
 
 type Props = {
-    isEditing: boolean
+  isEditing: boolean
 }
 
 const Macroview = ({ isEditing }: Props) => {
@@ -22,7 +26,7 @@ const Macroview = ({ isEditing }: Props) => {
   const sequence = useSequence()
 
   const currentCollection: Collection = useSelectedCollection()
-const currentMacro: Macro = useSelectedMacro()
+  const currentMacro: Macro = useSelectedMacro()
 
   const [recording, setRecording] = useState(false)
   const [macroName, setMacroName] = useState('Macro Name')
@@ -31,7 +35,9 @@ const currentMacro: Macro = useSelectedMacro()
   // need state for 'allow_while_other_keys', just a boolean
 
   useEffect(() => {
-    if (!isEditing) { return }
+    if (!isEditing) {
+      return
+    }
     console.log(currentMacro)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
@@ -90,7 +96,7 @@ const currentMacro: Macro = useSelectedMacro()
       (element) => element.data
     )
 
-    const itemToAdd:Macro = {
+    const itemToAdd: Macro = {
       name: macroName,
       active: true,
       macro_type: MacroType[selectedMacroType],
@@ -103,9 +109,9 @@ const currentMacro: Macro = useSelectedMacro()
     }
 
     if (isEditing) {
-        currentCollection.macros[selection.macroIndex] = itemToAdd
+      currentCollection.macros[selection.macroIndex] = itemToAdd
     } else {
-        currentCollection.macros.push(itemToAdd)
+      currentCollection.macros.push(itemToAdd)
     }
 
     changeViewState(ViewState.Overview)

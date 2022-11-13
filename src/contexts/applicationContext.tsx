@@ -61,7 +61,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const changeSelectedMacroIndex = useCallback(
     (index: number) => {
-      setSelection(prevState => ({
+      setSelection((prevState) => ({
         ...prevState,
         macroIndex: index
       }))
