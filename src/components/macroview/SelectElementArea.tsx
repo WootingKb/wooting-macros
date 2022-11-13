@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { ActionEventType } from '../../types'
 import { AddIcon } from '@chakra-ui/icons'
-import { Hid, HidInfo } from '../../HIDmap'
+import { Hid, HidInfo } from '../../maps/HIDmap'
 import SequenceElementButton from './SequenceElementButton'
 import { KeyType } from '../../enums'
 import { useSequenceContext } from '../../contexts/sequenceContext'
@@ -84,7 +84,7 @@ const SelectElementArea = () => {
                     data: {
                       keypress: HIDinfo.HIDcode,
                       press_duration: 1,
-                      keytype: KeyType[KeyType.Down]
+                      keytype: KeyType[KeyType.DownUp]
                     }
                   }}
                   onClick={onSequenceElementButtonPress}

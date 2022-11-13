@@ -7,17 +7,13 @@ type Props = {
   onClick: (type: ActionEventType) => void
 }
 
-const SequenceElementButton = ({
-  properties: type,
-  displayText,
-  onClick
-}: Props) => {
-  // when a user presses a sequence element button, it adds a sequence element to the sequence (list)
-  // info required:
-  // type, e.g. KeypressEvent, ActionEvent
-  //
+const SequenceElementButton = ({ properties, displayText, onClick }: Props) => {
   return (
-    <Button colorScheme="yellow" size={['sm']} onClick={() => onClick(type)}>
+    <Button
+      colorScheme="yellow"
+      size={['sm']}
+      onClick={() => onClick(properties)}
+    >
       {displayText}
     </Button>
   )

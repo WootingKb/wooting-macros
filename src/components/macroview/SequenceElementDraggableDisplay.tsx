@@ -10,7 +10,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { SequenceElement } from '../../types'
 import { useEffect, useState } from 'react'
-import { HIDLookup } from '../../HIDmap'
+import { HIDLookup } from '../../maps/HIDmap'
 import { useSequenceContext } from '../../contexts/sequenceContext'
 
 type Props = {

@@ -6,7 +6,7 @@ export enum ViewState {
 
 export enum MacroType {
   Single,
-  Repeating,
+  Toggle,
   OnHold // need to add space later when displaying the macro type name text
 }
 

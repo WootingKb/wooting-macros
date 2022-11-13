@@ -9,7 +9,7 @@ import {
   Text,
   Divider
 } from '@chakra-ui/react'
-import { HIDLookup } from '../../HIDmap'
+import { HIDLookup } from '../../maps/HIDmap'
 import { Keypress } from '../../types'
 
 type Props = {

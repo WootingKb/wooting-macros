@@ -54,17 +54,17 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const changeSelectedCollectionIndex = useCallback(
     (index: number) => {
-      setSelection({ collectionIndex: index, macroIndex: selection.macroIndex })
+      setSelection({ collectionIndex: index, macroIndex: -1 })
     },
     [setSelection]
   )
 
   const changeSelectedMacroIndex = useCallback(
     (index: number) => {
-      setSelection({
-        collectionIndex: selection.collectionIndex,
+      setSelection(prevState => ({
+        ...prevState,
         macroIndex: index
-      })
+      }))
     },
     [setSelection]
   )

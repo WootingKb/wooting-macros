@@ -15,7 +15,7 @@ import {
 import { EditIcon } from '@chakra-ui/icons'
 import { Keypress, Macro } from '../../types'
 import { BaseSyntheticEvent } from 'react'
-import { HIDLookup } from '../../HIDmap'
+import { HIDLookup } from '../../maps/HIDmap'
 import { updateBackendConfig } from '../../utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { ViewState } from '../../enums'

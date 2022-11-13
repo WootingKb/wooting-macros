@@ -10,6 +10,7 @@ export function useCollections() {
 
 export function useSelectedCollection(): Collection {
   const { collections, selection } = useApplicationContext()
+  console.log(selection)
   return useMemo(
     () => collections[selection.collectionIndex],
     [collections, selection]

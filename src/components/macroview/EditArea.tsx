@@ -2,7 +2,7 @@ import { VStack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useSelectedElement } from '../../contexts/selectors'
 import { useSequenceContext } from '../../contexts/sequenceContext'
-import { HIDLookup } from '../../HIDmap'
+import { HIDLookup } from '../../maps/HIDmap'
 
 const EditArea = () => {
   const [displayText, setDisplayText] = useState<string | undefined>('')
