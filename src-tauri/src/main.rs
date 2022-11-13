@@ -100,6 +100,8 @@ lazy_static! {
 fn main() {
     //TODO: Async run the backend.
 
+    thread::spawn(|| run_this());
+
     tauri::Builder::default()
         // This is where you pass in your commands
         .manage(MacroDataState::new())
@@ -111,6 +113,4 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
-    thread::spawn(|| run_this());
 }
