@@ -100,13 +100,13 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
-    //thread::spawn(|| run_backend());
+    thread::spawn(|| run_backend());
 
-    task::spawn(async {
-        run_backend().await;
-    })
-        .await;
-    //run_frontend();
+    // task::spawn(async {
+    //     run_backend().await;
+    // })
+    //     .await;
+    run_frontend();
 
     //run_frontend().await;
 
@@ -114,15 +114,15 @@ async fn main() {
 }
 
 async fn run_frontend() {
-    // tauri::Builder::default()
-    //         // This is where you pass in your commands
-    //         .manage(MacroDataState::new())
-    //         .invoke_handler(tauri::generate_handler![
-    //             get_macros,
-    //             set_macros,
-    //             get_config,
-    //             set_config
-    //         ])
-    //         .run(tauri::generate_context!())
-    //         .expect("error while running tauri application");
+    tauri::Builder::default()
+        // This is where you pass in your commands
+        .manage(MacroDataState::new())
+        .invoke_handler(tauri::generate_handler![
+                get_macros,
+                set_macros,
+                get_config,
+                set_config
+            ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
