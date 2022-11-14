@@ -61,7 +61,6 @@ pub enum ActionEventType {
     //TODO: Sound effects? Soundboards?
     //TODO: Sending a message through online webapi (twitch)
     Delay { data: delay::Delay },
-
 }
 
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution
@@ -417,7 +416,6 @@ pub async fn run_backend() {
 
     //Trigger hashes
 
-
     //println!("{:#?}", trigger_overview);
 
     match APPLICATION_STATE.config.read().await.use_input_grab {
@@ -469,28 +467,10 @@ pub async fn run_backend() {
                                                     if pressed_keys == converted_keys {
                                                         println!("MACRO READY TO EXECUTE");
 
-                                                        // thread::spawn(|| execute_macro(macros.clone()));
-
-
-                                                        // task::spawn(async {
-                                                        //     random().await
-                                                        // }).await;
                                                         let havo = macros.clone();
-                                                        //thread::spawn(async {execute_macro(havo).await});
 
                                                         thread::spawn(|| execute_macro(havo));
-
-                                                        // task::spawn(async move {
-                                                        //     execute_macro( havo).await;
-                                                        // }).await;
-
-                                                        // execute_macro(macros.clone());
-
-                                                        //execute_macro(&macros);
                                                     }
-                                                    // if &events.first() == trigger_key.first(){
-                                                    //
-                                                    // }
                                                 }
                                             }
                                         }

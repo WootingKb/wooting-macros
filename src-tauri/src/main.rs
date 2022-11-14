@@ -102,7 +102,6 @@ lazy_static! {
 async fn main() {
     // thread::spawn(|| run_backend());
 
-
     task::spawn(async move {
         run_backend().await;
     })
