@@ -4,16 +4,18 @@ use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
 use std::hash::Hash;
+use std::io::Read;
 use std::ptr::hash;
 use std::str::{Bytes, FromStr};
+use std::sync::Arc;
 use std::sync::mpsc::{channel, SendError};
-use std::sync::RwLock;
 use std::time::Duration;
 
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 use tauri::{Config, State};
+use tokio::sync::RwLock;
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
@@ -25,6 +27,9 @@ use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 use crate::plugin::unicode_direct;
+
+//use std::sync::RwLock;
+//use tauri::async_runtime::RwLock;
 
 ///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -89,46 +94,46 @@ impl Macro {
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub fn get_config(state: tauri::State<MacroDataState>) -> ApplicationConfig {
-    let config_data_state = state.config.read().unwrap();
-    config_data_state.clone()
+pub async fn get_config(state: tauri::State<'_, MacroDataState>) -> ApplicationConfig {
+    let output: ApplicationConfig = state.config.read().await.clone();
+    output
 }
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub fn set_config(state: tauri::State<MacroDataState>, config: ApplicationConfig) {
-    let mut tauri_state = state.config.write().unwrap();
+pub async fn set_config(state: tauri::State<'_, MacroDataState>, config: ApplicationConfig) {
+    let mut tauri_state = state.config.write().await;
     *tauri_state = config.clone();
     tauri_state.export_data();
 
-    let mut app_state = APPLICATION_STATE.config.write().unwrap();
+    let mut app_state = APPLICATION_STATE.config.write().await;
     *app_state = config;
 }
 
 #[tauri::command]
 /// Gets the macro data from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub fn get_macros(state: tauri::State<MacroDataState>) -> MacroData {
-    let macro_data_state = state.data.read().unwrap();
+pub async fn get_macros(state: tauri::State<'_, MacroDataState>) -> MacroData {
+    let macro_data_state = state.data.read().await;
     macro_data_state.clone()
 }
 
 #[tauri::command]
 /// Sets the configuration from frontend and updates the state for everything on backend.
-pub fn set_macros(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
-    let mut tauri_state = state.data.write().unwrap();
+pub async fn set_macros(state: tauri::State<'_, MacroDataState>, frontend_data: MacroData) {
+    let mut tauri_state = state.data.write().await;
     *tauri_state = frontend_data.clone();
     tauri_state.export_data();
 
-    let mut app_state = APPLICATION_STATE.data.write().unwrap();
+    let mut app_state = APPLICATION_STATE.data.write().await;
     *app_state = frontend_data;
 }
 
 /// Function for a manual write of config changes from the backend side. Just a test.
 /// Not meant to be used.
-pub fn set_data_write_manually_backend(frontend_data: MacroData) {
-    let mut app_state = APPLICATION_STATE.data.write().unwrap();
+pub async fn set_data_write_manually_backend(frontend_data: MacroData) {
+    let mut app_state = APPLICATION_STATE.data.write().await;
     *app_state = frontend_data.clone();
     app_state.clone().export_data();
 }
@@ -160,7 +165,7 @@ pub fn set_data_write_manually_backend(frontend_data: MacroData) {
 // }
 
 ///State of the application in RAM (rwlock).
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug)]
 pub struct MacroDataState {
     pub data: RwLock<MacroData>,
     pub config: RwLock<ApplicationConfig>,
@@ -308,61 +313,107 @@ pub struct Collection {
     pub active: bool,
 }
 
-//TODO: trait generic this executing
-///Executes a given macro (requires a reference to a macro).
-pub fn execute_macro(macros: &Macro) {
-    match macros.macro_type {
-        MacroType::Single => {
-            for sequence in &macros.sequence {
-                match sequence {
-                    ActionEventType::KeyPressEvent { data } => match data.keytype {
-                        key_press::KeyType::Down => {
-                            send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                        }
-                        key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
-                            SCANCODE_TO_RDEV[&data.keypress],
-                        )),
-                        key_press::KeyType::DownUp => {
-                            send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                            thread::sleep(time::Duration::from_millis(
-                                *&data.press_duration as u64,
-                            ));
-                            send(&rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ));
-                        }
-                    },
-                    ActionEventType::PhillipsHueCommand { .. } => {}
-                    ActionEventType::OBS { .. } => {}
-                    ActionEventType::DiscordCommand { .. } => {}
-                    ActionEventType::UnicodeDirect { .. } => {}
-                    ActionEventType::Delay { data } => {
-                        thread::sleep(time::Duration::from_millis(*data))
-                    }
+
+fn execute_macro_single(macros: &Macro) {
+    for sequence in &macros.sequence {
+        match sequence {
+            ActionEventType::KeyPressEvent { data } => match data.keytype {
+                key_press::KeyType::Down => {
+                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                 }
+                key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
+                    SCANCODE_TO_RDEV[&data.keypress],
+                )),
+                key_press::KeyType::DownUp => {
+                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                    thread::sleep(time::Duration::from_millis(
+                        *&data.press_duration as u64,
+                    ));
+                    send(&rdev::EventType::KeyRelease(
+                        SCANCODE_TO_RDEV[&data.keypress],
+                    ));
+                }
+            },
+            ActionEventType::PhillipsHueCommand { .. } => {}
+            ActionEventType::OBS { .. } => {}
+            ActionEventType::DiscordCommand { .. } => {}
+            ActionEventType::UnicodeDirect { .. } => {}
+            ActionEventType::Delay { data } => {
+                thread::sleep(time::Duration::from_millis(*data))
             }
         }
-        MacroType::Toggle => {}
-        MacroType::OnHold => {}
+    }
+}
+
+fn execute_macro_toggle(macros: &Macro) {
+    for sequence in &macros.sequence {
+        match sequence {
+            ActionEventType::KeyPressEvent { data } => match data.keytype {
+                key_press::KeyType::Down => {
+                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
+                }
+                key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
+                    SCANCODE_TO_RDEV[&data.keypress],
+                )),
+                key_press::KeyType::DownUp => {
+                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                    thread::sleep(time::Duration::from_millis(
+                        *&data.press_duration as u64,
+                    ));
+                    send(&rdev::EventType::KeyRelease(
+                        SCANCODE_TO_RDEV[&data.keypress],
+                    ));
+                }
+            },
+            ActionEventType::PhillipsHueCommand { .. } => {}
+            ActionEventType::OBS { .. } => {}
+            ActionEventType::DiscordCommand { .. } => {}
+            ActionEventType::UnicodeDirect { .. } => {}
+            ActionEventType::Delay { data } => {
+                thread::sleep(time::Duration::from_millis(*data))
+            }
+        }
+    }
+}
+
+fn execute_macro_onhold(macros: &Macro) {}
+
+//TODO: trait generic this executing
+//TODO: async
+///Executes a given macro (requires a reference to a macro).
+pub async fn execute_macro(macros: &Macro) {
+    match macros.macro_type {
+        MacroType::Single => {
+            //TODO: async
+            execute_macro_single(macros);
+        }
+        MacroType::Toggle => {
+            //TODO: async
+            execute_macro_toggle(macros);
+        }
+        MacroType::OnHold => {
+            //TODO: async
+            execute_macro_onhold(macros);
+        }
     }
 }
 
 ///Main loop for now (of the library)
-pub fn run_this() {
+pub async fn run_backend() {
     //==================================================
+    //TODO: Make a way to disable this listening function
     //TODO: make this a grab instead of listen
     //TODO: try to make this interact better (cleanup the code a bit)
     //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
-    //TODO: move all the plugin to its separate files (also with action keytype)
 
     loop {
         //Trigger hashes
-        let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
+        let trigger_overview = APPLICATION_STATE.data.read().await.clone();
 
         //println!("{:#?}", trigger_overview);
 
-        match APPLICATION_STATE.config.read().unwrap().use_input_grab {
+        match APPLICATION_STATE.config.read().await.use_input_grab {
             true => {
                 let mut events = Vec::new();
                 let mut pressed_keys: Vec<rdev::Key> = Vec::new();

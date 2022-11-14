@@ -9,12 +9,13 @@ extern crate core;
 use std::{fs, thread, time};
 use std::fs::File;
 use std::io::Read;
-use std::sync::RwLock;
 
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use tauri::App;
+//use std::sync::RwLock;
+use tauri::async_runtime::RwLock;
 use tokio::*;
 
 use plugin::delay;
@@ -97,20 +98,32 @@ lazy_static! {
 //     pub static ref KEYS_PRESSED: M = { MacroDataState::new() };
 // }
 
-fn main() {
-    //TODO: Async run the backend.
+#[tokio::main]
+async fn main() {
 
-    thread::spawn(|| run_this());
+    //thread::spawn(|| run_backend());
 
-    tauri::Builder::default()
-        // This is where you pass in your commands
-        .manage(MacroDataState::new())
-        .invoke_handler(tauri::generate_handler![
-            get_macros,
-            set_macros,
-            get_config,
-            set_config
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+
+
+    task::spawn(async { run_backend().await; }).await;
+    //run_frontend();
+
+    //run_frontend().await;
+
+    //thread::sleep(time::Duration::from_secs(30));
+}
+
+
+async fn run_frontend() {
+    // tauri::Builder::default()
+    //         // This is where you pass in your commands
+    //         .manage(MacroDataState::new())
+    //         .invoke_handler(tauri::generate_handler![
+    //             get_macros,
+    //             set_macros,
+    //             get_config,
+    //             set_config
+    //         ])
+    //         .run(tauri::generate_context!())
+    //         .expect("error while running tauri application");
 }

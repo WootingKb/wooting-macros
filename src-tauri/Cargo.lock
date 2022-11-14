@@ -793,7 +793,7 @@ version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bde03329ae10e79ede66c9ce4dc930aa8599043b0743008548680f25b91502d6"
 dependencies = [
- "dtoa",
+    "dtoa",
 ]
 
 [[package]]
@@ -801,6 +801,18 @@ name = "dunce"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bd4b30a6560bbd9b4620f4de34c3f14f60848e58a9b7216801afcb4c7b31c3c"
+
+[[package]]
+name = "educe"
+version = "0.4.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb0188e3c3ba8df5753894d54461f0e39bc91741dc5b22e1c46999ec2c71f4e4"
+dependencies = [
+    "enum-ordinalize",
+    "proc-macro2",
+    "quote",
+    "syn",
+]
 
 [[package]]
 name = "either"
@@ -826,7 +838,21 @@ version = "0.8.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9852635589dc9f9ea1b6fe9f05b50ef208c85c834a562f0c6abb1c475736ec2b"
 dependencies = [
- "cfg-if",
+    "cfg-if",
+]
+
+[[package]]
+name = "enum-ordinalize"
+version = "3.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a62bb1df8b45ecb7ffa78dca1c17a438fb193eb083db0b1b494d2a61bcb5096a"
+dependencies = [
+    "num-bigint",
+    "num-traits",
+    "proc-macro2",
+    "quote",
+    "rustc_version 0.4.0",
+    "syn",
 ]
 
 [[package]]
@@ -835,8 +861,8 @@ version = "4.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "20df693c700404f7e19d4d6fae6b15215d2913c27955d2b9d6f2c0f537511cd0"
 dependencies = [
- "bitflags",
- "libc",
+    "bitflags",
+    "libc",
 ]
 
 [[package]]
@@ -1883,8 +1909,19 @@ version = "0.46.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77a8165726e8236064dbb45459242600304b42a5ea24ee2948e18e023bf7ba84"
 dependencies = [
- "overload",
- "winapi",
+    "overload",
+    "winapi",
+]
+
+[[package]]
+name = "num-bigint"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f93ab6289c7b344a8a9f60f88d80aa20032336fe78da341afc91c8a2341fc75f"
+dependencies = [
+    "autocfg",
+    "num-integer",
+    "num-traits",
 ]
 
 [[package]]
@@ -1893,8 +1930,8 @@ version = "0.1.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "225d3389fb3509a24c93f5c29eb6bde2586b98d9f016636dff58d7c6f7569cd9"
 dependencies = [
- "autocfg",
- "num-traits",
+    "autocfg",
+    "num-traits",
 ]
 
 [[package]]
@@ -2269,7 +2306,27 @@ version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6796ad771acdc0123d2a88dc428b5e38ef24456743ddb1744ed628f9815c096"
 dependencies = [
- "siphasher",
+    "siphasher",
+]
+
+[[package]]
+name = "pin-project"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad29a609b6bcd67fee905812e544992d216af9d755757c05ed2d0e15a74c6ecc"
+dependencies = [
+    "pin-project-internal",
+]
+
+[[package]]
+name = "pin-project-internal"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "069bdb1e05adc7a8990dce9cc75370895fbe4e3d58b9b73bf1aee56359344a55"
+dependencies = [
+    "proc-macro2",
+    "quote",
+    "syn",
 ]
 
 [[package]]
@@ -3461,9 +3518,24 @@ version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9724f9a975fb987ef7a3cd9be0350edcbe130698af5b8f7a631e23d42d052484"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+    "proc-macro2",
+    "quote",
+    "syn",
+]
+
+[[package]]
+name = "tokio-serde"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "911a61637386b789af998ee23f50aa30d5fd7edcec8d6d3dedae5e5815205466"
+dependencies = [
+    "bytes",
+    "educe",
+    "futures-core",
+    "futures-sink",
+    "pin-project",
+    "serde",
+    "serde_json",
 ]
 
 [[package]]
@@ -3472,9 +3544,9 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d660770404473ccd7bc9f8b28494a811bc18542b915c0855c51e8f419d5223ce"
 dependencies = [
- "futures-core",
- "pin-project-lite",
- "tokio",
+    "futures-core",
+    "pin-project-lite",
+    "tokio",
  "tokio-util",
 ]
 
@@ -4206,15 +4278,16 @@ dependencies = [
 name = "wooting-macros"
 version = "0.2.0"
 dependencies = [
- "halfbrown",
- "idasen-cli",
- "lazy_static",
- "rdev",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tokio",
+    "halfbrown",
+    "idasen-cli",
+    "lazy_static",
+    "rdev",
+    "serde",
+    "serde_json",
+    "tauri",
+    "tauri-build",
+    "tokio",
+    "tokio-serde",
 ]
 
 [[package]]
