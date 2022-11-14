@@ -16,6 +16,7 @@ use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError}
 use serde::Serialize;
 use tauri::{Config, State};
 use tokio::sync::RwLock;
+use tokio::task;
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
 use crate::hid_table::*;
@@ -39,21 +40,26 @@ pub enum MacroType {
     OnHold,
 }
 
-
 //TODO: SERDE CAMEL CASE RENAME
+
 ///This enum is the registry for all actions that can be executed
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
     KeyPressEvent { data: key_press::KeyPress },
     //SystemEvent { action: Action },
+    //TODO: System event - notification
     PhillipsHueCommand {},
+    //TODO: Phillips hue notification
     OBS {},
     DiscordCommand {},
     //IKEADesk
     //MouseMovement
     UnicodeDirect {},
+    //TODO: Sound effects? Soundboards?
+    //TODO: Sending a message through online webapi (twitch)
     Delay { data: delay::Delay },
+
 }
 
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution
@@ -64,6 +70,8 @@ pub enum TriggerEventType {
         data: Vec<key_press::KeyPress>,
         allow_while_other_keys: bool,
     },
+    //TODO: computer time (have timezone support?)
+    //TODO: computer temperature?
 }
 
 #[derive(Debug, Clone)]
@@ -85,7 +93,10 @@ impl Macro {
             name: "".to_string(),
             sequence: vec![],
             macro_type: MacroType::Single,
-            trigger: TriggerEventType::KeyPressEvent { data: vec![], allow_while_other_keys: false },
+            trigger: TriggerEventType::KeyPressEvent {
+                data: vec![],
+                allow_while_other_keys: false,
+            },
             active: false,
         }
     }
@@ -313,8 +324,7 @@ pub struct Collection {
     pub active: bool,
 }
 
-
-fn execute_macro_single(macros: &Macro) {
+async fn execute_macro_single(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
             ActionEventType::KeyPressEvent { data } => match data.keytype {
@@ -326,9 +336,7 @@ fn execute_macro_single(macros: &Macro) {
                 )),
                 key_press::KeyType::DownUp => {
                     send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                    thread::sleep(time::Duration::from_millis(
-                        *&data.press_duration as u64,
-                    ));
+                    thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
                     send(&rdev::EventType::KeyRelease(
                         SCANCODE_TO_RDEV[&data.keypress],
                     ));
@@ -338,14 +346,12 @@ fn execute_macro_single(macros: &Macro) {
             ActionEventType::OBS { .. } => {}
             ActionEventType::DiscordCommand { .. } => {}
             ActionEventType::UnicodeDirect { .. } => {}
-            ActionEventType::Delay { data } => {
-                thread::sleep(time::Duration::from_millis(*data))
-            }
+            ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
         }
     }
 }
 
-fn execute_macro_toggle(macros: &Macro) {
+async fn execute_macro_toggle(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
             ActionEventType::KeyPressEvent { data } => match data.keytype {
@@ -357,9 +363,7 @@ fn execute_macro_toggle(macros: &Macro) {
                 )),
                 key_press::KeyType::DownUp => {
                     send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                    thread::sleep(time::Duration::from_millis(
-                        *&data.press_duration as u64,
-                    ));
+                    thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
                     send(&rdev::EventType::KeyRelease(
                         SCANCODE_TO_RDEV[&data.keypress],
                     ));
@@ -369,31 +373,29 @@ fn execute_macro_toggle(macros: &Macro) {
             ActionEventType::OBS { .. } => {}
             ActionEventType::DiscordCommand { .. } => {}
             ActionEventType::UnicodeDirect { .. } => {}
-            ActionEventType::Delay { data } => {
-                thread::sleep(time::Duration::from_millis(*data))
-            }
+            ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
         }
     }
 }
 
-fn execute_macro_onhold(macros: &Macro) {}
+async fn execute_macro_onhold(macros: &Macro) {}
 
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
-pub async fn execute_macro(macros: &Macro) {
+pub async fn execute_macro(macros: Macro) {
     match macros.macro_type {
         MacroType::Single => {
             //TODO: async
-            execute_macro_single(macros);
+            execute_macro_single(&macros).await;
         }
         MacroType::Toggle => {
             //TODO: async
-            execute_macro_toggle(macros);
+            execute_macro_toggle(&macros).await;
         }
         MacroType::OnHold => {
             //TODO: async
-            execute_macro_onhold(macros);
+            execute_macro_onhold(&macros).await;
         }
     }
 }
@@ -407,133 +409,135 @@ pub async fn run_backend() {
     //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
 
-    loop {
-        //Trigger hashes
-        let trigger_overview = APPLICATION_STATE.data.read().await.clone();
+    //Trigger hashes
 
-        //println!("{:#?}", trigger_overview);
 
-        match APPLICATION_STATE.config.read().await.use_input_grab {
-            true => {
-                let mut events = Vec::new();
-                let mut pressed_keys: Vec<rdev::Key> = Vec::new();
+    //println!("{:#?}", trigger_overview);
 
-                let (schan, rchan) = channel();
-                let _grabber = thread::spawn(move || {
-                    grab(move |event| match schan.send(event.clone()) {
-                        Ok(T) => {
-                            let mut keys_pressed: Vec<rdev::Key>;
-                            match &event.event_type {
-                                //TODO: Grab and discard the trigger actually
-                                EventType::KeyPress(key) => Some(event),
-                                _ => Some(event),
-                            }
+    match APPLICATION_STATE.config.read().await.use_input_grab {
+        true => {
+            let trigger_overview = APPLICATION_STATE.data.read().await.clone();
+            let mut events = Vec::new();
+            let mut pressed_keys: Vec<rdev::Key> = Vec::new();
+
+            let (schan, rchan) = channel();
+            let _grabber = thread::spawn(move || {
+                grab(move |event| match schan.send(event.clone()) {
+                    Ok(T) => {
+                        let mut keys_pressed: Vec<rdev::Key>;
+                        match &event.event_type {
+                            //TODO: Grab and discard the trigger actually
+                            EventType::KeyPress(key) => Some(event),
+                            _ => Some(event),
                         }
-                        Err(_) => None,
-                    })
-                });
+                    }
+                    Err(_) => None,
+                })
+            });
 
-                for event in rchan.iter() {
-                    events.push(event);
+            for event in rchan.iter() {
+                events.push(event);
 
-                    for i in &events {
-                        //println!("{:?}", events.len());
-                        match &i.event_type {
-                            EventType::KeyPress(listened_key) => {
-                                //TODO: Make this a hashtable or smth
-                                pressed_keys.push(listened_key.clone());
+                for i in &events {
+                    //println!("{:?}", events.len());
+                    match &i.event_type {
+                        EventType::KeyPress(listened_key) => {
+                            //TODO: Make this a hashtable or smth
+                            pressed_keys.push(listened_key.clone());
 
-                                for collections in &trigger_overview.data {
-                                    if collections.active == true {
-                                        for macros in &collections.macros {
-                                            if macros.active == true {
-                                                match &macros.trigger {
-                                                    TriggerEventType::KeyPressEvent {
-                                                        data: trigger_key, ..
-                                                    } => {
-                                                        let converted_keys: Vec<rdev::Key> =
-                                                            trigger_key
-                                                                .iter()
-                                                                .map(|x| {
-                                                                    SCANCODE_TO_RDEV[&x.keypress]
-                                                                })
-                                                                .collect();
+                            for collections in &trigger_overview.data {
+                                if collections.active == true {
+                                    for macros in &collections.macros {
+                                        if macros.active == true {
+                                            match &macros.trigger {
+                                                TriggerEventType::KeyPressEvent {
+                                                    data: trigger_key,
+                                                    ..
+                                                } => {
+                                                    let converted_keys: Vec<rdev::Key> =
+                                                        trigger_key
+                                                            .iter()
+                                                            .map(|x| SCANCODE_TO_RDEV[&x.keypress])
+                                                            .collect();
 
-                                                        if pressed_keys == converted_keys {
-                                                            execute_macro(&macros);
-                                                            println!("MACRO READY TO EXECUTE");
-                                                        }
-                                                        // if &events.first() == trigger_key.first(){
-                                                        //
-                                                        // }
+                                                    if pressed_keys == converted_keys {
+                                                        task::spawn(async {
+                                                            execute_macro(macros.clone()).await;
+                                                        })
+                                                            .await;
+                                                        //execute_macro(&macros);
+                                                        println!("MACRO READY TO EXECUTE");
                                                     }
+                                                    // if &events.first() == trigger_key.first(){
+                                                    //
+                                                    // }
                                                 }
                                             }
                                         }
                                     }
                                 }
+                            }
 
-                                println!("{:#?}", pressed_keys);
-                                println!("Pressed: {:?}", listened_key);
-                                //check_key(&pressed_keys);
-                            }
-                            EventType::KeyRelease(listened_key) => {
-                                println!("Released: {:?}", listened_key);
-                                pressed_keys.retain(|x| x != listened_key);
-                                println!("{:#?}", pressed_keys);
-                            }
-                            EventType::ButtonPress(listened_key) => {
-                                println!("MB Pressed:{:?}", listened_key)
-                            }
-                            EventType::ButtonRelease(listened_key) => {
-                                println!("MB Released:{:?}", listened_key)
-                            }
-                            EventType::MouseMove { x, y } => (),
-                            EventType::Wheel { delta_x, delta_y } => {}
+                            println!("{:#?}", pressed_keys);
+                            println!("Pressed: {:?}", listened_key);
+                            //check_key(&pressed_keys);
                         }
+                        EventType::KeyRelease(listened_key) => {
+                            println!("Released: {:?}", listened_key);
+                            pressed_keys.retain(|x| x != listened_key);
+                            println!("{:#?}", pressed_keys);
+                        }
+                        EventType::ButtonPress(listened_key) => {
+                            println!("MB Pressed:{:?}", listened_key)
+                        }
+                        EventType::ButtonRelease(listened_key) => {
+                            println!("MB Released:{:?}", listened_key)
+                        }
+                        EventType::MouseMove { x, y } => (),
+                        EventType::Wheel { delta_x, delta_y } => {}
                     }
-                    events.pop();
                 }
+                events.pop();
             }
-            false => {
-                let mut events = Vec::new();
+        }
+        false => {
+            let mut events = Vec::new();
 
-                let (schan, rchan) = channel();
-                let _listener = thread::spawn(move || {
-                    listen(move |event| {
-                        schan
-                            .send(event)
-                            .unwrap_or_else(|e| println!("Could not send event {:?}", e));
-                    })
-                        .expect("Could not listen");
-                });
+            let (schan, rchan) = channel();
+            let _listener = thread::spawn(move || {
+                listen(move |event| {
+                    schan
+                        .send(event)
+                        .unwrap_or_else(|e| println!("Could not send event {:?}", e));
+                })
+                    .expect("Could not listen");
+            });
 
-                for event in rchan.iter() {
-                    events.push(event);
+            for event in rchan.iter() {
+                events.push(event);
 
-                    for i in &events {
-                        //println!("{:?}", events.len());
-                        match &i.event_type {
-                            EventType::KeyPress(s) => {
-                                println!("Pressed: {:?}", s);
+                for i in &events {
+                    //println!("{:?}", events.len());
+                    match &i.event_type {
+                        EventType::KeyPress(s) => {
+                            println!("Pressed: {:?}", s);
 
-                                //check_key(&s);
-                            }
-                            EventType::KeyRelease(s) => {
-                                println!("Released: {:?}", s)
-                            }
-                            EventType::ButtonPress(s) => {
-                                println!("MB Pressed:{:?}", s)
-                            }
-                            EventType::ButtonRelease(s) => {
-                                println!("MB Released:{:?}", s)
-                            }
-                            EventType::MouseMove { x, y } => (),
-                            EventType::Wheel { delta_x, delta_y } => {}
+                            //check_key(&s);
                         }
+                        EventType::KeyRelease(s) => {
+                            println!("Released: {:?}", s)
+                        }
+                        EventType::ButtonPress(s) => {
+                            println!("MB Pressed:{:?}", s)
+                        }
+                        EventType::ButtonRelease(s) => {
+                            println!("MB Released:{:?}", s)
+                        }
+                        EventType::MouseMove { x, y } => (),
+                        EventType::Wheel { delta_x, delta_y } => {}
                     }
-                    events.pop();
                 }
+                events.pop();
             }
         }
     }

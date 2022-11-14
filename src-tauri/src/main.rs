@@ -100,19 +100,18 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
-
     //thread::spawn(|| run_backend());
 
-
-
-    task::spawn(async { run_backend().await; }).await;
+    task::spawn(async {
+        run_backend().await;
+    })
+        .await;
     //run_frontend();
 
     //run_frontend().await;
 
     //thread::sleep(time::Duration::from_secs(30));
 }
-
 
 async fn run_frontend() {
     // tauri::Builder::default()
