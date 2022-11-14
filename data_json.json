@@ -1,35 +1,127 @@
-[
-  {
-    "name": "Default",
-    "icon": "i",
-    "macros": [
-      {
-        "name": "auto run",
-        "sequence": [],
-        "trigger": {
-          "type": "KeyPressEvent",
-          "data": [
+{
+  "data": [
+    {
+      "name": "Default",
+      "icon": "i",
+      "macros": [
+        {
+          "name": "Havo",
+          "sequence": [
             {
-              "keypress": 26,
-              "press_duration": 0
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 4,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 16,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
             }
-          ]
-        },
-        "active": true
-      }
-    ],
-    "active": true
-  },
-  {
-    "name": "Fortnite",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  },
-  {
-    "name": "test",
-    "icon": "i",
-    "macros": [],
-    "active": false
-  }
-]
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 51,
+                "press_duration": 0,
+                "keytype": "DownUp"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        }
+      ],
+      "active": true
+    },
+    {
+      "name": "test",
+      "icon": "i",
+      "macros": [
+        {
+          "name": "Test Macro 1",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 8,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 14,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 7,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 6,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 224,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 15,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        }
+      ],
+      "active": true
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 [package]
 name = "wooting-macros"
-version = "0.1.0"
+version = "0.2.0"
 description = "Macro software made by Wooting."
 authors = ["David Manca, Khang"]
 license = ""
@@ -10,16 +10,17 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.1", features = [] }
+tauri-build = { version = "1.2", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.1", features = ["api-all"] }
+tauri = { version = "1.2.0", features = ["api-all"] }
 rdev = { version = "0.5.1", features = ["unstable_grab", "serde", "serialize"] }
 halfbrown = { version = "0.1.15", features = ["serde"] }
 idasen-cli = "0.1.0"
 lazy_static = "1.4.0"
+tokio = { version = "1.21.2", features = ["full"] }
 
 [features]
 # by default Tauri runs in production mode

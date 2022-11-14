@@ -15,10 +15,13 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use tauri::App;
+use tokio::*;
+
+use plugin::delay;
 
 use crate::wooting_macros_library::*;
 
-//use crate::wooting_macros_library;
+pub mod plugin;
 
 mod hid_table;
 mod wooting_macros_library;
@@ -74,42 +77,40 @@ impl ApplicationConfig {
         };
         deserialized
     }
+
+    /// This exports data for the frontend to process it.
+    /// Basically sends the entire struct to the frontend
+    pub fn export_data(&self) {
+        std::fs::write(
+            "../config.json",
+            serde_json::to_string_pretty(&self).unwrap(),
+        )
+            .unwrap();
+    }
 }
 
 lazy_static! {
     pub static ref APPLICATION_STATE: MacroDataState = { MacroDataState::new() };
 }
 
+// lazy_static! {
+//     pub static ref KEYS_PRESSED: M = { MacroDataState::new() };
+// }
+
 fn main() {
     //TODO: Async run the backend.
+
+    thread::spawn(|| run_this());
 
     tauri::Builder::default()
         // This is where you pass in your commands
         .manage(MacroDataState::new())
         .invoke_handler(tauri::generate_handler![
-            get_configuration,
-            set_configuration
+            get_macros,
+            set_macros,
+            get_config,
+            set_config
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
-
-    run_this();
-}
-
-pub fn get_config() -> ApplicationConfig {
-    let mut config: ApplicationConfig = ApplicationConfig {
-        use_input_grab: false,
-        startup_delay: 3,
-    };
-
-    let mut file = match File::open("../../config.json") {
-        Ok(T) => T,
-        Err(E) => {
-            eprintln!("Error parsing the file {}", E);
-            println!("Error finding the config.json file.\nPlease place one in the root directory. Using default configuration (safe).\nCreating an empty file.\n");
-            File::create("../../config.json").unwrap()
-        }
-    };
-    config
 }

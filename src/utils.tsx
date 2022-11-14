@@ -1,10 +1,15 @@
-import { invoke } from "@tauri-apps/api/tauri";
-import { Collection } from "./types";
+import { invoke } from '@tauri-apps/api/tauri'
+import { Collection, MacroData } from './types'
 
-export const updateBackendConfig = (collections:Collection[]) => {
-        invoke("set_configuration", { frontendData: collections }).then((res) => {
-            console.log(res)
-        }).catch(e => {
-        console.error(e)
-        })
-    }
+export const updateBackendConfig = (collections: Collection[]) => {
+  const macroData: MacroData = { data: collections }
+  invoke<void>('set_macros', { frontendData: macroData }).catch((e) => {
+    console.error(e)
+  })
+}
+
+export const checkIfStringIsNonNumeric: (text: string) => boolean = function (
+  value: string
+): boolean {
+  return !(isNaN(Number(value)) === false)
+}

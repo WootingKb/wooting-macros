@@ -1,52 +1,33 @@
-import {useEffect, useState} from "react";
-import {invoke} from "@tauri-apps/api/tauri";
-import { appWindow, PhysicalSize } from '@tauri-apps/api/window';
-import "./App.css";
-import {Flex} from '@chakra-ui/react'
-import {Route} from "wouter";
-import Overview from "./components/Overview";
-import AddMacroView from "./components/AddMacroView";
-import EditMacroView from "./components/EditMacroView";
-import {Collection} from "./types";
+import { appWindow, PhysicalSize } from '@tauri-apps/api/window'
+import { Flex } from '@chakra-ui/react'
+import Overview from './views/Overview'
+import { ViewState } from './enums'
+import { useApplicationContext } from './contexts/applicationContext'
+import { SequenceProvider } from './contexts/sequenceContext'
+import Macroview from './views/Macroview'
 
 function App() {
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [isLoading, setLoading] = useState(true);
+  const { viewState, initComplete } = useApplicationContext()
+  appWindow.setMinSize(new PhysicalSize(800, 600))
 
-  appWindow.setMinSize(new PhysicalSize(1000, 600));
-
-  useEffect(() => {
-    invoke<Collection[]>("get_configuration").then((res) => {
-      console.log(res)
-      setCollections(res)
-
-      setLoading(false)
-    }).catch(e => {
-      console.error(e)
-    })
-  }, [])
-
-  // Loading State is required, since getting data from the backend is async - Update Loading Screen
-  if (isLoading) {
-    return(
+  // TODO: Update Loading Screen & investigate loading time of application prior to loading screen taking effect
+  if (!initComplete) {
+    return (
       <Flex h="100vh" justifyContent="center" alignItems="center">
         Loading
       </Flex>
     )
   }
+
   return (
     <Flex h="100vh" direction="column">
-      <Route path="/">
-        <Overview collections={collections}/>
-      </Route>
-      <Route path="/macroview/:cid">
-        <AddMacroView collections={collections}/>
-      </Route>
-      <Route path="/editview/:cid/:mid">
-        <EditMacroView collections={collections}/>
-      </Route>
+      {viewState === ViewState.Overview && <Overview />}
+      <SequenceProvider>
+        {viewState === ViewState.Addview && <Macroview isEditing={false} />}
+        {viewState === ViewState.Editview && <Macroview isEditing={true} />}
+      </SequenceProvider>
     </Flex>
-  );
+  )
 }
 
-export default App;
+export default App
