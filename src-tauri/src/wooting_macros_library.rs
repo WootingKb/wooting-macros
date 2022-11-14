@@ -1,5 +1,3 @@
-#![deny(elided_lifetimes_in_paths)]
-
 use std::{fs, result, thread, time};
 use std::borrow::{Borrow, BorrowMut};
 use std::collections::HashMap;
@@ -9,15 +7,15 @@ use std::hash::Hash;
 use std::io::Read;
 use std::ptr::hash;
 use std::str::{Bytes, FromStr};
-use std::sync::Arc;
 use std::sync::mpsc::{channel, SendError};
+// use tokio::sync::RwLock;
+use std::sync::RwLock;
 use std::time::Duration;
 
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 use tauri::{Config, State};
-use tokio::sync::RwLock;
 use tokio::task;
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
@@ -31,7 +29,6 @@ use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 use crate::plugin::unicode_direct;
 
-//use std::sync::RwLock;
 //use tauri::async_runtime::RwLock;
 
 ///Type of a macro.
@@ -106,46 +103,46 @@ impl Macro {
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub async fn get_config(state: tauri::State<'_, MacroDataState>) -> ApplicationConfig {
-    let output: ApplicationConfig = state.config.read().await.clone();
+pub fn get_config(state: tauri::State<MacroDataState>) -> ApplicationConfig {
+    let output: ApplicationConfig = state.config.read().unwrap().clone();
     output
 }
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub async fn set_config(state: tauri::State<'_, MacroDataState>, config: ApplicationConfig) {
-    let mut tauri_state = state.config.write().await;
+pub fn set_config(state: tauri::State<MacroDataState>, config: ApplicationConfig) {
+    let mut tauri_state = state.config.write().unwrap();
     *tauri_state = config.clone();
     tauri_state.export_data();
 
-    let mut app_state = APPLICATION_STATE.config.write().await;
+    let mut app_state = APPLICATION_STATE.config.write().unwrap();
     *app_state = config;
 }
 
 #[tauri::command]
 /// Gets the macro data from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
-pub async fn get_macros(state: tauri::State<'_, MacroDataState>) -> MacroData {
-    let macro_data_state = state.data.read().await;
+pub fn get_macros(state: tauri::State<MacroDataState>) -> MacroData {
+    let macro_data_state = state.data.read().unwrap();
     macro_data_state.clone()
 }
 
 #[tauri::command]
 /// Sets the configuration from frontend and updates the state for everything on backend.
-pub async fn set_macros(state: tauri::State<'_, MacroDataState>, frontend_data: MacroData) {
-    let mut tauri_state = state.data.write().await;
+pub fn set_macros(state: tauri::State<MacroDataState>, frontend_data: MacroData) {
+    let mut tauri_state = state.data.write().unwrap();
     *tauri_state = frontend_data.clone();
     tauri_state.export_data();
 
-    let mut app_state = APPLICATION_STATE.data.write().await;
+    let mut app_state = APPLICATION_STATE.data.write().unwrap();
     *app_state = frontend_data;
 }
 
 /// Function for a manual write of config changes from the backend side. Just a test.
 /// Not meant to be used.
 pub async fn set_data_write_manually_backend(frontend_data: MacroData) {
-    let mut app_state = APPLICATION_STATE.data.write().await;
+    let mut app_state = APPLICATION_STATE.data.write().unwrap();
     *app_state = frontend_data.clone();
     app_state.clone().export_data();
 }
@@ -418,9 +415,9 @@ pub async fn run_backend() {
 
     //println!("{:#?}", trigger_overview);
 
-    match APPLICATION_STATE.config.read().await.use_input_grab {
+    match APPLICATION_STATE.config.read().unwrap().use_input_grab {
         true => {
-            let trigger_overview = APPLICATION_STATE.data.read().await.clone();
+            let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
             let mut events = Vec::new();
             let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
