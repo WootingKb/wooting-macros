@@ -13,7 +13,7 @@ use std::io::Read;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use tauri::{App, SystemTrayMenuItem};
+use tauri::{App, Manager, SystemTrayEvent, SystemTrayMenuItem};
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu};
 //use std::sync::RwLock;
 use tauri::async_runtime::RwLock;
@@ -104,24 +104,19 @@ async fn main() {
     // thread::spawn(|| run_backend());
     //thread::spawn(async move { run_backend().await });
 
-
-
-
     task::spawn(async move {
         run_backend().await;
     });
 
-
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+
     let tray_menu = SystemTrayMenu::new()
         .add_item(quit)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(hide);
 
-    let system_tray = SystemTray::new()
-        .with_menu(tray_menu);
-
+    let system_tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
         // This is where you pass in your commands
@@ -130,6 +125,37 @@ async fn main() {
             get_macros, set_macros, get_config, set_config
         ])
         .system_tray(system_tray)
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::MenuItemClick { id, .. } => {
+                // get a handle to the clicked menu item
+                // note that `tray_handle` can be called anywhere,
+                // just get a `AppHandle` instance with `app.handle()` on the setup hook
+                // and move it to another function or thread
+                let item_handle = app.tray_handle().get_item(&id);
+                match id.as_str() {
+                    "hide" => {
+                        let window = app.get_window("main").unwrap();
+                        window.hide().unwrap();
+                        // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
+                        item_handle.set_title("Show").unwrap();
+                    }
+                    "quit" => {
+                        app.exit(0);
+                    }
+                    "show" => {
+                        let window = app.get_window("main").unwrap();
+                        window.show().unwrap();
+                        // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
+                    }
+                    _ => {}
+                }
+            }
+            SystemTrayEvent::LeftClick { tray_id, position, size, .. } => {
+                let window = app.get_window("main").unwrap();
+                window.show().unwrap();
+            }
+            _ => {}
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
