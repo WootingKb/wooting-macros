@@ -10,6 +10,7 @@
     "version": "0.0.0"
   },
   "tauri": {
+
     "allowlist": {
       "all": true
     },
@@ -48,6 +49,10 @@
     },
     "security": {
       "csp": null
+    },
+    "systemTray": {
+      "iconPath": "icon.png",
+      "iconAsTemplate": true
     },
     "updater": {
       "active": false

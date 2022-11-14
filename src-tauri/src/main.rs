@@ -13,7 +13,8 @@ use std::io::Read;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use tauri::App;
+use tauri::{App, SystemTrayMenuItem};
+use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu};
 //use std::sync::RwLock;
 use tauri::async_runtime::RwLock;
 use tokio::*;
@@ -103,9 +104,24 @@ async fn main() {
     // thread::spawn(|| run_backend());
     //thread::spawn(async move { run_backend().await });
 
+
+
+
     task::spawn(async move {
         run_backend().await;
     });
+
+
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(quit)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(hide);
+
+    let system_tray = SystemTray::new()
+        .with_menu(tray_menu);
+
 
     tauri::Builder::default()
         // This is where you pass in your commands
@@ -113,6 +129,7 @@ async fn main() {
         .invoke_handler(tauri::generate_handler![
             get_macros, set_macros, get_config, set_config
         ])
+        .system_tray(system_tray)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
