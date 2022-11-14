@@ -12,9 +12,10 @@ import {
   IconButton,
   useDisclosure,
   Grid,
-  GridItem
+  GridItem,
+  Divider
 } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { AddIcon, EditIcon, StarIcon } from '@chakra-ui/icons'
 import { updateBackendConfig } from '../utils'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { ViewState } from '../enums'
@@ -64,38 +65,58 @@ function Overview() {
   return (
     <HStack minH="100vh" spacing="0" overflow="hidden">
       {/** Left Side Panel */}
-      <VStack borderRight="1px" h="100vh" p="4" w={['20%']}>
-        {collections.map((collection: Collection, index: number) => (
-          <CollectionButton
-            collection={collection}
-            index={index}
-            key={index}
-            isFocused={index == selection.collectionIndex}
-            setFocus={onCollectionButtonPress}
-            toggleCollection={onCollectionToggle}
-          />
-        ))}
-        <Button
-          colorScheme="yellow"
-          size={['sm', 'md', 'lg']}
-          leftIcon={<AddIcon />}
-          onClick={() => {
-            setIsRenamingCollection(false)
-            onOpen()
-          }}
-        >
-          New Collection
-        </Button>
-        <Button onClick={toggleColorMode}>
-          Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-        </Button>
+      <VStack
+        bg="gray.200"
+        borderRight="1px"
+        h="100vh"
+        p="2"
+        w={['25%', '20%', '15%']}
+        justifyContent="space-between"
+      >
+        <VStack w="100%">
+          <Text w="100%" fontWeight="bold">
+            Collections
+          </Text>
+          <Divider borderColor="black" />
+          {collections.map((collection: Collection, index: number) => (
+            <CollectionButton
+              collection={collection}
+              index={index}
+              key={index}
+              isFocused={index == selection.collectionIndex}
+              setFocus={onCollectionButtonPress}
+              toggleCollection={onCollectionToggle}
+            />
+          ))}
+          <Button
+            colorScheme="yellow"
+            size={['sm']}
+            leftIcon={<AddIcon />}
+            onClick={() => {
+              setIsRenamingCollection(false)
+              onOpen()
+            }}
+          >
+            New Collection
+          </Button>
+        </VStack>
+        <HStack w="100%">
+          <Button onClick={toggleColorMode} w="100%" size={'sm'}>
+            <Text fontSize={'xs'}>
+              Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+            </Text>
+          </Button>
+          <Button w="100%" size={'sm'}>
+            <Text fontSize={'xs'}>Give Feedback</Text>
+          </Button>
+        </HStack>
       </VStack>
       {/** Main Panel */}
       <VStack w="100%" h="100vh">
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          p="4"
+          p="2"
           borderBottom="1px"
           w="100%"
         >
@@ -103,24 +124,10 @@ function Overview() {
             <HStack w="100%">
               <IconButton
                 aria-label="Collection Icon Button"
-                icon={
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    width="24px"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"
-                    />
-                  </svg>
-                }
+                icon={<StarIcon />}
                 variant="ghost"
                 isDisabled
+                size={'sm'}
               ></IconButton>
               <Text fontWeight="bold" fontSize="xl">
                 {currentCollection.name}
@@ -137,15 +144,23 @@ function Overview() {
               />
             </HStack>
             <HStack w="100%">
-              <Button leftIcon={<AddIcon />} size={['sm', 'md']} isDisabled>
+              <Button
+                leftIcon={<AddIcon />}
+                size={['xs', 'sm', 'md']}
+                isDisabled
+              >
                 Export Collection
               </Button>
-              <Button leftIcon={<AddIcon />} size={['sm', 'md']} isDisabled>
+              <Button
+                leftIcon={<AddIcon />}
+                size={['xs', 'sm', 'md']}
+                isDisabled
+              >
                 Import Macros
               </Button>
               <Button
                 leftIcon={<AddIcon />}
-                size={['sm', 'md']}
+                size={['xs', 'sm', 'md']}
                 isDisabled={selection.collectionIndex <= 0}
                 onClick={onCollectionDelete}
               >
