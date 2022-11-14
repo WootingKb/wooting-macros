@@ -7,7 +7,9 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  SimpleGrid
+  SimpleGrid,
+  HStack,
+  Flex
 } from '@chakra-ui/react'
 import { ActionEventType } from '../../types'
 import { AddIcon } from '@chakra-ui/icons'
@@ -35,12 +37,6 @@ const SelectElementArea = () => {
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         Sequence Elements
       </Text>
-      <Input
-        minH="35px"
-        variant="outline"
-        borderColor="gray.400"
-        placeholder="Search"
-      />
       <Tabs
         w="100%"
         h="100%"
@@ -50,25 +46,33 @@ const SelectElementArea = () => {
         defaultIndex={0}
         colorScheme="yellow"
       >
-        <TabList>
-          <Tab>
-            <AddIcon />
-          </Tab>
-          <Tab>
-            <AddIcon />
-          </Tab>
-          <Tab>
-            <AddIcon />
-          </Tab>
-          <Tab>
-            <AddIcon />
-          </Tab>
-          <Tab>
-            <AddIcon />
-          </Tab>
-        </TabList>
-
-        <TabPanels w="100%" h="calc(100% - 90px)" overflowY="auto">
+        <Flex w="100%" flexWrap="wrap" justifyContent={['center', 'center', 'space-between']} gap="4px">
+          <TabList>
+            <Tab>
+              <AddIcon />
+            </Tab>
+            <Tab>
+              <AddIcon />
+            </Tab>
+            <Tab>
+              <AddIcon />
+            </Tab>
+            <Tab>
+              <AddIcon />
+            </Tab>
+            <Tab>
+              <AddIcon />
+            </Tab>
+          </TabList>
+          <Input
+            maxW={['100%', "100%", "40%", "50%", "55%"]}
+            maxH="32px"
+            variant="outline"
+            borderColor="gray.400"
+            placeholder="Search"
+          />
+        </Flex>
+        <TabPanels w="100%" h={["calc(100% - 86px)", "calc(100% - 90px)", "calc(100% - 64px)"]} mt={['4px']} overflowY="auto">
           {/** the 90px comes from the heights of the text, input, and tablist elements above */}
           <TabPanel>
             <Text>All goes here</Text>

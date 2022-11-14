@@ -19,7 +19,6 @@ function CollectionButton({
 }: Props) {
   return (
     <Box
-      as="button"
       pos="relative"
       w="100%"
       bg={isFocused ? 'gray.400' : ''}
