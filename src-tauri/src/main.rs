@@ -103,7 +103,7 @@ async fn main() {
     // thread::spawn(|| run_backend());
 
 
-    task::spawn(async {
+    task::spawn(async move {
         run_backend().await;
     })
         .await;

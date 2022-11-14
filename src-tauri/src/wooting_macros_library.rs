@@ -353,7 +353,7 @@ fn execute_macro_single(macros: &Macro) {
     }
 }
 
-fn execute_macro_toggle(macros: &Macro) {
+async fn execute_macro_toggle(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
             ActionEventType::KeyPressEvent { data } => match data.keytype {
@@ -393,13 +393,17 @@ pub fn execute_macro(macros: Macro) {
         }
         MacroType::Toggle => {
             //TODO: async
-            execute_macro_toggle(&macros)
+            execute_macro_toggle(&macros);
         }
         MacroType::OnHold => {
             //TODO: async
             execute_macro_onhold(&macros);
         }
     }
+}
+
+async fn random() {
+    println!("HIT");
 }
 
 ///Main loop for now (of the library)
@@ -467,12 +471,20 @@ pub async fn run_backend() {
 
                                                         // thread::spawn(|| execute_macro(macros.clone()));
 
-                                                        // task::spawn(async {
-                                                        //     execute_macro(macros.clone()).await;
-                                                        // })
-                                                        //     .await;
 
-                                                        execute_macro(macros.clone());
+                                                        // task::spawn(async {
+                                                        //     random().await
+                                                        // }).await;
+                                                        let havo = macros.clone();
+                                                        //thread::spawn(async {execute_macro(havo).await});
+
+                                                        thread::spawn(|| execute_macro(havo));
+
+                                                        // task::spawn(async move {
+                                                        //     execute_macro( havo).await;
+                                                        // }).await;
+
+                                                        // execute_macro(macros.clone());
 
                                                         //execute_macro(&macros);
                                                     }
@@ -553,7 +565,7 @@ pub async fn run_backend() {
 
 ///Sends an event to the library to execute on an OS level.
 fn send(event_type: &EventType) {
-    let delay = time::Duration::from_millis(20);
+    let delay = time::Duration::from_millis(200);
     match simulate(event_type) {
         Ok(()) => (),
         Err(SimulateError) => {
