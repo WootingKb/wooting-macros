@@ -1,3 +1,5 @@
+#![deny(elided_lifetimes_in_paths)]
+
 use std::{fs, result, thread, time};
 use std::borrow::{Borrow, BorrowMut};
 use std::collections::HashMap;
@@ -324,7 +326,7 @@ pub struct Collection {
     pub active: bool,
 }
 
-async fn execute_macro_single(macros: &Macro) {
+fn execute_macro_single(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
             ActionEventType::KeyPressEvent { data } => match data.keytype {
@@ -351,7 +353,7 @@ async fn execute_macro_single(macros: &Macro) {
     }
 }
 
-async fn execute_macro_toggle(macros: &Macro) {
+fn execute_macro_toggle(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
             ActionEventType::KeyPressEvent { data } => match data.keytype {
@@ -378,24 +380,24 @@ async fn execute_macro_toggle(macros: &Macro) {
     }
 }
 
-async fn execute_macro_onhold(macros: &Macro) {}
+fn execute_macro_onhold(macros: &Macro) {}
 
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
-pub async fn execute_macro(macros: Macro) {
+pub fn execute_macro(macros: Macro) {
     match macros.macro_type {
         MacroType::Single => {
             //TODO: async
-            execute_macro_single(&macros).await;
+            execute_macro_single(&macros);
         }
         MacroType::Toggle => {
             //TODO: async
-            execute_macro_toggle(&macros).await;
+            execute_macro_toggle(&macros)
         }
         MacroType::OnHold => {
             //TODO: async
-            execute_macro_onhold(&macros).await;
+            execute_macro_onhold(&macros);
         }
     }
 }
@@ -435,12 +437,12 @@ pub async fn run_backend() {
                 })
             });
 
-            for event in rchan.iter() {
+            for event in &rchan {
                 events.push(event);
 
                 for i in &events {
                     //println!("{:?}", events.len());
-                    match &i.event_type {
+                    match i.event_type {
                         EventType::KeyPress(listened_key) => {
                             //TODO: Make this a hashtable or smth
                             pressed_keys.push(listened_key.clone());
@@ -461,12 +463,18 @@ pub async fn run_backend() {
                                                             .collect();
 
                                                     if pressed_keys == converted_keys {
-                                                        task::spawn(async {
-                                                            execute_macro(macros.clone()).await;
-                                                        })
-                                                            .await;
-                                                        //execute_macro(&macros);
                                                         println!("MACRO READY TO EXECUTE");
+
+                                                        // thread::spawn(|| execute_macro(macros.clone()));
+
+                                                        // task::spawn(async {
+                                                        //     execute_macro(macros.clone()).await;
+                                                        // })
+                                                        //     .await;
+
+                                                        execute_macro(macros.clone());
+
+                                                        //execute_macro(&macros);
                                                     }
                                                     // if &events.first() == trigger_key.first(){
                                                     //
@@ -484,7 +492,7 @@ pub async fn run_backend() {
                         }
                         EventType::KeyRelease(listened_key) => {
                             println!("Released: {:?}", listened_key);
-                            pressed_keys.retain(|x| x != listened_key);
+                            pressed_keys.retain(|x| *x != listened_key);
                             println!("{:#?}", pressed_keys);
                         }
                         EventType::ButtonPress(listened_key) => {
