@@ -384,7 +384,7 @@ fn execute_macro_onhold(macros: &Macro) {}
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
-pub fn execute_macro(macros: Macro) {
+pub async fn execute_macro(macros: Macro) {
     match macros.macro_type {
         MacroType::Single => {
             //TODO: async
@@ -469,7 +469,13 @@ pub async fn run_backend() {
 
                                                         let havo = macros.clone();
 
-                                                        thread::spawn(|| execute_macro(havo));
+                                                        //USE THIS FOR THREADED
+                                                        //thread::spawn(|| execute_macro(havo));
+
+                                                        //USE THIS FOR ASYNC
+                                                        task::spawn(async move {
+                                                            execute_macro(havo).await;
+                                                        });
                                                     }
                                                 }
                                             }
