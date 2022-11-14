@@ -1,4 +1,4 @@
 {
-  "UseInputGrab": true,
+  "UseInputGrab": false,
   "StartupDelay": 0
 }

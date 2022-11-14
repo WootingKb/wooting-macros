@@ -504,7 +504,9 @@ pub async fn run_backend() {
             }
         }
         false => {
+            let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
             let mut events = Vec::new();
+            let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
             let (schan, rchan) = channel();
             let _listener = thread::spawn(move || {
@@ -521,20 +523,60 @@ pub async fn run_backend() {
 
                 for i in &events {
                     //println!("{:?}", events.len());
-                    match &i.event_type {
-                        EventType::KeyPress(s) => {
-                            println!("Pressed: {:?}", s);
+                    match i.event_type {
+                        EventType::KeyPress(listened_key) => {
+                            //TODO: Make this a hashtable or smth
+                            pressed_keys.push(listened_key.clone());
 
-                            //check_key(&s);
+                            for collections in &trigger_overview.data {
+                                if collections.active == true {
+                                    for macros in &collections.macros {
+                                        if macros.active == true {
+                                            match &macros.trigger {
+                                                TriggerEventType::KeyPressEvent {
+                                                    data: trigger_key,
+                                                    ..
+                                                } => {
+                                                    let converted_keys: Vec<rdev::Key> =
+                                                        trigger_key
+                                                            .iter()
+                                                            .map(|x| SCANCODE_TO_RDEV[&x.keypress])
+                                                            .collect();
+
+                                                    if pressed_keys == converted_keys {
+                                                        println!("MACRO READY TO EXECUTE");
+
+                                                        let havo = macros.clone();
+
+                                                        //USE THIS FOR THREADED
+                                                        //thread::spawn(|| execute_macro(havo));
+
+                                                        //USE THIS FOR ASYNC
+                                                        task::spawn(async move {
+                                                            execute_macro(havo).await;
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            println!("{:#?}", pressed_keys);
+                            println!("Pressed: {:?}", listened_key);
+                            //check_key(&pressed_keys);
                         }
-                        EventType::KeyRelease(s) => {
-                            println!("Released: {:?}", s)
+                        EventType::KeyRelease(listened_key) => {
+                            println!("Released: {:?}", listened_key);
+                            pressed_keys.retain(|x| *x != listened_key);
+                            println!("{:#?}", pressed_keys);
                         }
-                        EventType::ButtonPress(s) => {
-                            println!("MB Pressed:{:?}", s)
+                        EventType::ButtonPress(listened_key) => {
+                            println!("MB Pressed:{:?}", listened_key)
                         }
-                        EventType::ButtonRelease(s) => {
-                            println!("MB Released:{:?}", s)
+                        EventType::ButtonRelease(listened_key) => {
+                            println!("MB Released:{:?}", listened_key)
                         }
                         EventType::MouseMove { x, y } => (),
                         EventType::Wheel { delta_x, delta_y } => {}
