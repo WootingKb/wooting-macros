@@ -51,7 +51,7 @@
               {
                 "keypress": 51,
                 "press_duration": 0,
-                "keytype": "DownUp"
+                "keytype": "Down"
               }
             ],
             "allow_while_other_keys": false

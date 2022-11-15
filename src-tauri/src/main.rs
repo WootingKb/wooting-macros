@@ -8,7 +8,7 @@ extern crate core;
 
 use std::{fs, thread, time};
 use std::fs::File;
-use std::io::Read;
+use std::process::Command;
 
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
@@ -18,6 +18,7 @@ use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu};
 //use std::sync::RwLock;
 use tauri::async_runtime::RwLock;
 use tokio::*;
+use tokio::io::{AsyncWriteExt, stdin};
 
 use plugin::delay;
 
@@ -101,15 +102,18 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
-    // thread::spawn(|| run_backend());
-    //thread::spawn(async move { run_backend().await });
-
+    /// Spawn the backend thread.
+    /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
+    /// (will crash on key grab/listen)
     task::spawn(async move {
         run_backend().await;
     });
 
+
+    /// Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+
 
     let tray_menu = SystemTrayMenu::new()
         .add_item(quit)
@@ -117,6 +121,7 @@ async fn main() {
         .add_item(hide);
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
+
 
     tauri::Builder::default()
         // This is where you pass in your commands
@@ -150,18 +155,22 @@ async fn main() {
                     _ => {}
                 }
             }
-            SystemTrayEvent::LeftClick { tray_id, position, size, .. } => {
+            SystemTrayEvent::LeftClick {
+                tray_id,
+                position,
+                size,
+                ..
+            } => {
                 let window = app.get_window("main").unwrap();
                 window.show().unwrap();
             }
             _ => {}
         })
+        //.any_thread()
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
-    // run_frontend();
 
-    // run_frontend().await;
-
-    //thread::sleep(time::Duration::from_secs(30));
 }
+
+
