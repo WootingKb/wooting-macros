@@ -139,6 +139,8 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, rdev::Key> = {
         // scancode.insert(0x72, rdev::Key::Key); //F23
         //
         // scancode.insert(0x73, rdev::Key::Key); //F24
+
+        // NOT GONNA USE THESE
         // scancode.insert(0x74, rdev::Key::Key); //OPEN
         //
         // scancode.insert(0x75, rdev::Key::Key); //HELP

@@ -35,11 +35,14 @@ use crate::plugin::unicode_direct;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum MacroType {
     Single,
+    // single macro fire
     Toggle,
-    OnHold,
+    // press to start, press to finish cycle and terminate
+    OnHold, // while held execute macro (repeats)
 }
 
 //TODO: SERDE CAMEL CASE RENAME
+//TODO: Press a key to open file browser with a specific path
 
 ///This enum is the registry for all actions that can be executed
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -47,6 +50,7 @@ pub enum MacroType {
 pub enum ActionEventType {
     KeyPressEvent { data: key_press::KeyPress },
     //SystemEvent { action: Action },
+    //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
     PhillipsHueCommand {},
     //TODO: Phillips hue notification
@@ -322,9 +326,15 @@ pub struct Collection {
     pub active: bool,
 }
 
-fn execute_macro_single(macros: &Macro) {
+async fn execute_macro_single(macros: &Macro) {
     for sequence in &macros.sequence {
         match sequence {
+            //TODO: make a channel for send to accept stuff
+            //TODO: all of these should be sent onto a channel, while another thread is listening and executing
+            //TODO: Keypress manager task <- enum EventType send and channel recv. Keypress manager task would spawn tasks for the actions
+            //TODO: one task: listening for events and enforcing sleep time
+            //TODO: keypressevent has access to the data and spawns a task for downup
+
             ActionEventType::KeyPressEvent { data } => match data.keytype {
                 key_press::KeyType::Down => {
                     send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
@@ -349,34 +359,9 @@ fn execute_macro_single(macros: &Macro) {
     }
 }
 
-async fn execute_macro_toggle(macros: &Macro) {
-    for sequence in &macros.sequence {
-        match sequence {
-            ActionEventType::KeyPressEvent { data } => match data.keytype {
-                key_press::KeyType::Down => {
-                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                }
-                key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
-                    SCANCODE_TO_RDEV[&data.keypress],
-                )),
-                key_press::KeyType::DownUp => {
-                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                    thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                    send(&rdev::EventType::KeyRelease(
-                        SCANCODE_TO_RDEV[&data.keypress],
-                    ));
-                }
-            },
-            ActionEventType::PhillipsHueCommand { .. } => {}
-            ActionEventType::OBS { .. } => {}
-            ActionEventType::DiscordCommand { .. } => {}
-            ActionEventType::UnicodeDirect { .. } => {}
-            ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
-        }
-    }
-}
+async fn execute_macro_toggle(macros: &Macro) {}
 
-fn execute_macro_onhold(macros: &Macro) {}
+async fn execute_macro_onhold(macros: &Macro) {}
 
 //TODO: trait generic this executing
 //TODO: async
@@ -385,15 +370,15 @@ pub async fn execute_macro(macros: Macro) {
     match macros.macro_type {
         MacroType::Single => {
             //TODO: async
-            execute_macro_single(&macros);
+            execute_macro_single(&macros).await;
         }
         MacroType::Toggle => {
-            //TODO: async
-            execute_macro_toggle(&macros);
+            //TODO: async channel (event)
+            execute_macro_toggle(&macros).await;
         }
         MacroType::OnHold => {
             //TODO: async
-            execute_macro_onhold(&macros);
+            execute_macro_onhold(&macros).await;
         }
     }
 }
@@ -415,13 +400,14 @@ pub async fn run_backend() {
 
     //println!("{:#?}", trigger_overview);
 
+    //TODO: Banish the match
     match APPLICATION_STATE.config.read().unwrap().use_input_grab {
         true => {
             let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
             let mut events = Vec::new();
             let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
-            let (schan, rchan) = channel();
+            let (schan, rchan) = channel(); //TODO: async tokio version
             let _grabber = thread::spawn(move || {
                 grab(move |event| match schan.send(event.clone()) {
                     Ok(T) => {
@@ -590,7 +576,7 @@ pub async fn run_backend() {
 
 ///Sends an event to the library to execute on an OS level.
 fn send(event_type: &EventType) {
-    let delay = time::Duration::from_millis(200);
+    let delay = time::Duration::from_millis(20);
     match simulate(event_type) {
         Ok(()) => (),
         Err(SimulateError) => {

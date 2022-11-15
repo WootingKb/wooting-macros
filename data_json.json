@@ -10,6 +10,14 @@
             {
               "type": "KeyPressEvent",
               "data": {
+                "keypress": 5,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
                 "keypress": 4,
                 "press_duration": 1,
                 "keytype": "DownUp"
@@ -18,19 +26,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 16,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "Delay",
-              "data": 50
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 15,
+                "keypress": 6,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -38,7 +34,39 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 17,
+                "keypress": 7,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 8,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 9,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 10,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 11,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
