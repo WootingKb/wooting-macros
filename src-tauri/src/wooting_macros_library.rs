@@ -15,7 +15,7 @@ use std::time::Duration;
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
-use tauri::{Config, State};
+use tauri::{Config, State, Theme};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
@@ -405,10 +405,6 @@ pub struct Collection {
     pub active: bool,
 }
 
-trait MacroExecution {
-    fn execute_macro() {}
-}
-
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
@@ -416,8 +412,11 @@ pub async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
     match macros.macro_type {
         MacroType::Single => {
             println!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
+            let cloned_channel = channel.clone();
 
-            macros.execute(channel.clone()).await;
+            task::spawn(async move {
+                macros.execute(cloned_channel).await;
+            });
         }
         MacroType::Toggle => {
             //TODO: async channel (event)
@@ -490,7 +489,7 @@ pub async fn run_backend() {
                 EventType::KeyPress(listened_key) => {
                     //TODO: Make this a hashtable or smth
                     pressed_keys.push(listened_key.clone());
-                    check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
+
                     //println!("Pressed: {:?}", listened_key);
 
                     //check_key(&pressed_keys);
@@ -511,24 +510,42 @@ pub async fn run_backend() {
             }
 
             if pressed_keys.len() != 0 {
-                // println!("{:#?}", pressed_keys);
+                // let channel_copy_send = schan_execute.clone();
+                // let macro_data_copy = trigger_overview.clone();
+                // let pressed_keys_copy = pressed_keys.clone();
+                // task::spawn(async move {
+                //     check_macro_execution(pressed_keys_copy, macro_data_copy, channel_copy_send)
+                //         .await;
+                // });
+
+                //println!("{:#?}", pressed_keys);
                 // // check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
                 // println!(
                 //     "\nKey: {} WAS PRESSED IN HID CODE",
                 //     SCANCODE_TO_HID[&pressed_keys.first().unwrap()]
                 // );
             }
+            let channel_copy_send = schan_execute.clone();
+            let macro_data_copy = trigger_overview.clone();
+            let pressed_keys_copy = pressed_keys.clone();
+            task::spawn(async move {
+                check_macro_execution(pressed_keys_copy, macro_data_copy, channel_copy_send)
+                    .await;
+            });
         }
+
         events.pop();
     }
 }
 
 ///Function checks if the current keys pressed evalue to any macro
-fn check_macro_execution(
-    pressed_keys: &Vec<Key>,
-    trigger_overview: &MacroData,
+async fn check_macro_execution(
+    pressed_keys: Vec<Key>,
+    trigger_overview: MacroData,
     channel_sender: Sender<rdev::Event>,
 ) {
+    //println!("Received pressed keys {:#?}", pressed_keys);
+
     for collections in &trigger_overview.data {
         if collections.active == true {
             for macros in &collections.macros {
@@ -542,8 +559,9 @@ fn check_macro_execution(
                                 .map(|x| SCANCODE_TO_RDEV[&x.keypress])
                                 .collect();
 
-                            if *pressed_keys == converted_keys {
-                                println!("MACRO READY TO EXECUTE");
+                            if pressed_keys == converted_keys {
+                                println!("MACRO {:#?} READY TO EXECUTE", macros.name);
+                                println!("KEYS SEQUENCE {:#?} READY TO EXECUTE", macros.sequence);
 
                                 let havo = macros.clone();
                                 let havo2 = channel_sender.clone();
@@ -551,7 +569,10 @@ fn check_macro_execution(
                                 //thread::spawn(|| execute_macro(havo));
 
                                 //USE THIS FOR ASYNC
-                                println!("Executing macro {:#?} because of trigger {:#?} == {:#?}", havo.name, *pressed_keys, converted_keys);
+                                println!(
+                                    "Executing macro {:#?} because of trigger {:#?} == {:#?}",
+                                    havo.name, pressed_keys, converted_keys
+                                );
 
                                 task::spawn(async move {
                                     execute_macro(havo, havo2).await;

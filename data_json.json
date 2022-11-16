@@ -16,12 +16,8 @@
               }
             },
             {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 18,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
+              "type": "Delay",
+              "data": 50
             },
             {
               "type": "KeyPressEvent",
@@ -32,12 +28,8 @@
               }
             },
             {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 8,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
+              "type": "Delay",
+              "data": 50
             },
             {
               "type": "KeyPressEvent",
@@ -48,12 +40,8 @@
               }
             },
             {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 4,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
+              "type": "Delay",
+              "data": 50
             },
             {
               "type": "KeyPressEvent",
@@ -84,23 +72,31 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 5,
+                "keypress": 18,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
             },
             {
+              "type": "Delay",
+              "data": 50
+            },
+            {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 24,
+                "keypress": 8,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
             },
             {
+              "type": "Delay",
+              "data": 50
+            },
+            {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 16,
+                "keypress": 4,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -121,7 +117,7 @@
           "active": true
         }
       ],
-      "active": false
+      "active": true
     }
   ]
 }
