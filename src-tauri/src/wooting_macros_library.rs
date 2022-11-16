@@ -38,7 +38,7 @@ pub enum MacroType {
     // single macro fire
     Toggle,
     // press to start, press to finish cycle and terminate
-    OnHold, // while held execute macro (repeats)
+    OnHold, // while held Execute macro (repeats)
 }
 
 //TODO: SERDE CAMEL CASE RENAME
@@ -102,7 +102,41 @@ impl Macro {
             active: false,
         }
     }
+
+    fn execute(&self) {
+        for sequence in &self.sequence {
+            match sequence {
+                //TODO: make a channel for send to accept stuff
+                //TODO: all of these should be sent onto a channel, while another thread is listening and executing
+                //TODO: Keypress manager task <- enum EventType send and channel recv. Keypress manager task would spawn tasks for the actions
+                //TODO: one task: listening for events and enforcing sleep time
+                //TODO: keypressevent has access to the data and spawns a task for downup
+
+                ActionEventType::KeyPressEvent { data } => match data.keytype {
+                    key_press::KeyType::Down => {
+                        send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
+                    }
+                    key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
+                        SCANCODE_TO_RDEV[&data.keypress],
+                    )),
+                    key_press::KeyType::DownUp => {
+                        send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                        thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
+                        send(&rdev::EventType::KeyRelease(
+                            SCANCODE_TO_RDEV[&data.keypress],
+                        ));
+                    }
+                },
+                ActionEventType::PhillipsHueCommand { .. } => {}
+                ActionEventType::OBS { .. } => {}
+                ActionEventType::DiscordCommand { .. } => {}
+                ActionEventType::UnicodeDirect { .. } => {}
+                ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
+            }
+        }
+    }
 }
+
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -326,59 +360,30 @@ pub struct Collection {
     pub active: bool,
 }
 
-async fn execute_macro_single(macros: &Macro) {
-    for sequence in &macros.sequence {
-        match sequence {
-            //TODO: make a channel for send to accept stuff
-            //TODO: all of these should be sent onto a channel, while another thread is listening and executing
-            //TODO: Keypress manager task <- enum EventType send and channel recv. Keypress manager task would spawn tasks for the actions
-            //TODO: one task: listening for events and enforcing sleep time
-            //TODO: keypressevent has access to the data and spawns a task for downup
-
-            ActionEventType::KeyPressEvent { data } => match data.keytype {
-                key_press::KeyType::Down => {
-                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                }
-                key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
-                    SCANCODE_TO_RDEV[&data.keypress],
-                )),
-                key_press::KeyType::DownUp => {
-                    send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                    thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                    send(&rdev::EventType::KeyRelease(
-                        SCANCODE_TO_RDEV[&data.keypress],
-                    ));
-                }
-            },
-            ActionEventType::PhillipsHueCommand { .. } => {}
-            ActionEventType::OBS { .. } => {}
-            ActionEventType::DiscordCommand { .. } => {}
-            ActionEventType::UnicodeDirect { .. } => {}
-            ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
-        }
-    }
+trait MacroExecution {
+    fn execute_macro() {}
 }
 
-async fn execute_macro_toggle(macros: &Macro) {}
 
-async fn execute_macro_onhold(macros: &Macro) {}
+
 
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
 pub async fn execute_macro(macros: Macro) {
+
     match macros.macro_type {
         MacroType::Single => {
             //TODO: async
-            execute_macro_single(&macros).await;
+            macros.execute();
         }
         MacroType::Toggle => {
             //TODO: async channel (event)
-            execute_macro_toggle(&macros).await;
+            //execute_macro_toggle(&macros).await;
         }
         MacroType::OnHold => {
             //TODO: async
-            execute_macro_onhold(&macros).await;
+            //execute_macro_onhold(&macros).await;
         }
     }
 }
@@ -426,48 +431,10 @@ pub async fn run_backend() {
         events.push(event);
 
         for i in &events {
-            //println!("{:?}", events.len());
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
                     //TODO: Make this a hashtable or smth
                     pressed_keys.push(listened_key.clone());
-
-                    for collections in &trigger_overview.data {
-                        if collections.active == true {
-                            for macros in &collections.macros {
-                                if macros.active == true {
-                                    match &macros.trigger {
-                                        TriggerEventType::KeyPressEvent {
-                                            data: trigger_key,
-                                            ..
-                                        } => {
-                                            let converted_keys: Vec<rdev::Key> =
-                                                trigger_key
-                                                    .iter()
-                                                    .map(|x| SCANCODE_TO_RDEV[&x.keypress])
-                                                    .collect();
-
-                                            if pressed_keys == converted_keys {
-                                                println!("MACRO READY TO EXECUTE");
-
-                                                let havo = macros.clone();
-
-                                                //USE THIS FOR THREADED
-                                                //thread::spawn(|| execute_macro(havo));
-
-                                                //USE THIS FOR ASYNC
-                                                task::spawn(async move {
-                                                    execute_macro(havo).await;
-                                                });
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    println!("{:#?}", pressed_keys);
                     println!("Pressed: {:?}", listened_key);
                     //check_key(&pressed_keys);
                 }
@@ -485,13 +452,56 @@ pub async fn run_backend() {
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {}
             }
+
+
+            if pressed_keys.len() != 0 {
+                println!("{:#?}", pressed_keys);
+                check_macro_execution(&pressed_keys, &trigger_overview);
+            }
         }
         events.pop();
     }
 }
 
+///Function checks if the current keys pressed evalue to any macro
+fn check_macro_execution(pressed_keys: &Vec<Key>, trigger_overview: &MacroData) {
+    for collections in &trigger_overview.data {
+        if collections.active == true {
+            for macros in &collections.macros {
+                if macros.active == true {
+                    match &macros.trigger {
+                        TriggerEventType::KeyPressEvent {
+                            data: trigger_key,
+                            ..
+                        } => {
+                            let converted_keys: Vec<rdev::Key> =
+                                trigger_key
+                                    .iter()
+                                    .map(|x| SCANCODE_TO_RDEV[&x.keypress])
+                                    .collect();
 
-///Sends an event to the library to execute on an OS level.
+                            if *pressed_keys == converted_keys {
+                                println!("MACRO READY TO EXECUTE");
+
+                                let havo = macros.clone();
+
+                                //USE THIS FOR THREADED
+                                //thread::spawn(|| execute_macro(havo));
+
+                                //USE THIS FOR ASYNC
+                                task::spawn(async move {
+                                    execute_macro(havo).await;
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+///Sends an event to the library to Execute on an OS level.
 fn send(event_type: &EventType) {
     let delay = time::Duration::from_millis(20);
     match simulate(event_type) {
