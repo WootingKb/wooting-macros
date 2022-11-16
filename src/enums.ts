@@ -21,3 +21,9 @@ export enum KeyType {
   Up,
   DownUp
 }
+
+export enum DelayUnit {
+  Milliseconds,
+  Seconds,
+  Minutes
+}
