@@ -115,11 +115,15 @@ impl Macro {
                 //TODO: keypressevent has access to the data and spawns a task for downup
                 ActionEventType::KeyPressEvent { data } => match data.keytype {
                     key_press::KeyType::Down => {
-                        send_channel.send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]),
-                        }).await;
+                        send_channel
+                            .send(Event {
+                                time: time::SystemTime::now(),
+                                name: None,
+                                event_type: rdev::EventType::KeyPress(
+                                    SCANCODE_TO_RDEV[&data.keypress],
+                                ),
+                            })
+                            .await;
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                     }
                     key_press::KeyType::Up => {
@@ -127,13 +131,15 @@ impl Macro {
                         //     SCANCODE_TO_RDEV[&data.keypress],
                         // ))
 
-                        send_channel.send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ),
-                        }).await;
+                        send_channel
+                            .send(Event {
+                                time: time::SystemTime::now(),
+                                name: None,
+                                event_type: rdev::EventType::KeyRelease(
+                                    SCANCODE_TO_RDEV[&data.keypress],
+                                ),
+                            })
+                            .await;
                     }
                     key_press::KeyType::DownUp => {
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
@@ -142,21 +148,27 @@ impl Macro {
                         //    SCANCODE_TO_RDEV[&data.keypress],
                         //));
 
-                        println!("Found a press/release event, sending it now");
+                        //println!("Found a press/release event, sending it now");
 
-                        send_channel.send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]),
-                        }).await;
+                        send_channel
+                            .send(Event {
+                                time: time::SystemTime::now(),
+                                name: None,
+                                event_type: rdev::EventType::KeyPress(
+                                    SCANCODE_TO_RDEV[&data.keypress],
+                                ),
+                            })
+                            .await;
                         thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                        send_channel.send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ),
-                        }).await;
+                        send_channel
+                            .send(Event {
+                                time: time::SystemTime::now(),
+                                name: None,
+                                event_type: rdev::EventType::KeyRelease(
+                                    SCANCODE_TO_RDEV[&data.keypress],
+                                ),
+                            })
+                            .await;
                     }
                 },
                 ActionEventType::PhillipsHueCommand { .. } => {}
@@ -403,7 +415,8 @@ trait MacroExecution {
 pub async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
     match macros.macro_type {
         MacroType::Single => {
-            println!("\nEXECUTING A SINGLE MACRO");
+            println!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
+
             macros.execute(channel.clone()).await;
         }
         MacroType::Toggle => {
@@ -419,8 +432,8 @@ pub async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
 
 async fn executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
     loop {
-        println!("RECEIVED");
         let mut result = rchan_execute.recv().await.unwrap().event_type;
+        //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
         thread::sleep(time::Duration::from_millis(20));
     }
@@ -448,7 +461,6 @@ pub async fn run_backend() {
 
     let (schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
-
     task::spawn(async move {
         executor_sender(rchan_execute).await;
     });
@@ -472,19 +484,21 @@ pub async fn run_backend() {
 
     for event in &rchan_grab {
         events.push(event);
-
+        let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
         for i in &events {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
                     //TODO: Make this a hashtable or smth
                     pressed_keys.push(listened_key.clone());
-                    println!("Pressed: {:?}", listened_key);
+                    check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
+                    //println!("Pressed: {:?}", listened_key);
+
                     //check_key(&pressed_keys);
                 }
                 EventType::KeyRelease(listened_key) => {
-                    println!("Released: {:?}", listened_key);
+                    //println!("Released: {:?}", listened_key);
                     pressed_keys.retain(|x| *x != listened_key);
-                    println!("{:#?}", pressed_keys);
+                    //println!("{:#?}", pressed_keys);
                 }
                 EventType::ButtonPress(listened_key) => {
                     println!("MB Pressed:{:?}", listened_key)
@@ -497,12 +511,12 @@ pub async fn run_backend() {
             }
 
             if pressed_keys.len() != 0 {
-                println!("{:#?}", pressed_keys);
-                check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
-                println!(
-                    "\nKey: {} WAS PRESSED IN HID CODE",
-                    SCANCODE_TO_HID[&pressed_keys.first().unwrap()]
-                );
+                // println!("{:#?}", pressed_keys);
+                // // check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
+                // println!(
+                //     "\nKey: {} WAS PRESSED IN HID CODE",
+                //     SCANCODE_TO_HID[&pressed_keys.first().unwrap()]
+                // );
             }
         }
         events.pop();
@@ -537,6 +551,7 @@ fn check_macro_execution(
                                 //thread::spawn(|| execute_macro(havo));
 
                                 //USE THIS FOR ASYNC
+                                println!("Executing macro {:#?} because of trigger {:#?} == {:#?}", havo.name, *pressed_keys, converted_keys);
 
                                 task::spawn(async move {
                                     execute_macro(havo, havo2).await;

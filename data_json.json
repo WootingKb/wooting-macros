@@ -10,7 +10,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 5,
+                "keypress": 17,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -18,7 +18,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 4,
+                "keypress": 18,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -26,15 +26,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 6,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 7,
+                "keypress": 23,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -50,7 +42,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 9,
+                "keypress": 19,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -58,7 +50,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 10,
+                "keypress": 4,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -66,7 +58,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 11,
+                "keypress": 7,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -85,9 +77,51 @@
             "allow_while_other_keys": false
           },
           "active": true
+        },
+        {
+          "name": "BumBac",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 5,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 24,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 16,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 52,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
         }
       ],
-      "active": true
+      "active": false
     }
   ]
 }
