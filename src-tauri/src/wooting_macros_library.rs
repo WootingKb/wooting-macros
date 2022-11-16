@@ -16,6 +16,8 @@ use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 use tauri::{Config, State};
+use tokio::sync::mpsc;
+use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
 use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
@@ -103,7 +105,7 @@ impl Macro {
         }
     }
 
-    fn execute(&self) {
+    async fn execute(&self, send_channel: Sender<Event>) {
         for sequence in &self.sequence {
             match sequence {
                 //TODO: make a channel for send to accept stuff
@@ -111,32 +113,63 @@ impl Macro {
                 //TODO: Keypress manager task <- enum EventType send and channel recv. Keypress manager task would spawn tasks for the actions
                 //TODO: one task: listening for events and enforcing sleep time
                 //TODO: keypressevent has access to the data and spawns a task for downup
-
                 ActionEventType::KeyPressEvent { data } => match data.keytype {
                     key_press::KeyType::Down => {
-                        send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
+                        send_channel.send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]),
+                        }).await;
+                        //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                     }
-                    key_press::KeyType::Up => send(&rdev::EventType::KeyRelease(
-                        SCANCODE_TO_RDEV[&data.keypress],
-                    )),
+                    key_press::KeyType::Up => {
+                        //     send(&rdev::EventType::KeyRelease(
+                        //     SCANCODE_TO_RDEV[&data.keypress],
+                        // ))
+
+                        send_channel.send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ),
+                        }).await;
+                    }
                     key_press::KeyType::DownUp => {
-                        send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                        //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
+                        //thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
+                        //send(&rdev::EventType::KeyRelease(
+                        //    SCANCODE_TO_RDEV[&data.keypress],
+                        //));
+
+                        println!("Found a press/release event, sending it now");
+
+                        send_channel.send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]),
+                        }).await;
                         thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                        send(&rdev::EventType::KeyRelease(
-                            SCANCODE_TO_RDEV[&data.keypress],
-                        ));
+                        send_channel.send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ),
+                        }).await;
                     }
                 },
                 ActionEventType::PhillipsHueCommand { .. } => {}
                 ActionEventType::OBS { .. } => {}
                 ActionEventType::DiscordCommand { .. } => {}
                 ActionEventType::UnicodeDirect { .. } => {}
-                ActionEventType::Delay { data } => thread::sleep(time::Duration::from_millis(*data)),
+                ActionEventType::Delay { data } => {
+                    thread::sleep(time::Duration::from_millis(*data))
+                }
             }
         }
     }
 }
-
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -364,18 +397,14 @@ trait MacroExecution {
     fn execute_macro() {}
 }
 
-
-
-
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
-pub async fn execute_macro(macros: Macro) {
-
+pub async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
     match macros.macro_type {
         MacroType::Single => {
-            //TODO: async
-            macros.execute();
+            println!("\nEXECUTING A SINGLE MACRO");
+            macros.execute(channel.clone()).await;
         }
         MacroType::Toggle => {
             //TODO: async channel (event)
@@ -388,8 +417,13 @@ pub async fn execute_macro(macros: Macro) {
     }
 }
 
-async fn random() {
-    println!("HIT");
+async fn executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
+    loop {
+        println!("RECEIVED");
+        let mut result = rchan_execute.recv().await.unwrap().event_type;
+        send(&result);
+        thread::sleep(time::Duration::from_millis(20));
+    }
 }
 
 ///Main loop for now (of the library)
@@ -412,22 +446,31 @@ pub async fn run_backend() {
     let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
-    let (schan, rchan) = channel(); //TODO: async tokio version
-    let _grabber = thread::spawn(move || {
-        grab(move |event| match schan.send(event.clone()) {
-            Ok(T) => {
-                let mut keys_pressed: Vec<rdev::Key>;
-                match &event.event_type {
-                    //TODO: Grab and discard the trigger actually
-                    EventType::KeyPress(key) => Some(event),
-                    _ => Some(event),
-                }
-            }
-            Err(_) => None,
-        })
+    let (schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+
+
+    task::spawn(async move {
+        executor_sender(rchan_execute).await;
     });
 
-    for event in &rchan {
+    let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+    let _grabber = thread::spawn(move || {
+        grab(
+            move |event: rdev::Event| match schan_grab.send(event.clone()) {
+                Ok(T) => {
+                    let mut keys_pressed: Vec<rdev::Key>;
+                    match &event.event_type {
+                        //TODO: Grab and discard the trigger actually
+                        EventType::KeyPress(key) => Some(event),
+                        _ => Some(event),
+                    }
+                }
+                Err(_) => None,
+            },
+        )
+    });
+
+    for event in &rchan_grab {
         events.push(event);
 
         for i in &events {
@@ -453,10 +496,13 @@ pub async fn run_backend() {
                 EventType::Wheel { delta_x, delta_y } => {}
             }
 
-
             if pressed_keys.len() != 0 {
                 println!("{:#?}", pressed_keys);
-                check_macro_execution(&pressed_keys, &trigger_overview);
+                check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
+                println!(
+                    "\nKey: {} WAS PRESSED IN HID CODE",
+                    SCANCODE_TO_HID[&pressed_keys.first().unwrap()]
+                );
             }
         }
         events.pop();
@@ -464,33 +510,36 @@ pub async fn run_backend() {
 }
 
 ///Function checks if the current keys pressed evalue to any macro
-fn check_macro_execution(pressed_keys: &Vec<Key>, trigger_overview: &MacroData) {
+fn check_macro_execution(
+    pressed_keys: &Vec<Key>,
+    trigger_overview: &MacroData,
+    channel_sender: Sender<rdev::Event>,
+) {
     for collections in &trigger_overview.data {
         if collections.active == true {
             for macros in &collections.macros {
                 if macros.active == true {
                     match &macros.trigger {
                         TriggerEventType::KeyPressEvent {
-                            data: trigger_key,
-                            ..
+                            data: trigger_key, ..
                         } => {
-                            let converted_keys: Vec<rdev::Key> =
-                                trigger_key
-                                    .iter()
-                                    .map(|x| SCANCODE_TO_RDEV[&x.keypress])
-                                    .collect();
+                            let converted_keys: Vec<rdev::Key> = trigger_key
+                                .iter()
+                                .map(|x| SCANCODE_TO_RDEV[&x.keypress])
+                                .collect();
 
                             if *pressed_keys == converted_keys {
                                 println!("MACRO READY TO EXECUTE");
 
                                 let havo = macros.clone();
-
+                                let havo2 = channel_sender.clone();
                                 //USE THIS FOR THREADED
                                 //thread::spawn(|| execute_macro(havo));
 
                                 //USE THIS FOR ASYNC
+
                                 task::spawn(async move {
-                                    execute_macro(havo).await;
+                                    execute_macro(havo, havo2).await;
                                 });
                             }
                         }
@@ -503,7 +552,7 @@ fn check_macro_execution(pressed_keys: &Vec<Key>, trigger_overview: &MacroData) 
 
 ///Sends an event to the library to Execute on an OS level.
 fn send(event_type: &EventType) {
-    let delay = time::Duration::from_millis(20);
+    //let delay = time::Duration::from_millis(20);
     match simulate(event_type) {
         Ok(()) => (),
         Err(SimulateError) => {
@@ -512,7 +561,7 @@ fn send(event_type: &EventType) {
     }
     // Let ths OS catchup (at least MacOS)
     //TODO: remove the delay at least for windows, mac needs testing
-    thread::sleep(delay);
+    //thread::sleep(delay);
 }
 
 ///Gets user input on the backend. Dev purposes only.
