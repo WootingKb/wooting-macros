@@ -17,9 +17,6 @@ type Props = {
   element: SequenceElement
 }
 
-// TODO:
-// 1. variant for Delay Element required
-
 const SequenceElementDraggableDisplay = ({ element }: Props) => {
   const [isSmallVariant, setIsSmallVariant] = useState(false)
   const [displayText, setDisplayText] = useState<string | undefined>('')
@@ -48,7 +45,7 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
         break
       case 'Delay':
         setIsSmallVariant(true)
-        setDisplayText(element.data.data.toString() + 'ms')
+        setDisplayText(element.data.data.toString() + ' ms')
         break
       default:
         break

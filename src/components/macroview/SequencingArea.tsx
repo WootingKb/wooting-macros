@@ -23,6 +23,7 @@ const SequencingArea = () => {
       const newIndex = sequence.findIndex(
         (element) => element.id === event.over.id
       )
+
       overwriteSequence(arrayMove(sequence, oldIndex, newIndex))
     }
   }
