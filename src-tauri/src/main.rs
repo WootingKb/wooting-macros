@@ -96,6 +96,10 @@ lazy_static! {
     pub static ref APPLICATION_STATE: MacroDataState = { MacroDataState::new() };
 }
 
+lazy_static! {
+    pub static ref TRIGGERS_LIST: Triggers = { Triggers::new()};
+}
+
 // lazy_static! {
 //     pub static ref KEYS_PRESSED: M = { MacroDataState::new() };
 // }

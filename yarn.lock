@@ -2146,9 +2146,9 @@ focus-lock@^0.11.2:
     tslib "^2.0.3"
 
 framer-motion@^7.6.4:
-  version "7.6.6"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-7.6.6.tgz#50e0d3bc29b899a79dbafb6085e398fb53a2f04a"
-  integrity sha512-7ti5mEzhTRBFCMlKs8Zxu9dWtVattpj2jPCNc4jaz4d7bDFekClALaBzmi1pGOKzsOWJsKMeV5ckIkD1DLI9lw==
+  version "7.6.7"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-7.6.7.tgz#4ab0f33d0b77b4fe2289ce8b7c5cf6448d84f23d"
+  integrity sha512-vEGsjXygf4qSmgXXsCT1FC56DjiZau9tSQTCchwAP2mOHnYHUy5gbthc4RXFWJh4Z/gFtqE8bzEmjahwOrfT7w==
   dependencies:
     "@motionone/dom" "10.13.1"
     framesync "6.1.2"
@@ -2919,9 +2919,9 @@ type-fest@^0.20.2:
   integrity sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==
 
 typescript@^4.8.4:
-  version "4.8.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.4.tgz#c464abca159669597be5f96b8943500b238e60e6"
-  integrity sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.3.tgz#3aea307c1746b8c384435d8ac36b8a2e580d85db"
+  integrity sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==
 
 update-browserslist-db@^1.0.9:
   version "1.0.10"
@@ -2954,9 +2954,9 @@ use-sidecar@^1.1.2:
     tslib "^2.0.0"
 
 vite@^3.0.2:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-3.2.3.tgz#7a68d9ef73eff7ee6dc0718ad3507adfc86944a7"
-  integrity sha512-h8jl1TZ76eGs3o2dIBSsvXDLb1m/Ec1iej8ZMdz+PsaFUsftZeWe2CZOI3qogEsMNaywc17gu0q6cQDzh/weCQ==
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-3.2.4.tgz#d8c7892dd4268064e04fffbe7d866207dd24166e"
+  integrity sha512-Z2X6SRAffOUYTa+sLy3NQ7nlHFU100xwanq1WDwqaiFiCe+25zdxP1TfCS5ojPV2oDDcXudHIoPnI1Z/66B7Yw==
   dependencies:
     esbuild "^0.15.9"
     postcss "^8.4.18"

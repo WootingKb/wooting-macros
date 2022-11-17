@@ -1,6 +1,6 @@
 use std::{fs, result, thread, time};
 use std::borrow::{Borrow, BorrowMut};
-use std::collections::HashMap;
+//use std::collections::HashMap;
 use std::fmt::{format, Formatter};
 use std::fs::File;
 use std::hash::Hash;
@@ -12,6 +12,7 @@ use std::sync::mpsc::{channel, SendError};
 use std::sync::RwLock;
 use std::time::Duration;
 
+use halfbrown::HashMap;
 use lazy_static::lazy_static;
 use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
 use serde::Serialize;
@@ -20,7 +21,7 @@ use tokio::sync::mpsc;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
-use crate::{APPLICATION_STATE, ApplicationConfig, hid_table};
+use crate::{APPLICATION_STATE, ApplicationConfig, hid_table, TRIGGERS_LIST};
 use crate::hid_table::*;
 use crate::plugin::delay;
 use crate::plugin::discord;
@@ -208,6 +209,8 @@ pub fn set_config(state: tauri::State<MacroDataState>, config: ApplicationConfig
 /// The state gets it from the config file at bootup.
 pub fn get_macros(state: tauri::State<MacroDataState>) -> MacroData {
     let macro_data_state = state.data.read().unwrap();
+    generate_triggers(macro_data_state.clone());
+
     macro_data_state.clone()
 }
 
@@ -269,6 +272,7 @@ impl MacroDataState {
         MacroDataState {
             data: RwLock::from(MacroData::read_data()),
             config: RwLock::from(ApplicationConfig::read_data()),
+            //triggers: RwLock::from(Triggers::new()),
         }
     }
 }
@@ -279,10 +283,50 @@ impl MacroDataState {
 //     trigger_table: HashMap<Vec<rdev::Key>, &'a Macro>,
 // }
 
-type TriggersExtracted<'a> = Vec<(Vec<u32>, Vec<rdev::Key>, &'a Macro)>;
 
 ///Collections are groups of macros.
 type Collections = Vec<Collection>;
+
+#[derive(Debug)]
+pub struct Triggers(RwLock<HashMap<u32, Vec<Macro>>>);
+
+impl Triggers {
+    pub fn new() -> Self {
+        Triggers { 0: RwLock::from(HashMap::new()) }
+    }
+}
+
+
+pub fn generate_triggers(macro_data: MacroData) {
+    let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
+
+    let mut output_hashmap: HashMap<u32, Vec<Macro>> = HashMap::new();
+
+    for collections in &macro_data.data {
+        if collections.active == true {
+            for macros in &collections.macros {
+                if macros.active == true {
+                    match &macros.trigger {
+                        TriggerEventType::KeyPressEvent { data, .. } => {
+                            output_tuple.push((SCANCODE_TO_RDEV[&data.first().unwrap().keypress], data.first().unwrap().keypress.clone()));
+                            //output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, macros.clone());
+
+                            match output_hashmap.get_mut(&data.first().unwrap().keypress) {
+                                Some(mut value) => { value.push(macros.clone()) }
+                                None => {
+                                    output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, vec![macros.clone()])
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let mut write_here = TRIGGERS_LIST.0.write().unwrap();
+    *write_here = output_hashmap;
+}
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -299,6 +343,37 @@ impl MacroData {
             serde_json::to_string_pretty(&self).unwrap(),
         )
             .unwrap();
+    }
+
+
+    pub fn extract_triggers(&self) -> HashMap<u32, Vec<Macro>> {
+        let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
+
+        let mut output_hashmap: HashMap<u32, Vec<Macro>> = HashMap::new();
+
+        for collections in &self.data {
+            if collections.active == true {
+                for macros in &collections.macros {
+                    if macros.active == true {
+                        match &macros.trigger {
+                            TriggerEventType::KeyPressEvent { data, .. } => {
+                                output_tuple.push((SCANCODE_TO_RDEV[&data.first().unwrap().keypress], data.first().unwrap().keypress.clone()));
+                                //output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, macros.clone());
+
+                                match output_hashmap.get_mut(&data.first().unwrap().keypress) {
+                                    Some(mut value) => { value.push(macros.clone()) }
+                                    None => {
+                                        output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, vec![macros.clone()])
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        output_hashmap
     }
 
     // /// Imports data from the frontend (when updated) to update the background data structure
@@ -454,9 +529,26 @@ pub async fn run_backend() {
     //TODO: Banish the match
     //TODO: Make the modifier keys non-ordered?
 
-    let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
+    let macros_data_from_state = APPLICATION_STATE.data.read().unwrap().clone();
     let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
+
+    generate_triggers(macros_data_from_state.clone());
+
+    //println!("{:#?}", triggers);
+
+
+    //println!("FOR KEY 51:\n{:#?}", triggers.0.get(&51).unwrap_or(&vec![Macro::new()]));
+
+    // let triggers = macros_data_from_state.extract_triggers();
+
+    // println!("FOR KEY 51:\n{:#?}", triggers.get(&51).unwrap().len());
+    // println!("FOR KEY 52:\n{:#?}", triggers.get(&52).unwrap().len());
+
+    // println!("MACRO AMOUNT FOR KEY:\n{:#?}", triggers.get(&11).unwrap().len());
+
+    //println!("FOR KEY 51:\n{:#?}", triggers.get(&11).unwrap());
+    //println!("FOR KEY 51:\n{:#?}", triggers.get(&15).unwrap());
 
     let (schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
@@ -483,7 +575,12 @@ pub async fn run_backend() {
 
     for event in &rchan_grab {
         events.push(event);
-        let trigger_overview = APPLICATION_STATE.data.read().unwrap().clone();
+
+        let macro_collections = APPLICATION_STATE.data.read().unwrap().clone();
+
+
+        let triggers = TRIGGERS_LIST.0.read().unwrap().clone();
+
         for i in &events {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
@@ -509,7 +606,25 @@ pub async fn run_backend() {
                 EventType::Wheel { delta_x, delta_y } => {}
             }
 
+            let channel_copy_send = schan_execute.clone();
+            let macro_data_copy = macro_collections.clone();
+            let pressed_keys_copy = pressed_keys.clone();
+
+            let pressed_keys_copy_converted: Vec<u32> = pressed_keys.clone().iter().map(|x| SCANCODE_TO_HID[&x]).collect();
+
+
             if pressed_keys.len() != 0 {
+                println!("{:?}", triggers);
+                println!("{:?}", pressed_keys);
+                if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap()) {
+                    println!("FIRST KEY FOUND!!!");
+                    let check_macros: Vec<Macro> = triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
+                    task::spawn(async move {
+                        check_macro_execution_efficiently(pressed_keys_copy_converted, check_macros.clone(), channel_copy_send);
+                    });
+                }
+
+
                 // let channel_copy_send = schan_execute.clone();
                 // let macro_data_copy = trigger_overview.clone();
                 // let pressed_keys_copy = pressed_keys.clone();
@@ -525,16 +640,26 @@ pub async fn run_backend() {
                 //     SCANCODE_TO_HID[&pressed_keys.first().unwrap()]
                 // );
             }
-            let channel_copy_send = schan_execute.clone();
-            let macro_data_copy = trigger_overview.clone();
-            let pressed_keys_copy = pressed_keys.clone();
+
+
             task::spawn(async move {
-                check_macro_execution(pressed_keys_copy, macro_data_copy, channel_copy_send)
-                    .await;
+                //check_macro_execution(pressed_keys_copy, macro_data_copy, channel_copy_send).await;
+                //check_macro_execution_efficiently(pressed_keys_copy_converted, macro_data_copy, channel_copy_send).await
             });
         }
 
         events.pop();
+    }
+}
+
+
+async fn check_macro_execution_efficiently(
+    pressed_keys: Vec<u32>,
+    trigger_overview: Vec<Macro>,
+    channel_sender: Sender<rdev::Event>,
+) {
+    for macros in &trigger_overview {
+        println!("MACROS BEING CHECKED (only bool true should be here):\n{:?}", macros);
     }
 }
 
@@ -586,6 +711,7 @@ async fn check_macro_execution(
     }
 }
 
+
 ///Sends an event to the library to Execute on an OS level.
 fn send(event_type: &EventType) {
     //let delay = time::Duration::from_millis(20);
@@ -596,7 +722,7 @@ fn send(event_type: &EventType) {
         }
     }
     // Let ths OS catchup (at least MacOS)
-    //TODO: remove the delay at least for windows, mac needs testing
+    //TODO: remove the delay at least for windows, mac needs testing (done by executor)
     //thread::sleep(delay);
 }
 

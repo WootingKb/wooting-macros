@@ -5,53 +5,8 @@
       "icon": "i",
       "macros": [
         {
-          "name": "Havo",
-          "sequence": [
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 17,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "Delay",
-              "data": 50
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 23,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "Delay",
-              "data": 50
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 19,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "Delay",
-              "data": 50
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 7,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            }
-          ],
+          "name": "Macro Same 1",
+          "sequence": [],
           "macro_type": "Single",
           "trigger": {
             "type": "KeyPressEvent",
@@ -60,6 +15,11 @@
                 "keypress": 51,
                 "press_duration": 0,
                 "keytype": "Down"
+              },
+              {
+                "keypress": 14,
+                "press_duration": 0,
+                "keytype": "Down"
               }
             ],
             "allow_while_other_keys": false
@@ -67,107 +27,36 @@
           "active": true
         },
         {
-          "name": "BumBac",
-          "sequence": [
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 18,
-                "press_duration": 1,
-                "keytype": "DownUp"
+          "name": "Macro Same 2",
+          "sequence": [],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 51,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 15,
+                "press_duration": 0,
+                "keytype": "Down"
               }
-            },
-            {
-              "type": "Delay",
-              "data": 50
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 8,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "Delay",
-              "data": 50
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 4,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            }
-          ],
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        },
+        {
+          "name": "Macro Different",
+          "sequence": [],
           "macro_type": "Single",
           "trigger": {
             "type": "KeyPressEvent",
             "data": [
               {
                 "keypress": 52,
-                "press_duration": 0,
-                "keytype": "Down"
-              }
-            ],
-            "allow_while_other_keys": false
-          },
-          "active": true
-        },
-        {
-          "name": "test 2",
-          "sequence": [
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 4,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 8,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 10,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 9,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            }
-          ],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 4,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 22,
-                "press_duration": 0,
-                "keytype": "Down"
-              },
-              {
-                "keypress": 7,
                 "press_duration": 0,
                 "keytype": "Down"
               }
