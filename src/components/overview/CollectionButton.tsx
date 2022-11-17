@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Switch, Text } from '@chakra-ui/react'
+import { Box, HStack, Switch, Text, useColorModeValue } from '@chakra-ui/react'
 import { StarIcon } from '@chakra-ui/icons'
 import { Collection } from '../../types'
 
@@ -17,11 +17,13 @@ function CollectionButton({
   setFocus,
   toggleCollection
 }: Props) {
+  const buttonBg = useColorModeValue('gray.400', 'gray.700')
+
   return (
     <Box
       pos="relative"
       w="100%"
-      bg={isFocused ? 'gray.400' : ''}
+      bg={isFocused ? buttonBg : ''}
       p="4px"
       rounded="md"
     >
@@ -37,6 +39,7 @@ function CollectionButton({
         <Text>{collection.name}</Text>
         <Switch
           size="sm"
+          colorScheme="yellow"
           defaultChecked={collection.active}
           isChecked={collection.active}
           onChange={() => toggleCollection(index)}

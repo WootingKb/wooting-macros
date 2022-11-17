@@ -10,7 +10,8 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem
+  MenuItem,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { EditIcon, StarIcon } from '@chakra-ui/icons'
 import { Keypress, Macro } from '../../types'
@@ -29,6 +30,8 @@ type Props = {
 function MacroCard({ macro, index, onDelete }: Props) {
   const { collections, changeSelectedMacroIndex, changeViewState } =
     useApplicationContext()
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const kebabColour = useColorModeValue('black', 'white')
 
   const onToggle = (event: BaseSyntheticEvent) => {
     macro.active = event.target.checked
@@ -37,7 +40,15 @@ function MacroCard({ macro, index, onDelete }: Props) {
   }
 
   return (
-    <VStack w="100%" border="1px" rounded="md" p="3" m="auto" spacing="8px">
+    <VStack
+      w="100%"
+      border="1px"
+      borderColor={borderColour}
+      rounded="md"
+      p="3"
+      m="auto"
+      spacing="8px"
+    >
       {/** Top Row */}
       <Flex w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
@@ -54,7 +65,7 @@ function MacroCard({ macro, index, onDelete }: Props) {
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
-                stroke="black"
+                stroke={kebabColour}
                 width={24}
                 height={24}
               >
@@ -84,10 +95,12 @@ function MacroCard({ macro, index, onDelete }: Props) {
       </Text>
       <Flex w="100%" gap="4px">
         {macro.trigger.data.map((key: Keypress, index: number) => (
-          <Kbd key={index}>{HIDLookup.get(key.keypress)?.displayString}</Kbd>
+          <Kbd key={index} p="1">
+            {HIDLookup.get(key.keypress)?.displayString}
+          </Kbd>
         ))}
       </Flex>
-      <Divider />
+      <Divider borderColor={borderColour} />
       {/** Buttons */}
       <Flex w="100%" alignItems="center" justifyContent="space-between">
         <Button
