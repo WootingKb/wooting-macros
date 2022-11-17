@@ -465,36 +465,19 @@ pub async fn run_backend() {
     //TODO: Make a way to disable this listening function
     //TODO: make this a grab instead of listen
     //TODO: try to make this interact better (cleanup the code a bit)
-    //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
 
     //Trigger hashes
 
     //println!("{:#?}", trigger_overview);
 
-    //TODO: Banish the match
     //TODO: Make the modifier keys non-ordered?
 
     let macros_data_from_state = APPLICATION_STATE.data.read().unwrap().clone();
     let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
-    //let mut processed_keys: Vec<rdev::Key> = Vec::new();
 
     generate_triggers(macros_data_from_state.clone());
-
-    //println!("{:#?}", triggers);
-
-    //println!("FOR KEY 51:\n{:#?}", triggers.0.get(&51).unwrap_or(&vec![Macro::new()]));
-
-    // let triggers = macros_data_from_state.extract_triggers();
-
-    // println!("FOR KEY 51:\n{:#?}", triggers.get(&51).unwrap().len());
-    // println!("FOR KEY 52:\n{:#?}", triggers.get(&52).unwrap().len());
-
-    // println!("MACRO AMOUNT FOR KEY:\n{:#?}", triggers.get(&11).unwrap().len());
-
-    //println!("FOR KEY 51:\n{:#?}", triggers.get(&11).unwrap());
-    //println!("FOR KEY 51:\n{:#?}", triggers.get(&15).unwrap());
 
     let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
@@ -510,6 +493,7 @@ pub async fn run_backend() {
                     let mut keys_pressed: Vec<rdev::Key>;
                     match &event.event_type {
                         //TODO: Grab and discard the trigger actually
+                        //TODO: Move the detection logic rightttt heree
                         EventType::KeyPress(key) => Some(event),
                         _ => Some(event),
                     }
@@ -522,24 +506,16 @@ pub async fn run_backend() {
     for event in &rchan_grab {
         events.push(event);
 
-
-        //TODO: channel this
         let macro_collections = APPLICATION_STATE.data.read().unwrap();
         let triggers = TRIGGERS_LIST.data.read().unwrap();
-
 
         for i in &events {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
                     pressed_keys.push(listened_key.clone());
-                    //processed_keys.push(listened_key.clone());
-
                     println!("{:?}", pressed_keys);
-
-                    //check_key(&pressed_keys);
                 }
                 EventType::KeyRelease(listened_key) => {
-                    //println!("Released: {:?}", listened_key);
                     pressed_keys.retain(|x| *x != listened_key);
                     println!("{:#?}", pressed_keys);
                 }
@@ -552,42 +528,26 @@ pub async fn run_backend() {
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {}
             }
-            if pressed_keys.len() != 0 {}
 
-            let pressed_keys_copy_converted: Vec<u32> = pressed_keys
-                .iter()
-                .map(|x| SCANCODE_TO_HID[&x])
-                .collect();
+            //So basically we gotta reload the variables. I think this entire thing will get a refactor soon
+            let pressed_keys_copy_converted: Vec<u32> =
+                pressed_keys.iter().map(|x| SCANCODE_TO_HID[&x]).collect();
 
-            //println!("{:?}", pressed_keys);
-            //TODO: problem is here. TO FIX TOMMOROW!
-            println!("{:?}", pressed_keys_copy_converted);
             if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap_or(&0)) {
-                //println!("EventFind: FIRST KEY FOUND!!!");
-                //println!("EventFind: Triggers containsKey:\n {:#?}", &triggers);
                 let check_macros: Vec<Macro> =
                     triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
                 let channel_copy_send = schan_execute.clone();
 
                 task::spawn(async move {
-                    println!("EventFind: Macro length: {:#?}", check_macros);
-                    println!("EventFind: Pressed keys length: {}", pressed_keys_copy_converted.len());
                     check_macro_execution_efficiently(
                         pressed_keys_copy_converted,
                         check_macros,
                         channel_copy_send,
-                    ).await;
-                    //println!("EventFind: Task spawned and check_macro_efficient launched");
+                    )
+                        .await;
                 });
-
-                // check_macro_execution_efficiently(
-                // pressed_keys_copy_converted,
-                // check_macros,
-                // channel_copy_send,
-                // );
             }
         }
-
 
         events.pop();
     }
@@ -599,29 +559,23 @@ async fn check_macro_execution_efficiently(
     channel_sender: Sender<rdev::Event>,
 ) {
     for macros in &trigger_overview {
-        //println!("CheckMacroExec: MACROS BEING CHECKED");
-
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                //println!("CheckMacroExec: Matching type");
-
                 let keypress_to_check: Vec<u32> = data.iter().map(|x| x.keypress).collect();
 
-                println!("CheckMacroExec: Converted keys to vec<u32>\n {:#?}", keypress_to_check);
+                println!(
+                    "CheckMacroExec: Converted keys to vec<u32>\n {:#?}",
+                    keypress_to_check
+                );
 
                 if keypress_to_check == pressed_keys {
-                    //println!("CheckMacroExec: keys match");
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
-                    // println!(
-                    //     "IMPORTANT: Executing macro because of trigger {:#?} == {:#?}",
-                    //     keypress_to_check, pressed_keys
-                    // );
 
                     task::spawn(async move {
-                        //println!("TaskSpwnCheckMacroExec: Executing macro {:#?}", macro_clone);
                         execute_macro(macro_clone, channel_clone).await;
-                    }).await;
+                    })
+                        .await;
                 }
             }
         }
