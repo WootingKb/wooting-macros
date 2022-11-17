@@ -97,7 +97,7 @@ lazy_static! {
 }
 
 lazy_static! {
-    pub static ref TRIGGERS_LIST: Triggers = { Triggers::new()};
+    pub static ref TRIGGERS_LIST: Triggers = { Triggers::new() };
 }
 
 // lazy_static! {

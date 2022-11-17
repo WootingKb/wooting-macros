@@ -223,6 +223,8 @@ pub fn set_macros(state: tauri::State<MacroDataState>, frontend_data: MacroData)
 
     let mut app_state = APPLICATION_STATE.data.write().unwrap();
     *app_state = frontend_data;
+
+    generate_triggers(app_state.clone());
 }
 
 /// Function for a manual write of config changes from the backend side. Just a test.
@@ -283,7 +285,6 @@ impl MacroDataState {
 //     trigger_table: HashMap<Vec<rdev::Key>, &'a Macro>,
 // }
 
-
 ///Collections are groups of macros.
 type Collections = Vec<Collection>;
 
@@ -292,10 +293,11 @@ pub struct Triggers(RwLock<HashMap<u32, Vec<Macro>>>);
 
 impl Triggers {
     pub fn new() -> Self {
-        Triggers { 0: RwLock::from(HashMap::new()) }
+        Triggers {
+            0: RwLock::from(HashMap::new()),
+        }
     }
 }
-
 
 pub fn generate_triggers(macro_data: MacroData) {
     let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
@@ -308,14 +310,18 @@ pub fn generate_triggers(macro_data: MacroData) {
                 if macros.active == true {
                     match &macros.trigger {
                         TriggerEventType::KeyPressEvent { data, .. } => {
-                            output_tuple.push((SCANCODE_TO_RDEV[&data.first().unwrap().keypress], data.first().unwrap().keypress.clone()));
+                            output_tuple.push((
+                                SCANCODE_TO_RDEV[&data.first().unwrap().keypress],
+                                data.first().unwrap().keypress.clone(),
+                            ));
                             //output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, macros.clone());
 
                             match output_hashmap.get_mut(&data.first().unwrap().keypress) {
-                                Some(mut value) => { value.push(macros.clone()) }
-                                None => {
-                                    output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, vec![macros.clone()])
-                                }
+                                Some(mut value) => value.push(macros.clone()),
+                                None => output_hashmap.insert_nocheck(
+                                    data.clone().first().unwrap().keypress,
+                                    vec![macros.clone()],
+                                ),
                             }
                         }
                     }
@@ -345,7 +351,6 @@ impl MacroData {
             .unwrap();
     }
 
-
     pub fn extract_triggers(&self) -> HashMap<u32, Vec<Macro>> {
         let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
 
@@ -357,14 +362,18 @@ impl MacroData {
                     if macros.active == true {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
-                                output_tuple.push((SCANCODE_TO_RDEV[&data.first().unwrap().keypress], data.first().unwrap().keypress.clone()));
+                                output_tuple.push((
+                                    SCANCODE_TO_RDEV[&data.first().unwrap().keypress],
+                                    data.first().unwrap().keypress.clone(),
+                                ));
                                 //output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, macros.clone());
 
                                 match output_hashmap.get_mut(&data.first().unwrap().keypress) {
-                                    Some(mut value) => { value.push(macros.clone()) }
-                                    None => {
-                                        output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, vec![macros.clone()])
-                                    }
+                                    Some(mut value) => value.push(macros.clone()),
+                                    None => output_hashmap.insert_nocheck(
+                                        data.clone().first().unwrap().keypress,
+                                        vec![macros.clone()],
+                                    ),
                                 }
                             }
                         }
@@ -537,7 +546,6 @@ pub async fn run_backend() {
 
     //println!("{:#?}", triggers);
 
-
     //println!("FOR KEY 51:\n{:#?}", triggers.0.get(&51).unwrap_or(&vec![Macro::new()]));
 
     // let triggers = macros_data_from_state.extract_triggers();
@@ -550,7 +558,7 @@ pub async fn run_backend() {
     //println!("FOR KEY 51:\n{:#?}", triggers.get(&11).unwrap());
     //println!("FOR KEY 51:\n{:#?}", triggers.get(&15).unwrap());
 
-    let (schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+    let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
     task::spawn(async move {
         executor_sender(rchan_execute).await;
@@ -579,7 +587,6 @@ pub async fn run_backend() {
         let macro_collections = APPLICATION_STATE.data.read().unwrap().clone();
 
 
-        let triggers = TRIGGERS_LIST.0.read().unwrap().clone();
 
         for i in &events {
             match i.event_type {
@@ -606,52 +613,42 @@ pub async fn run_backend() {
                 EventType::Wheel { delta_x, delta_y } => {}
             }
 
-            let channel_copy_send = schan_execute.clone();
-            let macro_data_copy = macro_collections.clone();
-            let pressed_keys_copy = pressed_keys.clone();
-
-            let pressed_keys_copy_converted: Vec<u32> = pressed_keys.clone().iter().map(|x| SCANCODE_TO_HID[&x]).collect();
-
-
             if pressed_keys.len() != 0 {
-                println!("{:?}", triggers);
-                println!("{:?}", pressed_keys);
+                let triggers = TRIGGERS_LIST.0.read().unwrap().clone();
+                println!("EventFind: Length is not zero");
+
+                let pressed_keys_copy_converted: Vec<u32> = pressed_keys
+                    .iter()
+                    .map(|x| SCANCODE_TO_HID[&x])
+                    .collect();
+
+                //println!("{:?}", triggers);
+                //println!("{:?}", pressed_keys_copy_converted);
                 if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap()) {
-                    println!("FIRST KEY FOUND!!!");
-                    let check_macros: Vec<Macro> = triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
+                    println!("EventFind: FIRST KEY FOUND!!!");
+                    println!("EventFind: Triggers containsKey:\n {:#?}", &triggers);
+                    let check_macros: Vec<Macro> =
+                        triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
+                    let channel_copy_send = schan_execute.clone();
+
                     task::spawn(async move {
-                        check_macro_execution_efficiently(pressed_keys_copy_converted, check_macros.clone(), channel_copy_send);
+                        println!("EventFind: Spawning task");
+                        check_macro_execution_efficiently(
+                            pressed_keys_copy_converted,
+                            check_macros,
+                            channel_copy_send,
+                        )
+                            .await;
+                        println!("EventFind: Task spawned and check_macro_efficient launched");
                     });
+
                 }
-
-
-                // let channel_copy_send = schan_execute.clone();
-                // let macro_data_copy = trigger_overview.clone();
-                // let pressed_keys_copy = pressed_keys.clone();
-                // task::spawn(async move {
-                //     check_macro_execution(pressed_keys_copy, macro_data_copy, channel_copy_send)
-                //         .await;
-                // });
-
-                //println!("{:#?}", pressed_keys);
-                // // check_macro_execution(&pressed_keys, &trigger_overview, schan_execute.clone());
-                // println!(
-                //     "\nKey: {} WAS PRESSED IN HID CODE",
-                //     SCANCODE_TO_HID[&pressed_keys.first().unwrap()]
-                // );
             }
-
-
-            task::spawn(async move {
-                //check_macro_execution(pressed_keys_copy, macro_data_copy, channel_copy_send).await;
-                //check_macro_execution_efficiently(pressed_keys_copy_converted, macro_data_copy, channel_copy_send).await
-            });
         }
 
         events.pop();
     }
 }
-
 
 async fn check_macro_execution_efficiently(
     pressed_keys: Vec<u32>,
@@ -659,7 +656,31 @@ async fn check_macro_execution_efficiently(
     channel_sender: Sender<rdev::Event>,
 ) {
     for macros in &trigger_overview {
-        println!("MACROS BEING CHECKED (only bool true should be here):\n{:?}", macros);
+        println!("CheckMacroExec: MACROS BEING CHECKED");
+
+        match &macros.trigger {
+            TriggerEventType::KeyPressEvent { data, .. } => {
+                println!("CheckMacroExec: Matching type");
+
+                let keypress_to_check: Vec<u32> = data.iter().map(|x| x.keypress).collect();
+
+                println!("CheckMacroExec: Converted keys to vec<u32>");
+
+                if keypress_to_check == pressed_keys {
+                    println!("CheckMacroExec: keys match");
+                    let channel_clone = channel_sender.clone();
+                    let macro_clone = macros.clone();
+                    println!(
+                        "Executing macro because of trigger {:#?} == {:#?}",
+                        keypress_to_check, pressed_keys
+                    );
+
+                    task::spawn(async move {
+                        execute_macro(macro_clone, channel_clone).await;
+                    });
+                }
+            }
+        }
     }
 }
 
@@ -710,7 +731,6 @@ async fn check_macro_execution(
         }
     }
 }
-
 
 ///Sends an event to the library to Execute on an OS level.
 fn send(event_type: &EventType) {
