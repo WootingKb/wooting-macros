@@ -18,7 +18,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 4,
+                "keypress": 8,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -26,7 +26,15 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 25,
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -51,6 +59,48 @@
               },
               {
                 "keypress": 96,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        },
+        {
+          "name": "lol macro",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 18,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 51,
                 "press_duration": 0,
                 "keytype": "Down"
               }

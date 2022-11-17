@@ -531,8 +531,6 @@ pub async fn run_backend() {
         for i in &events {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
-                    //TODO: BUG IS SOMEWHERE HERE...
-                    //TODO: Macro execution pattern matching has "some" issues let's say.
                     pressed_keys.push(listened_key.clone());
                     //processed_keys.push(listened_key.clone());
 
@@ -554,44 +552,40 @@ pub async fn run_backend() {
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {}
             }
-            if pressed_keys.len() != 0 {
+            if pressed_keys.len() != 0 {}
 
-                //println!("EventFind: Length is not zero");
+            let pressed_keys_copy_converted: Vec<u32> = pressed_keys
+                .iter()
+                .map(|x| SCANCODE_TO_HID[&x])
+                .collect();
 
-                let pressed_keys_copy_converted: Vec<u32> = pressed_keys
-                    .iter()
-                    .map(|x| SCANCODE_TO_HID[&x])
-                    .collect();
+            //println!("{:?}", pressed_keys);
+            //TODO: problem is here. TO FIX TOMMOROW!
+            println!("{:?}", pressed_keys_copy_converted);
+            if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap_or(&0)) {
+                //println!("EventFind: FIRST KEY FOUND!!!");
+                //println!("EventFind: Triggers containsKey:\n {:#?}", &triggers);
+                let check_macros: Vec<Macro> =
+                    triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
+                let channel_copy_send = schan_execute.clone();
 
-                //println!("{:?}", pressed_keys);
-                //println!("{:?}", pressed_keys_copy_converted);
-                if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap()) {
-                    //println!("EventFind: FIRST KEY FOUND!!!");
-                    //println!("EventFind: Triggers containsKey:\n {:#?}", &triggers);
-                    let check_macros: Vec<Macro> =
-                        triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
-                    let channel_copy_send = schan_execute.clone();
+                task::spawn(async move {
+                    println!("EventFind: Macro length: {:#?}", check_macros);
+                    println!("EventFind: Pressed keys length: {}", pressed_keys_copy_converted.len());
+                    check_macro_execution_efficiently(
+                        pressed_keys_copy_converted,
+                        check_macros,
+                        channel_copy_send,
+                    ).await;
+                    //println!("EventFind: Task spawned and check_macro_efficient launched");
+                });
 
-                    task::spawn(async move {
-                        println!("EventFind: Macro length: {:#?}", check_macros);
-                        println!("EventFind: Pressed keys length: {}", pressed_keys_copy_converted.len());
-                        check_macro_execution_efficiently(
-                            pressed_keys_copy_converted,
-                            check_macros,
-                            channel_copy_send,
-                        ).await;
-                        //println!("EventFind: Task spawned and check_macro_efficient launched");
-                    });
-
-                    // check_macro_execution_efficiently(
-                    // pressed_keys_copy_converted,
-                    // check_macros,
-                    // channel_copy_send,
-                    // );
-                }
-                //processed_keys = Vec::new();
+                // check_macro_execution_efficiently(
+                // pressed_keys_copy_converted,
+                // check_macros,
+                // channel_copy_send,
+                // );
             }
-
         }
 
 
