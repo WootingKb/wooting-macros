@@ -7,7 +7,8 @@ import {
   Kbd,
   Button,
   Text,
-  Divider
+  Divider,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { HIDLookup } from '../../maps/HIDmap'
 import { Keypress } from '../../types'
@@ -23,6 +24,8 @@ const TriggerArea = ({
   triggerKeys,
   onRecordButtonPress
 }: Props) => {
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+
   return (
     <VStack
       w="50%"
@@ -30,7 +33,7 @@ const TriggerArea = ({
       py="4px"
       px="16px"
       border="1px"
-      borderColor="gray.200"
+      borderColor={dividerColour}
       rounded="md"
       justifyContent="center"
     >
@@ -53,7 +56,7 @@ const TriggerArea = ({
           </Alert>
         )}
       </HStack>
-      <Divider />
+      <Divider borderColor={dividerColour} />
       <HStack w="100%" justifyContent="space-between">
         <VStack alignItems="normal" w="full" h="full">
           <HStack spacing="4px" h="full">

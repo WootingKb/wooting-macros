@@ -1,4 +1,4 @@
-import { VStack, HStack } from '@chakra-ui/react'
+import { VStack, HStack, useColorModeValue } from '@chakra-ui/react'
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { useApplicationContext } from '../contexts/applicationContext'
 import {
@@ -34,11 +34,12 @@ const Macroview = ({ isEditing }: Props) => {
   const [selectedMacroType, setSelectedMacroType] = useState(0)
   // need state for 'allow_while_other_keys', just a boolean
 
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+
   useEffect(() => {
     if (!isEditing) {
       return
     }
-    console.log(currentMacro)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
   }, [])
@@ -145,7 +146,8 @@ const Macroview = ({ isEditing }: Props) => {
         w="100%"
         h="calc(100% - 190px)"
         borderTop="1px"
-        borderColor="gray.200"
+        borderColor={dividerColour}
+        spacing="0"
       >
         {/** Bottom Panels */}
         <SelectElementArea />
