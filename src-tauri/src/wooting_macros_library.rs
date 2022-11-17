@@ -478,7 +478,7 @@ pub async fn run_backend() {
     let macros_data_from_state = APPLICATION_STATE.data.read().unwrap().clone();
     let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
-    let mut processed_keys: Vec<rdev::Key> = Vec::new();
+    //let mut processed_keys: Vec<rdev::Key> = Vec::new();
 
     generate_triggers(macros_data_from_state.clone());
 
@@ -532,17 +532,18 @@ pub async fn run_backend() {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
                     //TODO: BUG IS SOMEWHERE HERE...
+                    //TODO: Macro execution pattern matching has "some" issues let's say.
                     pressed_keys.push(listened_key.clone());
-                    processed_keys.push(listened_key.clone());
+                    //processed_keys.push(listened_key.clone());
 
-                    //println!("Pressed: {:?}", listened_key);
+                    println!("{:?}", pressed_keys);
 
                     //check_key(&pressed_keys);
                 }
                 EventType::KeyRelease(listened_key) => {
                     //println!("Released: {:?}", listened_key);
                     pressed_keys.retain(|x| *x != listened_key);
-                    //println!("{:#?}", pressed_keys);
+                    println!("{:#?}", pressed_keys);
                 }
                 EventType::ButtonPress(listened_key) => {
                     println!("MB Pressed:{:?}", listened_key)
@@ -553,16 +554,16 @@ pub async fn run_backend() {
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {}
             }
-            if processed_keys.len() != 0 {
+            if pressed_keys.len() != 0 {
 
                 //println!("EventFind: Length is not zero");
 
-                let pressed_keys_copy_converted: Vec<u32> = processed_keys
+                let pressed_keys_copy_converted: Vec<u32> = pressed_keys
                     .iter()
                     .map(|x| SCANCODE_TO_HID[&x])
                     .collect();
 
-                println!("{:?}", processed_keys);
+                //println!("{:?}", pressed_keys);
                 //println!("{:?}", pressed_keys_copy_converted);
                 if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap()) {
                     //println!("EventFind: FIRST KEY FOUND!!!");
@@ -588,7 +589,7 @@ pub async fn run_backend() {
                     // channel_copy_send,
                     // );
                 }
-                processed_keys = Vec::new();
+                //processed_keys = Vec::new();
             }
 
         }
