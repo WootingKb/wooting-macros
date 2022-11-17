@@ -9,7 +9,8 @@ import {
   TabPanel,
   SimpleGrid,
   HStack,
-  Flex
+  Flex,
+  Divider
 } from '@chakra-ui/react'
 import { ActionEventType } from '../../types'
 import { AddIcon } from '@chakra-ui/icons'
@@ -37,6 +38,7 @@ const SelectElementArea = () => {
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         Sequence Elements
       </Text>
+      <Divider borderColor="gray.300"/>
       <Tabs
         w="100%"
         h="100%"

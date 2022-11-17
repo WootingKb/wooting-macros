@@ -56,7 +56,6 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
     if (selectedElementIndex === element.id) {
       return
     }
-    console.log(element.id)
     updateElementIndex(element.id)
   }
 
@@ -75,6 +74,7 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
       {...attributes}
       w={isSmallVariant ? 'fit-content' : '100%'}
       border="1px"
+      borderColor="gray.400"
       rounded="md"
       spacing="0px"
       bg="white"
@@ -83,6 +83,7 @@ const SequenceElementDraggableDisplay = ({ element }: Props) => {
       <Box
         {...listeners}
         borderRight="1px"
+        borderColor="gray.400"
         p="4px"
         h="full"
         sx={isDragging ? { cursor: 'grabbing' } : { cursor: 'grab' }}
