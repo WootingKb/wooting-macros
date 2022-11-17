@@ -17,7 +17,7 @@ function CollectionButton({
   setFocus,
   toggleCollection
 }: Props) {
-const buttonBg = useColorModeValue("gray.400", "gray.700")
+  const buttonBg = useColorModeValue('gray.400', 'gray.700')
 
   return (
     <Box

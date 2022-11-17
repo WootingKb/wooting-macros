@@ -34,7 +34,7 @@ const Macroview = ({ isEditing }: Props) => {
   const [selectedMacroType, setSelectedMacroType] = useState(0)
   // need state for 'allow_while_other_keys', just a boolean
 
-  const dividerColour = useColorModeValue("gray.400", "gray.600")
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (!isEditing) {

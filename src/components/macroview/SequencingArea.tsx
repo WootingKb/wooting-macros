@@ -1,6 +1,21 @@
-import { VStack, HStack, Text, Button, Divider, useColorModeValue } from '@chakra-ui/react'
+import {
+  VStack,
+  HStack,
+  Text,
+  Button,
+  Divider,
+  useColorModeValue
+} from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -15,22 +30,22 @@ import { useState } from 'react'
 
 // TODO: Record functionality; add delay functionality
 const SequencingArea = () => {
-  const [activeId, setActiveId] = useState(undefined);
+  const [activeId, setActiveId] = useState(undefined)
   const { sequence, addToSequence, overwriteSequence } = useSequenceContext()
-  const dividerColour = useColorModeValue("gray.400", "gray.600")
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: sortableKeyboardCoordinates
     })
-  );
+  )
 
-  const handleDragStart = (event:any) => {
-    const {active} = event;
+  const handleDragStart = (event: any) => {
+    const { active } = event
     console.log(active.id)
     console.log(sequence)
-    setActiveId(active.id);
+    setActiveId(active.id)
   }
 
   const handleDragEnd = (event: any) => {
@@ -77,27 +92,32 @@ const SequencingArea = () => {
           </Button>
         </HStack>
       </HStack>
-      <Divider borderColor={dividerColour}/>
+      <Divider borderColor={dividerColour} />
       {/** Timeline */}
-      <DndContext 
+      <DndContext
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis]}
         collisionDetection={closestCenter}
         sensors={sensors}
-        >
+      >
         <SortableContext
           items={sequence.map((element) => element.id)}
           strategy={verticalListSortingStrategy}
         >
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
             {sequence.map((element: SequenceElement) => (
-              <SequenceElementDraggableDisplay element={element} key={element.id} />
+              <SequenceElementDraggableDisplay
+                element={element}
+                key={element.id}
+              />
             ))}
           </VStack>
         </SortableContext>
         <DragOverlay>
-          {activeId ? <SequenceElementDraggableDisplay element={sequence[activeId]} /> : undefined}
+          {activeId ? (
+            <SequenceElementDraggableDisplay element={sequence[activeId]} />
+          ) : undefined}
         </DragOverlay>
       </DndContext>
     </VStack>

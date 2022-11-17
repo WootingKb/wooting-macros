@@ -7,12 +7,9 @@ import { updateBackendConfig } from '../../utils'
 import MacroCard from './MacroCard'
 
 const MacroList = () => {
-      const {
-    collections,
-    selection,
-  } = useApplicationContext()
-const currentCollection: Collection = useSelectedCollection()
-const [temp, setTemp] = useState(false)
+  const { collections, selection } = useApplicationContext()
+  const currentCollection: Collection = useSelectedCollection()
+  const [temp, setTemp] = useState(false)
 
   const onMacroDelete = (macroIndex: number) => {
     collections[selection.collectionIndex].macros.splice(macroIndex, 1)
@@ -22,17 +19,17 @@ const [temp, setTemp] = useState(false)
 
   return (
     <Grid
-        w="100%"
-        templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        p="2"
-        gap="2"
-        overflowY="auto"
+      w="100%"
+      templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
+      p="2"
+      gap="2"
+      overflowY="auto"
     >
-        {currentCollection.macros.map((macro: Macro, index: number) => (
+      {currentCollection.macros.map((macro: Macro, index: number) => (
         <GridItem w="100%" key={index}>
-            <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
+          <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
         </GridItem>
-        ))}
+      ))}
     </Grid>
   )
 }

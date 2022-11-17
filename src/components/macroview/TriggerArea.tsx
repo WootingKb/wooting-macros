@@ -24,7 +24,7 @@ const TriggerArea = ({
   triggerKeys,
   onRecordButtonPress
 }: Props) => {
-const dividerColour = useColorModeValue("gray.400", "gray.600")
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
     <VStack
@@ -56,7 +56,7 @@ const dividerColour = useColorModeValue("gray.400", "gray.600")
           </Alert>
         )}
       </HStack>
-      <Divider borderColor={dividerColour}/>
+      <Divider borderColor={dividerColour} />
       <HStack w="100%" justifyContent="space-between">
         <VStack alignItems="normal" w="full" h="full">
           <HStack spacing="4px" h="full">

@@ -32,5 +32,9 @@ export function useSequence() {
 
 export function useSelectedElement() {
   const context = useSequenceContext()
-  return context.sequence[context.sequence.findIndex((element) => element.id === context.selectedElementIndex)]
+  return context.sequence[
+    context.sequence.findIndex(
+      (element) => element.id === context.selectedElementIndex
+    )
+  ]
 }

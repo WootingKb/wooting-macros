@@ -1,5 +1,15 @@
 import { StarIcon } from '@chakra-ui/icons'
-import { VStack, Text, Input, Button, Flex, Grid, GridItem, Divider, useColorModeValue } from '@chakra-ui/react'
+import {
+  VStack,
+  Text,
+  Input,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Divider,
+  useColorModeValue
+} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useSelectedElement } from '../../contexts/selectors'
 import { useSequenceContext } from '../../contexts/sequenceContext'
@@ -12,7 +22,7 @@ const EditArea = () => {
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { selectedElementIndex } = useSequenceContext()
   const selectedElement = useSelectedElement()
-  const dividerColour = useColorModeValue("gray.400", "gray.600")
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (selectedElementIndex <= 0) {
@@ -20,11 +30,12 @@ const EditArea = () => {
     }
     switch (selectedElement.data.type) {
       case 'KeyPressEvent': {
-        const typeString: keyof typeof KeyType = selectedElement.data.data.keytype as keyof typeof KeyType
+        const typeString: keyof typeof KeyType = selectedElement.data.data
+          .keytype as keyof typeof KeyType
         setKeypressType(KeyType[typeString])
         setKeypressDuration(selectedElement.data.data.press_duration)
         setCurrentTypeIndex(0)
-        break        
+        break
       }
       case 'Delay':
         setDelayDuration(selectedElement.data.data)
@@ -35,21 +46,24 @@ const EditArea = () => {
     }
   }, [selectedElement])
 
-
-  const onDelayDurationChange = (event:any) => {
+  const onDelayDurationChange = (event: any) => {
     setDelayDuration(event.target.value)
     // TODO: fix element display in sequencing area not updating when fields are changed
     selectedElement.data.data = parseInt(event.target.value)
   }
 
-  const onKeypressDurationChange = (event:any) => {
-    if (selectedElement.data.type !== "KeyPressEvent") {return}
+  const onKeypressDurationChange = (event: any) => {
+    if (selectedElement.data.type !== 'KeyPressEvent') {
+      return
+    }
     setKeypressDuration(event.target.value)
     selectedElement.data.data.press_duration = parseInt(event.target.value)
   }
 
-  const onKeypressTypeChange = (newType:KeyType) => {
-    if (selectedElement.data.type !== "KeyPressEvent") {return}
+  const onKeypressTypeChange = (newType: KeyType) => {
+    if (selectedElement.data.type !== 'KeyPressEvent') {
+      return
+    }
     setKeypressType(newType)
     selectedElement.data.data.keytype = KeyType[newType]
   }
@@ -76,71 +90,125 @@ const EditArea = () => {
   }
 
   if (currentTypeIndex === 1) {
-    return(
-      <VStack w="25%" h="full" borderLeft="1px" borderColor={dividerColour} alignItems="center" p="3">
+    return (
+      <VStack
+        w="25%"
+        h="full"
+        borderLeft="1px"
+        borderColor={dividerColour}
+        alignItems="center"
+        p="3"
+      >
         <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-          {selectedElement.data.type  + " Element"}
+          {selectedElement.data.type + ' Element'}
         </Text>
-        <Divider borderColor={dividerColour}/>
+        <Divider borderColor={dividerColour} />
         <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-          <GridItem w='100%' h="8px" alignItems="center" justifyContent="center">
+          <GridItem
+            w="100%"
+            h="8px"
+            alignItems="center"
+            justifyContent="center"
+          >
             <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
           </GridItem>
-          <GridItem w='100%'>
-            <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
+          <GridItem w="100%">
+            <Flex
+              gap={['4px']}
+              alignItems="center"
+              justifyContent="space-around"
+            >
               <Input
                 variant="outline"
                 borderColor="gray.400"
-                value={delayDuration} onChange={onDelayDurationChange}
+                value={delayDuration}
+                onChange={onDelayDurationChange}
               />
             </Flex>
           </GridItem>
         </Grid>
-        <Button variant="outline" w="fit-content" colorScheme='yellow' onClick={() => setDelayDuration(50)}>Set to Default</Button>
+        <Button
+          variant="outline"
+          w="fit-content"
+          colorScheme="yellow"
+          onClick={() => setDelayDuration(50)}
+        >
+          Set to Default
+        </Button>
       </VStack>
     )
   }
   // default for keypress
   return (
-      <VStack w="25%" h="full" borderLeft="1px" borderColor={dividerColour} alignItems="center" p="3">
-        <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-          {selectedElement.data.type + " Element"}
-        </Text>
-        <Divider borderColor={dividerColour}/>
-        <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-          <GridItem w='100%' h="8px" alignItems="center" justifyContent="center">
-            <Text fontSize={['xs', 'sm', 'md']}>Type of keystroke</Text>
-          </GridItem>
-          <GridItem w='100%'>
-            <Flex flexDir={['column', 'column', 'column', 'row']} gap="4px" justifyContent="space-around">
-              <Button leftIcon={<StarIcon/>} w="100%" size={['sm', 'md']} onClick={() => onKeypressTypeChange(KeyType.DownUp)} isActive={keypressType === KeyType.DownUp}>
-                <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
-              </Button>
-              <Button leftIcon={<StarIcon/>} w="100%" size={['sm', 'md']} onClick={() => onKeypressTypeChange(KeyType.Down)} isActive={keypressType === KeyType.Down}>
-                <Text fontSize={['md', 'md', 'sm']}>Key Down</Text>
-                </Button>
-              <Button leftIcon={<StarIcon/>} w="100%" size={['sm', 'md']} onClick={() => onKeypressTypeChange(KeyType.Up)} isActive={keypressType === KeyType.Up}>
-                <Text fontSize={['md', 'md', 'sm']}>Key Up</Text>
-                </Button>
-            </Flex>
-          </GridItem>
-        </Grid>
-        <Grid templateRows={'20px 1fr'} gap="2">
-          <GridItem w='100%' h="8px" alignItems="center" justifyContent="center">
-            <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
-          </GridItem>
-          <GridItem w='100%'>
-            <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
-              <Input
-                variant="outline"
-                borderColor="gray.400"
-                isDisabled={keypressType === KeyType.DownUp ? false : true}
-                value={keypressDuration} onChange={onKeypressDurationChange}
-              />
-            </Flex>
-          </GridItem>
-        </Grid>
-      </VStack>
+    <VStack
+      w="25%"
+      h="full"
+      borderLeft="1px"
+      borderColor={dividerColour}
+      alignItems="center"
+      p="3"
+    >
+      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+        {selectedElement.data.type + ' Element'}
+      </Text>
+      <Divider borderColor={dividerColour} />
+      <Grid templateRows={'20px 1fr'} gap="2" w="100%">
+        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+          <Text fontSize={['xs', 'sm', 'md']}>Type of keystroke</Text>
+        </GridItem>
+        <GridItem w="100%">
+          <Flex
+            flexDir={['column', 'column', 'column', 'row']}
+            gap="4px"
+            justifyContent="space-around"
+          >
+            <Button
+              leftIcon={<StarIcon />}
+              w="100%"
+              size={['sm', 'md']}
+              onClick={() => onKeypressTypeChange(KeyType.DownUp)}
+              isActive={keypressType === KeyType.DownUp}
+            >
+              <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
+            </Button>
+            <Button
+              leftIcon={<StarIcon />}
+              w="100%"
+              size={['sm', 'md']}
+              onClick={() => onKeypressTypeChange(KeyType.Down)}
+              isActive={keypressType === KeyType.Down}
+            >
+              <Text fontSize={['md', 'md', 'sm']}>Key Down</Text>
+            </Button>
+            <Button
+              leftIcon={<StarIcon />}
+              w="100%"
+              size={['sm', 'md']}
+              onClick={() => onKeypressTypeChange(KeyType.Up)}
+              isActive={keypressType === KeyType.Up}
+            >
+              <Text fontSize={['md', 'md', 'sm']}>Key Up</Text>
+            </Button>
+          </Flex>
+        </GridItem>
+      </Grid>
+      <Grid templateRows={'20px 1fr'} gap="2">
+        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+          <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
+        </GridItem>
+        <GridItem w="100%">
+          <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
+            <Input
+              variant="outline"
+              borderColor="gray.400"
+              isDisabled={keypressType === KeyType.DownUp ? false : true}
+              value={keypressDuration}
+              onChange={onKeypressDurationChange}
+            />
+          </Flex>
+        </GridItem>
+      </Grid>
+    </VStack>
   )
 }
 

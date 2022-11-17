@@ -1,4 +1,11 @@
-import { Box, Divider, HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  Divider,
+  HStack,
+  IconButton,
+  Text,
+  useColorModeValue
+} from '@chakra-ui/react'
 import {
   DeleteIcon,
   DragHandleIcon,
@@ -20,8 +27,8 @@ type Props = {
 const SequenceElementDraggableDisplay = ({ element }: Props) => {
   const [isSmallVariant, setIsSmallVariant] = useState(false)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const bg = useColorModeValue("white", "gray.800")
-    const dividerColour = useColorModeValue("gray.400", "gray.600")
+  const bg = useColorModeValue('white', 'gray.800')
+  const dividerColour = useColorModeValue('gray.400', 'gray.600')
   const { selectedElementIndex, removeFromSequence, updateElementIndex } =
     useSequenceContext()
   const {
