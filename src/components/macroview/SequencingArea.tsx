@@ -1,4 +1,4 @@
-import { VStack, HStack, Text, Button, Divider } from '@chakra-ui/react'
+import { VStack, HStack, Text, Button, Divider, useColorModeValue } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import {
@@ -17,6 +17,7 @@ import { useState } from 'react'
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState(undefined);
   const { sequence, addToSequence, overwriteSequence } = useSequenceContext()
+  const dividerColour = useColorModeValue("gray.400", "gray.600")
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -57,24 +58,26 @@ const SequencingArea = () => {
   }
 
   return (
-    <VStack w="41%" h="full" p="8px">
+    <VStack w="41%" h="full" p="3">
       {/** Header */}
-      <HStack justifyContent="space-around" w="100%" alignItems="center">
+      <HStack justifyContent="space-between" w="100%" alignItems="center">
         <Text fontWeight="semibold" fontSize={['sm', 'md']}>
           Sequence
         </Text>
-        <Button leftIcon={<EditIcon />} size={['xs', 'sm', 'md']}>
-          Record
-        </Button>
-        <Button
-          leftIcon={<EditIcon />}
-          size={['xs', 'sm', 'md']}
-          onClick={onAddDelayButtonPress}
-        >
-          Add Delay
-        </Button>
+        <HStack>
+          <Button leftIcon={<EditIcon />} size={['xs', 'sm', 'md']}>
+            Record
+          </Button>
+          <Button
+            leftIcon={<EditIcon />}
+            size={['xs', 'sm', 'md']}
+            onClick={onAddDelayButtonPress}
+          >
+            Add Delay
+          </Button>
+        </HStack>
       </HStack>
-      <Divider borderColor="gray.300"/>
+      <Divider borderColor={dividerColour}/>
       {/** Timeline */}
       <DndContext 
         onDragStart={handleDragStart}

@@ -119,6 +119,66 @@
             "allow_while_other_keys": false
           },
           "active": true
+        },
+        {
+          "name": "test 2",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 4,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 8,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 10,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 9,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 4,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 22,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 7,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
         }
       ],
       "active": true

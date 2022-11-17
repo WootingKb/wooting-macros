@@ -1,5 +1,5 @@
 import { EditIcon } from '@chakra-ui/icons'
-import { HStack, VStack, IconButton, Text, Divider } from '@chakra-ui/react'
+import { HStack, VStack, IconButton, Text, Divider, useColorModeValue } from '@chakra-ui/react'
 import { MacroType, MacroTypeDefinitions } from '../../enums'
 import { checkIfStringIsNonNumeric } from '../../utils'
 
@@ -12,6 +12,8 @@ const MacroTypeArea = ({
   selectedMacroType,
   onMacroTypeButtonPress
 }: Props) => {
+const dividerColour = useColorModeValue("gray.400", "gray.600")
+
   return (
     <HStack
       w="50%"
@@ -19,7 +21,7 @@ const MacroTypeArea = ({
       py="4px"
       px="16px"
       border="1px"
-      borderColor="gray.200"
+      borderColor={dividerColour}
       rounded="md"
       spacing="16px"
     >
@@ -35,10 +37,10 @@ const MacroTypeArea = ({
                 icon={<EditIcon />}
                 aria-label="macro type button"
                 size="lg"
-                bg={
+                colorScheme={
                   MacroType[selectedMacroType] === value
-                    ? 'yellow.200'
-                    : 'gray.100'
+                    ? 'yellow'
+                    : 'gray'
                 }
                 onClick={() => onMacroTypeButtonPress(index)}
                 key={index}
@@ -46,7 +48,7 @@ const MacroTypeArea = ({
             ))}
         </HStack>
       </VStack>
-      <Divider orientation="vertical" />
+      <Divider orientation="vertical" borderColor={dividerColour} />
       <VStack w="full" h="full" alignItems="normal" justifyContent="center">
         <Text fontWeight="semibold" fontSize={['md', 'lg', 'xl']}>
           {MacroType[selectedMacroType]}
