@@ -5,37 +5,37 @@
       "icon": "i",
       "macros": [
         {
-          "name": "ABCD",
+          "name": "HELLO",
           "sequence": [
             {
               "type": "KeyPressEvent",
               "data": {
+                "keypress": 11,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
                 "keypress": 4,
-                "press_duration": 50,
+                "press_duration": 1,
                 "keytype": "DownUp"
               }
             },
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 5,
-                "press_duration": 50,
+                "keypress": 25,
+                "press_duration": 1,
                 "keytype": "DownUp"
               }
             },
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 6,
-                "press_duration": 50,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 7,
-                "press_duration": 50,
+                "keypress": 18,
+                "press_duration": 1,
                 "keytype": "DownUp"
               }
             }
@@ -45,7 +45,12 @@
             "type": "KeyPressEvent",
             "data": [
               {
-                "keypress": 51,
+                "keypress": 95,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 96,
                 "press_duration": 0,
                 "keytype": "Down"
               }

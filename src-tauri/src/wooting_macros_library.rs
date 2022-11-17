@@ -274,27 +274,21 @@ impl MacroDataState {
         MacroDataState {
             data: RwLock::from(MacroData::read_data()),
             config: RwLock::from(ApplicationConfig::read_data()),
-            //triggers: RwLock::from(Triggers::new()),
         }
     }
 }
-
-// ///Hash list
-// #[derive(Debug, Clone, Hash, Eq, PartialEq)]
-// pub struct TriggerHash<'a> {
-//     trigger_table: HashMap<Vec<rdev::Key>, &'a Macro>,
-// }
-
 ///Collections are groups of macros.
 type Collections = Vec<Collection>;
 
 #[derive(Debug)]
-pub struct Triggers(RwLock<HashMap<u32, Vec<Macro>>>);
+pub struct Triggers {
+    data: RwLock<HashMap<u32, Vec<Macro>>>,
+}
 
 impl Triggers {
     pub fn new() -> Self {
         Triggers {
-            0: RwLock::from(HashMap::new()),
+            data: RwLock::from(HashMap::new()),
         }
     }
 }
@@ -330,7 +324,7 @@ pub fn generate_triggers(macro_data: MacroData) {
         }
     }
 
-    let mut write_here = TRIGGERS_LIST.0.write().unwrap();
+    let mut write_here = TRIGGERS_LIST.data.write().unwrap();
     *write_here = output_hashmap;
 }
 
@@ -385,63 +379,6 @@ impl MacroData {
         output_hashmap
     }
 
-    // /// Imports data from the frontend (when updated) to update the background data structure
-    // /// This overwrites the datastructure
-    // pub fn import_data(&mut self, input: MacroData) -> TriggerHash {
-    //     *self = input;
-    //     self.export_data();
-    //     self.extract_triggers()
-    // }
-
-    /*
-        /// Extracts the data. This is a helper function for now.
-        fn extract_triggers(&self) -> TriggersExtracted {
-            //vector of keys
-            let mut output: TriggersExtracted = vec![];
-            // let mut add_keys: Vec<u32> = vec![];
-            // let mut add_keys_converted: Vec<rdev::Key> = vec![];
-            // let mut macro_to_add: &Macro = &Macro::new();
-
-
-            let mut tuple: TriggersExtracted = vec![];
-            for groups in &self.data {
-                for macros in &groups.macros{
-                    let mut macro_to_add: Macro = Macro{
-                        name: "".to_string(),
-                        sequence: vec![],
-                        macro_type: MacroType::Single,
-                        trigger: TriggerEventType::KeyPressEvent { data: vec![] },
-                        active: false
-                    };
-
-                        macro_to_add = &macros;
-
-                        let mut add_keys: Vec<u32> = vec![];
-                        let mut add_keys_converted: Vec<rdev::Key> = vec![];
-
-                        match &macros.trigger {
-                            TriggerEventType::KeyPressEvent { data: key } => {
-                                for individual_keys in key{
-                                    add_keys.push(individual_keys.keypress);
-                                    add_keys_converted.push(SCANCODE_TO_RDEV[&individual_keys.keypress]);
-
-
-
-                                }
-                            }
-                        }
-                        output.push((add_keys.clone(), add_keys_converted.clone(), macro_to_add));
-
-
-                }
-
-            }
-
-            println!("Macro Output Struct\n{:#?}", output);
-
-            tuple
-        }
-    */
     ///Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
     pub fn read_data() -> MacroData {
         let path = "../data_json.json";
@@ -492,7 +429,7 @@ pub struct Collection {
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
-pub async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
+async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
     match macros.macro_type {
         MacroType::Single => {
             println!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
@@ -518,7 +455,7 @@ async fn executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
         let mut result = rchan_execute.recv().await.unwrap().event_type;
         //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
-        thread::sleep(time::Duration::from_millis(20));
+        thread::sleep(time::Duration::from_millis(200));
     }
 }
 
@@ -541,6 +478,7 @@ pub async fn run_backend() {
     let macros_data_from_state = APPLICATION_STATE.data.read().unwrap().clone();
     let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
+    let mut processed_keys: Vec<rdev::Key> = Vec::new();
 
     generate_triggers(macros_data_from_state.clone());
 
@@ -584,15 +522,18 @@ pub async fn run_backend() {
     for event in &rchan_grab {
         events.push(event);
 
-        let macro_collections = APPLICATION_STATE.data.read().unwrap().clone();
 
+        //TODO: channel this
+        let macro_collections = APPLICATION_STATE.data.read().unwrap();
+        let triggers = TRIGGERS_LIST.data.read().unwrap();
 
 
         for i in &events {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
-                    //TODO: Make this a hashtable or smth
+                    //TODO: BUG IS SOMEWHERE HERE...
                     pressed_keys.push(listened_key.clone());
+                    processed_keys.push(listened_key.clone());
 
                     //println!("Pressed: {:?}", listened_key);
 
@@ -612,39 +553,46 @@ pub async fn run_backend() {
                 EventType::MouseMove { x, y } => (),
                 EventType::Wheel { delta_x, delta_y } => {}
             }
+            if processed_keys.len() != 0 {
 
-            if pressed_keys.len() != 0 {
-                let triggers = TRIGGERS_LIST.0.read().unwrap().clone();
-                println!("EventFind: Length is not zero");
+                //println!("EventFind: Length is not zero");
 
-                let pressed_keys_copy_converted: Vec<u32> = pressed_keys
+                let pressed_keys_copy_converted: Vec<u32> = processed_keys
                     .iter()
                     .map(|x| SCANCODE_TO_HID[&x])
                     .collect();
 
-                //println!("{:?}", triggers);
+                println!("{:?}", processed_keys);
                 //println!("{:?}", pressed_keys_copy_converted);
                 if triggers.contains_key(&pressed_keys_copy_converted.first().unwrap()) {
-                    println!("EventFind: FIRST KEY FOUND!!!");
-                    println!("EventFind: Triggers containsKey:\n {:#?}", &triggers);
+                    //println!("EventFind: FIRST KEY FOUND!!!");
+                    //println!("EventFind: Triggers containsKey:\n {:#?}", &triggers);
                     let check_macros: Vec<Macro> =
                         triggers[&pressed_keys_copy_converted.first().unwrap()].clone();
                     let channel_copy_send = schan_execute.clone();
 
                     task::spawn(async move {
-                        println!("EventFind: Spawning task");
+                        println!("EventFind: Macro length: {:#?}", check_macros);
+                        println!("EventFind: Pressed keys length: {}", pressed_keys_copy_converted.len());
                         check_macro_execution_efficiently(
                             pressed_keys_copy_converted,
                             check_macros,
                             channel_copy_send,
-                        )
-                            .await;
-                        println!("EventFind: Task spawned and check_macro_efficient launched");
+                        ).await;
+                        //println!("EventFind: Task spawned and check_macro_efficient launched");
                     });
 
+                    // check_macro_execution_efficiently(
+                    // pressed_keys_copy_converted,
+                    // check_macros,
+                    // channel_copy_send,
+                    // );
                 }
+                processed_keys = Vec::new();
             }
+
         }
+
 
         events.pop();
     }
@@ -656,28 +604,29 @@ async fn check_macro_execution_efficiently(
     channel_sender: Sender<rdev::Event>,
 ) {
     for macros in &trigger_overview {
-        println!("CheckMacroExec: MACROS BEING CHECKED");
+        //println!("CheckMacroExec: MACROS BEING CHECKED");
 
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                println!("CheckMacroExec: Matching type");
+                //println!("CheckMacroExec: Matching type");
 
                 let keypress_to_check: Vec<u32> = data.iter().map(|x| x.keypress).collect();
 
-                println!("CheckMacroExec: Converted keys to vec<u32>");
+                println!("CheckMacroExec: Converted keys to vec<u32>\n {:#?}", keypress_to_check);
 
                 if keypress_to_check == pressed_keys {
-                    println!("CheckMacroExec: keys match");
+                    //println!("CheckMacroExec: keys match");
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
-                    println!(
-                        "Executing macro because of trigger {:#?} == {:#?}",
-                        keypress_to_check, pressed_keys
-                    );
+                    // println!(
+                    //     "IMPORTANT: Executing macro because of trigger {:#?} == {:#?}",
+                    //     keypress_to_check, pressed_keys
+                    // );
 
                     task::spawn(async move {
+                        //println!("TaskSpwnCheckMacroExec: Executing macro {:#?}", macro_clone);
                         execute_macro(macro_clone, channel_clone).await;
-                    });
+                    }).await;
                 }
             }
         }
