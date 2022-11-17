@@ -109,11 +109,9 @@ async fn main() {
         run_backend().await;
     });
 
-
     /// Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-
 
     let tray_menu = SystemTrayMenu::new()
         .add_item(quit)
@@ -121,7 +119,6 @@ async fn main() {
         .add_item(hide);
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
-
 
     tauri::Builder::default()
         // This is where you pass in your commands
@@ -169,8 +166,4 @@ async fn main() {
         //.any_thread()
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
-
 }
-
-
