@@ -19,7 +19,7 @@
               "type": "SystemEvent",
               "action": {
                 "Open": {
-                  "path": "C:\\Users\\medze\\Desktop\\workspace"
+                  "path": "https://microsoft.github.io/windows-docs-rs/doc/windows/Win32/Media/Audio/struct.ISimpleAudioVolume.html"
                 }
               }
             }

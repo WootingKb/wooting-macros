@@ -181,7 +181,10 @@ impl Macro {
                 ActionEventType::Delay { data } => {
                     thread::sleep(time::Duration::from_millis(*data))
                 }
-                _ => {}
+
+                ActionEventType::SystemEvent { action } => {
+                    action.execute()
+                }
             }
         }
     }
@@ -453,7 +456,7 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
     }
 }
 
-async fn executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
+async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
     loop {
         let mut result = rchan_execute.recv().await.unwrap().event_type;
         //println!("RECEIVED RESULT {:#?}", &result);
@@ -495,7 +498,7 @@ pub async fn run_backend() {
     let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
     task::spawn(async move {
-        executor_sender(rchan_execute).await;
+        keypress_executor_sender(rchan_execute).await;
     });
 
     let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
