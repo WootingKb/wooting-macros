@@ -1,5 +1,6 @@
 use std::ptr;
 
+use windows::core::Interface;
 use windows::Win32::{Media::Audio::*, System::Com::*};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -19,7 +20,7 @@ impl SystemAction {
                 match action {
                     VolumeAction::Mute { data } => {
                         unsafe {
-                            CoInitialize(std::ptr::null().);
+                            CoInitialize(Some(std::ptr::null()));
 
                             let enumerator: IMMDeviceEnumerator =
                                 CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_ALL).unwrap();
@@ -31,10 +32,11 @@ impl SystemAction {
 
                             for n in 0..sessions.GetCount().unwrap() {
                                 let session_control = sessions.GetSession(n).unwrap();
+                                let session_control_2: windows::Win32::Media::Audio::IAudioSessionControl2 = session_control.cast().unwrap();
                             }
 
+
                             CoUninitialize();
-                            let session_control_2: windows::Win32::Media::Audio::IAudioSessionControl2 = session_control.cast().unwrap();
                         }
                     }
                     VolumeAction::SetVolume { amount } => {}
