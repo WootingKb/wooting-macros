@@ -307,7 +307,7 @@ pub static ref SCANCODE_TO_HID: HashMap<rdev::Key, u32> = {
 
         // scancode.insert(0x67, rdev::Key::Key); //NUMPAD_EQUAL
 
-        // scancode.insert(0x68, rdev::Key::Key); //F13
+        // scancode.insert(0x68, rdev::Key::Unknown(44)); //F13
         // scancode.insert(0x69, rdev::Key::Key); //F14
         // scancode.insert(0x6a, rdev::Key::Key); //F15
         // scancode.insert(0x6b, rdev::Key::Key); //F16
