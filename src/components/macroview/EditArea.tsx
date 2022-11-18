@@ -19,7 +19,7 @@ import { HIDLookup } from '../../maps/HIDmap'
 const EditArea = () => {
   const [currentTypeIndex, setCurrentTypeIndex] = useState(0) // this type refers to what kind of element is being edited
   const [delayDuration, setDelayDuration] = useState(0)
-  const [headingText, setHeadingText] = useState("")
+  const [headingText, setHeadingText] = useState('')
   const [keypressDuration, setKeypressDuration] = useState(1)
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { selectedElementIndex } = useSequenceContext()
@@ -36,13 +36,15 @@ const EditArea = () => {
           .keytype as keyof typeof KeyType
         setKeypressType(KeyType[typeString])
         setKeypressDuration(selectedElement.data.press_duration)
-        setHeadingText(`Key ${HIDLookup.get(selectedElement.data.keypress)?.displayString}`)
+        setHeadingText(
+          `Key ${HIDLookup.get(selectedElement.data.keypress)?.displayString}`
+        )
         setCurrentTypeIndex(0)
         break
       }
       case 'Delay':
         setDelayDuration(selectedElement.data)
-        setHeadingText("Delay Element")
+        setHeadingText('Delay Element')
         setCurrentTypeIndex(1)
         break
       default:

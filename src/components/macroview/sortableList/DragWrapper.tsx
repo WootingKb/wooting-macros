@@ -4,18 +4,18 @@ import { Box, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../types'
 
 type Props = {
-    id: number
-    element: ActionEventType
-    children: ReactNode
+  id: number
+  element: ActionEventType
+  children: ReactNode
 }
 
-const DragWrapper = ({id, element, children}: Props) => {
-const bg = useColorModeValue('white', 'gray.800')
+const DragWrapper = ({ id, element, children }: Props) => {
+  const bg = useColorModeValue('white', 'gray.800')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
     <HStack
-      w={element.type === "Delay" ? 'fit-content' : '100%'}
+      w={element.type === 'Delay' ? 'fit-content' : '100%'}
       border="1px"
       borderColor={dividerColour}
       rounded="md"
@@ -32,7 +32,7 @@ const bg = useColorModeValue('white', 'gray.800')
       >
         <DragHandleIcon w={4} h={8} />
       </Box>
-        {children}
+      {children}
     </HStack>
   )
 }

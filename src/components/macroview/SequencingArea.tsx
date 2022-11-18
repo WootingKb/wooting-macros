@@ -49,23 +49,23 @@ const SequencingArea = () => {
 
   function handleDragEnd(event: any) {
     console.log(event)
-    const { active, over } = event;
+    const { active, over } = event
 
     if (over === null) {
-      return;
+      return
     }
 
     if (active.id !== over.id) {
-      const oldIndex = ids.indexOf(active.id);
-      const newIndex = ids.indexOf(over.id);
+      const oldIndex = ids.indexOf(active.id)
+      const newIndex = ids.indexOf(over.id)
       overwriteIds(arrayMove(ids, oldIndex, newIndex))
     }
-    setActiveId(undefined);
+    setActiveId(undefined)
   }
 
   function handleDragStart(event: any) {
-    const { active } = event;
-    setActiveId(active.id);
+    const { active } = event
+    setActiveId(active.id)
   }
 
   const onAddDelayButtonPress = () => {
@@ -106,22 +106,19 @@ const SequencingArea = () => {
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis]}
       >
-        <SortableContext
-          items={ids}
-          strategy={verticalListSortingStrategy}
-        >
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
-            {ids.map((id) => 
+            {ids.map((id) => (
               <SortableWrapper id={id} key={id} element={sequence[id - 1]}>
-                <SortableItem id={id} element={sequence[id - 1]}/>
+                <SortableItem id={id} element={sequence[id - 1]} />
               </SortableWrapper>
-            )}
+            ))}
           </VStack>
         </SortableContext>
         <DragOverlay>
           {activeId ? (
             <DragWrapper id={activeId} element={sequence[activeId - 1]}>
-              <SortableItem id={activeId} element={sequence[activeId - 1]}/>
+              <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}
         </DragOverlay>

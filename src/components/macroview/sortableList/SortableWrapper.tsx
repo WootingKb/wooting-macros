@@ -6,12 +6,12 @@ import { CSS } from '@dnd-kit/utilities'
 import { ActionEventType } from '../../../types'
 
 type Props = {
-    id: number
-    element: ActionEventType
-    children: ReactNode
+  id: number
+  element: ActionEventType
+  children: ReactNode
 }
 
-const SortableWrapper = ({id, element, children}: Props) => {
+const SortableWrapper = ({ id, element, children }: Props) => {
   const {
     attributes,
     listeners,
@@ -20,7 +20,7 @@ const SortableWrapper = ({id, element, children}: Props) => {
     transition,
     isDragging
   } = useSortable({ id: id })
-const bg = useColorModeValue('white', 'gray.800')
+  const bg = useColorModeValue('white', 'gray.800')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   const style = {
@@ -28,13 +28,13 @@ const bg = useColorModeValue('white', 'gray.800')
     transition,
     opacity: isDragging ? 0 : 1
   }
-  
-    return (
+
+  return (
     <HStack
       ref={setNodeRef}
       style={style}
       {...attributes}
-      w={element.type === "Delay" ? 'fit-content' : '100%'}
+      w={element.type === 'Delay' ? 'fit-content' : '100%'}
       border="1px"
       borderColor={dividerColour}
       rounded="md"
@@ -52,7 +52,7 @@ const bg = useColorModeValue('white', 'gray.800')
       >
         <DragHandleIcon w={4} h={8} />
       </Box>
-        {children}
+      {children}
     </HStack>
   )
 }
