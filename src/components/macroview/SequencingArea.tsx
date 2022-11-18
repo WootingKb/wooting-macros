@@ -38,6 +38,7 @@ const SequencingArea = () => {
 
   useEffect(() => {
     overwriteIds(sequence.map((element, index) => index + 1))
+    console.log(sequence)
   }, [sequence])
 
   const sensors = useSensors(
@@ -48,7 +49,6 @@ const SequencingArea = () => {
   )
 
   function handleDragEnd(event: any) {
-    console.log(event)
     const { active, over } = event
 
     if (over === null) {

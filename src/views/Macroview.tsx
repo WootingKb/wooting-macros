@@ -38,7 +38,6 @@ const Macroview = ({ isEditing }: Props) => {
     if (!isEditing) {
       return
     }
-    console.log(currentMacro)
     updateElementIndex(-1)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)

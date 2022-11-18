@@ -46,12 +46,18 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     [setSequence]
   )
 
-  const removeFromSequence = (element: ActionEventType) => {
-    const temp: ActionEventType[] = [...sequence]
-    const index = temp.indexOf(element, 0)
-    temp.splice(index, 1)
-    setSequence(temp)
-  }
+  const removeFromSequence = useCallback(
+    (element: ActionEventType) => {
+      setSequence((sequence) => {
+        const temp = [...sequence]
+        const index = sequence.indexOf(element, 0)
+        temp.splice(index, 1)
+        overwriteIds(temp.map((element, index) => index + 1))
+        return temp
+      })
+    },
+    [setSequence]
+  ) 
 
   const overwriteSequence = useCallback(
     (newSequence: ActionEventType[]) => {
@@ -62,7 +68,6 @@ function SequenceProvider({ children }: SequenceProviderProps) {
 
   const overwriteIds = useCallback(
     (newArray: number[]) => {
-      console.log('overwriting ids')
       setIds(newArray)
     },
     [setIds]
