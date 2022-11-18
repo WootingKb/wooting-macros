@@ -21,7 +21,8 @@ const MacroviewHeader = ({
   onSaveButtonPress
 }: Props) => {
   const { changeViewState } = useApplicationContext()
-  const { updateElementIndex, overwriteSequence } = useSequenceContext()
+  const { updateElementIndex, overwriteSequence, overwriteIds } =
+    useSequenceContext()
 
   return (
     <HStack w="100%" h="60px" px="2" spacing="16px">
@@ -29,7 +30,8 @@ const MacroviewHeader = ({
         onClick={() => {
           changeViewState(ViewState.Overview)
           overwriteSequence([])
-          updateElementIndex(0)
+          overwriteIds([])
+          updateElementIndex(-1)
         }}
       >
         Back

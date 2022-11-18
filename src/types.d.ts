@@ -16,17 +16,14 @@ export type AppState = {
 }
 
 export type SequenceState = {
-  sequence: SequenceElement[]
+  sequence: ActionEventType[]
+  ids: number[]
   selectedElementIndex: number
-  addToSequence: (element: SequenceElement) => void
-  removeFromSequence: (element: SequenceElement) => void
-  overwriteSequence: (newSequence: SequenceElement[]) => void
+  addToSequence: (element: ActionEventType) => void
+  removeFromSequence: (element: ActionEventType) => void
+  overwriteSequence: (newSequence: ActionEventType[]) => void
+  overwriteIds: (newArray: number[]) => void
   updateElementIndex: (newIndex: number) => void
-}
-
-export interface SequenceElement {
-  id: number
-  data: ActionEventType
 }
 
 export interface Keypress {
