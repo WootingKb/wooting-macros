@@ -455,7 +455,7 @@ async fn executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
         let mut result = rchan_execute.recv().await.unwrap().event_type;
         //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
-        thread::sleep(time::Duration::from_millis(200));
+        thread::sleep(time::Duration::from_millis(20));
     }
 }
 
