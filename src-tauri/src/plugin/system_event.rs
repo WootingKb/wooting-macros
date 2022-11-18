@@ -3,19 +3,19 @@ use std::ptr;
 use windows::Win32::{Media::Audio::*, System::Com::*};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-pub enum ActionType {
+pub enum SystemAction {
     Open { path: String },
     Volume { action: VolumeAction },
     Brightness,
 }
 
-impl ActionType {
+impl SystemAction {
     pub async fn execute(&self) {
         match &self {
-            ActionType::Open { path } => {
+            SystemAction::Open { path } => {
                 opener::open(std::path::Path::new(path));
             }
-            ActionType::Volume { action } => {
+            SystemAction::Volume { action } => {
                 match action {
                     VolumeAction::Mute { data } => {
                         unsafe {
@@ -40,7 +40,7 @@ impl ActionType {
                     VolumeAction::SetVolume { amount } => {}
                 }
             }
-            ActionType::Brightness => {}
+            SystemAction::Brightness => {}
         }
     }
 }

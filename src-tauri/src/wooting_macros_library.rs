@@ -30,7 +30,7 @@ use crate::plugin::mouse_movement;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
-use crate::plugin::system_event::ActionType;
+use crate::plugin::system_event::SystemAction;
 use crate::plugin::unicode_direct;
 
 //use tauri::async_runtime::RwLock;
@@ -53,7 +53,7 @@ pub enum MacroType {
 #[serde(tag = "type")]
 pub enum ActionEventType {
     KeyPressEvent { data: key_press::KeyPress },
-    SystemEvent { data: system_event::ActionType },
+    SystemEvent { data: system_event::SystemAction },
     //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
     PhillipsHueCommand {},
