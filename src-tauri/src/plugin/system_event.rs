@@ -6,7 +6,7 @@ pub enum ActionType {
 }
 
 impl ActionType {
-    pub fn execute(&self) {
+    pub async fn execute(&self) {
         match &self {
             ActionType::Open { path } => {
                 opener::open(std::path::Path::new(path));
@@ -16,7 +16,6 @@ impl ActionType {
         }
     }
 }
-
 
 //
 // #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]

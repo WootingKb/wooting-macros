@@ -45,7 +45,6 @@ pub enum MacroType {
     OnHold, // while held Execute macro (repeats)
 }
 
-
 //TODO: SERDE CAMEL CASE RENAME
 //TODO: Press a key to open file browser with a specific path
 
@@ -183,7 +182,8 @@ impl Macro {
                 }
 
                 ActionEventType::SystemEvent { action } => {
-                    action.execute()
+                    let action_copy = action.clone();
+                    task::spawn(async move { action_copy.execute().await });
                 }
             }
         }
@@ -468,15 +468,14 @@ async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
 ///Main loop for now (of the library)
 pub async fn run_backend() {
     //==============TESTING GROUND======================
-    let action_type = ActionEventType::SystemEvent { action: ActionType::Open { path: r"C:\Users\medze\Desktop\workspace".to_string() } };
+    // let action_type = ActionEventType::SystemEvent { action: ActionType::Open { path: r"C:\Users\medze\Desktop\workspace".to_string() } };
 
-    match action_type {
-        ActionEventType::SystemEvent { action } => {
-            action.execute();
-        }
-        _ => {}
-    }
-
+    // match action_type {
+    //     ActionEventType::SystemEvent { action } => {
+    //         action.execute();
+    //     }
+    //     _ => {}
+    // }
 
     //==============TESTING GROUND======================
     //==================================================
@@ -613,7 +612,6 @@ async fn check_macro_execution(
     trigger_overview: MacroData,
     channel_sender: Sender<rdev::Event>,
 ) {
-
     for collections in &trigger_overview.data {
         if collections.active == true {
             for macros in &collections.macros {
