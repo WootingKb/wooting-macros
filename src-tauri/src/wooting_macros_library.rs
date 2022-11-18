@@ -520,6 +520,7 @@ pub async fn run_backend() {
     for event in &rchan_grab {
         events.push(event);
 
+        let test = 0;
         //TODO: channel this
         let macro_collections = APPLICATION_STATE.data.read().unwrap();
         let triggers = TRIGGERS_LIST.data.read().unwrap();
