@@ -15,13 +15,14 @@ tauri-build = { version = "1.2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
-tauri = { version = "1.2.0", features = ["api-all", "icon-png", "system-tray"] }
-rdev = { version = "0.5.2", features = ["unstable_grab", "serde", "serialize"] }
-halfbrown = { version = "0.1.15", features = ["serde"] }
-idasen-cli = "0.1.0"
-lazy_static = "1.4.0"
-tokio = { version = "1.21.2", features = ["full"] }
+tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
+rdev = { version = "0.5", features = ["unstable_grab", "serde", "serialize"] }
+halfbrown = { version = "0.1", features = ["serde"] }
+idasen-cli = "0.1"
+lazy_static = "1.4"
+tokio = { version = "1.21", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
+opener = "0.5"
 
 [features]
 # by default Tauri runs in production mode

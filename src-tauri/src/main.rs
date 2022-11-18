@@ -112,7 +112,7 @@ async fn main() {
     /// (will crash on key grab/listen)
     task::spawn(async move {
         run_backend().await;
-    });
+    }).await;
 
     /// Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");

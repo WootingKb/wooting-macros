@@ -30,6 +30,7 @@ use crate::plugin::mouse_movement;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
+use crate::plugin::system_event::ActionType;
 use crate::plugin::unicode_direct;
 
 //use tauri::async_runtime::RwLock;
@@ -44,6 +45,7 @@ pub enum MacroType {
     OnHold, // while held Execute macro (repeats)
 }
 
+
 //TODO: SERDE CAMEL CASE RENAME
 //TODO: Press a key to open file browser with a specific path
 
@@ -52,7 +54,7 @@ pub enum MacroType {
 #[serde(tag = "type")]
 pub enum ActionEventType {
     KeyPressEvent { data: key_press::KeyPress },
-    //SystemEvent { action: Action },
+    SystemEvent { action: system_event::ActionType },
     //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
     PhillipsHueCommand {},
@@ -179,6 +181,7 @@ impl Macro {
                 ActionEventType::Delay { data } => {
                     thread::sleep(time::Duration::from_millis(*data))
                 }
+                _ => {}
             }
         }
     }
@@ -455,12 +458,24 @@ async fn executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
         let mut result = rchan_execute.recv().await.unwrap().event_type;
         //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
-        thread::sleep(time::Duration::from_millis(200));
+        thread::sleep(time::Duration::from_millis(20));
     }
 }
 
 ///Main loop for now (of the library)
 pub async fn run_backend() {
+    //==============TESTING GROUND======================
+    let action_type = ActionEventType::SystemEvent { action: ActionType::Open { path: r"C:\Users\medze\Desktop\workspace".to_string() } };
+
+    match action_type {
+        ActionEventType::SystemEvent { action } => {
+            action.execute();
+        }
+        _ => {}
+    }
+
+
+    //==============TESTING GROUND======================
     //==================================================
     //TODO: Make a way to disable this listening function
     //TODO: make this a grab instead of listen
@@ -468,16 +483,14 @@ pub async fn run_backend() {
     //TODO: async the executor of the presses
     //TODO: io-uring async read files and write files
 
-
     //TODO: Make the modifier keys non-ordered?
+    //==================================================
 
     let macros_data_from_state = APPLICATION_STATE.data.read().unwrap().clone();
     let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
-
     generate_triggers(macros_data_from_state.clone());
-
 
     let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
@@ -513,14 +526,10 @@ pub async fn run_backend() {
             match i.event_type {
                 EventType::KeyPress(listened_key) => {
                     pressed_keys.push(listened_key.clone());
-                    //processed_keys.push(listened_key.clone());
 
                     print!("\n{:?}", pressed_keys);
-
-                    //check_key(&pressed_keys);
                 }
                 EventType::KeyRelease(listened_key) => {
-                    //println!("Released: {:?}", listened_key);
                     pressed_keys.retain(|x| *x != listened_key);
                     println!("{:?}", pressed_keys);
                 }
@@ -588,8 +597,7 @@ async fn check_macro_execution_efficiently(
 
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
-                    })
-                        .await;
+                    });
                 }
             }
         }
@@ -602,7 +610,6 @@ async fn check_macro_execution(
     trigger_overview: MacroData,
     channel_sender: Sender<rdev::Event>,
 ) {
-    //println!("Received pressed keys {:#?}", pressed_keys);
 
     for collections in &trigger_overview.data {
         if collections.active == true {
