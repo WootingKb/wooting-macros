@@ -548,7 +548,6 @@ pub async fn run_backend() {
                 });
             }
         }
-
         events.pop();
     }
 }
