@@ -17,10 +17,12 @@ export type AppState = {
 
 export type SequenceState = {
   sequence: ActionEventType[]
+  ids: number[]
   selectedElementIndex: number
   addToSequence: (element: ActionEventType) => void
   removeFromSequence: (element: ActionEventType) => void
   overwriteSequence: (newSequence: ActionEventType[]) => void
+  overwriteIds: (newArray: number[]) => void
   updateElementIndex: (newIndex: number) => void
 }
 

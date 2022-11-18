@@ -46,14 +46,13 @@ const SortableItem = ({id, element}: Props) => {
   }
 
   return (
-    <HStack w="100" justifyContent="space-around">
-        <HStack p="4px" px="8px" w="100%">
+    <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
+      <HStack p="4px" px="8px" w="100%">
         {element.type === "Delay" && <RepeatClockIcon />}
         {element.type === "KeyPressEvent" && <StarIcon />}
         <Text>{displayText}</Text>
       </HStack>
-      <Divider orientation="vertical" borderColor={dividerColour}/>
-      <HStack p="4px" h="full">
+      <HStack p="4px" h="100%" borderLeft="1px" borderColor={dividerColour}>
         <IconButton
           aria-label="delete-button"
           icon={<DeleteIcon />}

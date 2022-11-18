@@ -33,13 +33,11 @@ import { ActionEventType } from '../../types'
 // TODO: Record functionality
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState(undefined)
-  const { sequence, addToSequence } = useSequenceContext()
+  const { sequence, ids, addToSequence, overwriteIds } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
-  const [items, setItems] = useState<number[]>([]);
-
   useEffect(() => {
-    setItems(sequence.map((element, index) => index + 1))
+    overwriteIds(sequence.map((element, index) => index + 1))
   }, [sequence])
 
   const sensors = useSensors(
@@ -49,12 +47,8 @@ const SequencingArea = () => {
     })
   )
 
-  function getSortedSequence(ids: number[]) {
-    const sortedSequenceList = ids.map((id) => sequence[id - 1]);
-    console.log(sortedSequenceList);
-  }
-
   function handleDragEnd(event: any) {
+    console.log(event)
     const { active, over } = event;
 
     if (over === null) {
@@ -62,12 +56,9 @@ const SequencingArea = () => {
     }
 
     if (active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-        const sortedIds = arrayMove(items, oldIndex, newIndex);
-        return sortedIds;
-      });
+      const oldIndex = ids.indexOf(active.id);
+      const newIndex = ids.indexOf(over.id);
+      overwriteIds(arrayMove(ids, oldIndex, newIndex))
     }
     setActiveId(undefined);
   }
@@ -116,12 +107,12 @@ const SequencingArea = () => {
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext
-          items={items}
+          items={ids}
           strategy={verticalListSortingStrategy}
         >
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
-            {items.map((id) => 
-              <SortableWrapper id={id} key={id} isSmall={sequence[id - 1].type === "Delay"}>
+            {ids.map((id) => 
+              <SortableWrapper id={id} key={id} element={sequence[id - 1]}>
                 <SortableItem id={id} element={sequence[id - 1]}/>
               </SortableWrapper>
             )}
@@ -129,7 +120,7 @@ const SequencingArea = () => {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper id={activeId} isSmall={sequence[activeId - 1].type === "Delay"}>
+            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]}/>
             </DragWrapper>
           ) : undefined}

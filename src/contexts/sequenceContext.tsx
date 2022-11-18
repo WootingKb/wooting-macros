@@ -27,6 +27,7 @@ function useSequenceContext() {
 function SequenceProvider({ children }: SequenceProviderProps) {
   const { viewState } = useApplicationContext()
   const [sequence, setSequence] = useState<ActionEventType[]>([])
+  const [ids, setIds] = useState<number[]>([]);
   const [selectedElementIndex, setSelectedElementIndex] = useState(-1)
   const currentMacro = useSelectedMacro()
 
@@ -59,6 +60,14 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     [setSequence]
   )
 
+  const overwriteIds = useCallback(
+    (newArray: number[]) => {
+      console.log("overwriting ids")
+      setIds(newArray)
+    },
+    [setIds]
+  )
+
   const updateElementIndex = useCallback(
     (newIndex: number) => {
       setSelectedElementIndex(newIndex)
@@ -69,18 +78,22 @@ function SequenceProvider({ children }: SequenceProviderProps) {
   const value = useMemo<SequenceState>(
     () => ({
       sequence,
+      ids,
       selectedElementIndex,
       addToSequence,
       removeFromSequence,
       overwriteSequence,
+      overwriteIds,
       updateElementIndex
     }),
     [
       sequence,
+      ids,
       selectedElementIndex,
       addToSequence,
       removeFromSequence,
       overwriteSequence,
+      overwriteIds,
       updateElementIndex
     ]
   )

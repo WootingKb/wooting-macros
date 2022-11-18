@@ -2,13 +2,12 @@ import { VStack, HStack, useColorModeValue } from '@chakra-ui/react'
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { useApplicationContext } from '../contexts/applicationContext'
 import {
-  useSequence,
   useSelectedCollection,
   useSelectedMacro
 } from '../contexts/selectors'
 import { KeyType, MacroType, ViewState } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
-import { Keypress, ActionEventType, Collection, Macro } from '../types'
+import { Keypress, Collection, Macro } from '../types'
 import { updateBackendConfig } from '../utils'
 import EditArea from '../components/macroview/EditArea'
 import MacroviewHeader from '../components/macroview/Header'
@@ -16,6 +15,7 @@ import MacroTypeArea from '../components/macroview/MacroTypeArea'
 import SelectElementArea from '../components/macroview/SelectElementArea'
 import SequencingArea from '../components/macroview/SequencingArea'
 import TriggerArea from '../components/macroview/TriggerArea'
+import { useSequenceContext } from '../contexts/sequenceContext'
 
 type Props = {
   isEditing: boolean
@@ -23,7 +23,7 @@ type Props = {
 
 const Macroview = ({ isEditing }: Props) => {
   const { collections, selection, changeViewState } = useApplicationContext()
-  const sequence = useSequence()
+  const { sequence, ids, overwriteSequence, overwriteIds, updateElementIndex } = useSequenceContext()
 
   const currentCollection: Collection = useSelectedCollection()
   const currentMacro: Macro = useSelectedMacro()
@@ -40,6 +40,8 @@ const Macroview = ({ isEditing }: Props) => {
     if (!isEditing) {
       return
     }
+    console.log(currentMacro)
+    updateElementIndex(-1)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
   }, [])
@@ -93,10 +95,6 @@ const Macroview = ({ isEditing }: Props) => {
   }
 
   const onSaveButtonPress = () => {
-    const sequenceList: ActionEventType[] = sequence.map(
-      (element) => element.data
-    )
-
     const itemToAdd: Macro = {
       name: macroName,
       active: true,
@@ -106,7 +104,7 @@ const Macroview = ({ isEditing }: Props) => {
         data: triggerKeys,
         allow_while_other_keys: false
       },
-      sequence: sequenceList
+      sequence: ids.map((id) => sequence[id - 1])
     }
 
     if (isEditing) {
@@ -115,6 +113,9 @@ const Macroview = ({ isEditing }: Props) => {
       currentCollection.macros.push(itemToAdd)
     }
 
+    overwriteIds([])
+    overwriteSequence([])
+    updateElementIndex(-1)
     changeViewState(ViewState.Overview)
     updateBackendConfig(collections)
   }

@@ -3,14 +3,15 @@ import { DragHandleIcon } from '@chakra-ui/icons'
 import { HStack, Box, useColorModeValue } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { ActionEventType } from '../../../types'
 
 type Props = {
     id: number
-    isSmall: boolean
+    element: ActionEventType
     children: ReactNode
 }
 
-const SortableWrapper = ({id, isSmall, children}: Props) => {
+const SortableWrapper = ({id, element, children}: Props) => {
   const {
     attributes,
     listeners,
@@ -33,7 +34,7 @@ const bg = useColorModeValue('white', 'gray.800')
       ref={setNodeRef}
       style={style}
       {...attributes}
-      w={isSmall ? 'fit-content' : '100%'}
+      w={element.type === "Delay" ? 'fit-content' : '100%'}
       border="1px"
       borderColor={dividerColour}
       rounded="md"

@@ -32,5 +32,8 @@ export function useSequence() {
 
 export function useSelectedElement() {
   const context = useSequenceContext()
-  return context.sequence[context.selectedElementIndex]
+  return useMemo(
+    () => context.sequence[context.selectedElementIndex],
+    [context]
+  )
 }
