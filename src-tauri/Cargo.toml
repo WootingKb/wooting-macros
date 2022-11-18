@@ -23,7 +23,9 @@ lazy_static = "1.4"
 tokio = { version = "1.21", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 opener = "0.5"
-windows = { version = "0.43", features = ["Win32_Media_Audio"] }
+windows = { version = "0.43", features = ["Win32_Media_Audio", "Win32_Foundation", "Win32_System", "Win32_System_Com"] }
+winaudio = "1.0.2"
+rodio = "0.16.0"
 
 [features]
 # by default Tauri runs in production mode

@@ -53,7 +53,7 @@ pub enum MacroType {
 #[serde(tag = "type")]
 pub enum ActionEventType {
     KeyPressEvent { data: key_press::KeyPress },
-    SystemEvent { action: system_event::ActionType },
+    SystemEvent { data: system_event::ActionType },
     //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
     PhillipsHueCommand {},
