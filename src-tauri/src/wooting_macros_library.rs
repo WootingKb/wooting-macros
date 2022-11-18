@@ -150,26 +150,31 @@ impl Macro {
                         //));
 
                         //println!("Found a press/release event, sending it now");
+                        //TODO: Task separate this
+                        let channel_cloned = send_channel.clone();
+                        let self_value = data.clone();
 
-                        send_channel
-                            .send(Event {
-                                time: time::SystemTime::now(),
-                                name: None,
-                                event_type: rdev::EventType::KeyPress(
-                                    SCANCODE_TO_RDEV[&data.keypress],
-                                ),
-                            })
-                            .await;
-                        thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                        send_channel
-                            .send(Event {
-                                time: time::SystemTime::now(),
-                                name: None,
-                                event_type: rdev::EventType::KeyRelease(
-                                    SCANCODE_TO_RDEV[&data.keypress],
-                                ),
-                            })
-                            .await;
+                        task::spawn(async move {
+                            channel_cloned
+                                .send(Event {
+                                    time: time::SystemTime::now(),
+                                    name: None,
+                                    event_type: rdev::EventType::KeyPress(
+                                        SCANCODE_TO_RDEV[&self_value.keypress],
+                                    ),
+                                })
+                                .await;
+                            tokio::time::sleep(time::Duration::from_millis(*&self_value.press_duration as u64)).await;
+                            channel_cloned
+                                .send(Event {
+                                    time: time::SystemTime::now(),
+                                    name: None,
+                                    event_type: rdev::EventType::KeyRelease(
+                                        SCANCODE_TO_RDEV[&self_value.keypress],
+                                    ),
+                                })
+                                .await;
+                        }).await;
                     }
                 },
                 ActionEventType::PhillipsHueCommand { .. } => {}
@@ -177,7 +182,7 @@ impl Macro {
                 ActionEventType::DiscordCommand { .. } => {}
                 ActionEventType::UnicodeDirect { .. } => {}
                 ActionEventType::Delay { data } => {
-                    thread::sleep(time::Duration::from_millis(*data))
+                    tokio::time::sleep(time::Duration::from_millis(*data)).await
                 }
             }
         }

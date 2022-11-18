@@ -104,8 +104,8 @@ lazy_static! {
 //     pub static ref KEYS_PRESSED: M = { MacroDataState::new() };
 // }
 
-//#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
-#[tokio::main]
+//#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 async fn main() {
     /// Spawn the backend thread.
     /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
@@ -119,9 +119,10 @@ async fn main() {
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
 
     let tray_menu = SystemTrayMenu::new()
-        .add_item(quit)
+        .add_item(hide)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(hide);
+        .add_item(quit);
+
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
 

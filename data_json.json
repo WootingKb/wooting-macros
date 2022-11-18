@@ -11,15 +11,7 @@
               "type": "KeyPressEvent",
               "data": {
                 "keypress": 15,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 17,
-                "press_duration": 1,
+                "press_duration": 20,
                 "keytype": "DownUp"
               }
             },
@@ -28,34 +20,26 @@
               "data": 50
             },
             {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 4,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
+              "type": "Delay",
+              "data": 50
             },
             {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 5,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 6,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
+              "type": "Delay",
+              "data": 50
             },
             {
               "type": "KeyPressEvent",
               "data": {
                 "keypress": 10,
-                "press_duration": 1,
+                "press_duration": 20,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 20,
                 "keytype": "DownUp"
               }
             }
@@ -131,12 +115,16 @@
               }
             },
             {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 14,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "Delay",
+              "data": 50
             },
             {
               "type": "KeyPressEvent",
@@ -150,6 +138,14 @@
               "type": "KeyPressEvent",
               "data": {
                 "keypress": 6,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 14,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
