@@ -30,6 +30,7 @@ type Props = {
 function MacroCard({ macro, index, onDelete }: Props) {
   const { collections, changeSelectedMacroIndex, changeViewState } =
     useApplicationContext()
+  const subtextColour = useColorModeValue('gray.500', 'gray.400')
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
 
@@ -90,7 +91,7 @@ function MacroCard({ macro, index, onDelete }: Props) {
         </Menu>
       </Flex>
       {/** Trigger Keys Display */}
-      <Text fontSize="sm" color="gray.600" alignSelf="self-start">
+      <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
         Trigger Keys:
       </Text>
       <Flex w="100%" gap="4px">
