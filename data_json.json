@@ -18,15 +18,7 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 16,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 4,
+                "keypress": 17,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }
@@ -38,7 +30,31 @@
             {
               "type": "KeyPressEvent",
               "data": {
-                "keypress": 17,
+                "keypress": 4,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 5,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 6,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 10,
                 "press_duration": 1,
                 "keytype": "DownUp"
               }

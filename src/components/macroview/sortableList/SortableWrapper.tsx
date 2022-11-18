@@ -34,7 +34,7 @@ const SortableWrapper = ({ id, element, children }: Props) => {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      w={element.type === 'Delay' ? 'fit-content' : '100%'}
+      w={element.type === "Delay" ? 'fit-content' : '100%'}
       border="1px"
       borderColor={dividerColour}
       rounded="md"

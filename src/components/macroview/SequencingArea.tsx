@@ -37,8 +37,11 @@ const SequencingArea = () => {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
-    overwriteIds(sequence.map((element, index) => index + 1))
-    console.log(sequence)
+    console.log(ids.length)
+    if (ids.length === 0) {
+      overwriteIds(sequence.map((element, index) => index + 1))
+      console.log("initialized ids")
+    }
   }, [sequence])
 
   const sensors = useSensors(
@@ -58,6 +61,8 @@ const SequencingArea = () => {
     if (active.id !== over.id) {
       const oldIndex = ids.indexOf(active.id)
       const newIndex = ids.indexOf(over.id)
+      console.log(oldIndex)
+      console.log(newIndex)
       overwriteIds(arrayMove(ids, oldIndex, newIndex))
     }
     setActiveId(undefined)

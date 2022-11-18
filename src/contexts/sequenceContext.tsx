@@ -41,7 +41,10 @@ function SequenceProvider({ children }: SequenceProviderProps) {
 
   const addToSequence = useCallback(
     (newElement: ActionEventType) => {
-      setSequence((sequence) => [...sequence, newElement])
+      setSequence((sequence) => {
+        setIds((ids) => [...ids, (sequence.length + 1)])
+        return [...sequence, newElement]
+      })
     },
     [setSequence]
   )
@@ -52,7 +55,7 @@ function SequenceProvider({ children }: SequenceProviderProps) {
         const temp = [...sequence]
         const index = sequence.indexOf(element, 0)
         temp.splice(index, 1)
-        overwriteIds(temp.map((element, index) => index + 1))
+        setIds(temp.map((element, index) => index + 1))
         return temp
       })
     },
