@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { DragHandleIcon } from '@chakra-ui/icons'
 import { HStack, Box, useColorModeValue } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
@@ -6,7 +7,7 @@ import { CSS } from '@dnd-kit/utilities'
 type Props = {
     id: number
     isSmall: boolean
-    children: any
+    children: ReactNode
 }
 
 const SortableWrapper = ({id, isSmall, children}: Props) => {

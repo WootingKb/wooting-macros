@@ -1,11 +1,11 @@
+import { ReactNode } from 'react'
 import { DragHandleIcon } from '@chakra-ui/icons'
 import { Box, HStack, useColorModeValue } from '@chakra-ui/react'
-import React from 'react'
 
 type Props = {
     id: number
     isSmall: boolean
-    children: any
+    children: ReactNode
 }
 
 const DragWrapper = ({id, isSmall, children}: Props) => {

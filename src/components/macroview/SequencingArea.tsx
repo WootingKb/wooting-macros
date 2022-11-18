@@ -23,65 +23,24 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { SequenceElement } from '../../types'
-import SequenceElementDraggableDisplay from './SequenceElementDraggableDisplay'
 import { useSequenceContext } from '../../contexts/sequenceContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
+import { ActionEventType } from '../../types'
 
-// TODO: Record functionality; add delay functionality
+// TODO: Record functionality
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState(undefined)
-  const { sequence, addToSequence, overwriteSequence } = useSequenceContext()
+  const { sequence, addToSequence } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
-  const [sequenceList, setSequenceList] = useState([
-    {
-      text: "test 1",
-      isSmall: true
-    },
-    {
-      text: "test 2",
-      isSmall: false
-    },
-    {
-      text: "test 3",
-      isSmall: false
-    },
-    {
-      text: "test 4",
-      isSmall: false
-    },
-    {
-      text: "test 5",
-      isSmall: true
-    },
-    {
-      text: "test 6",
-      isSmall: true
-    },
-    {
-      text: "test 7",
-      isSmall: true
-    },
-    {
-      text: "test 8",
-      isSmall: true
-    },
-    {
-      text: "test 9",
-      isSmall: true
-    },
-    {
-      text: "test 10",
-      isSmall: true
-    }
-  ]);
-  const [items, setItems] = useState<number[]>(
-    sequenceList.map((element, index) => index + 1)
-  );
+  const [items, setItems] = useState<number[]>([]);
+
+  useEffect(() => {
+    setItems(sequence.map((element, index) => index + 1))
+  }, [sequence])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -91,13 +50,12 @@ const SequencingArea = () => {
   )
 
   function getSortedSequence(ids: number[]) {
-    const sortedSequenceList = ids.map((id) => sequenceList[id - 1]);
+    const sortedSequenceList = ids.map((id) => sequence[id - 1]);
     console.log(sortedSequenceList);
   }
 
   function handleDragEnd(event: any) {
     const { active, over } = event;
-    console.log(over);
 
     if (over === null) {
       return;
@@ -120,9 +78,9 @@ const SequencingArea = () => {
   }
 
   const onAddDelayButtonPress = () => {
-    const delayElement: SequenceElement = {
-      id: sequence.length + 1,
-      data: { type: 'Delay', data: 50 }
+    const delayElement: ActionEventType = {
+      type: 'Delay',
+      data: 50
     }
 
     addToSequence(delayElement)
@@ -163,16 +121,16 @@ const SequencingArea = () => {
         >
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
             {items.map((id) => 
-              <SortableWrapper id={id} key={id} isSmall={sequenceList[id - 1].isSmall}>
-                <SortableItem id={id} element={sequenceList[id - 1]}/>
+              <SortableWrapper id={id} key={id} isSmall={sequence[id - 1].type === "Delay"}>
+                <SortableItem id={id} element={sequence[id - 1]}/>
               </SortableWrapper>
             )}
           </VStack>
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper id={activeId} isSmall={sequenceList[activeId - 1].isSmall}>
-              <SortableItem id={activeId} element={sequenceList[activeId - 1]}/>
+            <DragWrapper id={activeId} isSmall={sequence[activeId - 1].type === "Delay"}>
+              <SortableItem id={activeId} element={sequence[activeId - 1]}/>
             </DragWrapper>
           ) : undefined}
         </DragOverlay>
