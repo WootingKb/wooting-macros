@@ -27,12 +27,61 @@ import { SequenceElement } from '../../types'
 import SequenceElementDraggableDisplay from './SequenceElementDraggableDisplay'
 import { useSequenceContext } from '../../contexts/sequenceContext'
 import { useState } from 'react'
+import SortableWrapper from './sortableList/SortableWrapper'
+import SortableItem from './sortableList/SortableItem'
+import DragWrapper from './sortableList/DragWrapper'
 
 // TODO: Record functionality; add delay functionality
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState(undefined)
   const { sequence, addToSequence, overwriteSequence } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
+
+  const [sequenceList, setSequenceList] = useState([
+    {
+      text: "test 1",
+      isSmall: true
+    },
+    {
+      text: "test 2",
+      isSmall: false
+    },
+    {
+      text: "test 3",
+      isSmall: false
+    },
+    {
+      text: "test 4",
+      isSmall: false
+    },
+    {
+      text: "test 5",
+      isSmall: true
+    },
+    {
+      text: "test 6",
+      isSmall: true
+    },
+    {
+      text: "test 7",
+      isSmall: true
+    },
+    {
+      text: "test 8",
+      isSmall: true
+    },
+    {
+      text: "test 9",
+      isSmall: true
+    },
+    {
+      text: "test 10",
+      isSmall: true
+    }
+  ]);
+  const [items, setItems] = useState<number[]>(
+    sequenceList.map((element, index) => index + 1)
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -41,26 +90,33 @@ const SequencingArea = () => {
     })
   )
 
-  const handleDragStart = (event: any) => {
-    const { active } = event
-    console.log(active.id)
-    console.log(sequence)
-    setActiveId(active.id)
+  function getSortedSequence(ids: number[]) {
+    const sortedSequenceList = ids.map((id) => sequenceList[id - 1]);
+    console.log(sortedSequenceList);
   }
 
-  const handleDragEnd = (event: any) => {
-    if (event.active.id !== event.over.id) {
-      const oldIndex = sequence.findIndex(
-        (element) => element.id === event.active.id
-      )
-      const newIndex = sequence.findIndex(
-        (element) => element.id === event.over.id
-      )
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+    console.log(over);
 
-      overwriteSequence(arrayMove(sequence, oldIndex, newIndex))
+    if (over === null) {
+      return;
     }
 
-    setActiveId(undefined)
+    if (active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+        const sortedIds = arrayMove(items, oldIndex, newIndex);
+        return sortedIds;
+      });
+    }
+    setActiveId(undefined);
+  }
+
+  function handleDragStart(event: any) {
+    const { active } = event;
+    setActiveId(active.id);
   }
 
   const onAddDelayButtonPress = () => {
@@ -95,28 +151,29 @@ const SequencingArea = () => {
       <Divider borderColor={dividerColour} />
       {/** Timeline */}
       <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis]}
-        collisionDetection={closestCenter}
-        sensors={sensors}
       >
         <SortableContext
-          items={sequence.map((element) => element.id)}
+          items={items}
           strategy={verticalListSortingStrategy}
         >
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
-            {sequence.map((element: SequenceElement) => (
-              <SequenceElementDraggableDisplay
-                element={element}
-                key={element.id}
-              />
-            ))}
+            {items.map((id) => 
+              <SortableWrapper id={id} key={id} isSmall={sequenceList[id - 1].isSmall}>
+                <SortableItem id={id} element={sequenceList[id - 1]}/>
+              </SortableWrapper>
+            )}
           </VStack>
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <SequenceElementDraggableDisplay element={sequence[activeId]} />
+            <DragWrapper id={activeId} isSmall={sequenceList[activeId - 1].isSmall}>
+              <SortableItem id={activeId} element={sequenceList[activeId - 1]}/>
+            </DragWrapper>
           ) : undefined}
         </DragOverlay>
       </DndContext>
