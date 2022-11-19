@@ -117,11 +117,13 @@ async fn main() {
     /// Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let show = CustomMenuItem::new("show".to_string(), "Show");
 
     let tray_menu = SystemTrayMenu::new()
         .add_item(hide)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
+        .add_item(quit)
+        .add_item(show);
 
 
     let system_tray = SystemTray::new().with_menu(tray_menu);

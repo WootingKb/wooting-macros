@@ -540,7 +540,7 @@ pub async fn run_backend() {
             }
 
             let pressed_keys_copy_converted: Vec<u32> =
-                pressed_keys.iter().map(|x| SCANCODE_TO_HID[&x]).collect();
+                pressed_keys.iter().map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0)).collect();
 
             let first_key: u32 = match pressed_keys_copy_converted.first() {
                 None => 0,
