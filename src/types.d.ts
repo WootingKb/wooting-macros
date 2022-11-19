@@ -36,8 +36,12 @@ export interface Keypress {
 
 export type SystemAction =
   | { type: 'Open'; data: string}
-  | { type: 'Volume'; data: undefined}
+  | { type: 'Volume'; data: SystemVolumeAction}
   | { type: 'Brightness'; data: undefined}
+
+export type SystemVolumeAction =
+  | { type: 'Mute'; data: boolean }
+  | { type: 'SetVolume'; data: number }
 
 // Input Event Types
 export type TriggerEventType = {

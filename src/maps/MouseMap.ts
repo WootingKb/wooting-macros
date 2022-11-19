@@ -19,4 +19,12 @@ export class MouseInput {
   static get X2(): MouseInputInfo {
     return { button: 4, displayString: 'Mouse 5' }
   }
+
+  static readonly all: MouseInputInfo[] = [
+    MouseInput.Left,
+    MouseInput.Middle,
+    MouseInput.Right,
+    MouseInput.X1,
+    MouseInput.X2,
+  ]
 }
