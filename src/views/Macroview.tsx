@@ -1,5 +1,5 @@
 import { VStack, HStack, useColorModeValue } from '@chakra-ui/react'
-import { BaseSyntheticEvent, useEffect, useState } from 'react'
+import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
 import { KeyType, MacroType, ViewState } from '../enums'
@@ -42,15 +42,20 @@ const Macroview = ({ isEditing }: Props) => {
     updateElementIndex(-1)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
-  }, [])
+  }, [isEditing, updateElementIndex])
 
-  const addTriggerKey = (event: KeyboardEvent) => {
+  const addTriggerKey = useCallback(
+    (event: KeyboardEvent) => {
     event.preventDefault()
 
     const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
     if (HIDcode === undefined) {
       return
     }
+
+    if (triggerKeys.some((element) => {
+      return HIDcode === element.keypress
+    })) { return }
 
     const keypress: Keypress = {
       keypress: HIDcode,
@@ -62,7 +67,9 @@ const Macroview = ({ isEditing }: Props) => {
     if (triggerKeys.length == 3) {
       setRecording(false)
     }
-  }
+  },
+  [triggerKeys]
+  )
 
   useEffect(() => {
     if (!recording) {
@@ -75,7 +82,7 @@ const Macroview = ({ isEditing }: Props) => {
       window.removeEventListener('keydown', addTriggerKey, false)
       // TODO: start backend trigger listening
     }
-  }, [addTriggerKey])
+  }, [addTriggerKey, recording])
 
   const onRecordButtonPress = () => {
     if (!recording) {

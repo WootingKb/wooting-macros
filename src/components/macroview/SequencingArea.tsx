@@ -37,8 +37,10 @@ const SequencingArea = () => {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
-    overwriteIds(sequence.map((element, index) => index + 1))
-  }, [sequence])
+    if (ids.length === 0) {
+      overwriteIds(sequence.map((element, index) => index + 1))
+    }
+  }, [ids.length, overwriteIds, sequence])
 
   const sensors = useSensors(
     useSensor(PointerSensor),

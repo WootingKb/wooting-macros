@@ -1,9 +1,21 @@
 {
   "extends": [
     "eslint:recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"]
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
+  "rules": {
+    "react/button-has-type": "warn",
+    "react/prop-types": "warn",
+    "react/require-default-props": "warn",
+    "react/no-array-index-key": "warn",
+    "react/display-name": "warn",
+    "react/no-danger-with-children": "warn",
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn"
+  }
 }

@@ -28,7 +28,7 @@ const MacroList = () => {
         overflowY="auto"
       >
         {currentCollection.macros.map((macro: Macro, index: number) => (
-          <GridItem w="100%" key={index}>
+          <GridItem w="100%" key={`${index}:${macro.name}`}>
             <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
           </GridItem>
         ))}

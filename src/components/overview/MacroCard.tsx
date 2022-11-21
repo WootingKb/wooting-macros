@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react'
 import { EditIcon, StarIcon } from '@chakra-ui/icons'
 import { Keypress, Macro } from '../../types'
-import { BaseSyntheticEvent } from 'react'
 import { HIDLookup } from '../../maps/HIDmap'
 import { updateBackendConfig } from '../../utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
@@ -34,7 +33,7 @@ function MacroCard({ macro, index, onDelete }: Props) {
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
 
-  const onToggle = (event: BaseSyntheticEvent) => {
+  const onToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     macro.active = event.target.checked
     // update backend
     updateBackendConfig(collections)
@@ -95,8 +94,8 @@ function MacroCard({ macro, index, onDelete }: Props) {
         Trigger Keys:
       </Text>
       <Flex w="100%" gap="4px">
-        {macro.trigger.data.map((key: Keypress, index: number) => (
-          <Kbd key={index} p="1">
+        {macro.trigger.data.map((key: Keypress) => (
+          <Kbd key={key.keypress} p="1">
             {HIDLookup.get(key.keypress)?.displayString}
           </Kbd>
         ))}

@@ -21,7 +21,7 @@ const MacroviewHeader = ({
   onSaveButtonPress
 }: Props) => {
   const { changeViewState } = useApplicationContext()
-  const { updateElementIndex, overwriteSequence, overwriteIds } =
+  const { sequence, updateElementIndex, overwriteSequence, overwriteIds } =
     useSequenceContext()
 
   return (
@@ -73,7 +73,7 @@ const MacroviewHeader = ({
       </Flex>
       <Button
         colorScheme="yellow"
-        isDisabled={!(triggerKeys.length > 0)}
+        isDisabled={(triggerKeys.length <= 0) || (sequence.length <= 0) || (macroName === '')}
         onClick={onSaveButtonPress}
       >
         Save Macro
