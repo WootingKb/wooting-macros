@@ -19,25 +19,25 @@ impl SystemAction {
             SystemAction::Volume { action } => {
                 match action {
                     VolumeAction::Mute { data } => {
-                        // unsafe {
-                        //     CoInitialize(Some(std::ptr::null()));
-                        //
-                        //     let enumerator: IMMDeviceEnumerator =
-                        //         CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_ALL).unwrap();
-                        //     let device = enumerator
-                        //         .GetDefaultAudioEndpoint(eRender, eMultimedia)
-                        //         .unwrap();
-                        //     let manager: IAudioSessionManager2 = device.Activate(CLSCTX_ALL, ptr::null()).unwrap();
-                        //     let sessions = manager.GetSessionEnumerator().unwrap();
-                        //
-                        //     for n in 0..sessions.GetCount().unwrap() {
-                        //         let session_control = sessions.GetSession(n).unwrap();
-                        //         let session_control_2: windows::Win32::Media::Audio::IAudioSessionControl2 = session_control.cast().unwrap();
-                        //     }
-                        //
-                        //
-                        //     CoUninitialize();
-                        // }
+                        unsafe {
+                            CoInitialize(Some(std::ptr::null()));
+
+                            let enumerator: IMMDeviceEnumerator =
+                                CoCreateInstance(&MMDeviceEnumerator, None, CLSCTX_ALL).unwrap();
+                            let device = enumerator
+                                .GetDefaultAudioEndpoint(eRender, eMultimedia)
+                                .unwrap();
+                            let manager: IAudioSessionManager2 = device.Activate(CLSCTX_ALL, ptr::null()).unwrap();
+                            let sessions = manager.GetSessionEnumerator().unwrap();
+
+                            for n in 0..sessions.GetCount().unwrap() {
+                                let session_control = sessions.GetSession(n).unwrap();
+                                let session_control_2: windows::Win32::Media::Audio::IAudioSessionControl2 = session_control.cast().unwrap();
+                            }
+
+
+                            CoUninitialize();
+                        }
                     }
                     VolumeAction::SetVolume { amount } => {}
                     VolumeAction::ToggleMute => {}

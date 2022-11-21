@@ -607,52 +607,6 @@ async fn check_macro_execution_efficiently(
     }
 }
 
-///Function checks if the current keys pressed evalue to any macro
-async fn check_macro_execution(
-    pressed_keys: Vec<Key>,
-    trigger_overview: MacroData,
-    channel_sender: Sender<rdev::Event>,
-) {
-    for collections in &trigger_overview.data {
-        if collections.active == true {
-            for macros in &collections.macros {
-                if macros.active == true {
-                    match &macros.trigger {
-                        TriggerEventType::KeyPressEvent {
-                            data: trigger_key, ..
-                        } => {
-                            let converted_keys: Vec<rdev::Key> = trigger_key
-                                .iter()
-                                .map(|x| SCANCODE_TO_RDEV[&x.keypress])
-                                .collect();
-
-                            if pressed_keys == converted_keys {
-                                println!("MACRO {:#?} READY TO EXECUTE", macros.name);
-                                println!("KEYS SEQUENCE {:#?} READY TO EXECUTE", macros.sequence);
-
-                                let havo = macros.clone();
-                                let havo2 = channel_sender.clone();
-                                //USE THIS FOR THREADED
-                                //thread::spawn(|| execute_macro(havo));
-
-                                //USE THIS FOR ASYNC
-                                println!(
-                                    "Executing macro {:#?} because of trigger {:#?} == {:#?}",
-                                    havo.name, pressed_keys, converted_keys
-                                );
-
-                                task::spawn(async move {
-                                    execute_macro(havo, havo2).await;
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 ///Sends an event to the library to Execute on an OS level.
 fn send(event_type: &EventType) {
     //let delay = time::Duration::from_millis(20);
