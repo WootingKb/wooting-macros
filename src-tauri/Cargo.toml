@@ -26,6 +26,9 @@ opener = "0.5"
 windows = { version = "0.43", features = ["Win32_Media_Audio", "Win32_Foundation", "Win32_System", "Win32_System_Com"] }
 winaudio = "1.0.2"
 rodio = "0.16.0"
+brightness = "0.5.0"
+futures = "0.3.25"
+copypasta = { version = "0.8.1", features = ["smithay-clipboard"] }
 
 [features]
 # by default Tauri runs in production mode

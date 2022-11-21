@@ -30,7 +30,7 @@ use crate::plugin::mouse_movement;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
-use crate::plugin::system_event::SystemAction;
+use crate::plugin::system_event::{ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction};
 use crate::plugin::unicode_direct;
 
 //use tauri::async_runtime::RwLock;
@@ -468,13 +468,53 @@ async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
 ///Main loop for now (of the library)
 pub async fn run_backend() {
     //==============TESTING GROUND======================
-    // let action_type = ActionEventType::SystemEvent { action: ActionType::Open { path: r"C:\Users\medze\Desktop\workspace".to_string() } };
-
+    // let action_type = ActionEventType::SystemEvent {
+    //     data: SystemAction::Clipboard{ action: ClipboardAction::Set },
+    // };
+    //
     // match action_type {
-    //     ActionEventType::SystemEvent { action } => {
-    //         action.execute();
+    //     ActionEventType::SystemEvent { data } => {
+    //         data.execute().await;
     //     }
     //     _ => {}
+    // }
+
+
+    let action_type = ActionEventType::SystemEvent {
+        data: SystemAction::Brightness { action: MonitorBrightnessAction::Set { level: 75 } },
+    };
+    match action_type {
+        ActionEventType::SystemEvent { data } => {
+            data.execute().await;
+        }
+        _ => {}
+    }
+
+
+    //
+    // match action_type {
+    //     ActionEventType::SystemEvent { data } => {
+    //         match data {
+    //             SystemAction::Open { .. } => {}
+    //             SystemAction::Volume { .. } => {}
+    //             SystemAction::Brightness{ action } => {
+    //                 match action{
+    //                     BrightnessAction::Get => {
+    //
+    //                     }
+    //                     BrightnessAction::Set { .. } => {}
+    //                 }
+    //
+    //             }
+    //         }
+    //     }
+    //
+    //     ActionEventType::KeyPressEvent { .. } => {}
+    //     ActionEventType::PhillipsHueCommand { .. } => {}
+    //     ActionEventType::OBS { .. } => {}
+    //     ActionEventType::DiscordCommand { .. } => {}
+    //     ActionEventType::UnicodeDirect { .. } => {}
+    //     ActionEventType::Delay { .. } => {}
     // }
 
     //==============TESTING GROUND======================
@@ -546,8 +586,10 @@ pub async fn run_backend() {
                 EventType::Wheel { delta_x, delta_y } => {}
             }
 
-            let pressed_keys_copy_converted: Vec<u32> =
-                pressed_keys.iter().map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0)).collect();
+            let pressed_keys_copy_converted: Vec<u32> = pressed_keys
+                .iter()
+                .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+                .collect();
 
             let first_key: u32 = match pressed_keys_copy_converted.first() {
                 None => 0,
