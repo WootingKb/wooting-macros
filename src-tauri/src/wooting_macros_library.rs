@@ -63,7 +63,7 @@ pub enum ActionEventType {
     OBS {},
     DiscordCommand {},
     //IKEADesk
-    //MouseMovement
+    MouseMovement { data: mouse_movement::MouseAction },
     UnicodeDirect {},
     //TODO: Sound effects? Soundboards?
     //TODO: Sending a message through online webapi (twitch)
