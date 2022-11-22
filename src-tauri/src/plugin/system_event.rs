@@ -1,8 +1,15 @@
-use std::ptr;
-
-use brightness::{Brightness, BrightnessDevice};
 use copypasta::{ClipboardContext, ClipboardProvider};
-use futures::{executor::block_on, TryStreamExt};
+
+//
+// #[cfg(target_os = "linux")]
+// #[cfg(target_os = "windows")]
+// use brightness::{Brightness, BrightnessDevice};
+//
+//
+//
+// #[cfg(target_os = "linux")]
+// #[cfg(target_os = "windows")]
+// use futures::{executor::block_on, TryStreamExt};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum SystemAction {
@@ -27,11 +34,18 @@ impl SystemAction {
             SystemAction::Brightness { action } => match action {
                 MonitorBrightnessAction::Get => {
                     // println!("{:#?}", show_brightness().await.unwrap());
-
+                    #[cfg(target_os = "linux")]
+                    #[cfg(target_os = "windows")]
                     brightness_get_info().await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
                 }
                 MonitorBrightnessAction::Set { level } => {
-                    brightness_set_info(*level).await
+                    #[cfg(target_os = "linux")]
+                    #[cfg(target_os = "windows")]
+                    brightness_set_info(*level).await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -54,6 +68,8 @@ impl SystemAction {
     }
 }
 
+#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
 async fn brightness_get_info() {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, dev| async move {
@@ -65,7 +81,10 @@ async fn brightness_get_info() {
     println!("Found {} displays", count);
 }
 
+
 //TODO: accept device from frontend
+#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
 async fn brightness_set_info(percentage_level: u32) {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
@@ -77,7 +96,8 @@ async fn brightness_set_info(percentage_level: u32) {
     println!("Found {} displays", count);
 }
 
-
+#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
 async fn show_brightness(dev: &BrightnessDevice) -> Result<(), brightness::Error> {
     println!("Display {}", dev.device_name().await?);
     println!("\tBrightness = {}%", dev.get().await?);
@@ -85,6 +105,8 @@ async fn show_brightness(dev: &BrightnessDevice) -> Result<(), brightness::Error
     Ok(())
 }
 
+#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
 async fn set_brightness(dev: &mut BrightnessDevice, percentage_level: u32) -> Result<(), brightness::Error> {
     println!("Display {}", dev.device_name().await?);
     dev.set(percentage_level).await?;
@@ -100,7 +122,7 @@ async fn show_platform_specific_info(dev: &BrightnessDevice) -> Result<(), brigh
     Ok(())
 }
 
-#[cfg(not(windows))]
+#[cfg(target_os = "linux")]
 async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightness::Error> {
     Ok(())
 }
@@ -127,9 +149,3 @@ pub enum VolumeAction {
     SetVolume { amount: u32 },
     ToggleMute,
 }
-//
-// #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-// pub struct OpenData{
-//     //pub application: String,
-//     pub path: std::path::Path,
-// }
