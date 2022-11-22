@@ -58,7 +58,7 @@ pub enum ActionEventType {
     SystemEvent { data: system_event::SystemAction },
     //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
-    PhillipsHueCommand {},
+    PhillipsHueCommand { data: phillips_hue::PhillipsHueStatus },
     //TODO: Phillips hue notification
     OBS {},
     DiscordCommand {},
@@ -243,31 +243,6 @@ pub async fn set_data_write_manually_backend(frontend_data: MacroData) {
     app_state.clone().export_data();
 }
 
-//
-// fn check_key(incoming_key: &Vec<rdev::Key>) {
-//     let app_state = APPLICATION_STATE.data.read().unwrap();
-//
-//     for collections in &app_state.data {
-//         if collections.active == true {
-//             for macros in &collections.macros {
-//                 if macros.active == true {
-//                     match &macros.trigger {
-//                         TriggerEventType::KeyPressEvent { data: trigger } => {
-//                             for i in trigger {
-//                                 if SCANCODE_MAP[&i.keypress] == *incoming_key {
-//                                     println!(
-//                                         "FOUND THE TRIGGER, WOULD EXECUTE MACRO: {}",
-//                                         macros.name
-//                                     )
-//                                 }
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
 
 ///State of the application in RAM (rwlock).
 #[derive(Debug)]
