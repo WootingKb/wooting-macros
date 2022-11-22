@@ -61,6 +61,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       setCollections((collections) => [...collections, newCollection])
+      // set collectionIndex to new collection's index
     },
     [setCollections],
   )
@@ -70,8 +71,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       const newCollections = collections.filter(
         (_, i) => i !== selection.collectionIndex
       )
-      newCollections[0].active = true
       setCollections(newCollections)
+      // set collectionIndex to 0
     },
     [collections, selection.collectionIndex, setCollections]
   )
@@ -101,6 +102,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         ...prevState,
         macroIndex: index
       }))
+      // set view to editview or addview depending on the index (>=0 is edit, -1 = add)
     },
     [setSelection]
   )

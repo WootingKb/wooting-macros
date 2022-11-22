@@ -52,6 +52,7 @@ function SequenceProvider({ children }: SequenceProviderProps) {
         (_, i) => i !== selectedElementId
       )
       setSequence(newSequence)
+      // set selected element id to -1
     },
     [selectedElementId, sequence, setSequence]
   )
