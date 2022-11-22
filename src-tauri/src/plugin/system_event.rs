@@ -1,15 +1,11 @@
+#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
+use brightness::{Brightness, BrightnessDevice};
 use copypasta::{ClipboardContext, ClipboardProvider};
-
-//
-// #[cfg(target_os = "linux")]
-// #[cfg(target_os = "windows")]
-// use brightness::{Brightness, BrightnessDevice};
-//
-//
-//
-// #[cfg(target_os = "linux")]
-// #[cfg(target_os = "windows")]
-// use futures::{executor::block_on, TryStreamExt};
+#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
+use futures::{executor::block_on, TryStreamExt};
+use wifi_rs;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum SystemAction {
@@ -17,8 +13,10 @@ pub enum SystemAction {
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
+    // Wifi needs more communication between frontend and backend,
+    // though same could be said for the brightness devices
+    Wifi { action: WifiAction },
 }
-
 
 impl SystemAction {
     pub async fn execute(&self) {
@@ -27,7 +25,7 @@ impl SystemAction {
                 opener::open(std::path::Path::new(path));
             }
             SystemAction::Volume { action } => match action {
-                VolumeAction::Mute { data } => {},
+                VolumeAction::Mute { data } => {}
                 VolumeAction::SetVolume { amount } => {}
                 VolumeAction::ToggleMute => {}
             },
@@ -59,11 +57,11 @@ impl SystemAction {
 
                     let content = ctx.get_contents().unwrap();
 
-
                     println!("{}", content);
                 }
                 ClipboardAction::Paste => {}
-            }
+            },
+            SystemAction::Wifi { .. } => {}
         }
     }
 }
@@ -80,7 +78,6 @@ async fn brightness_get_info() {
         .unwrap();
     println!("Found {} displays", count);
 }
-
 
 //TODO: accept device from frontend
 #[cfg(target_os = "linux")]
@@ -107,7 +104,10 @@ async fn show_brightness(dev: &BrightnessDevice) -> Result<(), brightness::Error
 
 #[cfg(target_os = "linux")]
 #[cfg(target_os = "windows")]
-async fn set_brightness(dev: &mut BrightnessDevice, percentage_level: u32) -> Result<(), brightness::Error> {
+async fn set_brightness(
+    dev: &mut BrightnessDevice,
+    percentage_level: u32,
+) -> Result<(), brightness::Error> {
     println!("Display {}", dev.device_name().await?);
     dev.set(percentage_level).await?;
     show_platform_specific_info(dev).await?;
@@ -127,7 +127,6 @@ async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightn
     Ok(())
 }
 
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum ClipboardAction {
     SetPredefined { data: String },
@@ -142,10 +141,16 @@ pub enum MonitorBrightnessAction {
     Set { level: u32 },
 }
 
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum VolumeAction {
     Mute { data: bool },
     SetVolume { amount: u32 },
     ToggleMute,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+pub enum WifiAction {
+    Connect,
+    Disconnect,
+    Hotspot,
 }

@@ -30,7 +30,9 @@ use crate::plugin::mouse_movement;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
-use crate::plugin::system_event::{ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction};
+use crate::plugin::system_event::{
+    ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
+};
 use crate::plugin::unicode_direct;
 
 //use tauri::async_runtime::RwLock;
@@ -204,7 +206,7 @@ pub fn get_config(state: tauri::State<MacroDataState>) -> ApplicationConfig {
 pub fn set_config(state: tauri::State<MacroDataState>, config: ApplicationConfig) {
     let mut tauri_state = state.config.write().unwrap();
     *tauri_state = config.clone();
-    tauri_state.export_data();
+    tauri_state.export_config_json();
 
     let mut app_state = APPLICATION_STATE.config.write().unwrap();
     *app_state = config;
@@ -479,9 +481,10 @@ pub async fn run_backend() {
     //     _ => {}
     // }
 
-
     let action_type = ActionEventType::SystemEvent {
-        data: SystemAction::Brightness { action: MonitorBrightnessAction::Set { level: 75 } },
+        data: SystemAction::Brightness {
+            action: MonitorBrightnessAction::Set { level: 75 },
+        },
     };
     match action_type {
         ActionEventType::SystemEvent { data } => {
@@ -490,6 +493,7 @@ pub async fn run_backend() {
         _ => {}
     }
 
+    println!("{:#?}", APPLICATION_STATE.config.read().unwrap());
 
     //
     // match action_type {

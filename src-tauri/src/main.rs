@@ -1,13 +1,14 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
 #![allow(warnings, unused)]
 
 extern crate core;
 
 use std::{fs, thread, time};
-use std::fs::File;
+use std::fs::{File, read_to_string};
+use std::io::{ErrorKind, Read, Write};
 use std::process::Command;
 
 use lazy_static::lazy_static;
@@ -15,7 +16,6 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use tauri::{App, Manager, SystemTrayEvent, SystemTrayMenuItem};
 use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu};
-//use std::sync::RwLock;
 use tauri::async_runtime::RwLock;
 use tokio::*;
 use tokio::io::{AsyncWriteExt, stdin};
@@ -23,6 +23,8 @@ use tokio::io::{AsyncWriteExt, stdin};
 use plugin::delay;
 
 use crate::wooting_macros_library::*;
+
+//use std::sync::RwLock;
 
 pub mod plugin;
 
@@ -38,57 +40,39 @@ pub struct ApplicationConfig {
 
 impl ApplicationConfig {
     pub fn read_data() -> ApplicationConfig {
-        let path = "../config.json";
-
-        let default_config: ApplicationConfig = ApplicationConfig {
+        let default: ApplicationConfig = ApplicationConfig {
             use_input_grab: false,
             startup_delay: 0,
         };
-
-        //TODO: Make this create a new file when needed.
-        let data = {
-            match fs::read_to_string(path) {
-                Ok(T) => T,
-                Err(E) => {
-                    eprintln!("{}", E);
-                    std::fs::write(
-                        "../config.json",
-                        serde_json::to_string_pretty(&default_config).unwrap(),
-                    )
-                        .unwrap();
-
-                    let output = fs::read_to_string(path).unwrap();
-                    println!("{}", output);
-
-                    output
-                }
+        return match File::open("../config.json") {
+            Ok(T) => {
+                let data: ApplicationConfig = serde_json::from_reader(&T).unwrap();
+                data
             }
-        };
 
-        let deserialized: ApplicationConfig = match serde_json::from_str(&data) {
-            Ok(T) => T,
             Err(E) => {
-                println!("{}", E);
-                std::fs::write(
-                    "../config.json",
-                    serde_json::to_string_pretty(&default_config).unwrap(),
-                )
-                    .unwrap();
-                thread::sleep(time::Duration::from_secs(2));
-                serde_json::from_str(&data).unwrap()
+                eprintln!("Error opening file, using default config {}", E);
+                default.export_config_json();
+                default
             }
         };
-        deserialized
     }
 
-    /// This exports data for the frontend to process it.
-    /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) {
-        std::fs::write(
+    pub fn export_config_json(&self) {
+        match std::fs::write(
             "../config.json",
             serde_json::to_string_pretty(&self).unwrap(),
-        )
-            .unwrap();
+        ) {
+            Ok(_) => {
+                println!("Success writing a new file");
+            }
+            Err(E) => {
+                eprintln!(
+                    "Error writing a new file, using only read only defaults. {}",
+                    E
+                );
+            }
+        };
     }
 }
 
