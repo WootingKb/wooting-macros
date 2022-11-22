@@ -96,12 +96,9 @@ lazy_static! {
     pub static ref TRIGGERS_LIST: Triggers = { Triggers::new() };
 }
 
-// lazy_static! {
-//     pub static ref KEYS_PRESSED: M = { MacroDataState::new() };
-// }
 
-//#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
-#[tokio::main]
+
+#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 async fn main() {
     /// Spawn the backend thread.
     /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions

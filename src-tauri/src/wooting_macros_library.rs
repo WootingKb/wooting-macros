@@ -416,7 +416,6 @@ impl StateManagement for MacroData {
             }],
         };
 
-
         return match File::open("../data_json.json") {
             Ok(T) => {
                 let data: MacroData = serde_json::from_reader(&T).unwrap();
@@ -430,8 +429,6 @@ impl StateManagement for MacroData {
             }
         };
     }
-
-
 }
 
 ///Collection struct that defines what a group of macros looks like and what properties it carries
