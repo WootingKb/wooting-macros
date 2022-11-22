@@ -40,9 +40,12 @@ export interface Keypress {
 }
 
 export type SystemAction =
-  | { type: 'Open'; data: string }
-  | { type: 'Volume'; data: SystemVolumeAction }
-  | { type: 'Brightness'; data: undefined }
+  | { type: 'Open'; path: string }
+  | { type: 'Volume'; action: SystemVolumeAction }
+  | { type: 'Brightness'; action: undefined }
+  | { type: 'Clipboard'; action: undefined }
+
+// test to see if having different word, i.e. 'path' vs 'data' vs 'action', affects how the data is serialized
 
 export type SystemVolumeAction =
   | { type: 'Mute'; data: boolean }
