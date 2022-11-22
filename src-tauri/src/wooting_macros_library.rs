@@ -21,7 +21,7 @@ use tokio::sync::mpsc;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
-use crate::{APPLICATION_STATE, ApplicationConfig, hid_table, TRIGGERS_LIST};
+use crate::{APPLICATION_STATE, ApplicationConfig, hid_table, StateManagement, TRIGGERS_LIST};
 use crate::hid_table::*;
 use crate::plugin::delay;
 use crate::plugin::discord;
@@ -206,7 +206,7 @@ pub fn get_config(state: tauri::State<MacroDataState>) -> ApplicationConfig {
 pub fn set_config(state: tauri::State<MacroDataState>, config: ApplicationConfig) {
     let mut tauri_state = state.config.write().unwrap();
     *tauri_state = config.clone();
-    tauri_state.export_config_json();
+    tauri_state.write_to_file();
 
     let mut app_state = APPLICATION_STATE.config.write().unwrap();
     *app_state = config;
@@ -280,8 +280,8 @@ impl MacroDataState {
     ///Generates a new state.
     pub fn new() -> Self {
         MacroDataState {
-            data: RwLock::from(MacroData::read_data()),
-            config: RwLock::from(ApplicationConfig::read_data()),
+            data: RwLock::from(MacroData::read_data_macro()),
+            config: RwLock::from(ApplicationConfig::read_data_config()),
         }
     }
 }
@@ -386,12 +386,28 @@ impl MacroData {
 
         output_hashmap
     }
+}
 
+impl StateManagement for MacroData {
+    fn write_to_file(&self) {
+        match std::fs::write(
+            "../data_json.json",
+            serde_json::to_string_pretty(&self).unwrap(),
+        ) {
+            Ok(_) => {
+                println!("Success writing a new file");
+            }
+            Err(E) => {
+                eprintln!(
+                    "Error writing a new file, using only read only defaults. {}",
+                    E
+                );
+            }
+        };
+    }
     ///Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
-    pub fn read_data() -> MacroData {
-        let path = "../data_json.json";
-
-        let incoming_test: MacroData = MacroData {
+    fn read_data_macro() -> MacroData {
+        let default: MacroData = MacroData {
             data: vec![Collection {
                 name: "Default".to_string(),
                 icon: 'i'.to_string(),
@@ -400,28 +416,22 @@ impl MacroData {
             }],
         };
 
-        let data = {
-            match fs::read_to_string(path) {
-                Ok(T) => T,
-                Err(E) => {
-                    println!("{}", E);
-                    std::fs::write(
-                        "../data_json.json",
-                        serde_json::to_string_pretty(&incoming_test).unwrap(),
-                    )
-                        .unwrap();
 
-                    let output = fs::read_to_string(path).unwrap();
-                    println!("{}", output);
+        return match File::open("../data_json.json") {
+            Ok(T) => {
+                let data: MacroData = serde_json::from_reader(&T).unwrap();
+                data
+            }
 
-                    output
-                }
+            Err(E) => {
+                eprintln!("Error opening file, using default macrodata {}", E);
+                default.write_to_file();
+                default
             }
         };
-
-        let deserialized: MacroData = serde_json::from_str(&data).unwrap();
-        deserialized
     }
+
+
 }
 
 ///Collection struct that defines what a group of macros looks like and what properties it carries

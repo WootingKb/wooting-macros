@@ -3,42 +3,7 @@
     {
       "name": "Default",
       "icon": "i",
-      "macros": [
-        {
-          "name": "Havo",
-          "sequence": [
-            {
-              "type": "KeyPressEvent",
-              "data": {
-                "keypress": 16,
-                "press_duration": 1,
-                "keytype": "DownUp"
-              }
-            },
-            {
-              "type": "SystemEvent",
-              "data": {
-                "Open": {
-                  "path": "C:\\Users\\medze\\Desktop\\workspace"
-                }
-              }
-            }
-          ],
-          "macro_type": "Single",
-          "trigger": {
-            "type": "KeyPressEvent",
-            "data": [
-              {
-                "keypress": 51,
-                "press_duration": 0,
-                "keytype": "DownUp"
-              }
-            ],
-            "allow_while_other_keys": false
-          },
-          "active": true
-        }
-      ],
+      "macros": [],
       "active": true
     }
   ]

@@ -38,8 +38,20 @@ pub struct ApplicationConfig {
     pub startup_delay: u64,
 }
 
-impl ApplicationConfig {
-    pub fn read_data() -> ApplicationConfig {
+trait StateManagement {
+    fn read_data_config() -> ApplicationConfig {
+        unimplemented!("Implement locally.")
+    }
+    fn write_to_file(&self) {
+        unimplemented!("Implement locally.")
+    }
+    fn read_data_macro() -> MacroData {
+        unimplemented!("Implement locally.")
+    }
+}
+
+impl StateManagement for ApplicationConfig {
+    fn read_data_config() -> ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             use_input_grab: false,
             startup_delay: 0,
@@ -52,13 +64,13 @@ impl ApplicationConfig {
 
             Err(E) => {
                 eprintln!("Error opening file, using default config {}", E);
-                default.export_config_json();
+                default.write_to_file();
                 default
             }
         };
     }
 
-    pub fn export_config_json(&self) {
+    fn write_to_file(&self) {
         match std::fs::write(
             "../config.json",
             serde_json::to_string_pretty(&self).unwrap(),
