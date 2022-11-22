@@ -1,9 +1,7 @@
-#[cfg(target_os = "linux")]
-#[cfg(target_os = "windows")]
-use brightness::{Brightness, BrightnessDevice};
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+use brightness::{Brightness, BrightnessDevice, windows::BrightnessExt};
 use copypasta::{ClipboardContext, ClipboardProvider};
-#[cfg(target_os = "linux")]
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{executor::block_on, TryStreamExt};
 use wifi_rs;
 
@@ -32,15 +30,13 @@ impl SystemAction {
             SystemAction::Brightness { action } => match action {
                 MonitorBrightnessAction::Get => {
                     // println!("{:#?}", show_brightness().await.unwrap());
-                    #[cfg(target_os = "linux")]
-                    #[cfg(target_os = "windows")]
+                    #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_get_info().await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
                 }
                 MonitorBrightnessAction::Set { level } => {
-                    #[cfg(target_os = "linux")]
-                    #[cfg(target_os = "windows")]
+                    #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set_info(*level).await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
@@ -66,8 +62,7 @@ impl SystemAction {
     }
 }
 
-#[cfg(target_os = "linux")]
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn brightness_get_info() {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, dev| async move {
@@ -80,8 +75,7 @@ async fn brightness_get_info() {
 }
 
 //TODO: accept device from frontend
-#[cfg(target_os = "linux")]
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn brightness_set_info(percentage_level: u32) {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
@@ -93,8 +87,7 @@ async fn brightness_set_info(percentage_level: u32) {
     println!("Found {} displays", count);
 }
 
-#[cfg(target_os = "linux")]
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn show_brightness(dev: &BrightnessDevice) -> Result<(), brightness::Error> {
     println!("Display {}", dev.device_name().await?);
     println!("\tBrightness = {}%", dev.get().await?);
@@ -102,8 +95,7 @@ async fn show_brightness(dev: &BrightnessDevice) -> Result<(), brightness::Error
     Ok(())
 }
 
-#[cfg(target_os = "linux")]
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn set_brightness(
     dev: &mut BrightnessDevice,
     percentage_level: u32,
@@ -116,7 +108,6 @@ async fn set_brightness(
 
 #[cfg(windows)]
 async fn show_platform_specific_info(dev: &BrightnessDevice) -> Result<(), brightness::Error> {
-    use brightness::windows::BrightnessExt;
     println!("\tDevice description = {}", dev.device_description()?);
     println!("\tDevice registry key = {}", dev.device_registry_key()?);
     Ok(())
