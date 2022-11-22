@@ -20,11 +20,11 @@ import { KeyType } from '../../enums'
 import { useSequenceContext } from '../../contexts/sequenceContext'
 
 const SelectElementArea = () => {
-  const { addToSequence } = useSequenceContext()
+  const { onElementAdd: onSequenceAdd } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   const onSequenceElementButtonPress = (properties: ActionEventType) => {
-    addToSequence(properties)
+    onSequenceAdd(properties)
   }
 
   return (

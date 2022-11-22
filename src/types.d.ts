@@ -11,20 +11,25 @@ export type AppState = {
   collections: Collection[]
   initComplete: boolean
   selection: CurrentSelection
+  changeViewState: (newState: ViewState) => void
+  onCollectionAdd: (newCollection: Collection) => void
+  onSelectedCollectionDelete: () => void
+  onCollectionUpdate: (updatedCollection: Collection) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number) => void
-  changeViewState: (newState: ViewState) => void
 }
 
 export type SequenceState = {
   sequence: ActionEventType[]
   ids: number[]
-  selectedElementIndex: number
-  addToSequence: (element: ActionEventType) => void
-  removeFromSequence: (element: ActionEventType) => void
+  selectedElementId: number
+  onElementAdd: (element: ActionEventType) => void
+  onSelectedElementDelete: () => void
   overwriteSequence: (newSequence: ActionEventType[]) => void
+  onIdAdd: (elementToAdd: number) => void
+  onIdDelete: (elementToRemove: number) => void
   overwriteIds: (newArray: number[]) => void
-  updateElementIndex: (newIndex: number) => void
+  updateSelectedElementId: (newIndex: number) => void
 }
 
 // Action Event Structs
@@ -35,9 +40,9 @@ export interface Keypress {
 }
 
 export type SystemAction =
-  | { type: 'Open'; data: string}
-  | { type: 'Volume'; data: SystemVolumeAction}
-  | { type: 'Brightness'; data: undefined}
+  | { type: 'Open'; data: string }
+  | { type: 'Volume'; data: SystemVolumeAction }
+  | { type: 'Brightness'; data: undefined }
 
 export type SystemVolumeAction =
   | { type: 'Mute'; data: boolean }
@@ -69,7 +74,7 @@ export interface Macro {
 }
 
 export interface Collection {
-  name: string
+  name: string // unique key
   active: boolean
   macros: Macro[]
   icon: string

@@ -10,6 +10,7 @@ import {
 } from 'react'
 import { ViewState } from '../enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
+import { updateBackendConfig } from '../utils'
 
 type ApplicationProviderProps = { children: ReactNode }
 
@@ -45,11 +46,46 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       })
   }, [])
 
+  useEffect(() => {
+    updateBackendConfig(collections)
+  }, [collections])
+  
+
   const changeViewState = useCallback(
     (newState: ViewState) => {
       setViewState(newState)
     },
     [setViewState]
+  )
+
+  const onCollectionAdd = useCallback(
+    (newCollection: Collection) => {
+      setCollections((collections) => [...collections, newCollection])
+    },
+    [setCollections],
+  )
+
+  const onSelectedCollectionDelete = useCallback(
+    () => {
+      const newCollections = collections.filter(
+        (_, i) => i !== selection.collectionIndex
+      )
+      newCollections[0].active = true
+      setCollections(newCollections)
+    },
+    [collections, selection.collectionIndex, setCollections]
+  )
+
+  const onCollectionUpdate = useCallback(
+    (updatedCollection: Collection) => {
+      const newCollections = collections.map((collection) =>
+        collection.name === updatedCollection.name
+        ? updatedCollection
+        : collection
+      )
+      setCollections(newCollections)
+    },
+    [collections],
   )
 
   const changeSelectedCollectionIndex = useCallback(
@@ -75,18 +111,24 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       collections,
       initComplete,
       selection,
+      changeViewState,
+      onSelectedCollectionDelete,
+      onCollectionAdd,
+      onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex,
-      changeViewState
+      changeSelectedMacroIndex
     }),
     [
       viewState,
       collections,
       initComplete,
       selection,
+      changeViewState,
+      onSelectedCollectionDelete,
+      onCollectionAdd,
+      onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex,
-      changeViewState
+      changeSelectedMacroIndex
     ]
   )
 

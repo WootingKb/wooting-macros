@@ -21,8 +21,12 @@ const MacroviewHeader = ({
   onSaveButtonPress
 }: Props) => {
   const { changeViewState } = useApplicationContext()
-  const { sequence, updateElementIndex, overwriteSequence, overwriteIds } =
-    useSequenceContext()
+  const {
+    sequence,
+    updateSelectedElementId,
+    overwriteSequence,
+    overwriteIds
+  } = useSequenceContext()
 
   return (
     <HStack w="100%" h="60px" px="2" spacing="16px">
@@ -31,7 +35,7 @@ const MacroviewHeader = ({
           changeViewState(ViewState.Overview)
           overwriteSequence([])
           overwriteIds([])
-          updateElementIndex(-1)
+          updateSelectedElementId(-1)
         }}
       >
         Back
@@ -73,7 +77,9 @@ const MacroviewHeader = ({
       </Flex>
       <Button
         colorScheme="yellow"
-        isDisabled={(triggerKeys.length <= 0) || (sequence.length <= 0) || (macroName === '')}
+        isDisabled={
+          triggerKeys.length <= 0 || sequence.length <= 0 || macroName === ''
+        }
         onClick={onSaveButtonPress}
       >
         Save Macro

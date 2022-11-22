@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { useApplicationContext } from './applicationContext'
-import { Collection } from '../types'
+import { ActionEventType, Collection, Macro } from '../types'
 import { useSequenceContext } from './sequenceContext'
 
-export function useCollections() {
+export function useCollections(): Collection[] {
   const context = useApplicationContext()
   return context.collections
 }
@@ -16,7 +16,7 @@ export function useSelectedCollection(): Collection {
   )
 }
 
-export function useSelectedMacro() {
+export function useSelectedMacro(): Macro {
   const { selection } = useApplicationContext()
   const selectedCollection = useSelectedCollection()
   return useMemo(
@@ -25,15 +25,12 @@ export function useSelectedMacro() {
   )
 }
 
-export function useSequence() {
+export function useSequence(): ActionEventType[] {
   const context = useSequenceContext()
   return context.sequence
 }
 
-export function useSelectedElement() {
+export function useSelectedElement(): ActionEventType {
   const context = useSequenceContext()
-  return useMemo(
-    () => context.sequence[context.selectedElementIndex],
-    [context]
-  )
+  return useMemo(() => context.sequence[context.selectedElementId], [context])
 }

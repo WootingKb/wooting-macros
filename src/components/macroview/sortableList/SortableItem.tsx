@@ -24,8 +24,11 @@ type Props = {
 const SortableItem = ({ id, element }: Props) => {
   const [displayText, setDisplayText] = useState<string | undefined>('')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-  const { selectedElementIndex, removeFromSequence, updateElementIndex } =
-    useSequenceContext()
+  const {
+    selectedElementId,
+    onSelectedElementDelete,
+    updateSelectedElementId
+  } = useSequenceContext()
 
   useEffect(() => {
     switch (element.type) {
@@ -41,18 +44,18 @@ const SortableItem = ({ id, element }: Props) => {
   }, [id])
 
   const onEditButtonPress = () => {
-    if (selectedElementIndex === id - 1) {
+    if (selectedElementId === id - 1) {
       return
     }
-    updateElementIndex(id - 1)
+    updateSelectedElementId(id - 1)
   }
 
   const onDeleteButtonPress = () => {
-    if (selectedElementIndex === id - 1) {
-      updateElementIndex(-1)
+    if (selectedElementId === id - 1) {
+      updateSelectedElementId(-1)
     }
 
-    removeFromSequence(element)
+    onSelectedElementDelete(element)
   }
 
   return (

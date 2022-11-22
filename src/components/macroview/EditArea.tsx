@@ -22,12 +22,12 @@ const EditArea = () => {
   const [headingText, setHeadingText] = useState('')
   const [keypressDuration, setKeypressDuration] = useState(1)
   const [keypressType, setKeypressType] = useState<KeyType>()
-  const { selectedElementIndex } = useSequenceContext()
+  const { selectedElementId } = useSequenceContext()
   const selectedElement = useSelectedElement()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
-    if (selectedElementIndex < 0) {
+    if (selectedElementId < 0) {
       return
     }
     switch (selectedElement.type) {
@@ -74,7 +74,7 @@ const EditArea = () => {
     selectedElement.data.keytype = KeyType[newType]
   }
 
-  if (selectedElementIndex === -1) {
+  if (selectedElementId === -1) {
     return (
       <VStack
         w="25%"

@@ -28,7 +28,7 @@ function SequenceProvider({ children }: SequenceProviderProps) {
   const { viewState } = useApplicationContext()
   const [sequence, setSequence] = useState<ActionEventType[]>([])
   const [ids, setIds] = useState<number[]>([])
-  const [selectedElementIndex, setSelectedElementIndex] = useState(-1)
+  const [selectedElementId, setSelectedElementId] = useState(-1)
   const currentMacro = useSelectedMacro()
 
   useEffect(() => {
@@ -39,19 +39,22 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     }
   }, [viewState])
 
-  const addToSequence = useCallback(
+  const onElementAdd = useCallback(
     (newElement: ActionEventType) => {
       setSequence((sequence) => [...sequence, newElement])
     },
     [setSequence]
   )
 
-  const removeFromSequence = (element: ActionEventType) => {
-    const temp: ActionEventType[] = [...sequence]
-    const index = temp.indexOf(element, 0)
-    temp.splice(index, 1)
-    setSequence(temp)
-  }
+  const onSelectedElementDelete = useCallback(
+    () => {
+      const newSequence = sequence.filter(
+        (_, i) => i !== selectedElementId
+      )
+      setSequence(newSequence)
+    },
+    [selectedElementId, sequence, setSequence]
+  )
 
   const overwriteSequence = useCallback(
     (newSequence: ActionEventType[]) => {
@@ -60,41 +63,61 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     [setSequence]
   )
 
+  const onIdAdd = useCallback(
+    (newId: number) => {
+      setIds((ids) => [...ids, newId])
+    },
+    [setIds]
+  )
+  
+  const onIdDelete = useCallback(
+    () => {
+      const newIds = ids.filter(
+        (_, i) => i !== selectedElementId
+      )
+      setIds(newIds)
+    },
+    [ids, selectedElementId, setIds]
+  )
+  
   const overwriteIds = useCallback(
     (newArray: number[]) => {
-      console.log('overwriting ids')
       setIds(newArray)
     },
     [setIds]
   )
 
-  const updateElementIndex = useCallback(
+  const updateSelectedElementId = useCallback(
     (newIndex: number) => {
-      setSelectedElementIndex(newIndex)
+      setSelectedElementId(newIndex)
     },
-    [setSelectedElementIndex]
+    [setSelectedElementId]
   )
 
   const value = useMemo<SequenceState>(
     () => ({
       sequence,
       ids,
-      selectedElementIndex,
-      addToSequence,
-      removeFromSequence,
+      selectedElementId,
+      onElementAdd,
+      onSelectedElementDelete,
       overwriteSequence,
+      onIdAdd,
+      onIdDelete,
       overwriteIds,
-      updateElementIndex
+      updateSelectedElementId
     }),
     [
       sequence,
       ids,
-      selectedElementIndex,
-      addToSequence,
-      removeFromSequence,
+      selectedElementId,
+      onElementAdd,
+      onSelectedElementDelete,
       overwriteSequence,
+      onIdAdd,
+      onIdDelete,
       overwriteIds,
-      updateElementIndex
+      updateSelectedElementId
     ]
   )
 

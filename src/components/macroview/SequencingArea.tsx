@@ -33,7 +33,12 @@ import { ActionEventType } from '../../types'
 // TODO: Record functionality
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState(undefined)
-  const { sequence, ids, addToSequence, overwriteIds } = useSequenceContext()
+  const {
+    sequence,
+    ids,
+    onElementAdd: onSequenceAdd,
+    overwriteIds
+  } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
@@ -76,7 +81,7 @@ const SequencingArea = () => {
       data: 50
     }
 
-    addToSequence(delayElement)
+    onSequenceAdd(delayElement)
   }
 
   return (

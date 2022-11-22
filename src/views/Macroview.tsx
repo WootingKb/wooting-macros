@@ -20,8 +20,13 @@ type Props = {
 
 const Macroview = ({ isEditing }: Props) => {
   const { collections, selection, changeViewState } = useApplicationContext()
-  const { sequence, ids, overwriteSequence, overwriteIds, updateElementIndex } =
-    useSequenceContext()
+  const {
+    sequence,
+    ids,
+    overwriteSequence,
+    overwriteIds,
+    updateSelectedElementId
+  } = useSequenceContext()
 
   const currentCollection: Collection = useSelectedCollection()
   const currentMacro: Macro = useSelectedMacro()
@@ -39,36 +44,40 @@ const Macroview = ({ isEditing }: Props) => {
       return
     }
     console.log(currentMacro)
-    updateElementIndex(-1)
+    updateSelectedElementId(-1)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
-  }, [isEditing, updateElementIndex])
+  }, [isEditing, updateSelectedElementId])
 
   const addTriggerKey = useCallback(
     (event: KeyboardEvent) => {
-    event.preventDefault()
+      event.preventDefault()
 
-    const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
-    if (HIDcode === undefined) {
-      return
-    }
+      const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+      if (HIDcode === undefined) {
+        return
+      }
 
-    if (triggerKeys.some((element) => {
-      return HIDcode === element.keypress
-    })) { return }
+      if (
+        triggerKeys.some((element) => {
+          return HIDcode === element.keypress
+        })
+      ) {
+        return
+      }
 
-    const keypress: Keypress = {
-      keypress: HIDcode,
-      press_duration: 0,
-      keytype: KeyType[KeyType.Down]
-    }
+      const keypress: Keypress = {
+        keypress: HIDcode,
+        press_duration: 0,
+        keytype: KeyType[KeyType.Down]
+      }
 
-    setTriggerKeys((triggerKeys) => [...triggerKeys, keypress])
-    if (triggerKeys.length == 3) {
-      setRecording(false)
-    }
-  },
-  [triggerKeys]
+      setTriggerKeys((triggerKeys) => [...triggerKeys, keypress])
+      if (triggerKeys.length == 3) {
+        setRecording(false)
+      }
+    },
+    [triggerKeys]
   )
 
   useEffect(() => {
@@ -120,7 +129,7 @@ const Macroview = ({ isEditing }: Props) => {
 
     overwriteIds([])
     overwriteSequence([])
-    updateElementIndex(-1)
+    updateSelectedElementId(-1)
     changeViewState(ViewState.Overview)
     updateBackendConfig(collections)
   }
