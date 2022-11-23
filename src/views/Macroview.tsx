@@ -36,18 +36,19 @@ const Macroview = ({ isEditing }: Props) => {
   const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
   const [selectedMacroType, setSelectedMacroType] = useState(0)
   // need state for 'allow_while_other_keys', just a boolean
-
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (!isEditing) {
+      overwriteSequence([])
       return
     }
     console.log(currentMacro)
     updateSelectedElementId(-1)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
-  }, [isEditing, updateSelectedElementId])
+    overwriteSequence(currentMacro.sequence)
+  }, [currentMacro, isEditing, overwriteSequence, updateSelectedElementId])
 
   const addTriggerKey = useCallback(
     (event: KeyboardEvent) => {
@@ -105,6 +106,7 @@ const Macroview = ({ isEditing }: Props) => {
   }
 
   const onMacroNameChange = (event: BaseSyntheticEvent) => {
+    console.log(event.target.value)
     setMacroName(event.target.value)
   }
 
@@ -136,21 +138,18 @@ const Macroview = ({ isEditing }: Props) => {
 
   return (
     <VStack h="100%" spacing="0px" overflow="hidden">
-      {/** Header */}
       <MacroviewHeader
         triggerKeys={triggerKeys}
-        macroName={isEditing ? macroName : ''}
+        macroName={macroName}
         isEditing={isEditing}
         onMacroNameChange={onMacroNameChange}
         onSaveButtonPress={onSaveButtonPress}
       />
       <HStack w="100%" h={130} spacing="8px" p="8px">
-        {/** Macro Type Area */}
         <MacroTypeArea
           selectedMacroType={selectedMacroType}
           onMacroTypeButtonPress={onMacroTypeButtonPress}
         />
-        {/** Trigger Area */}
         <TriggerArea
           recording={recording}
           triggerKeys={triggerKeys}

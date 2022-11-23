@@ -12,20 +12,13 @@ import {
   Divider,
   useColorModeValue
 } from '@chakra-ui/react'
-import { ActionEventType } from '../../types'
 import { AddIcon } from '@chakra-ui/icons'
 import { Hid, HidInfo } from '../../maps/HIDmap'
 import SequenceElementButton from './SequenceElementButton'
 import { KeyType } from '../../enums'
-import { useSequenceContext } from '../../contexts/sequenceContext'
 
 const SelectElementArea = () => {
-  const { onElementAdd: onSequenceAdd } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-
-  const onSequenceElementButtonPress = (properties: ActionEventType) => {
-    onSequenceAdd(properties)
-  }
 
   return (
     <VStack
@@ -105,7 +98,6 @@ const SelectElementArea = () => {
                       keytype: KeyType[KeyType.DownUp]
                     }
                   }}
-                  onClick={onSequenceElementButtonPress}
                 />
               ))}
             </SimpleGrid>

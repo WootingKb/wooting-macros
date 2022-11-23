@@ -5,7 +5,6 @@ import {
   EditIcon
 } from '@chakra-ui/icons'
 import {
-  Divider,
   HStack,
   IconButton,
   Text,
@@ -26,7 +25,7 @@ const SortableItem = ({ id, element }: Props) => {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
   const {
     selectedElementId,
-    onSelectedElementDelete,
+    onElementDelete,
     updateSelectedElementId
   } = useSequenceContext()
 
@@ -41,7 +40,7 @@ const SortableItem = ({ id, element }: Props) => {
       default:
         break
     }
-  }, [id])
+  }, [element.data, element.type, id])
 
   const onEditButtonPress = () => {
     if (selectedElementId === id - 1) {
@@ -54,8 +53,7 @@ const SortableItem = ({ id, element }: Props) => {
     if (selectedElementId === id - 1) {
       updateSelectedElementId(-1)
     }
-
-    onSelectedElementDelete(element)
+    onElementDelete(id - 1)
   }
 
   return (

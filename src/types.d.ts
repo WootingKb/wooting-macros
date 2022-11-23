@@ -29,10 +29,9 @@ export type SequenceState = {
   ids: number[]
   selectedElementId: number
   onElementAdd: (element: ActionEventType) => void
-  onSelectedElementDelete: () => void
+  onElementDelete: (index: number) => void
   overwriteSequence: (newSequence: ActionEventType[]) => void
-  onIdAdd: (elementToAdd: number) => void
-  onIdDelete: (elementToRemove: number) => void
+  onIdAdd: (newId: number) => VoidExpression
   overwriteIds: (newArray: number[]) => void
   updateSelectedElementId: (newIndex: number) => void
 }

@@ -78,7 +78,7 @@ const MacroviewHeader = ({
       <Button
         colorScheme="yellow"
         isDisabled={
-          triggerKeys.length <= 0 || sequence.length <= 0 || macroName === ''
+          triggerKeys.length === 0 || sequence.length === 0 || macroName === ''
         }
         onClick={onSaveButtonPress}
       >

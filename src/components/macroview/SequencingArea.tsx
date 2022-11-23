@@ -24,11 +24,10 @@ import {
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { useSequenceContext } from '../../contexts/sequenceContext'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
-import { ActionEventType } from '../../types'
 
 // TODO: Record functionality
 const SequencingArea = () => {
@@ -41,12 +40,6 @@ const SequencingArea = () => {
   } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
-  useEffect(() => {
-    if (ids.length === 0) {
-      overwriteIds(sequence.map((element, index) => index + 1))
-    }
-  }, [ids.length, overwriteIds, sequence])
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -55,7 +48,6 @@ const SequencingArea = () => {
   )
 
   function handleDragEnd(event: any) {
-    console.log(event)
     const { active, over } = event
 
     if (over === null) {
@@ -76,12 +68,10 @@ const SequencingArea = () => {
   }
 
   const onAddDelayButtonPress = () => {
-    const delayElement: ActionEventType = {
+    onSequenceAdd({
       type: 'Delay',
       data: 50
-    }
-
-    onSequenceAdd(delayElement)
+    })
   }
 
   return (

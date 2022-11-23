@@ -29,7 +29,7 @@ const MacroList = () => {
         gap="2"
         overflowY="auto"
       >
-        <Flex minH="100px" justifyContent="center" alignItems="center">
+        <Flex minH="163px" justifyContent="center" alignItems="center">
           <Button
             colorScheme="yellow"
             leftIcon={<AddIcon />}

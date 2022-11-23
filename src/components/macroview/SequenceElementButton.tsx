@@ -1,18 +1,20 @@
 import { Button } from '@chakra-ui/react'
+import { useSequenceContext } from '../../contexts/sequenceContext'
 import { ActionEventType } from '../../types'
 
 type Props = {
   properties: ActionEventType
   displayText: string
-  onClick: (type: ActionEventType) => void
 }
 
-const SequenceElementButton = ({ properties, displayText, onClick }: Props) => {
+const SequenceElementButton = ({ properties, displayText }: Props) => {
+  const { onElementAdd } = useSequenceContext()
+
   return (
     <Button
       colorScheme="yellow"
       size={['sm']}
-      onClick={() => onClick(properties)}
+      onClick={() => onElementAdd(properties)}
     >
       {displayText}
     </Button>

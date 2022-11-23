@@ -1,16 +1,12 @@
 import {
   ReactNode,
   useState,
-  useEffect,
   useMemo,
   useContext,
   createContext,
   useCallback
 } from 'react'
-import { ViewState } from '../enums'
 import { SequenceState, ActionEventType } from '../types'
-import { useApplicationContext } from './applicationContext'
-import { useSelectedMacro } from './selectors'
 
 type SequenceProviderProps = { children: ReactNode }
 
@@ -25,61 +21,15 @@ function useSequenceContext() {
 }
 
 function SequenceProvider({ children }: SequenceProviderProps) {
-  const { viewState } = useApplicationContext()
   const [sequence, setSequence] = useState<ActionEventType[]>([])
   const [ids, setIds] = useState<number[]>([])
   const [selectedElementId, setSelectedElementId] = useState(-1)
-  const currentMacro = useSelectedMacro()
-
-  useEffect(() => {
-    if (viewState === ViewState.Addview) {
-      setSequence([])
-    } else if (viewState === ViewState.Editview) {
-      setSequence(currentMacro.sequence)
-    }
-  }, [viewState])
-
-  const onElementAdd = useCallback(
-    (newElement: ActionEventType) => {
-      console.log("adding new element to sequence")
-      setSequence((sequence) => [...sequence, newElement])
-    },
-    [setSequence]
-  )
-
-  const onSelectedElementDelete = useCallback(
-    () => {
-      const newSequence = sequence.filter(
-        (_, i) => i !== selectedElementId
-      )
-      setSequence(newSequence)
-      // set selected element id to -1
-    },
-    [selectedElementId, sequence, setSequence]
-  )
-
-  const overwriteSequence = useCallback(
-    (newSequence: ActionEventType[]) => {
-      setSequence(newSequence)
-    },
-    [setSequence]
-  )
 
   const onIdAdd = useCallback(
     (newId: number) => {
       setIds((ids) => [...ids, newId])
     },
     [setIds]
-  )
-  
-  const onIdDelete = useCallback(
-    () => {
-      const newIds = ids.filter(
-        (_, i) => i !== selectedElementId
-      )
-      setIds(newIds)
-    },
-    [ids, selectedElementId, setIds]
   )
   
   const overwriteIds = useCallback(
@@ -96,16 +46,46 @@ function SequenceProvider({ children }: SequenceProviderProps) {
     [setSelectedElementId]
   )
 
+  const onElementAdd = useCallback(
+    (newElement: ActionEventType) => {
+      setSequence((sequence) => {
+        const newSequence = [...sequence, newElement]
+        onIdAdd(newSequence.length)
+        return newSequence
+      })
+    },
+    [onIdAdd, setSequence]
+  )
+
+  const onElementDelete = useCallback(
+    (index: number) => {
+      console.log('deleting element')
+      const newSequence = sequence.filter(
+        (_, i) => i !== index
+      )
+      setSequence(newSequence)
+      setIds(newSequence.map((element, index) => index + 1))
+    },
+    [sequence, setSequence]
+  )
+
+  const overwriteSequence = useCallback(
+    (newSequence: ActionEventType[]) => {
+      setSequence(newSequence)
+      setIds(newSequence.map((element, index) => index + 1))
+    },
+    [setSequence, setIds]
+  )
+
   const value = useMemo<SequenceState>(
     () => ({
       sequence,
       ids,
       selectedElementId,
       onElementAdd,
-      onSelectedElementDelete,
+      onElementDelete,
       overwriteSequence,
       onIdAdd,
-      onIdDelete,
       overwriteIds,
       updateSelectedElementId
     }),
@@ -114,10 +94,9 @@ function SequenceProvider({ children }: SequenceProviderProps) {
       ids,
       selectedElementId,
       onElementAdd,
-      onSelectedElementDelete,
+      onElementDelete,
       overwriteSequence,
       onIdAdd,
-      onIdDelete,
       overwriteIds,
       updateSelectedElementId
     ]
