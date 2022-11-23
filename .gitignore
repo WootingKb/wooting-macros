@@ -23,4 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 /src-tauri/Cargo.lock
-/data_json.json
+data_json.json
