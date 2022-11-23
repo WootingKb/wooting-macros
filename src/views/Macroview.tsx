@@ -2,7 +2,7 @@ import { VStack, HStack, useColorModeValue } from '@chakra-ui/react'
 import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
-import { KeyType, MacroType, ViewState } from '../enums'
+import { KeyType, MacroType } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { Keypress, Collection, Macro } from '../types'
 import { updateBackendConfig } from '../utils'
@@ -19,7 +19,7 @@ type Props = {
 }
 
 const Macroview = ({ isEditing }: Props) => {
-  const { collections, selection, changeViewState } = useApplicationContext()
+  const { collections, selection, changeSelectedMacroIndex } = useApplicationContext()
   const {
     sequence,
     ids,
@@ -130,7 +130,7 @@ const Macroview = ({ isEditing }: Props) => {
     overwriteIds([])
     overwriteSequence([])
     updateSelectedElementId(-1)
-    changeViewState(ViewState.Overview)
+    changeSelectedMacroIndex(-1)
     updateBackendConfig(collections)
   }
 

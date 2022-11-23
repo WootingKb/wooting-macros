@@ -71,7 +71,11 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         ...prevState,
         macroIndex: index
       }))
-      // set view to editview or addview depending on the index (>=0 is edit, -1 = add)
+      if (index >= 0) {
+        setViewState(ViewState.Editview)
+      } else {
+        setViewState(ViewState.Overview)
+      }
     },
     [setSelection]
   )

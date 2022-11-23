@@ -50,7 +50,7 @@ const EditArea = () => {
       default:
         break
     }
-  }, [selectedElement])
+  }, [selectedElement, selectedElementId])
 
   const onDelayDurationChange = (event: any) => {
     setDelayDuration(event.target.value)

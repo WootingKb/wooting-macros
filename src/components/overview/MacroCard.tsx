@@ -18,7 +18,6 @@ import { Keypress, Macro } from '../../types'
 import { HIDLookup } from '../../maps/HIDmap'
 import { updateBackendConfig } from '../../utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
-import { ViewState } from '../../enums'
 
 type Props = {
   macro: Macro
@@ -27,8 +26,7 @@ type Props = {
 }
 
 function MacroCard({ macro, index, onDelete }: Props) {
-  const { collections, changeSelectedMacroIndex, changeViewState } =
-    useApplicationContext()
+  const { collections, changeSelectedMacroIndex } = useApplicationContext()
   const subtextColour = useColorModeValue('gray.500', 'gray.400')
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
@@ -108,7 +106,6 @@ function MacroCard({ macro, index, onDelete }: Props) {
           leftIcon={<EditIcon />}
           onClick={() => {
             changeSelectedMacroIndex(index)
-            changeViewState(ViewState.Editview)
           }}
         >
           Edit

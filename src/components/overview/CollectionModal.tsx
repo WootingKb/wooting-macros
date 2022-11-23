@@ -15,21 +15,23 @@ import { useSelectedCollection } from '../../contexts/selectors'
 import { Collection } from '../../types'
 
 type Props = {
-  isRenaming: boolean
   isOpen: boolean
   onClose: () => void
 }
 
-const CollectionModal = ({ isRenaming, isOpen, onClose }: Props) => {
+const CollectionModal = ({ isOpen, onClose }: Props) => {
   const [collectionName, setCollectionName] = useState('')
   const [isNameUsable, setIsNameUsable] = useState(true)
-  const { selection, collections, onCollectionAdd, onCollectionUpdate } =
+  const { selection, collections, isRenamingCollection, onCollectionAdd, onCollectionUpdate } =
     useApplicationContext()
   const collection: Collection = useSelectedCollection()
 
   const onModalSuccessClose = () => {
-    if (isRenaming) {
-      onCollectionUpdate({ ...collection, name: collectionName }, selection.collectionIndex)
+    if (isRenamingCollection) {
+      onCollectionUpdate(
+        { ...collection, name: collectionName },
+        selection.collectionIndex
+      )
     } else {
       onCollectionAdd({
         active: true,
@@ -64,7 +66,9 @@ const CollectionModal = ({ isRenaming, isOpen, onClose }: Props) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {isRenaming ? 'Changed your mind?' : 'Give it a unique name!'}
+          {isRenamingCollection
+            ? 'Changed your mind?'
+            : 'Give it a unique name!'}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -73,15 +77,21 @@ const CollectionModal = ({ isRenaming, isOpen, onClose }: Props) => {
             isRequired
             isInvalid={!isNameUsable}
             onChange={onCollectionNameChange}
-            placeholder={isRenaming ? collection.name : 'Collection Name'}
+            placeholder={
+              isRenamingCollection ? collection.name : 'Collection Name'
+            }
           />
         </ModalBody>
         <ModalFooter>
           <Button mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button colorScheme="yellow" onClick={onModalSuccessClose} isDisabled={!isNameUsable}>
-            {isRenaming ? 'Rename' : 'Create'}
+          <Button
+            colorScheme="yellow"
+            onClick={onModalSuccessClose}
+            isDisabled={!isNameUsable}
+          >
+            {isRenamingCollection ? 'Rename' : 'Create'}
           </Button>
         </ModalFooter>
       </ModalContent>
