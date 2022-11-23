@@ -2,9 +2,9 @@ import { VStack, HStack, useColorModeValue } from '@chakra-ui/react'
 import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useSelectedCollection, useSelectedMacro } from '../contexts/selectors'
-import { KeyType, MacroType } from '../enums'
+import { KeyType, MacroType, RecordingType } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
-import { Keypress, Collection, Macro } from '../types'
+import { Keypress, Collection, Macro, MousePressAction } from '../types'
 import { updateBackendConfig } from '../utils'
 import EditArea from '../components/macroview/EditArea'
 import MacroviewHeader from '../components/macroview/Header'
@@ -13,6 +13,7 @@ import SelectElementArea from '../components/macroview/SelectElementArea'
 import SequencingArea from '../components/macroview/SequencingArea'
 import TriggerArea from '../components/macroview/TriggerArea'
 import { useSequenceContext } from '../contexts/sequenceContext'
+import useRecording from '../hooks/useRecording'
 
 type Props = {
   isEditing: boolean
@@ -27,13 +28,13 @@ const Macroview = ({ isEditing }: Props) => {
     overwriteIds,
     updateSelectedElementId
   } = useSequenceContext()
-
   const currentCollection: Collection = useSelectedCollection()
   const currentMacro: Macro = useSelectedMacro()
-
-  const [recording, setRecording] = useState(false)
+  const { recording, toggle, items } = useRecording(RecordingType.Trigger)
   const [macroName, setMacroName] = useState('Macro Name')
-  const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
+  const [triggerKeys, setTriggerKeys] = useState<
+    Keypress[]
+  >([])
   const [selectedMacroType, setSelectedMacroType] = useState(0)
   // need state for 'allow_while_other_keys', just a boolean
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
@@ -50,56 +51,14 @@ const Macroview = ({ isEditing }: Props) => {
     overwriteSequence(currentMacro.sequence)
   }, [currentMacro, isEditing, overwriteSequence, updateSelectedElementId])
 
-  const addTriggerKey = useCallback(
-    (event: KeyboardEvent) => {
-      event.preventDefault()
-
-      const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
-      if (HIDcode === undefined) {
-        return
-      }
-
-      if (
-        triggerKeys.some((element) => {
-          return HIDcode === element.keypress
-        })
-      ) {
-        return
-      }
-
-      const keypress: Keypress = {
-        keypress: HIDcode,
-        press_duration: 0,
-        keytype: KeyType[KeyType.Down]
-      }
-
-      setTriggerKeys((triggerKeys) => [...triggerKeys, keypress])
-      if (triggerKeys.length == 3) {
-        setRecording(false)
-      }
-    },
-    [triggerKeys]
-  )
-
   useEffect(() => {
-    if (!recording) {
-      return
-    }
-    // Does not get mouse input for trigger
-    window.addEventListener('keydown', addTriggerKey, false)
-    // TODO: stop backend trigger listening
-    return () => {
-      window.removeEventListener('keydown', addTriggerKey, false)
-      // TODO: start backend trigger listening
-    }
-  }, [addTriggerKey, recording])
-
-  const onRecordButtonPress = () => {
-    if (!recording) {
-      setTriggerKeys([])
-    }
-    setRecording(!recording)
-  }
+    console.log(items)
+    setTriggerKeys(
+      items.filter(
+        (element): element is Keypress => 'keypress' in element
+      )
+    )
+  }, [items])
 
   const onMacroTypeButtonPress = (index: number) => {
     setSelectedMacroType(index)
@@ -110,6 +69,7 @@ const Macroview = ({ isEditing }: Props) => {
   }
 
   const onSaveButtonPress = () => {
+  
     const itemToAdd: Macro = {
       name: macroName,
       active: true,
@@ -152,7 +112,7 @@ const Macroview = ({ isEditing }: Props) => {
         <TriggerArea
           recording={recording}
           triggerKeys={triggerKeys}
-          onRecordButtonPress={onRecordButtonPress}
+          onRecordButtonPress={toggle}
         />
       </HStack>
       <HStack

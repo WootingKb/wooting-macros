@@ -43,6 +43,14 @@ export interface Keypress {
   keytype: string
 }
 
+export type MousePressAction =
+  | { type: 'Down'; button: number }
+  | { type: 'Up'; button: number }
+  | { type: 'DownUp'; button: number; duration: number }
+
+export type MouseAction =
+  | { type: 'Press'; data: MouseAction }
+
 export type SystemAction =
   | { type: 'Open'; path: string }
   | { type: 'Volume'; action: SystemVolumeAction }

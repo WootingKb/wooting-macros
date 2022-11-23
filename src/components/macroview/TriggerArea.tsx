@@ -73,7 +73,7 @@ const TriggerArea = ({
             onClick={onRecordButtonPress}
             colorScheme={recording ? 'red' : 'gray'}
           >
-            Record
+            {recording ? 'Stop' : 'Record'}
           </Button>
         </VStack>
       </HStack>
