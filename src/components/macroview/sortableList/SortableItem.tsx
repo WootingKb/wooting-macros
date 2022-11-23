@@ -4,12 +4,7 @@ import {
   DeleteIcon,
   EditIcon
 } from '@chakra-ui/icons'
-import {
-  HStack,
-  IconButton,
-  Text,
-  useColorModeValue
-} from '@chakra-ui/react'
+import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useSequenceContext } from '../../../contexts/sequenceContext'
 import { HIDLookup } from '../../../maps/HIDmap'
@@ -23,11 +18,8 @@ type Props = {
 const SortableItem = ({ id, element }: Props) => {
   const [displayText, setDisplayText] = useState<string | undefined>('')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-  const {
-    selectedElementId,
-    onElementDelete,
-    updateSelectedElementId
-  } = useSequenceContext()
+  const { selectedElementId, onElementDelete, updateSelectedElementId } =
+    useSequenceContext()
 
   useEffect(() => {
     switch (element.type) {
@@ -36,6 +28,12 @@ const SortableItem = ({ id, element }: Props) => {
         break
       case 'Delay':
         setDisplayText(element.data.toString() + ' ms')
+        break
+      case 'MousePressEvent':
+        setDisplayText('Mouse Press')
+        break
+      case 'SystemEvent':
+        setDisplayText(element.data.type.toString())
         break
       default:
         break

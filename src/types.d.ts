@@ -49,7 +49,7 @@ export type MousePressAction =
   | { type: 'DownUp'; button: number; duration: number }
 
 export type MouseAction =
-  | { type: 'Press'; data: MouseAction }
+  | { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
   | { type: 'Open'; path: string }
@@ -74,6 +74,7 @@ export type ActionEventType =
   | { type: 'KeyPressEvent'; data: Keypress }
   | { type: 'Delay'; data: number }
   | { type: 'SystemEvent'; data: SystemAction }
+  | { type: 'MousePressEvent'; data: MouseAction }
 
 // Main Data Structures
 export interface MacroData {
