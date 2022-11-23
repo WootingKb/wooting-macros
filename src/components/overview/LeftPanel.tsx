@@ -11,29 +11,20 @@ import {
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import CollectionButton from './CollectionButton'
-import { updateBackendConfig } from '../../utils'
-import { useState } from 'react'
 
 type Props = {
   onOpen: () => void
 }
 
 const LeftPanel = ({ onOpen }: Props) => {
-  const { collections, selection, changeSelectedCollectionIndex } =
+  const { collections, selection, onCollectionUpdate, changeSelectedCollectionIndex } =
     useApplicationContext()
-  const [isRenamingCollection, setIsRenamingCollection] = useState(false)
   const { colorMode, toggleColorMode } = useColorMode()
   const panelBg = useColorModeValue('gray.200', 'gray.900')
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
 
   const onCollectionButtonPress = (newActiveIndex: number) => {
     changeSelectedCollectionIndex(newActiveIndex)
-  }
-
-  const onCollectionToggle = (index: number) => {
-    collections[index].active = !collections[index].active
-    setIsRenamingCollection(!isRenamingCollection)
-    updateBackendConfig(collections)
   }
 
   return (
@@ -55,10 +46,15 @@ const LeftPanel = ({ onOpen }: Props) => {
           <CollectionButton
             collection={collection}
             index={index}
-            key={index}
+            key={collection.name}
             isFocused={index == selection.collectionIndex}
             setFocus={onCollectionButtonPress}
-            toggleCollection={onCollectionToggle}
+            toggleCollection={() =>
+              onCollectionUpdate({
+                ...collections[index],
+                active: !collections[index].active
+              }, index)
+            }
           />
         ))}
         <Button
@@ -66,7 +62,6 @@ const LeftPanel = ({ onOpen }: Props) => {
           size={['sm']}
           leftIcon={<AddIcon />}
           onClick={() => {
-            setIsRenamingCollection(false)
             onOpen()
           }}
         >

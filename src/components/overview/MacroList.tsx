@@ -1,14 +1,16 @@
-import { Grid, GridItem } from '@chakra-ui/react'
+import { AddIcon } from '@chakra-ui/icons'
+import { Button, Flex, Grid, GridItem } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
+import { ViewState } from '../../enums'
 import { Collection, Macro } from '../../types'
 import { updateBackendConfig } from '../../utils'
 import FadeInWrapper from '../FadeInWrapper'
 import MacroCard from './MacroCard'
 
 const MacroList = () => {
-  const { collections, selection } = useApplicationContext()
+  const { collections, selection, changeViewState } = useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
   const [temp, setTemp] = useState(false)
 
@@ -19,7 +21,7 @@ const MacroList = () => {
   }
 
   return (
-    <FadeInWrapper transitionDuration={1000}>
+    <FadeInWrapper transitionDuration={500}>
       <Grid
         w="100%"
         templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
@@ -27,6 +29,17 @@ const MacroList = () => {
         gap="2"
         overflowY="auto"
       >
+        <Flex minH="100px" justifyContent="center" alignItems="center">
+          <Button
+            colorScheme="yellow"
+            leftIcon={<AddIcon />}
+            size={['sm', 'md', 'lg']}
+            maxW="50%"
+            onClick={() => changeViewState(ViewState.Addview)}
+          >
+            Add Macro
+          </Button>
+        </Flex>
         {currentCollection.macros.map((macro: Macro, index: number) => (
           <GridItem w="100%" key={`${index}:${macro.name}`}>
             <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />

@@ -14,7 +14,7 @@ export type AppState = {
   changeViewState: (newState: ViewState) => void
   onCollectionAdd: (newCollection: Collection) => void
   onSelectedCollectionDelete: () => void
-  onCollectionUpdate: (updatedCollection: Collection) => void
+  onCollectionUpdate: (updatedCollection: Collection, collectionIndex: number) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number) => void
 }

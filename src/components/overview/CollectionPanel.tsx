@@ -1,4 +1,4 @@
-import { StarIcon, EditIcon, AddIcon } from '@chakra-ui/icons'
+import { StarIcon, EditIcon, AddIcon, DeleteIcon } from '@chakra-ui/icons'
 import {
   VStack,
   Flex,
@@ -10,9 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { ViewState } from '../../enums'
 import { Collection } from '../../types'
-import { updateBackendConfig } from '../../utils'
 import MacroList from './MacroList'
 
 type Props = {
@@ -22,20 +20,11 @@ type Props = {
 
 const CollectionPanel = ({ onOpen, setIsRenamingCollection }: Props) => {
   const {
-    collections,
     selection,
-    changeSelectedCollectionIndex,
-    changeViewState
+    onSelectedCollectionDelete,
   } = useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
-
-  const onCollectionDelete = () => {
-    collections.splice(selection.collectionIndex, 1)
-    collections[0].active = true
-    changeSelectedCollectionIndex(0)
-    updateBackendConfig(collections)
-  }
 
   return (
     <VStack w="100%" h="100vh" spacing="0">
@@ -78,23 +67,15 @@ const CollectionPanel = ({ onOpen, setIsRenamingCollection }: Props) => {
               Import Macros
             </Button>
             <Button
-              leftIcon={<AddIcon />}
+              leftIcon={<DeleteIcon />}
               size={['xs', 'sm', 'md']}
               isDisabled={selection.collectionIndex <= 0}
-              onClick={onCollectionDelete}
+              onClick={onSelectedCollectionDelete}
             >
               Delete Collection
             </Button>
           </HStack>
         </VStack>
-        <Button
-          colorScheme="yellow"
-          leftIcon={<AddIcon />}
-          size={['sm', 'md', 'lg']}
-          onClick={() => changeViewState(ViewState.Addview)}
-        >
-          Add Macro
-        </Button>
       </Flex>
       <MacroList />
     </VStack>

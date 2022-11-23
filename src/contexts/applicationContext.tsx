@@ -56,14 +56,32 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       setViewState(newState)
     },
     [setViewState]
-  )
+    )
+   
+    const changeSelectedCollectionIndex = useCallback(
+      (index: number) => {
+        setSelection({ collectionIndex: index, macroIndex: -1 })
+      },
+      [setSelection]
+    )
+  
+    const changeSelectedMacroIndex = useCallback(
+      (index: number) => {
+        setSelection((prevState) => ({
+          ...prevState,
+          macroIndex: index
+        }))
+        // set view to editview or addview depending on the index (>=0 is edit, -1 = add)
+      },
+      [setSelection]
+    )
 
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       setCollections((collections) => [...collections, newCollection])
-      // set collectionIndex to new collection's index
+      changeSelectedCollectionIndex(collections.length)
     },
-    [setCollections],
+    [changeSelectedCollectionIndex, collections.length],
   )
 
   const onSelectedCollectionDelete = useCallback(
@@ -72,15 +90,15 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         (_, i) => i !== selection.collectionIndex
       )
       setCollections(newCollections)
-      // set collectionIndex to 0
+      changeSelectedCollectionIndex(0)
     },
-    [collections, selection.collectionIndex, setCollections]
+    [changeSelectedCollectionIndex, collections, selection.collectionIndex]
   )
 
   const onCollectionUpdate = useCallback(
-    (updatedCollection: Collection) => {
-      const newCollections = collections.map((collection) =>
-        collection.name === updatedCollection.name
+    (updatedCollection: Collection, collectionIndex: number) => {
+      const newCollections = collections.map((collection, index) =>
+        index === collectionIndex
         ? updatedCollection
         : collection
       )
@@ -89,23 +107,6 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [collections],
   )
 
-  const changeSelectedCollectionIndex = useCallback(
-    (index: number) => {
-      setSelection({ collectionIndex: index, macroIndex: -1 })
-    },
-    [setSelection]
-  )
-
-  const changeSelectedMacroIndex = useCallback(
-    (index: number) => {
-      setSelection((prevState) => ({
-        ...prevState,
-        macroIndex: index
-      }))
-      // set view to editview or addview depending on the index (>=0 is edit, -1 = add)
-    },
-    [setSelection]
-  )
 
   const value = useMemo<AppState>(
     () => ({

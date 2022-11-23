@@ -41,6 +41,7 @@ function SequenceProvider({ children }: SequenceProviderProps) {
 
   const onElementAdd = useCallback(
     (newElement: ActionEventType) => {
+      console.log("adding new element to sequence")
       setSequence((sequence) => [...sequence, newElement])
     },
     [setSequence]
