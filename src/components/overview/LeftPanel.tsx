@@ -17,8 +17,13 @@ type Props = {
 }
 
 const LeftPanel = ({ onOpen }: Props) => {
-  const { collections, selection, onCollectionUpdate, changeSelectedCollectionIndex } =
-    useApplicationContext()
+  const {
+    collections,
+    selection,
+    onCollectionUpdate,
+    changeSelectedCollectionIndex,
+    updateIsRenamingCollection
+  } = useApplicationContext()
   const { colorMode, toggleColorMode } = useColorMode()
   const panelBg = useColorModeValue('gray.200', 'gray.900')
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
@@ -50,10 +55,13 @@ const LeftPanel = ({ onOpen }: Props) => {
             isFocused={index == selection.collectionIndex}
             setFocus={onCollectionButtonPress}
             toggleCollection={() =>
-              onCollectionUpdate({
-                ...collections[index],
-                active: !collections[index].active
-              }, index)
+              onCollectionUpdate(
+                {
+                  ...collections[index],
+                  active: !collections[index].active
+                },
+                index
+              )
             }
           />
         ))}
@@ -62,6 +70,7 @@ const LeftPanel = ({ onOpen }: Props) => {
           size={['sm']}
           leftIcon={<AddIcon />}
           onClick={() => {
+            updateIsRenamingCollection(false)
             onOpen()
           }}
         >
@@ -80,7 +89,7 @@ const LeftPanel = ({ onOpen }: Props) => {
             Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
           </Text>
         </Button>
-        <Button variant="outline" borderColor="gray.400" w="100%" size={'sm'}>
+        <Button variant="outline" borderColor="gray.400" w="100%" size={'sm'} isDisabled>
           <Text fontSize={'xs'}>Give Feedback</Text>
         </Button>
       </HStack>

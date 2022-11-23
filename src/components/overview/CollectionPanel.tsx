@@ -15,14 +15,11 @@ import MacroList from './MacroList'
 
 type Props = {
   onOpen: () => void
-  setIsRenamingCollection: (newVal: boolean) => void
 }
 
-const CollectionPanel = ({ onOpen, setIsRenamingCollection }: Props) => {
-  const {
-    selection,
-    onSelectedCollectionDelete,
-  } = useApplicationContext()
+const CollectionPanel = ({ onOpen }: Props) => {
+  const { selection, onSelectedCollectionDelete, updateIsRenamingCollection } =
+    useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
 
@@ -54,7 +51,7 @@ const CollectionPanel = ({ onOpen, setIsRenamingCollection }: Props) => {
               variant="ghost"
               isDisabled={selection.collectionIndex <= 0}
               onClick={() => {
-                setIsRenamingCollection(true)
+                updateIsRenamingCollection(true)
                 onOpen()
               }}
             />

@@ -11,12 +11,17 @@ export type AppState = {
   collections: Collection[]
   initComplete: boolean
   selection: CurrentSelection
+  isRenamingCollection: boolean
   changeViewState: (newState: ViewState) => void
   onCollectionAdd: (newCollection: Collection) => void
   onSelectedCollectionDelete: () => void
-  onCollectionUpdate: (updatedCollection: Collection, collectionIndex: number) => void
+  onCollectionUpdate: (
+    updatedCollection: Collection,
+    collectionIndex: number
+  ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number) => void
+  updateIsRenamingCollection: (newVal: boolean) => void
 }
 
 export type SequenceState = {
