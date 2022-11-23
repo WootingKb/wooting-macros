@@ -7,20 +7,6 @@ const useRecording = (
   type: RecordingType,
   initialItems: Array<Keypress | MousePressAction> = []
 ) => {
-  // what we have
-  // recording state; array of keypress/mousepress; type, either trigger or sequence
-
-  // what we return
-  // recording state; toggle callback, array of keypress/mousepress
-
-  // what is used
-  // recording state is used for conditional rendering
-  // array of keypress/mousepress will be assigned to the trigger or appended to the sequence
-
-  // when hook is called (new instance), recording is false and we reset array of input
-  // when recording is on, add event listener to window
-  // any input from keyboard or mouse is added to array
-  // when recording is off, remove listener
   const [recording, setRecording] = useState(false)
   const toggle = useCallback(() => {
     if (!recording) {
@@ -30,7 +16,6 @@ const useRecording = (
   }, [recording, setRecording])
   const [items, setItems] = useState<Array<Keypress | MousePressAction>>(initialItems)
 
-  // handle adding keypress to array
   const addKeypress = useCallback(
     (event: KeyboardEvent) => {
       event.preventDefault()
@@ -99,11 +84,11 @@ const useRecording = (
       return
     }
 
-    window.addEventListener('keydown', addKeypress, false)
+    window.addEventListener('keypress', addKeypress, false)
     // window.addEventListener('mousedown', addMousepress, false)
     // TODO: stop backend trigger listening
     return () => {
-      window.removeEventListener('keydown', addKeypress, false)
+      window.removeEventListener('keypress', addKeypress, false)
       // window.removeEventListener('mousedown', addMousepress, false)
       // TODO: start backend trigger listening
     }

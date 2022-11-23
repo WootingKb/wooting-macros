@@ -38,27 +38,26 @@ const Macroview = ({ isEditing }: Props) => {
   const [selectedMacroType, setSelectedMacroType] = useState(0)
   // need state for 'allow_while_other_keys', just a boolean
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-
+  
   useEffect(() => {
-    if (!isEditing) {
-      overwriteSequence([])
-      return
-    }
-    // this could be cleaned up later
-    updateSelectedElementId(-1)
-    setMacroName(currentMacro.name)
-    setTriggerKeys(currentMacro.trigger.data)
-    overwriteSequence(currentMacro.sequence)
-  }, [currentMacro, isEditing, overwriteSequence, updateSelectedElementId])
-
-  useEffect(() => {
-    console.log(items)
     setTriggerKeys(
       items.filter(
         (element): element is Keypress => 'keypress' in element
       )
     )
   }, [items])
+
+  useEffect(() => {
+    if (!isEditing) {
+      overwriteSequence([])
+      return
+    }
+    // this should be cleaned up later
+    updateSelectedElementId(-1)
+    setMacroName(currentMacro.name)
+    setTriggerKeys(currentMacro.trigger.data)
+    overwriteSequence(currentMacro.sequence)
+  }, [currentMacro, isEditing, overwriteSequence, updateSelectedElementId])
 
   const onMacroTypeButtonPress = (index: number) => {
     setSelectedMacroType(index)
@@ -69,7 +68,6 @@ const Macroview = ({ isEditing }: Props) => {
   }
 
   const onSaveButtonPress = () => {
-  
     const itemToAdd: Macro = {
       name: macroName,
       active: true,

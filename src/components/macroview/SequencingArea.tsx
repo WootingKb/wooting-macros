@@ -24,20 +24,22 @@ import {
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { useSequenceContext } from '../../contexts/sequenceContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
+import { RecordingType } from '../../enums'
+import useRecording from '../../hooks/useRecording'
+import { Keypress } from '../../types'
 
 // TODO: Record functionality
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState(undefined)
-  const {
-    sequence,
-    ids,
-    onElementAdd: onSequenceAdd,
-    overwriteIds
-  } = useSequenceContext()
+  const { recording, toggle, items } = useRecording(
+    RecordingType.Sequence
+  )
+  const [index, setIndex] = useState(0)
+  const { sequence, ids, onElementAdd, overwriteIds } = useSequenceContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   const sensors = useSensors(
@@ -68,11 +70,27 @@ const SequencingArea = () => {
   }
 
   const onAddDelayButtonPress = () => {
-    onSequenceAdd({
+    onElementAdd({
       type: 'Delay',
       data: 50
     })
   }
+
+  useEffect(() => {
+    const temp: Keypress[] = items.filter(
+      (element): element is Keypress => 'keypress' in element
+    )
+    console.log(temp)
+    if (temp.length > 0) {
+      onElementAdd({
+        type: 'KeyPressEvent',
+        data: temp[index]
+      })
+
+      setIndex(items.length)
+    }
+    // cannot add index as a dependency, it breaks it
+  }, [items, onElementAdd])
 
   return (
     <VStack w="41%" h="full" p="3">
@@ -82,7 +100,12 @@ const SequencingArea = () => {
           Sequence
         </Text>
         <HStack>
-          <Button leftIcon={<EditIcon />} size={['xs', 'sm', 'md']}>
+          <Button
+            leftIcon={<EditIcon />}
+            size={['xs', 'sm', 'md']}
+            colorScheme={recording ? 'red' : 'gray'}
+            onClick={toggle}
+          >
             Record
           </Button>
           <Button
