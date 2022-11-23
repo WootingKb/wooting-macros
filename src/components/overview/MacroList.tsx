@@ -1,23 +1,22 @@
 import { AddIcon } from '@chakra-ui/icons'
 import { Button, Flex, Grid, GridItem } from '@chakra-ui/react'
-import { useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
 import { Collection, Macro } from '../../types'
-import { updateBackendConfig } from '../../utils'
 import FadeInWrapper from '../FadeInWrapper'
 import MacroCard from './MacroCard'
 
 const MacroList = () => {
-  const { collections, selection, changeViewState } = useApplicationContext()
+  const { selection, onCollectionUpdate, changeViewState } = useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
-  const [temp, setTemp] = useState(false)
 
   const onMacroDelete = (macroIndex: number) => {
-    collections[selection.collectionIndex].macros.splice(macroIndex, 1)
-    setTemp(!temp)
-    updateBackendConfig(collections)
+    const newCollection = { ...currentCollection }
+    newCollection.macros = newCollection.macros.filter(
+      (_, i) => i !== macroIndex
+    )
+    onCollectionUpdate(newCollection, selection.collectionIndex)
   }
 
   return (

@@ -46,18 +46,15 @@ const CollectionModal = ({ isOpen, onClose }: Props) => {
   const onCollectionNameChange = (event: BaseSyntheticEvent) => {
     let newName: string = event.target.value
     newName = newName.trim()
-    console.log(newName)
     setCollectionName(newName)
 
     for (let i = 0; i < collections.length; i++) {
       const collection = collections[i]
       if (collection.name.toUpperCase() === newName.toUpperCase()) {
-        console.log("name matches")
         setIsNameUsable(false)
         return
       }
     }
-    console.log("name is usable")
     setIsNameUsable(true)
   }
 

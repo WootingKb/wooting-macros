@@ -43,7 +43,7 @@ const Macroview = ({ isEditing }: Props) => {
       overwriteSequence([])
       return
     }
-    console.log(currentMacro)
+    // this could be cleaned up later
     updateSelectedElementId(-1)
     setMacroName(currentMacro.name)
     setTriggerKeys(currentMacro.trigger.data)
@@ -106,7 +106,6 @@ const Macroview = ({ isEditing }: Props) => {
   }
 
   const onMacroNameChange = (event: BaseSyntheticEvent) => {
-    console.log(event.target.value)
     setMacroName(event.target.value)
   }
 

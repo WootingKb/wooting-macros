@@ -59,7 +59,6 @@ function SequenceProvider({ children }: SequenceProviderProps) {
 
   const onElementDelete = useCallback(
     (index: number) => {
-      console.log('deleting element')
       const newSequence = sequence.filter(
         (_, i) => i !== index
       )

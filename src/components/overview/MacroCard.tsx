@@ -16,8 +16,8 @@ import {
 import { EditIcon, StarIcon } from '@chakra-ui/icons'
 import { Keypress, Macro } from '../../types'
 import { HIDLookup } from '../../maps/HIDmap'
-import { updateBackendConfig } from '../../utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
+import { useSelectedCollection } from '../../contexts/selectors'
 
 type Props = {
   macro: Macro
@@ -26,15 +26,17 @@ type Props = {
 }
 
 function MacroCard({ macro, index, onDelete }: Props) {
-  const { collections, changeSelectedMacroIndex } = useApplicationContext()
+  const { selection, onCollectionUpdate, changeSelectedMacroIndex } = useApplicationContext()
+  const currentCollection = useSelectedCollection()
+
   const subtextColour = useColorModeValue('gray.500', 'gray.400')
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
 
   const onToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    macro.active = event.target.checked
-    // update backend
-    updateBackendConfig(collections)
+    const newCollection = { ...currentCollection }
+    newCollection.macros[index].active = event.target.checked
+    onCollectionUpdate(newCollection, selection.collectionIndex)
   }
 
   return (
