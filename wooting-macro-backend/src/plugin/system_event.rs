@@ -1,5 +1,6 @@
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use brightness::{Brightness, BrightnessDevice, windows::BrightnessExt};
+
 use copypasta::{ClipboardContext, ClipboardProvider};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{executor::block_on, TryStreamExt};

@@ -296,7 +296,7 @@ impl MacroBackend {
     pub async fn get_brightness_devices(&self) -> Vec<BrightnessDevice> {
         #[cfg(any(target_os = "windows", target_os = "linux"))]
         {
-            let result = brightness::brightness_devices().await.unwrap();
+            let result = brightness::brightness_devices();
             vec![]
         }
 
