@@ -96,8 +96,6 @@ lazy_static! {
     pub static ref TRIGGERS_LIST: Triggers = { Triggers::new() };
 }
 
-
-
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 async fn main() {
     /// Spawn the backend thread.
@@ -105,8 +103,7 @@ async fn main() {
     /// (will crash on key grab/listen)
     task::spawn(async move {
         run_backend().await;
-    }).await
-    ;
+    }).await;
 
     /// Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");

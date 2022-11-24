@@ -10,6 +10,3 @@ pub enum MousePressAction {
     Up { button: u32 },
     DownUp { button: u32, duration: u32 },
 }
-
-
-

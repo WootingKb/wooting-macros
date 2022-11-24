@@ -14,7 +14,7 @@ use std::time::Duration;
 
 use halfbrown::HashMap;
 use lazy_static::lazy_static;
-use rdev::{Button, Event, EventType, grab, Key, listen, simulate, SimulateError};
+use rdev::{Button, Event, EventType, grab, GrabError, Key, listen, simulate, SimulateError};
 use serde::Serialize;
 use tauri::{Config, State, Theme};
 use tokio::sync::mpsc;
@@ -54,20 +54,30 @@ pub enum MacroType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
-    KeyPressEvent { data: key_press::KeyPress },
-    SystemEvent { data: system_event::SystemAction },
+    KeyPressEvent {
+        data: key_press::KeyPress,
+    },
+    SystemEvent {
+        data: system_event::SystemAction,
+    },
     //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
-    PhillipsHueCommand { data: phillips_hue::PhillipsHueStatus },
+    PhillipsHueCommand {
+        data: phillips_hue::PhillipsHueStatus,
+    },
     //TODO: Phillips hue notification
     OBS {},
     DiscordCommand {},
     //IKEADesk
-    MouseMovement { data: mouse_movement::MouseAction },
+    MouseMovement {
+        data: mouse_movement::MouseAction,
+    },
     UnicodeDirect {},
     //TODO: Sound effects? Soundboards?
     //TODO: Sending a message through online webapi (twitch)
-    Delay { data: delay::Delay },
+    Delay {
+        data: delay::Delay,
+    },
 }
 
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution
@@ -187,6 +197,7 @@ impl Macro {
                     let action_copy = data.clone();
                     task::spawn(async move { action_copy.execute().await });
                 }
+                ActionEventType::MouseMovement { .. } => {}
             }
         }
     }
@@ -242,7 +253,6 @@ pub async fn set_data_write_manually_backend(frontend_data: MacroData) {
     *app_state = frontend_data.clone();
     app_state.clone().export_data();
 }
-
 
 ///State of the application in RAM (rwlock).
 #[derive(Debug)]
@@ -516,96 +526,122 @@ pub async fn run_backend() {
     //==================================================
 
     let macros_data_from_state = APPLICATION_STATE.data.read().unwrap().clone();
-    let mut events = Vec::new();
+    //let mut events = Vec::new();
     let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
     generate_triggers(macros_data_from_state.clone());
 
-    let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+    // let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
-    task::spawn(async move {
-        keypress_executor_sender(rchan_execute).await;
-    });
+    // task::spawn(async move {
+    //     keypress_executor_sender(rchan_execute).await;
+    // });
 
-    let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+    //let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+
+
     let _grabber = thread::spawn(move || {
-        grab(
-            move |event: rdev::Event| match schan_grab.send(event.clone()) {
-                Ok(T) => {
-                    let mut keys_pressed: Vec<rdev::Key>;
-                    match &event.event_type {
-                        //TODO: Grab and discard the trigger actually
-                        EventType::KeyPress(key) => Some(event),
-                        _ => Some(event),
+        grab(move |event: rdev::Event| match Ok::<&rdev::Event, GrabError>(&event) {
+            Ok(T) => {
+                let mut keys_pressed: Vec<rdev::Key>;
+                match &event.event_type {
+                    //TODO: Grab and discard the trigger actually
+                    EventType::KeyPress(key) => {
+                        Some(event)
                     }
+                    EventType::KeyRelease(key) => {
+                        Some(event)
+                    }
+
+                    _ => { Some(event) },
                 }
-                Err(_) => None,
-            },
-        )
+            }
+            Err(_) => None,
+        })
     });
 
-    for event in &rchan_grab {
-        events.push(event);
-
-        let test = 0;
-        //TODO: channel this
-        let macro_collections = APPLICATION_STATE.data.read().unwrap();
-        let triggers = TRIGGERS_LIST.data.read().unwrap();
-
-        for i in &events {
-            match i.event_type {
-                EventType::KeyPress(listened_key) => {
-                    pressed_keys.push(listened_key.clone());
-
-                    print!("\n{:?}", pressed_keys);
-                }
-                EventType::KeyRelease(listened_key) => {
-                    pressed_keys.retain(|x| *x != listened_key);
-                    println!("{:?}", pressed_keys);
-                }
-                EventType::ButtonPress(listened_key) => {
-                    println!("MB Pressed:{:?}", listened_key)
-                }
-                EventType::ButtonRelease(listened_key) => {
-                    println!("MB Released:{:?}", listened_key)
-                }
-                EventType::MouseMove { x, y } => (),
-                EventType::Wheel { delta_x, delta_y } => {}
-            }
-
-            let pressed_keys_copy_converted: Vec<u32> = pressed_keys
-                .iter()
-                .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
-                .collect();
-
-            let first_key: u32 = match pressed_keys_copy_converted.first() {
-                None => 0,
-                Some(T) => *T,
-            };
-
-            let trigger_list = TRIGGERS_LIST.data.read().unwrap();
-
-            let check_these_macros = match trigger_list.get(&first_key) {
-                None => {
-                    vec![]
-                }
-                Some(T) => T.to_vec(),
-            };
-
-            let channel_copy_send = schan_execute.clone();
-
-            task::spawn(async move {
-                check_macro_execution_efficiently(
-                    pressed_keys_copy_converted,
-                    check_these_macros,
-                    channel_copy_send,
-                )
-                    .await;
-            });
-        }
-
-        events.pop();
-    }
+    // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+    // let _grabber = thread::spawn(move || {
+    //     grab(
+    //         move |event: rdev::Event| match schan_grab.send(event.clone()) {
+    //             Ok(T) => {
+    //                 let mut keys_pressed: Vec<rdev::Key>;
+    //                 match &event.event_type {
+    //                     //TODO: Grab and discard the trigger actually
+    //                     EventType::KeyPress(key) => Some(event),
+    //
+    //
+    //
+    //                     _ => Some(event),
+    //                 }
+    //             }
+    //             Err(_) => None,
+    //         },
+    //     )
+    // });
+    //
+    // for event in &rchan_grab {
+    //     events.push(event);
+    //
+    //     let test = 0;
+    //     //TODO: channel this
+    //     let macro_collections = APPLICATION_STATE.data.read().unwrap();
+    //     let triggers = TRIGGERS_LIST.data.read().unwrap();
+    //
+    //     for i in &events {
+    //         match i.event_type {
+    //             EventType::KeyPress(listened_key) => {
+    //                 pressed_keys.push(listened_key.clone());
+    //
+    //                 print!("\n{:?}", pressed_keys);
+    //             }
+    //             EventType::KeyRelease(listened_key) => {
+    //                 pressed_keys.retain(|x| *x != listened_key);
+    //                 println!("{:?}", pressed_keys);
+    //             }
+    //             EventType::ButtonPress(listened_key) => {
+    //                 println!("MB Pressed:{:?}", listened_key)
+    //             }
+    //             EventType::ButtonRelease(listened_key) => {
+    //                 println!("MB Released:{:?}", listened_key)
+    //             }
+    //             EventType::MouseMove { x, y } => (),
+    //             EventType::Wheel { delta_x, delta_y } => {}
+    //         }
+    //
+    //         let pressed_keys_copy_converted: Vec<u32> = pressed_keys
+    //             .iter()
+    //             .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+    //             .collect();
+    //
+    //         let first_key: u32 = match pressed_keys_copy_converted.first() {
+    //             None => 0,
+    //             Some(T) => *T,
+    //         };
+    //
+    //         let trigger_list = TRIGGERS_LIST.data.read().unwrap();
+    //
+    //         let check_these_macros = match trigger_list.get(&first_key) {
+    //             None => {
+    //                 vec![]
+    //             }
+    //             Some(T) => T.to_vec(),
+    //         };
+    //
+    //         let channel_copy_send = schan_execute.clone();
+    //
+    //         task::spawn(async move {
+    //             check_macro_execution_efficiently(
+    //                 pressed_keys_copy_converted,
+    //                 check_these_macros,
+    //                 channel_copy_send,
+    //             )
+    //                 .await;
+    //         });
+    //     }
+    //
+    //     events.pop();
+    // }
 }
 
 async fn check_macro_execution_efficiently(

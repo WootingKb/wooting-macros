@@ -1407,9 +1407,9 @@
     "@types/lodash" "*"
 
 "@types/lodash@*":
-  version "4.14.189"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.189.tgz#975ff8c38da5ae58b751127b19ad5e44b5b7f6d2"
-  integrity sha512-kb9/98N6X8gyME9Cf7YaqIMvYGnBSWqEci6tiettE6iJWH1XdJz/PO8LB0GtLCG7x8dU3KWhZT+lA1a35127tA==
+  version "4.14.190"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.190.tgz#d8e99647af141c63902d0ca53cf2b34d2df33545"
+  integrity sha512-5iJ3FBJBvQHQ8sFhEhJfjUP+G+LalhavTkYyrAYqz5MEJG+erSv0k9KJLb6q7++17Lafk1scaTIFXcMJlwK8Mw==
 
 "@types/node@^18.7.10":
   version "18.11.9"
@@ -2273,9 +2273,9 @@ focus-lock@^0.11.2:
     tslib "^2.0.3"
 
 framer-motion@^7.6.4:
-  version "7.6.9"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-7.6.9.tgz#d2c8ca8b97580aa00f7c6e2b616da241bd2ce8e6"
-  integrity sha512-byPSPOqKApmVUvbtvmFCyL09dqBNLUwkXRQMeTsawtF6YpiB54yCVzk+9YXAnoswMSgsB7CQaA6ls7e8QL+C+g==
+  version "7.6.10"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-7.6.10.tgz#5eaf5448065167e67b46aa0f189ac0fa150e3711"
+  integrity sha512-XAzeEIezmK1RZ/YPn4rviOCOLhIUta5+KSsRv4VZ9dDnnzhp8sq676AKKR2K5Kvuj6JU4wL3QEXC20yVX0XjvA==
   dependencies:
     "@motionone/dom" "10.13.1"
     framesync "6.1.2"
@@ -2942,9 +2942,9 @@ prelude-ls@^1.2.1:
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
 prettier@^2.7.1:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
-  integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.0.tgz#c7df58393c9ba77d6fba3921ae01faf994fb9dc9"
+  integrity sha512-9Lmg8hTFZKG0Asr/kW9Bp8tJjRVluO8EJQVfY2T7FMw9T5jy4I/Uvx0Rca/XWf50QQ1/SS48+6IJWnrb+2yemA==
 
 prop-types@^15.6.2, prop-types@^15.8.1:
   version "15.8.1"
