@@ -1,111 +1,68 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
-#![allow(warnings, unused)]
 
 extern crate core;
 
-use std::{fs, thread, time};
-use std::fs::{File, read_to_string};
-use std::io::{ErrorKind, Read, Write};
-use std::process::Command;
+use tauri::{
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
+};
 
-use lazy_static::lazy_static;
-use serde::{Deserialize, Serialize};
-use serde_json;
-use tauri::{App, Manager, SystemTrayEvent, SystemTrayMenuItem};
-use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu};
-use tauri::async_runtime::RwLock;
-use tokio::*;
-use tokio::io::{AsyncWriteExt, stdin};
+use wooting_macro_backend::*;
 
-use plugin::delay;
-
-use crate::wooting_macros_library::*;
-
-//use std::sync::RwLock;
-
-pub mod plugin;
-
-mod hid_table;
-mod wooting_macros_library;
-
-#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
-#[serde(rename_all = "PascalCase")]
-pub struct ApplicationConfig {
-    pub use_input_grab: bool,
-    pub startup_delay: u64,
+#[tauri::command]
+/// Gets the application config from the current state and sends to frontend.
+/// The state gets it from the config file at bootup.
+async fn get_config(state: tauri::State<'_, MacroBackend>) -> Result<ApplicationConfig, ()> {
+    Ok(state.config.read().await.clone())
 }
 
-trait StateManagement {
-    fn read_data_config() -> ApplicationConfig {
-        unimplemented!("Implement locally.")
-    }
-    fn write_to_file(&self) {
-        unimplemented!("Implement locally.")
-    }
-    fn read_data_macro() -> MacroData {
-        unimplemented!("Implement locally.")
-    }
+#[tauri::command]
+/// Gets the application config from the current state and sends to frontend.
+/// The state gets it from the config file at bootup.
+async fn set_config(
+    state: tauri::State<'_, MacroBackend>,
+    config: ApplicationConfig,
+) -> Result<(), ()> {
+    state.set_config(config).await;
+    Ok(())
 }
 
-impl StateManagement for ApplicationConfig {
-    fn read_data_config() -> ApplicationConfig {
-        let default: ApplicationConfig = ApplicationConfig {
-            use_input_grab: false,
-            startup_delay: 0,
-        };
-        return match File::open("../config.json") {
-            Ok(T) => {
-                let data: ApplicationConfig = serde_json::from_reader(&T).unwrap();
-                data
-            }
-
-            Err(E) => {
-                eprintln!("Error opening file, using default config {}", E);
-                default.write_to_file();
-                default
-            }
-        };
-    }
-
-    fn write_to_file(&self) {
-        match std::fs::write(
-            "../config.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
-            Ok(_) => {
-                println!("Success writing a new file");
-            }
-            Err(E) => {
-                eprintln!(
-                    "Error writing a new file, using only read only defaults. {}",
-                    E
-                );
-            }
-        };
-    }
+#[tauri::command]
+/// Gets the macro data from current state and sends to frontend.
+/// The state gets it from the config file at bootup.
+async fn get_macros(state: tauri::State<'_, MacroBackend>) -> Result<MacroData, ()> {
+    Ok(state.data.read().await.clone())
 }
 
-lazy_static! {
-    pub static ref APPLICATION_STATE: MacroDataState = { MacroDataState::new() };
+#[tauri::command]
+/// Sets the configuration from frontend and updates the state for everything on backend.
+async fn set_macros(
+    state: tauri::State<'_, MacroBackend>,
+    frontend_data: MacroData,
+) -> Result<(), ()> {
+    state.set_macros(frontend_data).await;
+    Ok(())
 }
 
-lazy_static! {
-    pub static ref TRIGGERS_LIST: Triggers = { Triggers::new() };
+#[tauri::command]
+async fn get_brightness_devices(
+    state: tauri::State<'_, MacroBackend>,
+) -> Result<Vec<BrightnessDevice>, ()> {
+    Ok(state.get_brightness_devices().await)
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 async fn main() {
-    /// Spawn the backend thread.
-    /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
-    /// (will crash on key grab/listen)
-    task::spawn(async move {
-        run_backend().await;
-    }).await;
+    // Spawn the backend thread.
+    // Note: this doesn't work on macOS since we cannot give the thread the proper permissions
+    // (will crash on key grab/listen)
 
-    /// Begin the main event loop. This loop cannot run on another thread on MacOS.
+    let backend = MacroBackend::new();
+    backend.init();
+
+    // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
 
@@ -118,9 +75,13 @@ async fn main() {
 
     tauri::Builder::default()
         // This is where you pass in your commands
-        .manage(MacroDataState::new())
+        .manage(backend)
         .invoke_handler(tauri::generate_handler![
-            get_macros, set_macros, get_config, set_config
+            get_macros,
+            set_macros,
+            get_config,
+            set_config,
+            get_brightness_devices
         ])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
@@ -148,12 +109,7 @@ async fn main() {
                     _ => {}
                 }
             }
-            SystemTrayEvent::LeftClick {
-                tray_id,
-                position,
-                size,
-                ..
-            } => {
+            SystemTrayEvent::LeftClick { .. } => {
                 let window = app.get_window("main").unwrap();
                 window.show().unwrap();
             }

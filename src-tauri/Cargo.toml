@@ -19,20 +19,11 @@ tauri-build = { version = "1.2", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
-rdev = { version = "0.5", features = ["unstable_grab", "serde", "serialize"] }
-halfbrown = { version = "0.1", features = ["serde"] }
-idasen-cli = "0.1"
-lazy_static = "1.4"
 tokio = { version = "1.21", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
-opener = "0.5"
-#windows = { version = "0.43", features = ["Win32_Media_Audio", "Win32_Foundation", "Win32_System", "Win32_System_Com"] }
-winaudio = "1.0.2"
-rodio = "0.16.0"
-brightness = { version = "0.5", optional = false }
-futures = "0.3.25"
-copypasta = { version = "0.8.1", features = ["smithay-clipboard"] }
-wifi-rs = "0.2.2"
+wooting-macro-backend = { path = "../wooting-macro-backend" }
+
+
 
 [features]
 # by default Tauri runs in production mode
