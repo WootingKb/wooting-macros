@@ -1,10 +1,8 @@
-
 mod hid_table;
 pub mod plugin;
 
-
-
 use std::fs::File;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
 
 use std::sync::Arc;
@@ -226,8 +224,6 @@ type Collections = Vec<Collection>;
 //                 match event {
 //                     Some(event) => {
 
-
-
 //                         data.execute(event_channel).await;
 //                     }
 //                     None => {
@@ -249,16 +245,13 @@ type Collections = Vec<Collection>;
 //     }
 // }
 
-
-// struct TriggerLookup2<'a> 
+// struct TriggerLookup2<'a>
 // {
-//     macros:  Vec<MacroExecutor>, 
+//     macros:  Vec<MacroExecutor>,
 //     lookup: HashMap<u32, Vec<&'a MacroExecutor>>,
 // }
 
 type TriggerLookup = HashMap<u32, Vec<Macro>>;
-
-
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -280,6 +273,7 @@ pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<TriggerLookup>>,
+    pub is_listening: Arc<AtomicBool>,
 }
 
 impl MacroBackend {
@@ -291,7 +285,12 @@ impl MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
+            is_listening: Arc::new(AtomicBool::new(true)),
         }
+    }
+
+    pub fn set_is_listening(&self, is_listening: bool) {
+        self.is_listening.store(is_listening, Ordering::Relaxed);
     }
 
     pub async fn get_brightness_devices(&self) -> Vec<BrightnessDevice> {
@@ -322,6 +321,7 @@ impl MacroBackend {
         let inner_config = self.config.clone();
         let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
+        let inner_is_listening = self.is_listening.clone();
         task::spawn(async move {
             //==============TESTING GROUND======================
             // let action_type = ActionEventType::SystemEvent {
@@ -404,13 +404,17 @@ impl MacroBackend {
                 grab(
                     move |event: rdev::Event| match Ok::<&rdev::Event, GrabError>(&event) {
                         Ok(_data) => {
-                            let mut keys_pressed: Vec<rdev::Key>;
-                            match &event.event_type {
-                                //TODO: Grab and discard the trigger actually
-                                EventType::KeyPress(key) => Some(event),
-                                EventType::KeyRelease(key) => Some(event),
+                            if inner_is_listening.load(Ordering::Relaxed) {
+                                let mut keys_pressed: Vec<rdev::Key>;
+                                match &event.event_type {
+                                    //TODO: Grab and discard the trigger actually
+                                    EventType::KeyPress(key) => Some(event),
+                                    EventType::KeyRelease(key) => Some(event),
 
-                                _ => Some(event),
+                                    _ => Some(event),
+                                }
+                            } else {
+                                Some(event)
                             }
                         }
                         Err(_) => None,
@@ -739,11 +743,6 @@ fn get_user_input(display_text: String) -> String {
         .expect("Invalid type");
     buffer.trim().to_string()
 }
-
-
-
-
-
 
 #[cfg(test)]
 mod tests {
