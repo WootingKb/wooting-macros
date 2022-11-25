@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/icons'
 import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { useSequenceContext } from '../../../contexts/sequenceContext'
+import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
 import { ActionEventType } from '../../../types'
 
@@ -19,7 +19,7 @@ const SortableItem = ({ id, element }: Props) => {
   const [displayText, setDisplayText] = useState<string | undefined>('')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
   const { selectedElementId, onElementDelete, updateSelectedElementId } =
-    useSequenceContext()
+    useMacroContext()
 
   useEffect(() => {
     switch (element.type) {

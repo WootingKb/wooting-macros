@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import { useSequenceContext } from '../../contexts/sequenceContext'
+import { useMacroContext } from '../../contexts/macroContext'
 import { ActionEventType } from '../../types'
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 }
 
 const SequenceElementButton = ({ properties, displayText }: Props) => {
-  const { onElementAdd } = useSequenceContext()
+  const { onElementAdd } = useMacroContext()
 
   return (
     <Button

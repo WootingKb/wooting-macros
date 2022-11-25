@@ -51,6 +51,8 @@ const useRecording = (
     [items, type]
   )
 
+  // add start, stop
+
   const addMousepress = useCallback((event: MouseEvent) => {
     event.preventDefault()
 

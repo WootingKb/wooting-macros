@@ -1,9 +1,9 @@
-import { ViewState } from './enums'
+import { MacroType, ViewState } from './enums'
 
 // Contexts
 export interface CurrentSelection {
   collectionIndex: number
-  macroIndex: number
+  macroIndex: number | undefined
 }
 
 export type AppState = {
@@ -20,8 +20,30 @@ export type AppState = {
     collectionIndex: number
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
-  changeSelectedMacroIndex: (index: number) => void
+  changeSelectedMacroIndex: (index: number | undefined) => void
   updateIsRenamingCollection: (newVal: boolean) => void
+}
+
+export type MacroState = {
+  macroName: string
+  macroType: MacroType
+  triggerKeys: Keypress[] // update to allow for mouse buttons
+  allowWhileOtherKeys: boolean
+  sequence: ActionEventType[]
+  ids: number[]
+  selectedElementId: number | undefined
+  updateMacroName: (newName: string) => void
+  updateMacroType: (newType: MacroType) => void
+  updateTriggerKeys: (newArray: Keypress[]) => void
+  updateAllowWhileOtherKeys: (value: boolean) => void
+  onElementAdd: (element: ActionEventType) => void
+  onElementDelete: (index: number) => void
+  overwriteSequence: (newSequence: ActionEventType[]) => void
+  onIdAdd: (newId: number) => void
+  onIdDelete: (IdToRemove: number) => void
+  overwriteIds: (newArray: number[]) => void
+  updateSelectedElementId: (newIndex: number | undefined) => void
+  updateMacro: () => void
 }
 
 export type SequenceState = {
@@ -48,8 +70,7 @@ export type MousePressAction =
   | { type: 'Up'; button: number }
   | { type: 'DownUp'; button: number; duration: number }
 
-export type MouseAction =
-  | { type: 'Press'; data: MousePressAction }
+export type MouseAction = { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
   | { type: 'Open'; path: string }

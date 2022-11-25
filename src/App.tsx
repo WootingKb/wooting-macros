@@ -3,9 +3,9 @@ import { Flex } from '@chakra-ui/react'
 import Overview from './views/Overview'
 import { ViewState } from './enums'
 import { useApplicationContext } from './contexts/applicationContext'
-import { SequenceProvider } from './contexts/sequenceContext'
 import Macroview from './views/Macroview'
 import { useEffect } from 'react'
+import { MacroProvider } from './contexts/macroContext'
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()
@@ -26,10 +26,16 @@ function App() {
   return (
     <Flex h="100vh" direction="column">
       {viewState === ViewState.Overview && <Overview />}
-      <SequenceProvider>
-        {viewState === ViewState.Addview && <Macroview isEditing={false} />}
-        {viewState === ViewState.Editview && <Macroview isEditing={true} />}
-      </SequenceProvider>
+      {viewState === ViewState.Addview && (
+        <MacroProvider key={0}>
+          <Macroview isEditing={false} />
+        </MacroProvider>
+      )}
+      {viewState === ViewState.Editview && (
+        <MacroProvider key={1}>
+          <Macroview isEditing={true} />
+        </MacroProvider>
+      )}
     </Flex>
   )
 }

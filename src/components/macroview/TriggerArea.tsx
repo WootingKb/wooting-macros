@@ -10,21 +10,24 @@ import {
   Divider,
   useColorModeValue
 } from '@chakra-ui/react'
+import { useEffect } from 'react'
+import { useMacroContext } from '../../contexts/macroContext'
+import { RecordingType } from '../../enums'
+import useRecording from '../../hooks/useRecording'
 import { HIDLookup } from '../../maps/HIDmap'
 import { Keypress } from '../../types'
 
-type Props = {
-  recording: boolean
-  triggerKeys: Keypress[]
-  onRecordButtonPress: () => void
-}
-
-const TriggerArea = ({
-  recording,
-  triggerKeys,
-  onRecordButtonPress
-}: Props) => {
+const TriggerArea = () => {
+  const { recording, toggle, items } = useRecording(RecordingType.Trigger)
+  const { triggerKeys, updateTriggerKeys } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
+
+  useEffect(() => {
+    // remove the filter when backend updates trigger to allow mouse press
+    updateTriggerKeys(
+      items.filter((element): element is Keypress => 'keypress' in element)
+    )
+  }, [items, updateTriggerKeys])
 
   return (
     <VStack
@@ -60,8 +63,8 @@ const TriggerArea = ({
       <HStack w="100%" justifyContent="space-between">
         <VStack alignItems="normal" w="full" h="full">
           <HStack spacing="4px" h="full">
-            {triggerKeys.map((key: Keypress, index: number) => (
-              <Kbd key={index}>
+            {triggerKeys.map((key: Keypress) => (
+              <Kbd key={key.keypress}>
                 {HIDLookup.get(key.keypress)?.displayString}
               </Kbd>
             ))}
@@ -70,7 +73,7 @@ const TriggerArea = ({
         <VStack alignItems="normal">
           <Button
             leftIcon={<EditIcon />}
-            onClick={onRecordButtonPress}
+            onClick={toggle}
             colorScheme={recording ? 'red' : 'gray'}
           >
             {recording ? 'Stop' : 'Record'}

@@ -1,14 +1,13 @@
 import { useMemo } from 'react'
 import { useApplicationContext } from './applicationContext'
-import { ActionEventType, Collection, Macro } from '../types'
-import { useSequenceContext } from './sequenceContext'
+import { useMacroContext } from './macroContext'
 
-export function useCollections(): Collection[] {
+export function useCollections() {
   const context = useApplicationContext()
   return context.collections
 }
 
-export function useSelectedCollection(): Collection {
+export function useSelectedCollection() {
   const { collections, selection } = useApplicationContext()
   return useMemo(
     () => collections[selection.collectionIndex],
@@ -16,21 +15,30 @@ export function useSelectedCollection(): Collection {
   )
 }
 
-export function useSelectedMacro(): Macro {
+export function useSelectedMacro() {
   const { selection } = useApplicationContext()
   const selectedCollection = useSelectedCollection()
   return useMemo(
-    () => selectedCollection.macros[selection.macroIndex],
+    () =>
+      selection.macroIndex !== undefined
+        ? selectedCollection.macros[selection.macroIndex]
+        : undefined,
     [selectedCollection, selection]
   )
 }
 
-export function useSequence(): ActionEventType[] {
-  const context = useSequenceContext()
+export function useSequence() {
+  const context = useMacroContext()
   return context.sequence
 }
 
-export function useSelectedElement(): ActionEventType {
-  const context = useSequenceContext()
-  return useMemo(() => context.sequence[context.selectedElementId], [context])
+export function useSelectedElement() {
+  const context = useMacroContext()
+  return useMemo(
+    () =>
+      context.selectedElementId !== undefined
+        ? context.sequence[context.selectedElementId]
+        : undefined,
+    [context]
+  )
 }

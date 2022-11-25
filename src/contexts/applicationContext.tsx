@@ -32,7 +32,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [collections, setCollections] = useState<Collection[]>([])
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
-    macroIndex: -1
+    macroIndex: undefined
   })
   const [isRenamingCollection, setIsRenamingCollection] = useState(false)
 
@@ -66,12 +66,14 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   )
 
   const changeSelectedMacroIndex = useCallback(
-    (index: number) => {
+    (index: number | undefined) => {
+      console.log("new macro index is " + index)
       setSelection((prevState) => ({
         ...prevState,
         macroIndex: index
       }))
-      if (index >= 0) {
+
+      if ((index !== undefined) && (index >= 0)) {
         setViewState(ViewState.Editview)
       } else {
         setViewState(ViewState.Overview)

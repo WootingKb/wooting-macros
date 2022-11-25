@@ -23,7 +23,6 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useSequenceContext } from '../../contexts/sequenceContext'
 import { useEffect, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
@@ -31,15 +30,16 @@ import DragWrapper from './sortableList/DragWrapper'
 import { RecordingType } from '../../enums'
 import useRecording from '../../hooks/useRecording'
 import { Keypress } from '../../types'
+import { useMacroContext } from '../../contexts/macroContext'
 
-// TODO: Record functionality
+// ask about how to deal with dndkit's types, e.g. UniqueIdentifier
 const SequencingArea = () => {
-  const [activeId, setActiveId] = useState(undefined)
+  const [activeId, setActiveId] = useState<number | undefined>(undefined)
   const { recording, toggle, items } = useRecording(
     RecordingType.Sequence
   )
   const [index, setIndex] = useState(0)
-  const { sequence, ids, onElementAdd, overwriteIds } = useSequenceContext()
+  const { sequence, ids, onElementAdd, overwriteIds } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   const sensors = useSensors(
@@ -69,18 +69,15 @@ const SequencingArea = () => {
     setActiveId(active.id)
   }
 
-  const onAddDelayButtonPress = () => {
-    onElementAdd({
-      type: 'Delay',
-      data: 50
-    })
-  }
-
   useEffect(() => {
+    // this is an issue because we need to render the elements when they get added to items
+    // need a better way to only add "new" elements when recording
+    // index breaks this if added to deps
+    // cant just do a check to see if it was already added, because what if the sequence has multiple of the same element
     const temp: Keypress[] = items.filter(
       (element): element is Keypress => 'keypress' in element
     )
-    console.log(temp)
+
     if (temp.length > 0) {
       onElementAdd({
         type: 'KeyPressEvent',
@@ -111,7 +108,12 @@ const SequencingArea = () => {
           <Button
             leftIcon={<EditIcon />}
             size={['xs', 'sm', 'md']}
-            onClick={onAddDelayButtonPress}
+            onClick={() => {
+              onElementAdd({
+                type: 'Delay',
+                data: 50
+              })
+            }}
           >
             Add Delay
           </Button>

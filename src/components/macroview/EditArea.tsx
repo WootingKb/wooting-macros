@@ -12,22 +12,24 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useSelectedElement } from '../../contexts/selectors'
-import { useSequenceContext } from '../../contexts/sequenceContext'
 import { KeyType } from '../../enums'
 import { HIDLookup } from '../../maps/HIDmap'
 
 const EditArea = () => {
-  const [currentTypeIndex, setCurrentTypeIndex] = useState(0) // this type refers to what kind of element is being edited
-  const [delayDuration, setDelayDuration] = useState(0)
-  const [headingText, setHeadingText] = useState('')
-  const [keypressDuration, setKeypressDuration] = useState(1)
-  const [keypressType, setKeypressType] = useState<KeyType>()
-  const { selectedElementId } = useSequenceContext()
+  // Need to refactor this
+  // new folder: Editables
+  // new file for each type of element, e.g. EditDelay.tsx, EditKeyPress.tsx, etc
+  // each file will have a local state, and then call updateMacro() from the macroContext to update instead of directly changing selectedElement
+  const [currentTypeIndex, setCurrentTypeIndex] = useState(0) // can get rid of this after refactor
+  const [delayDuration, setDelayDuration] = useState(0) // move to EditDelay
+  const [headingText, setHeadingText] = useState('') // dont need state for this, just calc it on render
+  const [keypressDuration, setKeypressDuration] = useState(1) // move to EditKeyPress
+  const [keypressType, setKeypressType] = useState<KeyType>() // move to EditKeyPress
   const selectedElement = useSelectedElement()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
-    if (selectedElementId < 0) {
+    if (selectedElement === undefined) {
       return
     }
     switch (selectedElement.type) {
@@ -50,15 +52,21 @@ const EditArea = () => {
       default:
         break
     }
-  }, [selectedElement, selectedElementId])
+  }, [selectedElement])
 
   const onDelayDurationChange = (event: any) => {
+    if (selectedElement === undefined) {
+      return
+    }
     setDelayDuration(event.target.value)
     // TODO: fix element display in sequencing area not updating when fields are changed
     selectedElement.data = parseInt(event.target.value)
   }
 
   const onKeypressDurationChange = (event: any) => {
+    if (selectedElement === undefined) {
+      return
+    }
     if (selectedElement.type !== 'KeyPressEvent') {
       return
     }
@@ -67,6 +75,9 @@ const EditArea = () => {
   }
 
   const onKeypressTypeChange = (newType: KeyType) => {
+    if (selectedElement === undefined) {
+      return
+    }
     if (selectedElement.type !== 'KeyPressEvent') {
       return
     }
@@ -74,7 +85,7 @@ const EditArea = () => {
     selectedElement.data.keytype = KeyType[newType]
   }
 
-  if (selectedElementId === -1) {
+  if (selectedElement === undefined) {
     return (
       <VStack
         w="25%"
