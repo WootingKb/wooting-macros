@@ -8,13 +8,26 @@ type Props = {
 }
 
 const SequenceElementButton = ({ properties, displayText }: Props) => {
-  const { onElementAdd } = useMacroContext()
+  const { sequence, onElementAdd } = useMacroContext()
+
+  function handleAddElement() {
+    // check if last element in the sequence is a delay element
+    // if not, add a delay
+    if ((sequence.at(-1)?.type !== "Delay") && (sequence.length > 0)) {
+      onElementAdd({
+        type: 'Delay',
+        data: 50
+      })
+    }
+    // add element
+    onElementAdd(properties)
+  }
 
   return (
     <Button
       colorScheme="yellow"
       size={['sm']}
-      onClick={() => onElementAdd(properties)}
+      onClick={handleAddElement}
     >
       {displayText}
     </Button>
