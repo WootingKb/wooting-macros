@@ -8,13 +8,17 @@ const useRecording = (
   initialItems: Array<Keypress | MousePressAction> = []
 ) => {
   const [recording, setRecording] = useState(false)
-  const toggle = useCallback(() => {
-    if (!recording) {
-      setItems([])
-    }
-    setRecording((recording) => !recording)
-  }, [recording, setRecording])
-  const [items, setItems] = useState<Array<Keypress | MousePressAction>>(initialItems)
+  const [items, setItems] =
+    useState<Array<Keypress | MousePressAction>>(initialItems)
+
+  const startRecording = useCallback(() => {
+    setItems([])
+    setRecording(true)
+  }, [setItems, setRecording])
+
+  const stopRecording = useCallback(() => {
+    setRecording(false)
+  }, [setRecording])
 
   const addKeypress = useCallback(
     (event: KeyboardEvent) => {
@@ -44,17 +48,16 @@ const useRecording = (
       }
 
       setItems((items) => [...items, keypress])
-      if ((type === RecordingType.Trigger) && (items.length == 3)) {
+      if (type === RecordingType.Trigger && items.length == 3) {
         setRecording(false)
       }
     },
     [items, type]
   )
 
-  // add start, stop
-
-  const addMousepress = useCallback((event: MouseEvent) => {
-    event.preventDefault()
+  const addMousepress = useCallback(
+    (event: MouseEvent) => {
+      event.preventDefault()
 
       if (type === RecordingType.Trigger) {
         if (
@@ -68,18 +71,19 @@ const useRecording = (
         }
       }
 
-    const mousepress: MousePressAction = {
-      type: 'DownUp',
-      button: event.button,
-      duration: 0
-    }
+      const mousepress: MousePressAction = {
+        type: 'DownUp',
+        button: event.button,
+        duration: 0
+      }
 
-    setItems((items) => [...items, mousepress])
-    if (type === RecordingType.Trigger && items.length == 3) {
+      setItems((items) => [...items, mousepress])
+      if (type === RecordingType.Trigger && items.length == 3) {
         setRecording(false)
-    }
-
-  }, [items, type])
+      }
+    },
+    [items, type]
+  )
 
   useEffect(() => {
     if (!recording) {
@@ -96,7 +100,7 @@ const useRecording = (
     }
   }, [addKeypress, recording])
 
-  return { recording, toggle, items }
+  return { recording, startRecording, stopRecording, items }
 }
 
 export default useRecording

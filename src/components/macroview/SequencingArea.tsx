@@ -6,7 +6,7 @@ import {
   Divider,
   useColorModeValue
 } from '@chakra-ui/react'
-import { EditIcon } from '@chakra-ui/icons'
+import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import {
   closestCenter,
   DndContext,
@@ -35,7 +35,7 @@ import { useMacroContext } from '../../contexts/macroContext'
 // ask about how to deal with dndkit's types, e.g. UniqueIdentifier
 const SequencingArea = () => {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
-  const { recording, toggle, items } = useRecording(
+  const { recording, startRecording, stopRecording, items } = useRecording(
     RecordingType.Sequence
   )
   const [index, setIndex] = useState(0)
@@ -101,12 +101,12 @@ const SequencingArea = () => {
             leftIcon={<EditIcon />}
             size={['xs', 'sm', 'md']}
             colorScheme={recording ? 'red' : 'gray'}
-            onClick={toggle}
+            onClick={recording ? stopRecording : startRecording}
           >
-            Record
+            {recording ? 'Stop' : 'Record'}
           </Button>
           <Button
-            leftIcon={<EditIcon />}
+            leftIcon={<AddIcon />}
             size={['xs', 'sm', 'md']}
             onClick={() => {
               onElementAdd({

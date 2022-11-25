@@ -18,7 +18,9 @@ import { HIDLookup } from '../../maps/HIDmap'
 import { Keypress } from '../../types'
 
 const TriggerArea = () => {
-  const { recording, toggle, items } = useRecording(RecordingType.Trigger)
+  const { recording, startRecording, stopRecording, items } = useRecording(
+    RecordingType.Trigger
+  )
   const { triggerKeys, updateTriggerKeys } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
@@ -73,7 +75,7 @@ const TriggerArea = () => {
         <VStack alignItems="normal">
           <Button
             leftIcon={<EditIcon />}
-            onClick={toggle}
+            onClick={recording ? stopRecording : startRecording}
             colorScheme={recording ? 'red' : 'gray'}
           >
             {recording ? 'Stop' : 'Record'}
