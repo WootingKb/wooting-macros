@@ -38,7 +38,8 @@ const MacroviewHeader = ({ isEditing }: Props) => {
           </svg>
           {isEditing && (
             <Input
-              variant="unstyled"
+              variant="flushed"
+              w="35%"
               placeholder="Macro Name"
               isRequired
               onChange={(event) => {
@@ -49,7 +50,8 @@ const MacroviewHeader = ({ isEditing }: Props) => {
           )}
           {!isEditing && (
             <Input
-              variant="unstyled"
+              variant="flushed"
+              w="35%"
               placeholder="Macro Name"
               isRequired
               onChange={(event) => {
