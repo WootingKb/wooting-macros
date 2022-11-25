@@ -307,6 +307,7 @@ impl MacroBackend {
     }
 
     pub async fn set_macros(&self, macros: MacroData) {
+        macros.export_data();
         *self.triggers.write().await = macros.extract_triggers();
         *self.data.write().await = macros;
     }
