@@ -49,7 +49,7 @@ const SortableItem = ({ id, element }: Props) => {
 
   const onDeleteButtonPress = () => {
     if (selectedElementId === id - 1) {
-      updateSelectedElementId(-1)
+      updateSelectedElementId(undefined)
     }
     onElementDelete(id - 1)
   }

@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Button, Text } from '@chakra-ui/react'
 import { useMacroContext } from '../../contexts/macroContext'
 import { ActionEventType } from '../../types'
 
@@ -29,7 +29,7 @@ const SequenceElementButton = ({ properties, displayText }: Props) => {
       size={['sm']}
       onClick={handleAddElement}
     >
-      {displayText}
+      <Text fontSize={['xs', 'sm', 'md']}>{displayText}</Text>
     </Button>
   )
 }

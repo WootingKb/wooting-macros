@@ -129,6 +129,19 @@ function MacroProvider({ children }: MacroProviderProps) {
     [onIdAdd, setSequence]
   )
 
+  const updateElement = useCallback(
+    (newElement: ActionEventType, index: number) => {
+      setSequence((sequence) => {
+        console.log(sequence)
+        const newSequence = [...sequence]
+        newSequence[index] = newElement
+        console.log(newSequence)
+        return newSequence
+      })
+    },
+    [setSequence]
+  )
+
   const onElementDelete = useCallback(
     (index: number) => {
       const newSequence = sequence.filter((_, i) => i !== index)
@@ -207,6 +220,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateTriggerKeys,
       updateAllowWhileOtherKeys,
       onElementAdd,
+      updateElement,
       onElementDelete,
       overwriteSequence,
       onIdAdd,
@@ -228,6 +242,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateTriggerKeys,
       updateAllowWhileOtherKeys,
       onElementAdd,
+      updateElement,
       onElementDelete,
       overwriteSequence,
       onIdAdd,

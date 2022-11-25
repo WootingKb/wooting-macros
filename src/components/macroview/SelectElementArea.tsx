@@ -128,7 +128,52 @@ const SelectElementArea = () => {
         >
           {/** the 90px comes from the heights of the text, input, and tablist elements above */}
           <TabPanel w="full" p="4px" h="100%">
-            <Text>All goes here</Text>
+            <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
+              {SystemEvent.all.map((info: SystemEventInfo) => (
+                <SequenceElementButton
+                  key={info.type}
+                  displayText={info.displayString}
+                  properties={{
+                    type: 'SystemEvent',
+                    data: {
+                      type: 'Open',
+                      path: 'path'
+                    }
+                  }}
+                />
+              ))}
+              {MouseInput.all.map((info: MouseInputInfo) => (
+                <SequenceElementButton
+                  key={info.button}
+                  displayText={info.displayString}
+                  properties={{
+                    type: 'MousePressEvent',
+                    data: {
+                      type: 'Press',
+                      data: {
+                        type: 'DownUp',
+                        button: info.button,
+                        duration: 0
+                      }
+                    }
+                  }}
+                />
+              ))}
+              {Hid.all.map((HIDinfo: HidInfo) => (
+                <SequenceElementButton
+                  key={HIDinfo.HIDcode}
+                  displayText={HIDinfo.displayString}
+                  properties={{
+                    type: 'KeyPressEvent',
+                    data: {
+                      keypress: HIDinfo.HIDcode,
+                      press_duration: 1,
+                      keytype: KeyType[KeyType.DownUp]
+                    }
+                  }}
+                />
+              ))}
+            </SimpleGrid>
           </TabPanel>
           <TabPanel w="full" p="4px" h="100%">
             <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
