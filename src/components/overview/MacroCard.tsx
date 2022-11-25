@@ -33,9 +33,15 @@ function MacroCard({ macro, index, onDelete }: Props) {
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
 
-  const onToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+  function onToggle(event: React.ChangeEvent<HTMLInputElement>) {
     const newCollection = { ...currentCollection }
     newCollection.macros[index].active = event.target.checked
+    onCollectionUpdate(newCollection, selection.collectionIndex)
+  }
+
+  function onDuplicate() {
+    const newCollection = { ...currentCollection }
+    newCollection.macros.push(macro)
     onCollectionUpdate(newCollection, selection.collectionIndex)
   }
 
@@ -79,7 +85,7 @@ function MacroCard({ macro, index, onDelete }: Props) {
             variant="link"
           ></MenuButton>
           <MenuList>
-            <MenuItem isDisabled>Duplicate</MenuItem>
+            <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             <MenuItem isDisabled>Move to Collection</MenuItem>
             <MenuItem isDisabled>Export</MenuItem>
             <Divider />
