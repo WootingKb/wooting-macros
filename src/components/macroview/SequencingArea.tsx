@@ -70,10 +70,11 @@ const SequencingArea = () => {
   }
 
   useEffect(() => {
-    // this is an issue because we need to render the elements when they get added to items
-    // need a better way to only add "new" elements when recording
-    // index breaks this if added to deps
-    // cant just do a check to see if it was already added, because what if the sequence has multiple of the same element
+    // this useeffect, or some other function like it, is required so that we can add items to the macrocontext when items updates
+    // we need to know what elements the user adds so that we can render them in the sortable list
+    // onelementadd is called so that the sortable list IDs, and also the element to get component info from is there
+    // we need to be able to only add "NEW" elements to the sequence, instead of the entirety of items again, thus the attempt to use an index
+    // but index breaks this if added to deps, so we need a new way
     const temp: Keypress[] = items.filter(
       (element): element is Keypress => 'keypress' in element
     )
@@ -86,7 +87,6 @@ const SequencingArea = () => {
 
       setIndex(items.length)
     }
-    // cannot add index as a dependency, it breaks it
   }, [items, onElementAdd])
 
   return (

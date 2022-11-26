@@ -125,6 +125,11 @@ const SelectElementArea = () => {
           h={['calc(100% - 108px)', 'calc(100% - 112px)', 'calc(100% - 72px)']}
           mt={['4px']}
           overflowY="auto"
+          css={{
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            }
+          }}
         >
           {/** the 90px comes from the heights of the text, input, and tablist elements above */}
           <TabPanel w="full" p="4px" h="100%">

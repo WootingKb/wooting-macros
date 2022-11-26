@@ -11,6 +11,7 @@ import {
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import CollectionButton from './CollectionButton'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 type Props = {
   onOpen: () => void
@@ -25,13 +26,13 @@ const LeftPanel = ({ onOpen }: Props) => {
     updateIsRenamingCollection
   } = useApplicationContext()
   const { colorMode, toggleColorMode } = useColorMode()
-  const panelBg = useColorModeValue('gray.200', 'gray.900')
+  const [parent] = useAutoAnimate<HTMLDivElement>()
+  const panelBg = useColorModeValue('gray.100', 'gray.900')
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
 
   const onCollectionButtonPress = (newActiveIndex: number) => {
     changeSelectedCollectionIndex(newActiveIndex)
   }
-
   return (
     <VStack
       bg={panelBg}
@@ -39,32 +40,40 @@ const LeftPanel = ({ onOpen }: Props) => {
       borderColor={dividerBg}
       h="100vh"
       p="2"
-      w={['25%', '20%', '15%']}
+      w={['30%', '25%', '15%']}
       justifyContent="space-between"
+      overflowY="auto"
+      css={{
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        }
+      }}
     >
       <VStack w="100%">
         <Text w="100%" fontWeight="bold">
           Collections
         </Text>
         <Divider borderColor={dividerBg} />
-        {collections.map((collection: Collection, index: number) => (
-          <CollectionButton
-            collection={collection}
-            index={index}
-            key={collection.name}
-            isFocused={index == selection.collectionIndex}
-            setFocus={onCollectionButtonPress}
-            toggleCollection={() =>
-              onCollectionUpdate(
-                {
-                  ...collections[index],
-                  active: !collections[index].active
-                },
-                index
-              )
-            }
-          />
-        ))}
+        <VStack w="100%" ref={parent}>
+          {collections.map((collection: Collection, index: number) => (
+            <CollectionButton
+              collection={collection}
+              index={index}
+              key={collection.name}
+              isFocused={index == selection.collectionIndex}
+              setFocus={onCollectionButtonPress}
+              toggleCollection={() =>
+                onCollectionUpdate(
+                  {
+                    ...collections[index],
+                    active: !collections[index].active
+                  },
+                  index
+                )
+              }
+            />
+          ))}
+        </VStack>
         <Button
           colorScheme="yellow"
           size={['sm']}
@@ -89,7 +98,13 @@ const LeftPanel = ({ onOpen }: Props) => {
             Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
           </Text>
         </Button>
-        <Button variant="outline" borderColor="gray.400" w="100%" size={'sm'} isDisabled>
+        <Button
+          variant="outline"
+          borderColor="gray.400"
+          w="100%"
+          size={'sm'}
+          isDisabled
+        >
           <Text fontSize={'xs'}>Give Feedback</Text>
         </Button>
       </HStack>
