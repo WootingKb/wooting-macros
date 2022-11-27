@@ -326,7 +326,6 @@ impl MacroBackend {
         //     keypress_executor_sender(rchan_execute).await;
         // });
 
-
         // task::spawn(async move {
         //     //==============TESTING GROUND======================
         //     let action_type = ActionEventType::SystemEvent {
@@ -342,189 +341,181 @@ impl MacroBackend {
         //     }
         // });
 
-            // let action_type = ActionEventType::SystemEvent {
-            //     data: SystemAction::Brightness {
-            //         action: MonitorBrightnessAction::Set { level: 75 },
-            //     },
-            // };
-            // match action_type {
-            //     ActionEventType::SystemEvent { data } => {
-            //         data.execute().await;
-            //     }
-            //     _ => {}
-            // }
+        // let action_type = ActionEventType::SystemEvent {
+        //     data: SystemAction::Brightness {
+        //         action: MonitorBrightnessAction::Set { level: 75 },
+        //     },
+        // };
+        // match action_type {
+        //     ActionEventType::SystemEvent { data } => {
+        //         data.execute().await;
+        //     }
+        //     _ => {}
+        // }
 
-            // println!("{:#?}", self.config.read().unwrap().startup_delay);
+        // println!("{:#?}", self.config.read().unwrap().startup_delay);
 
-            //
-            // match action_type {
-            //     ActionEventType::SystemEvent { data } => {
-            //         match data {
-            //             SystemAction::Open { .. } => {}
-            //             SystemAction::Volume { .. } => {}
-            //             SystemAction::Brightness{ action } => {
-            //                 match action{
-            //                     BrightnessAction::Get => {
-            //
-            //                     }
-            //                     BrightnessAction::Set { .. } => {}
-            //                 }
-            //
-            //             }
-            //         }
-            //     }
-            //
-            //     ActionEventType::KeyPressEvent { .. } => {}
-            //     ActionEventType::PhillipsHueCommand { .. } => {}
-            //     ActionEventType::OBS { .. } => {}
-            //     ActionEventType::DiscordCommand { .. } => {}
-            //     ActionEventType::UnicodeDirect { .. } => {}
-            //     ActionEventType::Delay { .. } => {}
-            // }
+        //
+        // match action_type {
+        //     ActionEventType::SystemEvent { data } => {
+        //         match data {
+        //             SystemAction::Open { .. } => {}
+        //             SystemAction::Volume { .. } => {}
+        //             SystemAction::Brightness{ action } => {
+        //                 match action{
+        //                     BrightnessAction::Get => {
+        //
+        //                     }
+        //                     BrightnessAction::Set { .. } => {}
+        //                 }
+        //
+        //             }
+        //         }
+        //     }
+        //
+        //     ActionEventType::KeyPressEvent { .. } => {}
+        //     ActionEventType::PhillipsHueCommand { .. } => {}
+        //     ActionEventType::OBS { .. } => {}
+        //     ActionEventType::DiscordCommand { .. } => {}
+        //     ActionEventType::UnicodeDirect { .. } => {}
+        //     ActionEventType::Delay { .. } => {}
+        // }
 
-            //==============TESTING GROUND======================
-            //==================================================
-            //TODO: Make a way to disable this listening function
-            //TODO: make this a grab instead of listen
-            //TODO: try to make this interact better (cleanup the code a bit)
-            //TODO: async the executor of the presses
-            //TODO: io-uring async read files and write files
-            //TODO: implement drop
+        //==============TESTING GROUND======================
+        //==================================================
+        //TODO: Make a way to disable this listening function
+        //TODO: make this a grab instead of listen
+        //TODO: try to make this interact better (cleanup the code a bit)
+        //TODO: async the executor of the presses
+        //TODO: io-uring async read files and write files
+        //TODO: implement drop
 
-            //TODO: Make the modifier keys non-ordered?
-            //==================================================
+        //TODO: Make the modifier keys non-ordered?
+        //==================================================
 
-            //let mut events = Vec::new();
-            let mut pressed_keys: Vec<rdev::Key> = Vec::new();
+        //let mut events = Vec::new();
+        let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
+        // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
 
+        let inner_config = self.config.clone();
+        let inner_data = self.data.clone();
+        let inner_triggers = self.triggers.clone();
+        let inner_is_listening = self.is_listening.clone();
 
+        let inner_config_special = self.config.read().await.clone();
 
+        let _grabber = thread::spawn(move || {
+            grab(move |event: rdev::Event| {
+                let inner_config1 = inner_config.clone();
+                let inner_config_special1 = inner_config_special.clone();
+                match Ok::<&rdev::Event, GrabError>(&event) {
+                    Ok(_data) => {
+                        if inner_is_listening.load(Ordering::Relaxed) {
+                            match &event.event_type {
+                                //TODO: Grab and discard the trigger actually
+                                EventType::KeyPress(key) => {
+                                    let inner_config_special2 = inner_config_special1;
+                                    println!("Conifg: {:?}", inner_config_special2);
 
-            // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
-
-            let inner_config = self.config.clone();
-            let inner_data = self.data.clone();
-            let inner_triggers = self.triggers.clone();
-            let inner_is_listening = self.is_listening.clone();
-
-            let inner_config_special = self.config.read().await.clone();
-
-
-            let _grabber = thread::spawn(move || {
-
-                grab(
-                    move |event: rdev::Event| {
-                        let inner_config1 = inner_config.clone();
-                        let inner_config_special1 = inner_config_special.clone();
-                        match Ok::<&rdev::Event, GrabError>(&event) {
-                            Ok(_data) => {
-                                if inner_is_listening.load(Ordering::Relaxed) {
-                                    match &event.event_type {
-                                        //TODO: Grab and discard the trigger actually
-                                        EventType::KeyPress(key) => {
-                                            let inner_config_special2 = inner_config_special1;
-                                            println!("Conifg: {:?}", inner_config_special2);
-
-                                            Some(event)
-                                        },
-                                        EventType::KeyRelease(key) => Some(event),
-
-                                        _ => Some(event),
-                                    }
-                                } else {
                                     Some(event)
                                 }
-                            }
-                            Err(_) => None,
-                        }
-                    },
-                )
-            });
+                                EventType::KeyRelease(key) => Some(event),
 
-            // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
-            // let _grabber = thread::spawn(move || {
-            //     grab(
-            //         move |event: rdev::Event| match schan_grab.send(event.clone()) {
-            //             Ok(T) => {
-            //                 let mut keys_pressed: Vec<rdev::Key>;
-            //                 match &event.event_type {
-            //                     //TODO: Grab and discard the trigger actually
-            //                     EventType::KeyPress(key) => Some(event),
-            //
-            //
-            //
-            //                     _ => Some(event),
-            //                 }
-            //             }
-            //             Err(_) => None,
-            //         },
-            //     )
-            // });
-            //
-            // for event in &rchan_grab {
-            //     events.push(event);
-            //
-            //     let test = 0;
-            //     //TODO: channel this
-            //     let macro_collections = APPLICATION_STATE.data.read().unwrap();
-            //     let triggers = TRIGGERS_LIST.data.read().unwrap();
-            //
-            //     for i in &events {
-            //         match i.event_type {
-            //             EventType::KeyPress(listened_key) => {
-            //                 pressed_keys.push(listened_key.clone());
-            //
-            //                 print!("\n{:?}", pressed_keys);
-            //             }
-            //             EventType::KeyRelease(listened_key) => {
-            //                 pressed_keys.retain(|x| *x != listened_key);
-            //                 println!("{:?}", pressed_keys);
-            //             }
-            //             EventType::ButtonPress(listened_key) => {
-            //                 println!("MB Pressed:{:?}", listened_key)
-            //             }
-            //             EventType::ButtonRelease(listened_key) => {
-            //                 println!("MB Released:{:?}", listened_key)
-            //             }
-            //             EventType::MouseMove { x, y } => (),
-            //             EventType::Wheel { delta_x, delta_y } => {}
-            //         }
-            //
-            //         let pressed_keys_copy_converted: Vec<u32> = pressed_keys
-            //             .iter()
-            //             .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
-            //             .collect();
-            //
-            //         let first_key: u32 = match pressed_keys_copy_converted.first() {
-            //             None => 0,
-            //             Some(T) => *T,
-            //         };
-            //
-            //         let trigger_list = TRIGGERS_LIST.data.read().unwrap();
-            //
-            //         let check_these_macros = match trigger_list.get(&first_key) {
-            //             None => {
-            //                 vec![]
-            //             }
-            //             Some(T) => T.to_vec(),
-            //         };
-            //
-            //         let channel_copy_send = schan_execute.clone();
-            //
-            //         task::spawn(async move {
-            //             check_macro_execution_efficiently(
-            //                 pressed_keys_copy_converted,
-            //                 check_these_macros,
-            //                 channel_copy_send,
-            //             )
-            //                 .await;
-            //         });
-            //     }
-            //
-            //     events.pop();
-            // }
-    //     });
+                                _ => Some(event),
+                            }
+                        } else {
+                            Some(event)
+                        }
+                    }
+                    Err(_) => None,
+                }
+            })
+        });
+
+        // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+        // let _grabber = thread::spawn(move || {
+        //     grab(
+        //         move |event: rdev::Event| match schan_grab.send(event.clone()) {
+        //             Ok(T) => {
+        //                 let mut keys_pressed: Vec<rdev::Key>;
+        //                 match &event.event_type {
+        //                     //TODO: Grab and discard the trigger actually
+        //                     EventType::KeyPress(key) => Some(event),
+        //
+        //
+        //
+        //                     _ => Some(event),
+        //                 }
+        //             }
+        //             Err(_) => None,
+        //         },
+        //     )
+        // });
+        //
+        // for event in &rchan_grab {
+        //     events.push(event);
+        //
+        //     let test = 0;
+        //     //TODO: channel this
+        //     let macro_collections = APPLICATION_STATE.data.read().unwrap();
+        //     let triggers = TRIGGERS_LIST.data.read().unwrap();
+        //
+        //     for i in &events {
+        //         match i.event_type {
+        //             EventType::KeyPress(listened_key) => {
+        //                 pressed_keys.push(listened_key.clone());
+        //
+        //                 print!("\n{:?}", pressed_keys);
+        //             }
+        //             EventType::KeyRelease(listened_key) => {
+        //                 pressed_keys.retain(|x| *x != listened_key);
+        //                 println!("{:?}", pressed_keys);
+        //             }
+        //             EventType::ButtonPress(listened_key) => {
+        //                 println!("MB Pressed:{:?}", listened_key)
+        //             }
+        //             EventType::ButtonRelease(listened_key) => {
+        //                 println!("MB Released:{:?}", listened_key)
+        //             }
+        //             EventType::MouseMove { x, y } => (),
+        //             EventType::Wheel { delta_x, delta_y } => {}
+        //         }
+        //
+        //         let pressed_keys_copy_converted: Vec<u32> = pressed_keys
+        //             .iter()
+        //             .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+        //             .collect();
+        //
+        //         let first_key: u32 = match pressed_keys_copy_converted.first() {
+        //             None => 0,
+        //             Some(T) => *T,
+        //         };
+        //
+        //         let trigger_list = TRIGGERS_LIST.data.read().unwrap();
+        //
+        //         let check_these_macros = match trigger_list.get(&first_key) {
+        //             None => {
+        //                 vec![]
+        //             }
+        //             Some(T) => T.to_vec(),
+        //         };
+        //
+        //         let channel_copy_send = schan_execute.clone();
+        //
+        //         task::spawn(async move {
+        //             check_macro_execution_efficiently(
+        //                 pressed_keys_copy_converted,
+        //                 check_these_macros,
+        //                 channel_copy_send,
+        //             )
+        //                 .await;
+        //         });
+        //     }
+        //
+        //     events.pop();
+        // }
+        //     });
     }
 }
 
