@@ -423,13 +423,8 @@ impl MacroBackend {
                                     match &event.event_type {
                                         //TODO: Grab and discard the trigger actually
                                         EventType::KeyPress(key) => {
-                                            let inner_config2 = inner_config1.clone();
                                             let inner_config_special2 = inner_config_special1;
                                             println!("Conifg: {:?}", inner_config_special2);
-
-                                            // task::spawn(async move {
-                                            //     println!("settings {:?}", inner_config2.read().await);
-                                            // });
 
                                             Some(event)
                                         },
