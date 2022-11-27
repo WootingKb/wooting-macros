@@ -8,7 +8,6 @@ extern crate core;
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
-
 use wooting_macro_backend::*;
 
 #[tauri::command]
@@ -60,6 +59,8 @@ async fn main() {
     // (will crash on key grab/listen)
 
     let backend = MacroBackend::new();
+
+    println!("Running the macro backend");
     backend.init();
 
     // Begin the main event loop. This loop cannot run on another thread on MacOS.

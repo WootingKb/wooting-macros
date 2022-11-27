@@ -188,7 +188,8 @@ impl Macro {
 
                 ActionEventType::SystemEvent { data } => {
                     let action_copy = data.clone();
-                    task::spawn(async move { action_copy.execute().await });
+                    let channel_copy = send_channel.clone();
+                    task::spawn(async move { action_copy.execute(channel_copy).await });
                 }
                 ActionEventType::MouseMovement { .. } => {}
             }
@@ -319,34 +320,42 @@ impl MacroBackend {
     }
 
     pub fn init(&self) {
+        let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+
+        task::spawn(async move {
+            keypress_executor_sender(rchan_execute).await;
+        });
+
         let inner_config = self.config.clone();
         let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
         task::spawn(async move {
             //==============TESTING GROUND======================
+            let action_type = ActionEventType::SystemEvent {
+                data: SystemAction::Clipboard { action: ClipboardAction::Paste },
+            };
+
+            match action_type {
+                ActionEventType::SystemEvent { data } => {
+                    let channel_send = schan_execute.clone();
+                    data.execute(channel_send).await;
+                }
+                _ => {}
+            }
+        });
+
             // let action_type = ActionEventType::SystemEvent {
-            //     data: SystemAction::Clipboard{ action: ClipboardAction::Set },
+            //     data: SystemAction::Brightness {
+            //         action: MonitorBrightnessAction::Set { level: 75 },
+            //     },
             // };
-            //
             // match action_type {
             //     ActionEventType::SystemEvent { data } => {
             //         data.execute().await;
             //     }
             //     _ => {}
             // }
-
-            let action_type = ActionEventType::SystemEvent {
-                data: SystemAction::Brightness {
-                    action: MonitorBrightnessAction::Set { level: 75 },
-                },
-            };
-            match action_type {
-                ActionEventType::SystemEvent { data } => {
-                    data.execute().await;
-                }
-                _ => {}
-            }
 
             // println!("{:#?}", self.config.read().unwrap().startup_delay);
 
@@ -393,13 +402,9 @@ impl MacroBackend {
 
             let triggers = inner_triggers;
 
-            // let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
-            // task::spawn(async move {
-            //     keypress_executor_sender(rchan_execute).await;
-            // });
 
-            //let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+            // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
 
             let _grabber = thread::spawn(move || {
                 grab(
@@ -505,7 +510,7 @@ impl MacroBackend {
             //
             //     events.pop();
             // }
-        });
+    //     });
     }
 }
 
