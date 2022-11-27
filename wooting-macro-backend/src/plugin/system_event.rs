@@ -4,14 +4,12 @@ use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 use copypasta::{ClipboardContext, ClipboardProvider};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{executor::block_on, TryStreamExt};
-use wifi_rs;
 use std::time;
+use wifi_rs;
 
-
-
-use tokio::sync::mpsc::Sender;
-use rdev::Event;
 use crate::hid_table::SCANCODE_TO_RDEV;
+use rdev::Event;
+use tokio::sync::mpsc::Sender;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum SystemAction {
@@ -31,10 +29,7 @@ impl SystemAction {
                 opener::open(std::path::Path::new(path));
             }
             SystemAction::Volume { action } => match action {
-                VolumeAction::Mute { data } => {
-
-
-                }
+                VolumeAction::Mute { data } => {}
                 VolumeAction::SetVolume { amount } => {}
                 VolumeAction::ToggleMute => {}
             },
@@ -60,39 +55,30 @@ impl SystemAction {
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyPress(
-                                rdev::Key::ControlLeft,
-                            ),
+                            event_type: rdev::EventType::KeyPress(rdev::Key::ControlLeft),
                         })
                         .await;
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyPress(
-                                rdev::Key::KeyC,
-                            ),
+                            event_type: rdev::EventType::KeyPress(rdev::Key::KeyC),
                         })
                         .await;
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyRelease(
-                                rdev::Key::KeyC,
-                            ),
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::KeyC),
                         })
                         .await;
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyRelease(
-                                rdev::Key::ControlLeft,
-                            ),
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::ControlLeft),
                         })
                         .await;
-
                 }
                 ClipboardAction::GetSelectionSet => {
                     let mut ctx = ClipboardContext::new().unwrap();
@@ -109,36 +95,28 @@ impl SystemAction {
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyPress(
-                                rdev::Key::ControlLeft,
-                            ),
+                            event_type: rdev::EventType::KeyPress(rdev::Key::ControlLeft),
                         })
                         .await;
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyPress(
-                                rdev::Key::KeyV,
-                            ),
+                            event_type: rdev::EventType::KeyPress(rdev::Key::KeyV),
                         })
                         .await;
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyRelease(
-                                rdev::Key::KeyV,
-                            ),
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::KeyV),
                         })
                         .await;
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::KeyRelease(
-                                rdev::Key::ControlLeft,
-                            ),
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::ControlLeft),
                         })
                         .await;
                 }

@@ -319,31 +319,28 @@ impl MacroBackend {
         *self.config.write().await = config;
     }
 
-    pub fn init(&self) {
-        let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+    pub async fn init(&self) {
+        // let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
-        task::spawn(async move {
-            keypress_executor_sender(rchan_execute).await;
-        });
+        // task::spawn(async move {
+        //     keypress_executor_sender(rchan_execute).await;
+        // });
 
-        let inner_config = self.config.clone();
-        let inner_data = self.data.clone();
-        let inner_triggers = self.triggers.clone();
-        let inner_is_listening = self.is_listening.clone();
-        task::spawn(async move {
-            //==============TESTING GROUND======================
-            let action_type = ActionEventType::SystemEvent {
-                data: SystemAction::Clipboard { action: ClipboardAction::Paste },
-            };
 
-            match action_type {
-                ActionEventType::SystemEvent { data } => {
-                    let channel_send = schan_execute.clone();
-                    data.execute(channel_send).await;
-                }
-                _ => {}
-            }
-        });
+        // task::spawn(async move {
+        //     //==============TESTING GROUND======================
+        //     let action_type = ActionEventType::SystemEvent {
+        //         data: SystemAction::Clipboard { action: ClipboardAction::Paste },
+        //     };
+        //
+        //     match action_type {
+        //         ActionEventType::SystemEvent { data } => {
+        //             let channel_send = schan_execute.clone();
+        //             data.execute(channel_send).await;
+        //         }
+        //         _ => {}
+        //     }
+        // });
 
             // let action_type = ActionEventType::SystemEvent {
             //     data: SystemAction::Brightness {
@@ -400,30 +397,52 @@ impl MacroBackend {
             //let mut events = Vec::new();
             let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
-            let triggers = inner_triggers;
+
 
 
 
             // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
 
-            let _grabber = thread::spawn(move || {
-                grab(
-                    move |event: rdev::Event| match Ok::<&rdev::Event, GrabError>(&event) {
-                        Ok(_data) => {
-                            if inner_is_listening.load(Ordering::Relaxed) {
-                                let mut keys_pressed: Vec<rdev::Key>;
-                                match &event.event_type {
-                                    //TODO: Grab and discard the trigger actually
-                                    EventType::KeyPress(key) => Some(event),
-                                    EventType::KeyRelease(key) => Some(event),
+            let inner_config = self.config.clone();
+            let inner_data = self.data.clone();
+            let inner_triggers = self.triggers.clone();
+            let inner_is_listening = self.is_listening.clone();
 
-                                    _ => Some(event),
+            let inner_config_special = self.config.read().await.clone();
+
+
+            let _grabber = thread::spawn(move || {
+
+                grab(
+                    move |event: rdev::Event| {
+                        let inner_config1 = inner_config.clone();
+                        let inner_config_special1 = inner_config_special.clone();
+                        match Ok::<&rdev::Event, GrabError>(&event) {
+                            Ok(_data) => {
+                                if inner_is_listening.load(Ordering::Relaxed) {
+                                    match &event.event_type {
+                                        //TODO: Grab and discard the trigger actually
+                                        EventType::KeyPress(key) => {
+                                            let inner_config2 = inner_config1.clone();
+                                            let inner_config_special2 = inner_config_special1;
+                                            println!("Conifg: {:?}", inner_config_special2);
+
+                                            // task::spawn(async move {
+                                            //     println!("settings {:?}", inner_config2.read().await);
+                                            // });
+
+                                            Some(event)
+                                        },
+                                        EventType::KeyRelease(key) => Some(event),
+
+                                        _ => Some(event),
+                                    }
+                                } else {
+                                    Some(event)
                                 }
-                            } else {
-                                Some(event)
                             }
+                            Err(_) => None,
                         }
-                        Err(_) => None,
                     },
                 )
             });
