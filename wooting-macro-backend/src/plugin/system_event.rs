@@ -36,7 +36,8 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(173)),
                         })
-                        .await;
+                        .await
+                        .unwrap();
 
                     send_channel
                         .send(Event {
@@ -44,8 +45,8 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(173)),
                         })
-                        .await;
-
+                        .await
+                        .unwrap();
                 }
                 VolumeAction::LowerVolume => {
                     send_channel
@@ -54,7 +55,8 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(174)),
                         })
-                        .await;
+                        .await
+                        .unwrap();
 
                     send_channel
                         .send(Event {
@@ -62,8 +64,8 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(174)),
                         })
-                        .await;
-
+                        .await
+                        .unwrap();
                 }
                 VolumeAction::IncreaseVolume => {
                     send_channel
@@ -72,7 +74,8 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(175)),
                         })
-                        .await;
+                        .await
+                        .unwrap();
 
                     send_channel
                         .send(Event {
@@ -80,8 +83,8 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(175)),
                         })
-                        .await;
-
+                        .await
+                        .unwrap();
                 }
             },
             SystemAction::Brightness { action } => match action {
@@ -100,7 +103,11 @@ impl SystemAction {
                 }
             },
             SystemAction::Clipboard { action } => match action {
-                ClipboardAction::SetPredefined { data } => {}
+                ClipboardAction::SetClipboard { data } => {
+                    let mut ctx = ClipboardContext::new().unwrap();
+
+                    ctx.set_contents(data.to_owned()).unwrap();
+                }
                 ClipboardAction::Copy => {
                     send_channel
                         .send(Event {
@@ -108,34 +115,35 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::ControlLeft),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::KeyC),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::KeyC),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::ControlLeft),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                 }
-                ClipboardAction::GetSelectionSet => {
+                ClipboardAction::GetClipboard => {
                     let mut ctx = ClipboardContext::new().unwrap();
-
-                    let msg = "Hello, world!";
-                    ctx.set_contents(msg.to_owned()).unwrap();
 
                     let content = ctx.get_contents().unwrap();
 
@@ -148,28 +156,32 @@ impl SystemAction {
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::ControlLeft),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
                             event_type: rdev::EventType::KeyPress(rdev::Key::KeyV),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::KeyV),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                     send_channel
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
                             event_type: rdev::EventType::KeyRelease(rdev::Key::ControlLeft),
                         })
-                        .await;
+                        .await
+                        .unwrap();
                 }
             },
             SystemAction::Wifi { .. } => {}
@@ -235,9 +247,9 @@ async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightn
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum ClipboardAction {
-    SetPredefined { data: String },
+    SetClipboard { data: String },
     Copy,
-    GetSelectionSet,
+    GetClipboard,
     Paste,
 }
 

@@ -8,6 +8,7 @@ use std::{thread, time};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
+use crate::ActionEventType::{KeyPressEventAction, MouseEventAction};
 use halfbrown::HashMap;
 use rdev::{grab, simulate, Event, EventType, GrabError, SimulateError};
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -19,6 +20,7 @@ use crate::plugin::delay;
 use crate::plugin::discord;
 use crate::plugin::key_press;
 use crate::plugin::mouse_movement;
+use crate::plugin::mouse_movement::{MouseAction, MousePressAction};
 #[allow(unused_imports)]
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
@@ -47,28 +49,28 @@ pub enum MacroType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum ActionEventType {
-    KeyPressEvent {
+    KeyPressEventAction {
         data: key_press::KeyPress,
     },
-    SystemEvent {
+    SystemEventAction {
         data: system_event::SystemAction,
     },
     //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
     //TODO: System event - notification
-    PhillipsHueCommand {
+    PhillipsHueEventAction {
         data: phillips_hue::PhillipsHueStatus,
     },
     //TODO: Phillips hue notification
-    OBS {},
-    DiscordCommand {},
+    OBSEventAction {},
+    DiscordEventAction {},
     //IKEADesk
-    MouseMovement {
+    MouseEventAction {
         data: mouse_movement::MouseAction,
     },
-    UnicodeDirect {},
+    UnicodeEventAction {},
     //TODO: Sound effects? Soundboards?
     //TODO: Sending a message through online webapi (twitch)
-    Delay {
+    DelayEventAction {
         data: delay::Delay,
     },
 }
@@ -120,9 +122,8 @@ impl Macro {
                 //TODO: Keypress manager task <- enum EventType send and channel recv. Keypress manager task would spawn tasks for the actions
                 //TODO: one task: listening for events and enforcing sleep time
                 //TODO: keypressevent has access to the data and spawns a task for downup
-                ActionEventType::KeyPressEvent { data } => match data.keytype {
+                ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
-
                         send_channel
                             .send(Event {
                                 time: time::SystemTime::now(),
@@ -131,7 +132,8 @@ impl Macro {
                                     SCANCODE_TO_RDEV[&data.keypress],
                                 ),
                             })
-                            .await;
+                            .await
+                            .unwrap();
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                     }
                     key_press::KeyType::Up => {
@@ -147,7 +149,8 @@ impl Macro {
                                     SCANCODE_TO_RDEV[&data.keypress],
                                 ),
                             })
-                            .await;
+                            .await
+                            .unwrap();
                     }
                     key_press::KeyType::DownUp => {
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
@@ -166,7 +169,8 @@ impl Macro {
                                     SCANCODE_TO_RDEV[&data.keypress],
                                 ),
                             })
-                            .await;
+                            .await
+                            .unwrap();
                         thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
                         send_channel
                             .send(Event {
@@ -176,23 +180,28 @@ impl Macro {
                                     SCANCODE_TO_RDEV[&data.keypress],
                                 ),
                             })
-                            .await;
+                            .await
+                            .unwrap();
                     }
                 },
-                ActionEventType::PhillipsHueCommand { .. } => {}
-                ActionEventType::OBS { .. } => {}
-                ActionEventType::DiscordCommand { .. } => {}
-                ActionEventType::UnicodeDirect { .. } => {}
-                ActionEventType::Delay { data } => {
+                ActionEventType::PhillipsHueEventAction { .. } => {}
+                ActionEventType::OBSEventAction { .. } => {}
+                ActionEventType::DiscordEventAction { .. } => {}
+                ActionEventType::UnicodeEventAction { .. } => {}
+                ActionEventType::DelayEventAction { data } => {
                     thread::sleep(time::Duration::from_millis(*data))
                 }
 
-                ActionEventType::SystemEvent { data } => {
+                ActionEventType::SystemEventAction { data } => {
                     let action_copy = data.clone();
                     let channel_copy = send_channel.clone();
                     task::spawn(async move { action_copy.execute(channel_copy).await });
                 }
-                ActionEventType::MouseMovement { .. } => {}
+                ActionEventType::MouseEventAction { data } => {
+                    let action_copy = data.clone();
+                    let channel_copy = send_channel.clone();
+                    task::spawn(async move { action_copy.execute(channel_copy).await });
+                }
             }
         }
     }
@@ -335,71 +344,38 @@ impl MacroBackend {
 
         task::spawn(async move {
             //==============TESTING GROUND======================
-            let action_type = ActionEventType::SystemEvent {
-                data: SystemAction::Volume { action: VolumeAction::LowerVolume },
+            let action_type = ActionEventType::MouseEventAction {
+                data: MouseAction::Press {
+                    data: MousePressAction::DownUp {
+                        button: rdev::Button::Left,
+                        duration: 25,
+                    },
+                },
             };
 
             match action_type {
-                ActionEventType::SystemEvent { data } => {
+                ActionEventType::MouseEventAction { data } => {
+                    println!("RUNNING MOUSE ACTION {:?}", data);
                     let channel_send = channel_execute_copy.clone();
                     data.execute(channel_send).await;
                 }
                 _ => {}
             }
-        });
-
-        // let action_type = ActionEventType::SystemEvent {
-        //     data: SystemAction::Brightness {
-        //         action: MonitorBrightnessAction::Set { level: 75 },
-        //     },
-        // };
-        // match action_type {
-        //     ActionEventType::SystemEvent { data } => {
-        //         data.execute().await;
-        //     }
-        //     _ => {}
-        // }
-
-        // println!("{:#?}", self.config.read().unwrap().startup_delay);
-
-        //
-        // match action_type {
-        //     ActionEventType::SystemEvent { data } => {
-        //         match data {
-        //             SystemAction::Open { .. } => {}
-        //             SystemAction::Volume { .. } => {}
-        //             SystemAction::Brightness{ action } => {
-        //                 match action{
-        //                     BrightnessAction::Get => {
-        //
-        //                     }
-        //                     BrightnessAction::Set { .. } => {}
-        //                 }
-        //
-        //             }
-        //         }
-        //     }
-        //
-        //     ActionEventType::KeyPressEvent { .. } => {}
-        //     ActionEventType::PhillipsHueCommand { .. } => {}
-        //     ActionEventType::OBS { .. } => {}
-        //     ActionEventType::DiscordCommand { .. } => {}
-        //     ActionEventType::UnicodeDirect { .. } => {}
-        //     ActionEventType::Delay { .. } => {}
-        // }
+        })
+        .await
+        .unwrap();
 
         //==============TESTING GROUND======================
         //==================================================
-        //TODO: Make a way to disable this listening function
+
         //TODO: make this a grab instead of listen
         //TODO: try to make this interact better (cleanup the code a bit)
-        //TODO: async the executor of the presses
+
         //TODO: io-uring async read files and write files
-        //TODO: implement drop
+        //TODO: implement drop when the application ends to clean up the downed keys
 
         //TODO: Make the modifier keys non-ordered?
         //==================================================
-
 
         //let (schan_grab, rchan_grab) = tokio::sync::mpsc::channel(1); //TODO: async tokio version
 
@@ -416,9 +392,6 @@ impl MacroBackend {
 
         let _grabber = task::spawn(async move {
             grab(move |event: rdev::Event| {
-
-
-
                 let inner_keys_pressed_special = inner_keys_pressed.clone();
                 let inner_triggers_special = inner_triggers.clone();
                 let schan_execute_special = schan_execute.clone();
@@ -437,58 +410,54 @@ impl MacroBackend {
 
                                     // println!("Key pressed: {:?}", key);
 
-
                                     task::spawn(async move {
-
-
                                         inner_keys_pressed_special.write().await.push(key_to_push);
                                         println!(
                                             "Conifg: {:?}",
                                             inner_keys_pressed_special.read().await
                                         );
 
-                                        let pressed_keys_copy_converted: Vec<u32> = inner_keys_pressed_special.read().await
-                                            .iter()
-                                            .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
-                                            .collect();
+                                        let pressed_keys_copy_converted: Vec<u32> =
+                                            inner_keys_pressed_special
+                                                .read()
+                                                .await
+                                                .iter()
+                                                .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+                                                .collect();
 
-                                        let first_key: u32 = match pressed_keys_copy_converted.first() {
-                                                        None => 0,
-                                                        Some(data_first) => *data_first,
-                                                    };
+                                        let first_key: u32 =
+                                            match pressed_keys_copy_converted.first() {
+                                                None => 0,
+                                                Some(data_first) => *data_first,
+                                            };
 
-                                        let trigger_list = inner_triggers_closure.read().await.clone();
+                                        let trigger_list =
+                                            inner_triggers_closure.read().await.clone();
 
-                                        let check_these_macros = match trigger_list.get(&first_key) {
-                                                        None => {
-                                                            vec![]
-                                                        }
-                                                        Some(data_found) => {
-                                                            data_found.to_vec() },
-                                                    };
+                                        let check_these_macros = match trigger_list.get(&first_key)
+                                        {
+                                            None => {
+                                                vec![]
+                                            }
+                                            Some(data_found) => data_found.to_vec(),
+                                        };
 
                                         let channel_copy_send = schan_execute_closure.clone();
 
                                         task::spawn(async move {
-                                                        check_macro_execution_efficiently(
-                                                            pressed_keys_copy_converted,
-                                                            check_these_macros,
-                                                            channel_copy_send,
-                                                        )
-                                                            .await;
-                                                    });
-
-
+                                            check_macro_execution_efficiently(
+                                                pressed_keys_copy_converted,
+                                                check_these_macros,
+                                                channel_copy_send,
+                                            )
+                                            .await;
+                                        });
                                     });
-
-
-
 
                                     //thread::sleep(time::Duration::from_millis(1000));
 
-                                   Some(event)
+                                    Some(event)
                                 }
-
 
                                 EventType::KeyRelease(key) => {
                                     let key_to_remove = key.clone();
@@ -505,19 +474,30 @@ impl MacroBackend {
                                     Some(event)
                                 }
 
-                                _ => {
-                                    //Try to triage here perhaps? (maybe not)
+                                EventType::ButtonPress(key) => {
+                                    println!("Button pressed: {:?}", key);
+                                    Some(event)
+                                }
+                                EventType::ButtonRelease(key) => {
+                                    println!("Button pressed: {:?}", key);
+                                    Some(event)
+                                }
+                                EventType::MouseMove { .. } => Some(event),
+                                EventType::Wheel { delta_x, delta_y } => {
+                                    println!("Button pressed: {:?} {:?}", delta_x, delta_y);
                                     Some(event)
                                 }
                             }
                         } else {
+                            println!("Event: {:?}", event);
                             Some(event)
                         }
                     }
                     Err(_) => None,
                 }
             })
-        });
+        })
+        .await;
 
         // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
         // let _grabber = thread::spawn(move || {
@@ -603,7 +583,6 @@ impl MacroBackend {
         // }
         //     });
     }
-
 }
 
 pub trait StateManagement {
