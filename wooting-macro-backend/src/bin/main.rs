@@ -4,5 +4,5 @@ use wooting_macro_backend::MacroBackend;
 async fn main() {
     println!("Eyo");
     let backend = MacroBackend::new();
-    backend.init();
+    backend.init().await;
 }

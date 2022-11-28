@@ -361,9 +361,7 @@ impl MacroBackend {
                 }
                 _ => {}
             }
-        })
-        .await
-        .unwrap();
+        });
 
         //==============TESTING GROUND======================
         //==================================================
@@ -413,7 +411,7 @@ impl MacroBackend {
                                     task::spawn(async move {
                                         inner_keys_pressed_special.write().await.push(key_to_push);
                                         println!(
-                                            "Conifg: {:?}",
+                                            "Pressed Keys: {:?}",
                                             inner_keys_pressed_special.read().await
                                         );
 
@@ -496,8 +494,7 @@ impl MacroBackend {
                     Err(_) => None,
                 }
             })
-        })
-        .await;
+        });
 
         // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
         // let _grabber = thread::spawn(move || {
