@@ -122,6 +122,7 @@ impl Macro {
                 //TODO: keypressevent has access to the data and spawns a task for downup
                 ActionEventType::KeyPressEvent { data } => match data.keytype {
                     key_press::KeyType::Down => {
+
                         send_channel
                             .send(Event {
                                 time: time::SystemTime::now(),
@@ -275,7 +276,7 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<TriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
-    pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>
+    pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 }
 
 impl MacroBackend {
@@ -404,12 +405,10 @@ impl MacroBackend {
         let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
-        // let mut inner_keys_pressed: Vec<rdev::Key> = Vec::new();
         let inner_config_special = self.config.read().await.clone();
         let mut inner_keys_pressed = self.keys_pressed.clone();
 
-
-        let _grabber = task::spawn( async move {
+        let _grabber = task::spawn(async move {
             grab(move |event: rdev::Event| {
                 // let inner_config_special = inner_config_special.clone();
                 let mut inner_keys_pressed_special = inner_keys_pressed.clone();
@@ -422,16 +421,33 @@ impl MacroBackend {
                                     let key_to_push = key.clone();
                                     task::spawn(async move {
                                         inner_keys_pressed_special.write().await.push(key_to_push);
-                                        println!("Conifg: {:?}", inner_keys_pressed_special.read().await);
+                                        println!(
+                                            "Conifg: {:?}",
+                                            inner_keys_pressed_special.read().await
+                                        );
                                     });
-
-
 
                                     Some(event)
                                 }
-                                EventType::KeyRelease(key) => Some(event),
+                                EventType::KeyRelease(key) => {
+                                    let key_to_remove = key.clone();
+                                    task::spawn(async move {
+                                        inner_keys_pressed_special
+                                            .write()
+                                            .await
+                                            .retain(|x| *x != key_to_remove);
+                                        println!(
+                                            "Conifg: {:?}",
+                                            inner_keys_pressed_special.read().await
+                                        );
+                                    });
+                                    Some(event)
+                                }
 
-                                _ => Some(event),
+                                _ => {
+                                    //Try to triage here perhaps? (maybe not)
+                                    Some(event)
+                                }
                             }
                         } else {
                             Some(event)
