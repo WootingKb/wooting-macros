@@ -1,13 +1,16 @@
 #![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
+all(not(debug_assertions), target_os = "windows"),
+windows_subsystem = "windows"
 )]
 
 extern crate core;
 
+use std::sync::atomic::Ordering;
+
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
+
 use wooting_macro_backend::*;
 
 #[tauri::command]
@@ -50,6 +53,12 @@ async fn get_brightness_devices(
     state: tauri::State<'_, MacroBackend>,
 ) -> Result<Vec<BrightnessDevice>, ()> {
     Ok(state.get_brightness_devices().await)
+}
+
+#[tauri::command]
+async fn control_grabbing(state: tauri::State<'_, MacroBackend>, frontend_bool: bool) -> Result<(), ()> {
+    state.is_listening.store(frontend_bool, Ordering::Relaxed);
+    Ok(())
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
