@@ -275,6 +275,7 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<TriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
+    pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>
 }
 
 impl MacroBackend {
@@ -287,6 +288,7 @@ impl MacroBackend {
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
+            keys_pressed: Arc::new(RwLock::from(Vec::new())),
         }
     }
 
@@ -402,21 +404,28 @@ impl MacroBackend {
         let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
-
+        // let mut inner_keys_pressed: Vec<rdev::Key> = Vec::new();
         let inner_config_special = self.config.read().await.clone();
+        let mut inner_keys_pressed = self.keys_pressed.clone();
 
-        let _grabber = thread::spawn(move || {
+
+        let _grabber = task::spawn( async move {
             grab(move |event: rdev::Event| {
-                let inner_config1 = inner_config.clone();
-                let inner_config_special1 = inner_config_special.clone();
+                // let inner_config_special = inner_config_special.clone();
+                let mut inner_keys_pressed_special = inner_keys_pressed.clone();
                 match Ok::<&rdev::Event, GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
-                            match &event.event_type {
+                            match event.event_type.clone() {
                                 //TODO: Grab and discard the trigger actually
                                 EventType::KeyPress(key) => {
-                                    let inner_config_special2 = inner_config_special1;
-                                    println!("Conifg: {:?}", inner_config_special2);
+                                    let key_to_push = key.clone();
+                                    task::spawn(async move {
+                                        inner_keys_pressed_special.write().await.push(key_to_push);
+                                        println!("Conifg: {:?}", inner_keys_pressed_special.read().await);
+                                    });
+
+
 
                                     Some(event)
                                 }
