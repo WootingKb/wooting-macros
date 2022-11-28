@@ -7,7 +7,7 @@ use std::time;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum MouseAction {
     Press { data: MousePressAction },
-    Move { x: u32, y: u32 },
+    Move { x: i32, y: i32 },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -64,7 +64,23 @@ impl MouseAction {
                 }
             },
 
-            MouseAction::Move { x, y } => {}
+            MouseAction::Move { x, y } => {
+                let display_size = rdev::display_size().unwrap();
+                println!("Display size: {:?}", display_size);
+
+                send_channel
+                    .send(Event {
+                        time: time::SystemTime::now(),
+                        name: None,
+                        event_type: rdev::EventType::MouseMove {
+                            x: *x as f64,
+                            y: *y as f64,
+                        },
+                    })
+                    .await
+                    .unwrap();
+
+            }
         }
     }
 }

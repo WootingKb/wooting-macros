@@ -19,8 +19,8 @@ use crate::plugin::delay;
 #[allow(unused_imports)]
 use crate::plugin::discord;
 use crate::plugin::key_press;
-use crate::plugin::mouse_movement;
-use crate::plugin::mouse_movement::{MouseAction, MousePressAction};
+use crate::plugin::mouse;
+use crate::plugin::mouse::{MouseAction, MousePressAction};
 #[allow(unused_imports)]
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
@@ -65,7 +65,7 @@ pub enum ActionEventType {
     DiscordEventAction {},
     //IKEADesk
     MouseEventAction {
-        data: mouse_movement::MouseAction,
+        data: mouse::MouseAction,
     },
     UnicodeEventAction {},
     //TODO: Sound effects? Soundboards?
@@ -345,12 +345,11 @@ impl MacroBackend {
         task::spawn(async move {
             //==============TESTING GROUND======================
             let action_type = ActionEventType::MouseEventAction {
-                data: MouseAction::Press {
-                    data: MousePressAction::DownUp {
-                        button: rdev::Button::Left,
-                        duration: 25,
-                    },
+                data: MouseAction::Move {
+                    x: 1920,
+                    y: 1080,
                 },
+
             };
 
             match action_type {

@@ -101,8 +101,6 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         scancode.insert(0x72, Key::Unknown(134)); //F23
         scancode.insert(0x73, Key::Unknown(135)); //F24
 
-
-
         scancode.insert(0x46, Key::PrintScreen); //PRINT_SCREEN
         scancode.insert(0x47, Key::ScrollLock); //SCROLL_LOCK
 
@@ -332,19 +330,7 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         // scancode.insert(0x67, Key::Key); //NUMPAD_EQUAL
 
         // scancode.insert(0x68, Key::Unknown(44)); //F13
-        // scancode.insert(0x69, Key::Key); //F14
-        // scancode.insert(0x6a, Key::Key); //F15
-        // scancode.insert(0x6b, Key::Key); //F16
-        // scancode.insert(0x6c, Key::Key); //F17
-        // scancode.insert(0x6d, Key::Key); //F18
-        // scancode.insert(0x6e, Key::Key); //F19
-        // scancode.insert(0x6f, Key::Key); //F20
-        //
-        // scancode.insert(0x70, Key::Key); //F21
-        // scancode.insert(0x71, Key::Key); //F22
-        // scancode.insert(0x72, Key::Key); //F23
-        //
-        // scancode.insert(0x73, Key::Key); //F24
+
         // scancode.insert(0x74, Key::Key); //OPEN
         //
         // scancode.insert(0x75, Key::Key); //HELP
