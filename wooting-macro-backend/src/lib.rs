@@ -83,6 +83,9 @@ pub enum TriggerEventType {
         data: Vec<key_press::KeyPress>,
         allow_while_other_keys: bool,
     },
+    MouseEvent {
+        data: Vec<mouse::MouseAction>,
+    },
     //TODO: computer time (have timezone support?)
     //TODO: computer temperature?
 }
@@ -667,6 +670,9 @@ impl MacroData {
                                     ),
                                 }
                             }
+                            TriggerEventType::MouseEvent { data } => {
+
+                            }
                         }
                     }
                 }
@@ -787,6 +793,7 @@ async fn check_macro_execution_efficiently(
                     });
                 }
             }
+            TriggerEventType::MouseEvent { data } => {}
         }
     }
 }
