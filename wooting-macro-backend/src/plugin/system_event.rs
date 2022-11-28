@@ -29,9 +29,60 @@ impl SystemAction {
                 opener::open(std::path::Path::new(path));
             }
             SystemAction::Volume { action } => match action {
-                VolumeAction::Mute { data } => {}
-                VolumeAction::SetVolume { amount } => {}
-                VolumeAction::ToggleMute => {}
+                VolumeAction::ToggleMute => {
+                    send_channel
+                        .send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(173)),
+                        })
+                        .await;
+
+                    send_channel
+                        .send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(173)),
+                        })
+                        .await;
+
+                }
+                VolumeAction::LowerVolume => {
+                    send_channel
+                        .send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(174)),
+                        })
+                        .await;
+
+                    send_channel
+                        .send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(174)),
+                        })
+                        .await;
+
+                }
+                VolumeAction::IncreaseVolume => {
+                    send_channel
+                        .send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(175)),
+                        })
+                        .await;
+
+                    send_channel
+                        .send(Event {
+                            time: time::SystemTime::now(),
+                            name: None,
+                            event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(175)),
+                        })
+                        .await;
+
+                }
             },
             SystemAction::Brightness { action } => match action {
                 MonitorBrightnessAction::Get => {
@@ -198,8 +249,8 @@ pub enum MonitorBrightnessAction {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 pub enum VolumeAction {
-    Mute { data: bool },
-    SetVolume { amount: u32 },
+    LowerVolume,
+    IncreaseVolume,
     ToggleMute,
 }
 

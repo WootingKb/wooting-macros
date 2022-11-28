@@ -277,6 +277,7 @@ pub struct MacroBackend {
     pub triggers: Arc<RwLock<TriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
     pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
+    pub grab_key: Arc<AtomicBool>,
 }
 
 impl MacroBackend {
@@ -290,6 +291,7 @@ impl MacroBackend {
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(Vec::new())),
+            grab_key: Arc::new(AtomicBool::new(true)),
         }
     }
 
@@ -323,26 +325,28 @@ impl MacroBackend {
     }
 
     pub async fn init(&self) {
-        // let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+        let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
 
-        // task::spawn(async move {
-        //     keypress_executor_sender(rchan_execute).await;
-        // });
+        task::spawn(async move {
+            keypress_executor_sender(rchan_execute).await;
+        });
 
-        // task::spawn(async move {
-        //     //==============TESTING GROUND======================
-        //     let action_type = ActionEventType::SystemEvent {
-        //         data: SystemAction::Clipboard { action: ClipboardAction::Paste },
-        //     };
-        //
-        //     match action_type {
-        //         ActionEventType::SystemEvent { data } => {
-        //             let channel_send = schan_execute.clone();
-        //             data.execute(channel_send).await;
-        //         }
-        //         _ => {}
-        //     }
-        // });
+        let channel_execute_copy = schan_execute.clone();
+
+        task::spawn(async move {
+            //==============TESTING GROUND======================
+            let action_type = ActionEventType::SystemEvent {
+                data: SystemAction::Volume { action: VolumeAction::LowerVolume },
+            };
+
+            match action_type {
+                ActionEventType::SystemEvent { data } => {
+                    let channel_send = channel_execute_copy.clone();
+                    data.execute(channel_send).await;
+                }
+                _ => {}
+            }
+        });
 
         // let action_type = ActionEventType::SystemEvent {
         //     data: SystemAction::Brightness {
@@ -396,22 +400,29 @@ impl MacroBackend {
         //TODO: Make the modifier keys non-ordered?
         //==================================================
 
-        //let mut events = Vec::new();
-        let mut pressed_keys: Vec<rdev::Key> = Vec::new();
 
-        // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
+        //let (schan_grab, rchan_grab) = tokio::sync::mpsc::channel(1); //TODO: async tokio version
 
         let inner_config = self.config.clone();
         let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
+        let inner_triggers_grab = self.triggers.read().await.clone();
         let inner_is_listening = self.is_listening.clone();
+
+        //let inner_grab = self.grab_key.clone();
+
         let inner_config_special = self.config.read().await.clone();
-        let mut inner_keys_pressed = self.keys_pressed.clone();
+        let inner_keys_pressed = self.keys_pressed.clone();
 
         let _grabber = task::spawn(async move {
             grab(move |event: rdev::Event| {
-                // let inner_config_special = inner_config_special.clone();
-                let mut inner_keys_pressed_special = inner_keys_pressed.clone();
+
+
+
+                let inner_keys_pressed_special = inner_keys_pressed.clone();
+                let inner_triggers_special = inner_triggers.clone();
+                let schan_execute_special = schan_execute.clone();
+
                 match Ok::<&rdev::Event, GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
@@ -419,16 +430,66 @@ impl MacroBackend {
                                 //TODO: Grab and discard the trigger actually
                                 EventType::KeyPress(key) => {
                                     let key_to_push = key.clone();
+                                    let inner_triggers_closure = inner_triggers_special.clone();
+                                    let schan_execute_closure = schan_execute_special.clone();
+
+                                    let inner_triggers_grab = inner_triggers_grab.clone();
+
+                                    // println!("Key pressed: {:?}", key);
+
+
                                     task::spawn(async move {
+
+
                                         inner_keys_pressed_special.write().await.push(key_to_push);
                                         println!(
                                             "Conifg: {:?}",
                                             inner_keys_pressed_special.read().await
                                         );
+
+                                        let pressed_keys_copy_converted: Vec<u32> = inner_keys_pressed_special.read().await
+                                            .iter()
+                                            .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+                                            .collect();
+
+                                        let first_key: u32 = match pressed_keys_copy_converted.first() {
+                                                        None => 0,
+                                                        Some(data_first) => *data_first,
+                                                    };
+
+                                        let trigger_list = inner_triggers_closure.read().await.clone();
+
+                                        let check_these_macros = match trigger_list.get(&first_key) {
+                                                        None => {
+                                                            vec![]
+                                                        }
+                                                        Some(data_found) => {
+                                                            data_found.to_vec() },
+                                                    };
+
+                                        let channel_copy_send = schan_execute_closure.clone();
+
+                                        task::spawn(async move {
+                                                        check_macro_execution_efficiently(
+                                                            pressed_keys_copy_converted,
+                                                            check_these_macros,
+                                                            channel_copy_send,
+                                                        )
+                                                            .await;
+                                                    });
+
+
                                     });
 
-                                    Some(event)
+
+
+
+                                    //thread::sleep(time::Duration::from_millis(1000));
+
+                                   Some(event)
                                 }
+
+
                                 EventType::KeyRelease(key) => {
                                     let key_to_remove = key.clone();
                                     task::spawn(async move {
@@ -542,6 +603,7 @@ impl MacroBackend {
         // }
         //     });
     }
+
 }
 
 pub trait StateManagement {
