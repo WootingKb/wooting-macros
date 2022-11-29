@@ -66,10 +66,18 @@ export interface Keypress {
   keytype: string
 }
 
+enum MouseButton {
+  Left = 1,
+  Right = 2,
+  Middle = 3,
+  Mouse4 = 4,
+  Mouse5 = 5,
+}
+
 export type MousePressAction =
-  | { type: 'Down'; button: number }
-  | { type: 'Up'; button: number }
-  | { type: 'DownUp'; button: number; duration: number }
+  | { type: 'Down'; button: MouseButton }
+  | { type: 'Up'; button: MouseButton }
+  | { type: 'DownUp'; button: MouseButton; duration: number }
 
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 

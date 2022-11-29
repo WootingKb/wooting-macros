@@ -11,11 +11,43 @@ pub enum MouseAction {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+pub enum MouseButton {
+    Left = 1,
+    Right = 2,
+    Middle = 3,
+    Mouse4 = 4,
+    Mouse5 = 5,
+}
+
+impl Into<rdev::Button> for &MouseButton {
+    fn into(self) -> rdev::Button {
+        match *self {
+            MouseButton::Left => rdev::Button::Left,
+            MouseButton::Right => rdev::Button::Right,
+            MouseButton::Middle => rdev::Button::Middle,
+            MouseButton::Mouse4 => rdev::Button::Left,
+            MouseButton::Mouse5 => rdev::Button::Right,
+        }
+    }
+}
+
+impl Into<MouseButton> for rdev::Button {
+    fn into(self) -> MouseButton {
+        match self {
+            rdev::Button::Left => MouseButton::Left,
+            rdev::Button::Right => MouseButton::Right,
+            rdev::Button::Middle => MouseButton::Middle,
+            _ => MouseButton::Left,
+        }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum MousePressAction {
-    Down { button: rdev::Button },
-    Up { button: rdev::Button },
-    DownUp { button: rdev::Button, duration: u32 },
+    Down { button: MouseButton },
+    Up { button: MouseButton },
+    DownUp { button: MouseButton, duration: u32 },
 }
 
 impl MouseAction {
@@ -27,7 +59,7 @@ impl MouseAction {
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::ButtonPress(*button),
+                            event_type: rdev::EventType::ButtonPress(button.into()),
                         })
                         .await
                         .unwrap();
@@ -37,7 +69,7 @@ impl MouseAction {
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::ButtonRelease(*button),
+                            event_type: rdev::EventType::ButtonRelease(button.into()),
                         })
                         .await
                         .unwrap();
@@ -47,7 +79,7 @@ impl MouseAction {
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::ButtonPress(*button),
+                            event_type: rdev::EventType::ButtonPress(button.into()),
                         })
                         .await
                         .unwrap();
@@ -58,7 +90,7 @@ impl MouseAction {
                         .send(Event {
                             time: time::SystemTime::now(),
                             name: None,
-                            event_type: rdev::EventType::ButtonRelease(*button),
+                            event_type: rdev::EventType::ButtonRelease(button.into()),
                         })
                         .await
                         .unwrap();
@@ -80,7 +112,6 @@ impl MouseAction {
                     })
                     .await
                     .unwrap();
-
             }
         }
     }
