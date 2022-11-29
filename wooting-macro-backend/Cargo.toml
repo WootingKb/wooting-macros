@@ -26,5 +26,5 @@ wifi-rs = "0.2.2"
 [target.'cfg(target_os = "windows")'.dependencies]
 brightness = { version = "0.5"}
 #windows = { version = "0.43", features = ["Win32_Media_Audio", "Win32_Foundation", "Win32_System", "Win32_System_Com"] }
-winaudio = "1.0.2"
+#winaudio = "1.0.2"
 futures = "0.3"

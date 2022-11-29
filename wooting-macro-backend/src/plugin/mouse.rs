@@ -11,6 +11,7 @@ pub enum MouseAction {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum MousePressAction {
     Down { button: rdev::Button },
     Up { button: rdev::Button },
