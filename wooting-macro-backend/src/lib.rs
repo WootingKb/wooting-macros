@@ -289,7 +289,6 @@ pub struct MacroBackend {
     pub triggers: Arc<RwLock<TriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
     pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
-    pub grab_key: Arc<AtomicBool>,
 }
 
 impl MacroBackend {
@@ -303,7 +302,6 @@ impl MacroBackend {
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(Vec::new())),
-            grab_key: Arc::new(AtomicBool::new(true)),
         }
     }
 
@@ -337,33 +335,29 @@ impl MacroBackend {
     }
 
     pub async fn init(&self) {
-        let (mut schan_execute, mut rchan_execute) = tokio::sync::mpsc::channel(1);
+        let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
 
         task::spawn(async move {
             keypress_executor_sender(rchan_execute).await;
         });
 
-        let channel_execute_copy = schan_execute.clone();
+        // let channel_execute_copy = schan_execute.clone();
 
-        task::spawn(async move {
-            //==============TESTING GROUND======================
-            let action_type = ActionEventType::MouseEventAction {
-                data: MouseAction::Move {
-                    x: 1920,
-                    y: 1080,
-                },
+        // task::spawn(async move {
+        //     //==============TESTING GROUND======================
+        //     let action_type = ActionEventType::MouseEventAction {
+        //         data: MouseAction::Move { x: 1920, y: 1080 },
+        //     };
 
-            };
-
-            match action_type {
-                ActionEventType::MouseEventAction { data } => {
-                    println!("RUNNING MOUSE ACTION {:?}", data);
-                    let channel_send = channel_execute_copy.clone();
-                    data.execute(channel_send).await;
-                }
-                _ => {}
-            }
-        });
+        //     match action_type {
+        //         ActionEventType::MouseEventAction { data } => {
+        //             println!("RUNNING MOUSE ACTION {:?}", data);
+        //             let channel_send = channel_execute_copy.clone();
+        //             data.execute(channel_send).await;
+        //         }
+        //         _ => {}
+        //     }
+        // });
 
         //==============TESTING GROUND======================
         //==================================================
@@ -382,20 +376,15 @@ impl MacroBackend {
         let inner_config = self.config.clone();
         let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
-        let inner_triggers_grab = self.triggers.read().await.clone();
+
         let inner_is_listening = self.is_listening.clone();
 
-        //let inner_grab = self.grab_key.clone();
+        // let inner_keys_pressed = self.keys_pressed.clone();
 
-        let inner_config_special = self.config.read().await.clone();
-        let inner_keys_pressed = self.keys_pressed.clone();
-
-        let _grabber = task::spawn(async move {
+        let _grabber = std::thread::spawn(move || {
+            let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
+            let keys_pressed = keys_pressed.clone();
             grab(move |event: rdev::Event| {
-                let inner_keys_pressed_special = inner_keys_pressed.clone();
-                let inner_triggers_special = inner_triggers.clone();
-                let schan_execute_special = schan_execute.clone();
-
                 match Ok::<&rdev::Event, GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
@@ -403,55 +392,44 @@ impl MacroBackend {
                                 //TODO: Grab and discard the trigger actually
                                 EventType::KeyPress(key) => {
                                     let key_to_push = key.clone();
-                                    let inner_triggers_closure = inner_triggers_special.clone();
-                                    let schan_execute_closure = schan_execute_special.clone();
-
-                                    let inner_triggers_grab = inner_triggers_grab.clone();
 
                                     // println!("Key pressed: {:?}", key);
 
+                                    let mut keys_pressed = keys_pressed.blocking_write();
+
+                                    keys_pressed.push(key_to_push);
+                                    // keys_pressed.push(key_to_push);
+
+                                    println!("Pressed Keys: {:?}", keys_pressed);
+
+                                    let pressed_keys_copy_converted: Vec<u32> = keys_pressed
+                                        .iter()
+                                        .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+                                        .collect();
+
+                                    let first_key: u32 = match pressed_keys_copy_converted.first() {
+                                        None => 0,
+                                        Some(data_first) => *data_first,
+                                    };
+
+                                    let trigger_list = inner_triggers.blocking_read().clone();
+
+                                    let check_these_macros = match trigger_list.get(&first_key) {
+                                        None => {
+                                            vec![]
+                                        }
+                                        Some(data_found) => data_found.to_vec(),
+                                    };
+
+                                    let channel_copy_send = schan_execute.clone();
+
                                     task::spawn(async move {
-                                        inner_keys_pressed_special.write().await.push(key_to_push);
-                                        println!(
-                                            "Pressed Keys: {:?}",
-                                            inner_keys_pressed_special.read().await
-                                        );
-
-                                        let pressed_keys_copy_converted: Vec<u32> =
-                                            inner_keys_pressed_special
-                                                .read()
-                                                .await
-                                                .iter()
-                                                .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
-                                                .collect();
-
-                                        let first_key: u32 =
-                                            match pressed_keys_copy_converted.first() {
-                                                None => 0,
-                                                Some(data_first) => *data_first,
-                                            };
-
-                                        let trigger_list =
-                                            inner_triggers_closure.read().await.clone();
-
-                                        let check_these_macros = match trigger_list.get(&first_key)
-                                        {
-                                            None => {
-                                                vec![]
-                                            }
-                                            Some(data_found) => data_found.to_vec(),
-                                        };
-
-                                        let channel_copy_send = schan_execute_closure.clone();
-
-                                        task::spawn(async move {
-                                            check_macro_execution_efficiently(
-                                                pressed_keys_copy_converted,
-                                                check_these_macros,
-                                                channel_copy_send,
-                                            )
-                                            .await;
-                                        });
+                                        check_macro_execution_efficiently(
+                                            pressed_keys_copy_converted,
+                                            check_these_macros,
+                                            channel_copy_send,
+                                        )
+                                        .await;
                                     });
 
                                     //thread::sleep(time::Duration::from_millis(1000));
@@ -461,16 +439,12 @@ impl MacroBackend {
 
                                 EventType::KeyRelease(key) => {
                                     let key_to_remove = key.clone();
-                                    task::spawn(async move {
-                                        inner_keys_pressed_special
-                                            .write()
-                                            .await
-                                            .retain(|x| *x != key_to_remove);
-                                        println!(
-                                            "Conifg: {:?}",
-                                            inner_keys_pressed_special.read().await
-                                        );
-                                    });
+
+                                    keys_pressed
+                                        .blocking_write()
+                                        .retain(|x| *x != key_to_remove);
+                                    println!("Conifg: {:?}", keys_pressed.blocking_read());
+
                                     Some(event)
                                 }
 
@@ -670,9 +644,7 @@ impl MacroData {
                                     ),
                                 }
                             }
-                            TriggerEventType::MouseEvent { data } => {
-
-                            }
+                            TriggerEventType::MouseEvent { data } => {}
                         }
                     }
                 }
