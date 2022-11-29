@@ -23,7 +23,7 @@ const DelayForm = () => {
       return
     }
 
-    if (selectedElement.type !== 'Delay') {
+    if (selectedElement.type !== 'DelayEventAction') {
       return
     }
 

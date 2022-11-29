@@ -11,8 +11,8 @@ const EditArea = () => {
   return (
     <VStack w="25%" h="full" p="3" borderLeft="1px" borderColor={dividerColour}>
       {selectedElement === undefined && <EmptyForm />}
-      {selectedElement?.type === 'Delay' && <DelayForm />}
-      {selectedElement?.type === 'KeyPressEvent' && <KeyPressForm />}
+      {selectedElement?.type === 'DelayEventAction' && <DelayForm />}
+      {selectedElement?.type === 'KeyPressEventAction' && <KeyPressForm />}
     </VStack>
   )
 }

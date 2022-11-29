@@ -23,16 +23,16 @@ const SortableItem = ({ id, element }: Props) => {
 
   useEffect(() => {
     switch (element.type) {
-      case 'KeyPressEvent':
+      case 'KeyPressEventAction':
         setDisplayText(HIDLookup.get(element.data.keypress)?.displayString)
         break
-      case 'Delay':
+      case 'DelayEventAction':
         setDisplayText(element.data.toString() + ' ms')
         break
-      case 'MousePressEvent':
-        setDisplayText('Mouse Press')
+      case 'MouseEventAction':
+        setDisplayText('M' + element.data.data.button)
         break
-      case 'SystemEvent':
+      case 'SystemEventAction':
         setDisplayText(element.data.type.toString())
         break
       default:
@@ -57,8 +57,8 @@ const SortableItem = ({ id, element }: Props) => {
   return (
     <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
       <HStack p="4px" px="8px" w="100%">
-        {element.type === 'Delay' && <RepeatClockIcon />}
-        {element.type === 'KeyPressEvent' && <StarIcon />}
+        {element.type === 'DelayEventAction' && <RepeatClockIcon />}
+        {element.type === 'KeyPressEventAction' && <StarIcon />}
         <Text>{displayText}</Text>
       </HStack>
       <HStack p="4px" h="100%" borderLeft="1px" borderColor={dividerColour}>

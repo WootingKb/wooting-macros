@@ -13,9 +13,9 @@ const SequenceElementButton = ({ properties, displayText }: Props) => {
   function handleAddElement() {
     // check if last element in the sequence is a delay element
     // if not, add a delay
-    if ((sequence.at(-1)?.type !== "Delay") && (sequence.length > 0)) {
+    if ((sequence.at(-1)?.type !== "DelayEventAction") && (sequence.length > 0)) {
       onElementAdd({
-        type: 'Delay',
+        type: 'DelayEventAction',
         data: 50
       })
     }

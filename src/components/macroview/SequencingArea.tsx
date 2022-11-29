@@ -78,12 +78,12 @@ const SequencingArea = () => {
 
       if (isKeypress(element)) {
         onElementAdd({
-          type: 'KeyPressEvent',
+          type: 'KeyPressEventAction',
           data: element
         })
       } else {
         onElementAdd({
-          type: 'MousePressEvent',
+          type: 'MouseEventAction',
           data: { type: 'Press', data: element }
         })
       }
@@ -111,7 +111,7 @@ const SequencingArea = () => {
             size={['xs', 'sm', 'md']}
             onClick={() => {
               onElementAdd({
-                type: 'Delay',
+                type: 'DelayEventAction',
                 data: 50
               })
             }}
@@ -140,7 +140,7 @@ const SequencingArea = () => {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
+            <DragWrapper element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}

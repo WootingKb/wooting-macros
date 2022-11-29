@@ -28,7 +28,7 @@ const KeyPressForm = () => {
       return
     }
 
-    if (selectedElement.type !== 'KeyPressEvent') {
+    if (selectedElement.type !== 'KeyPressEventAction') {
       return
     }
 
@@ -46,7 +46,7 @@ const KeyPressForm = () => {
     if (selectedElement === undefined) {
       return
     }
-    if (selectedElement.type !== 'KeyPressEvent') {
+    if (selectedElement.type !== 'KeyPressEventAction') {
       return
     }
     if (selectedElementId === undefined) {
@@ -62,7 +62,7 @@ const KeyPressForm = () => {
     if (selectedElement === undefined) {
       return
     }
-    if (selectedElement.type !== 'KeyPressEvent') {
+    if (selectedElement.type !== 'KeyPressEventAction') {
       return
     }
     if (selectedElementId === undefined) {

@@ -25,7 +25,7 @@ function useMacroContext() {
 }
 
 function MacroProvider({ children }: MacroProviderProps) {
-  const [macroName, setMacroName] = useState('Macro Name')
+  const [macroName, setMacroName] = useState('')
   const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
   const [allowWhileOtherKeys, setAllowWhileOtherKeys] = useState(false) // allows the trigger to be registered if the input contains more than the trigger keys
   const [macroType, setMacroType] = useState(0)

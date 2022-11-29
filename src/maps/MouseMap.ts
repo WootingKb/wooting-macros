@@ -24,7 +24,7 @@ export class MouseInput {
     MouseInput.Left,
     MouseInput.Middle,
     MouseInput.Right,
-    MouseInput.X1,
-    MouseInput.X2,
+    // MouseInput.X1,
+    // MouseInput.X2,
   ]
 }

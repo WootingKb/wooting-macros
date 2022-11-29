@@ -139,7 +139,7 @@ const SelectElementArea = () => {
                   key={info.type}
                   displayText={info.displayString}
                   properties={{
-                    type: 'SystemEvent',
+                    type: 'SystemEventAction',
                     data: {
                       type: 'Open',
                       path: 'path'
@@ -152,13 +152,12 @@ const SelectElementArea = () => {
                   key={info.button}
                   displayText={info.displayString}
                   properties={{
-                    type: 'MousePressEvent',
+                    type: 'MouseEventAction',
                     data: {
                       type: 'Press',
                       data: {
-                        type: 'DownUp',
+                        type: 'Down',
                         button: info.button,
-                        duration: 0
                       }
                     }
                   }}
@@ -169,7 +168,7 @@ const SelectElementArea = () => {
                   key={HIDinfo.HIDcode}
                   displayText={HIDinfo.displayString}
                   properties={{
-                    type: 'KeyPressEvent',
+                    type: 'KeyPressEventAction',
                     data: {
                       keypress: HIDinfo.HIDcode,
                       press_duration: 1,
@@ -187,7 +186,7 @@ const SelectElementArea = () => {
                   key={HIDinfo.HIDcode}
                   displayText={HIDinfo.displayString}
                   properties={{
-                    type: 'KeyPressEvent',
+                    type: 'KeyPressEventAction',
                     data: {
                       keypress: HIDinfo.HIDcode,
                       press_duration: 1,
@@ -205,7 +204,7 @@ const SelectElementArea = () => {
                   key={info.button}
                   displayText={info.displayString}
                   properties={{
-                    type: 'MousePressEvent',
+                    type: 'MouseEventAction',
                     data: {
                       type: 'Press',
                       data: {
@@ -226,7 +225,7 @@ const SelectElementArea = () => {
                   key={info.type}
                   displayText={info.displayString}
                   properties={{
-                    type: 'SystemEvent',
+                    type: 'SystemEventAction',
                     data: {
                       type: 'Open',
                       path: 'path'

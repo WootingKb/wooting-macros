@@ -93,10 +93,11 @@ export type TriggerEventType = {
 }
 
 export type ActionEventType =
-  | { type: 'KeyPressEvent'; data: Keypress }
-  | { type: 'Delay'; data: number }
-  | { type: 'SystemEvent'; data: SystemAction }
-  | { type: 'MousePressEvent'; data: MouseAction }
+  | { type: 'KeyPressEventAction'; data: Keypress }
+  | { type: 'DelayEventAction'; data: number }
+  | { type: 'SystemEventAction'; data: SystemAction }
+  | { type: 'MouseEventAction'; data: MouseAction }
+  | { type: 'PhillipsHueEventAction'; data: undefined }
 
 // Main Data Structures
 export interface MacroData {
