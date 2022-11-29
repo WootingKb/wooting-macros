@@ -136,18 +136,15 @@ const SelectElementArea = () => {
             <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
               {SystemEvent.all.map((info: SystemEventInfo) => (
                 <SequenceElementButton
-                  key={info.type}
+                  key={info.displayString}
                   displayText={info.displayString}
                   properties={{
                     type: 'SystemEventAction',
-                    data: {
-                      type: 'Open',
-                      path: 'path'
-                    }
+                    data: info.defaultData
                   }}
                 />
               ))}
-              {MouseInput.all.map((info: MouseInputInfo) => (
+              {/* {MouseInput.all.map((info: MouseInputInfo) => (
                 <SequenceElementButton
                   key={info.button}
                   displayText={info.displayString}
@@ -157,12 +154,12 @@ const SelectElementArea = () => {
                       type: 'Press',
                       data: {
                         type: 'Down',
-                        button: info.button,
+                        button: info.button
                       }
                     }
                   }}
                 />
-              ))}
+              ))} */}
               {Hid.all.map((HIDinfo: HidInfo) => (
                 <SequenceElementButton
                   key={HIDinfo.HIDcode}
@@ -199,7 +196,7 @@ const SelectElementArea = () => {
           </TabPanel>
           <TabPanel w="full" p="4px">
             <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
-              {MouseInput.all.map((info: MouseInputInfo) => (
+              {/* {MouseInput.all.map((info: MouseInputInfo) => (
                 <SequenceElementButton
                   key={info.button}
                   displayText={info.displayString}
@@ -215,21 +212,18 @@ const SelectElementArea = () => {
                     }
                   }}
                 />
-              ))}
+              ))} */}
             </SimpleGrid>
           </TabPanel>
           <TabPanel w="full" p="4px">
             <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
               {SystemEvent.all.map((info: SystemEventInfo) => (
                 <SequenceElementButton
-                  key={info.type}
+                  key={info.displayString}
                   displayText={info.displayString}
                   properties={{
                     type: 'SystemEventAction',
-                    data: {
-                      type: 'Open',
-                      path: 'path'
-                    }
+                    data: info.defaultData
                   }}
                 />
               ))}

@@ -1,4 +1,4 @@
-import { MacroType, ViewState } from './enums'
+import { MacroType, ViewState, VolumeAction } from './enums'
 
 // Contexts
 export interface CurrentSelection {
@@ -75,15 +75,17 @@ export type MouseAction = { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
   | { type: 'Open'; path: string }
-  | { type: 'Volume'; action: SystemVolumeAction }
+  | { type: 'Volume'; action: VolumeAction }
+  | { type: 'Clipboard'; action: ClipboardAction }
   | { type: 'Brightness'; action: undefined }
-  | { type: 'Clipboard'; action: undefined }
 
 // test to see if having different word, i.e. 'path' vs 'data' vs 'action', affects how the data is serialized
 
-export type SystemVolumeAction =
-  | { type: 'Mute'; data: boolean }
-  | { type: 'SetVolume'; data: number }
+export type ClipboardAction = 
+  | { type: 'SetClipboard'; data: string}
+  | { type: 'Copy'}
+  | { type: 'GetClipboard'}
+  | { type: 'Paste'}
 
 // Input Event Types
 export type TriggerEventType = {
@@ -113,7 +115,7 @@ export interface Macro {
 }
 
 export interface Collection {
-  name: string // unique key
+  name: string
   active: boolean
   macros: Macro[]
   icon: string

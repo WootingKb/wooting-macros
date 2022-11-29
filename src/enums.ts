@@ -26,3 +26,9 @@ export enum KeyType {
   Up,
   DownUp
 }
+
+export enum VolumeAction {
+  LowerVolume,
+  IncreaseVolume,
+  ToggleMute
+}
