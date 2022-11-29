@@ -289,7 +289,6 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<TriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
-    pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 }
 
 impl MacroBackend {
@@ -302,7 +301,6 @@ impl MacroBackend {
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
-            keys_pressed: Arc::new(RwLock::from(Vec::new())),
         }
     }
 
