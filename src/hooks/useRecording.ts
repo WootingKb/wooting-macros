@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { invoke } from '@tauri-apps/api/tauri'
+import { SyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { KeyType, RecordingType } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { Keypress, MousePressAction } from '../types'
@@ -13,10 +14,12 @@ const useRecording = (
 
   const startRecording = useCallback(() => {
     setItems([])
+    console.log("setting recording to true")
     setRecording(true)
   }, [setItems, setRecording])
 
   const stopRecording = useCallback(() => {
+    console.log("setting recording to false")
     setRecording(false)
   }, [setRecording])
 
@@ -58,19 +61,13 @@ const useRecording = (
   const addMousepress = useCallback(
     (event: MouseEvent) => {
       event.preventDefault()
+      console.log(recording)
+      if (!recording) { return }
 
       if (type === RecordingType.Trigger) {
-        if (
-          items.some((element) => {
-            if ('button' in element) {
-              return event.button === element.button
-            }
-          })
-        ) {
-          return
-        }
+        return
       }
-
+      console.log('adding mouse press')
       const mousepress: MousePressAction = {
         type: 'DownUp',
         button: event.button,
@@ -78,27 +75,32 @@ const useRecording = (
       }
 
       setItems((items) => [...items, mousepress])
-      if (type === RecordingType.Trigger && items.length == 3) {
-        setRecording(false)
-      }
+      // if (type === RecordingType.Trigger && items.length == 3) {
+      //   setRecording(false)
+      // }
     },
-    [items, type]
+    [recording, type]
   )
 
   useEffect(() => {
     if (!recording) {
       return
     }
-
+    console.log("event listeners added")
     window.addEventListener('keypress', addKeypress, false)
-    // window.addEventListener('mousedown', addMousepress, false)
-    // TODO: stop backend trigger listening
+    window.addEventListener('mousedown', addMousepress, false)
+    invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
+      console.error(e)
+    })
     return () => {
+      console.log("event listeners removed")
       window.removeEventListener('keypress', addKeypress, false)
-      // window.removeEventListener('mousedown', addMousepress, false)
-      // TODO: start backend trigger listening
+      window.removeEventListener('mousedown', addMousepress, false)
+      invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
+        console.error(e)
+      })
     }
-  }, [addKeypress, recording])
+  }, [addKeypress, addMousepress, recording])
 
   return { recording, startRecording, stopRecording, items }
 }

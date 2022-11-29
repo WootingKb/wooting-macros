@@ -12,6 +12,7 @@ function App() {
 
   useEffect(() => {
     appWindow.setMinSize(new PhysicalSize(800, 600))
+    document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
   }, [])
 
   // TODO: Update Loading Screen & investigate loading time of application prior to loading screen taking effect

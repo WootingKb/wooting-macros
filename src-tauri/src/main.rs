@@ -91,7 +91,8 @@ async fn main() {
             set_macros,
             get_config,
             set_config,
-            get_brightness_devices
+            get_brightness_devices,
+            control_grabbing
         ])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {

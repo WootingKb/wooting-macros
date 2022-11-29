@@ -29,7 +29,7 @@ import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
 import { RecordingType } from '../../enums'
 import useRecording from '../../hooks/useRecording'
-import { Keypress } from '../../types'
+import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 
 // ask about how to deal with dndkit's types, e.g. UniqueIdentifier
@@ -38,7 +38,6 @@ const SequencingArea = () => {
   const { recording, startRecording, stopRecording, items } = useRecording(
     RecordingType.Sequence
   )
-  const [index, setIndex] = useState(0)
   const { sequence, ids, onElementAdd, overwriteIds } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
@@ -70,22 +69,24 @@ const SequencingArea = () => {
   }
 
   useEffect(() => {
-    // this useeffect, or some other function like it, is required so that we can add items to the macrocontext when items updates
-    // we need to know what elements the user adds so that we can render them in the sortable list
-    // onelementadd is called so that the sortable list IDs, and also the element to get component info from is there
-    // we need to be able to only add "NEW" elements to the sequence, instead of the entirety of items again, thus the attempt to use an index
-    // but index breaks this if added to deps, so we need a new way
-    const temp: Keypress[] = items.filter(
-      (element): element is Keypress => 'keypress' in element
-    )
+    if (items.length > 0) {
+      const element = items[items.length - 1]
 
-    if (temp.length > 0) {
-      onElementAdd({
-        type: 'KeyPressEvent',
-        data: temp[index]
-      })
+      const isKeypress = (e: Keypress | MousePressAction): e is Keypress => {
+        return (e as Keypress).keypress !== undefined
+      }
 
-      setIndex(items.length)
+      if (isKeypress(element)) {
+        onElementAdd({
+          type: 'KeyPressEvent',
+          data: element
+        })
+      } else {
+        onElementAdd({
+          type: 'MousePressEvent',
+          data: { type: 'Press', data: element }
+        })
+      }
     }
   }, [items, onElementAdd])
 
