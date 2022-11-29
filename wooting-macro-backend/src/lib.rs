@@ -144,7 +144,7 @@ impl Macro {
                         //     send(&rdev::EventType::KeyRelease(
                         //     SCANCODE_TO_RDEV[&data.keypress],
                         // ))
-
+                        //TODO: send only event_type
                         send_channel
                             .send(Event {
                                 time: time::SystemTime::now(),
@@ -382,7 +382,7 @@ impl MacroBackend {
 
         // let inner_keys_pressed = self.keys_pressed.clone();
 
-        let _grabber = std::thread::spawn(move || {
+        let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let keys_pressed = keys_pressed.clone();
             grab(move |event: rdev::Event| {
@@ -399,6 +399,7 @@ impl MacroBackend {
                                     let mut keys_pressed = keys_pressed.blocking_write();
 
                                     keys_pressed.push(key_to_push);
+
                                     // keys_pressed.push(key_to_push);
 
                                     println!("Pressed Keys: {:?}", keys_pressed);
