@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use lazy_static::lazy_static;
-use rdev::Key;
+use rdev::{Button, Key};
 
 lazy_static! {
 ///Conversion from HID codes to the library backend enums.
@@ -191,6 +191,15 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
 };
 
 }
+
+lazy_static! {
+#[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
+pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
+    let mut scancode: HashMap<rdev::Button, u32> = HashMap::new();
+        scancode.insert(Button::Left, 0x101);
+        scancode.insert(Button::Right, 0x102);
+        scancode
+};}
 
 lazy_static! {
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]

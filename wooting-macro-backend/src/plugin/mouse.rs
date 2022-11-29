@@ -11,6 +11,7 @@ pub enum MouseAction {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+// TODO: Implement https://serde.rs/enum-number.html to ensure representation to frontend is correct
 pub enum MouseButton {
     Left = 1,
     Right = 2,
@@ -25,8 +26,8 @@ impl Into<rdev::Button> for &MouseButton {
             MouseButton::Left => rdev::Button::Left,
             MouseButton::Right => rdev::Button::Right,
             MouseButton::Middle => rdev::Button::Middle,
-            MouseButton::Mouse4 => rdev::Button::Left,
-            MouseButton::Mouse5 => rdev::Button::Right,
+            MouseButton::Mouse4 => rdev::Button::Unknown(4),
+            MouseButton::Mouse5 => rdev::Button::Unknown(5),
         }
     }
 }
@@ -38,6 +39,15 @@ impl Into<MouseButton> for rdev::Button {
             rdev::Button::Right => MouseButton::Right,
             rdev::Button::Middle => MouseButton::Middle,
             _ => MouseButton::Left,
+        }
+    }
+}
+impl Into<u32> for &MouseButton {
+    fn into(self) -> u32 {
+        match *self {
+            MouseButton::Left => 0x101,
+            MouseButton::Right => 0x102,
+            _ => 0x100,
         }
     }
 }

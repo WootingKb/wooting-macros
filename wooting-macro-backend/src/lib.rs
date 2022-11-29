@@ -80,11 +80,12 @@ pub enum ActionEventType {
 #[serde(tag = "type")]
 pub enum TriggerEventType {
     KeyPressEvent {
+        // TODO: This should be a Vec of u32, it shouldn't be sharing the type of the KeyPressEventAction
         data: Vec<key_press::KeyPress>,
         allow_while_other_keys: bool,
     },
     MouseEvent {
-        data: Vec<mouse::MouseAction>,
+        data: mouse::MouseButton,
     },
     //TODO: computer time (have timezone support?)
     //TODO: computer temperature?
@@ -448,6 +449,7 @@ impl MacroBackend {
                                 }
 
                                 EventType::ButtonPress(key) => {
+                                    // BUTTON_TO_HID[key]
                                     println!("Button pressed: {:?}", key);
                                     Some(event)
                                 }
@@ -643,7 +645,9 @@ impl MacroData {
                                     ),
                                 }
                             }
-                            TriggerEventType::MouseEvent { data } => {}
+                            TriggerEventType::MouseEvent { data } => {
+                                let code: u32 = data.into();
+                            }
                         }
                     }
                 }
