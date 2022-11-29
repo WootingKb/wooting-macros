@@ -423,18 +423,17 @@ impl MacroBackend {
 
                                     let channel_copy_send = schan_execute.clone();
 
-                                    task::spawn(async move {
-                                        check_macro_execution_efficiently(
-                                            pressed_keys_copy_converted,
-                                            check_these_macros,
-                                            channel_copy_send,
-                                        )
-                                        .await;
-                                    });
+                                    let should_grab = check_macro_execution_efficiently(
+                                        pressed_keys_copy_converted,
+                                        check_these_macros,
+                                        channel_copy_send,
+                                    );
 
-                                    //thread::sleep(time::Duration::from_millis(1000));
-
-                                    Some(event)
+                                    if should_grab {
+                                        None
+                                    } else {
+                                        Some(event)
+                                    }
                                 }
 
                                 EventType::KeyRelease(key) => {
@@ -741,11 +740,12 @@ async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
     }
 }
 
-async fn check_macro_execution_efficiently(
+fn check_macro_execution_efficiently(
     pressed_keys: Vec<u32>,
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::Event>,
-) {
+) -> bool {
+    let mut output = false;
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
@@ -763,11 +763,14 @@ async fn check_macro_execution_efficiently(
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
                     });
+                    output = output || true;
                 }
             }
             TriggerEventType::MouseEvent { data } => {}
         }
     }
+
+    return output;
 }
 
 ///Sends an event to the library to Execute on an OS level.
