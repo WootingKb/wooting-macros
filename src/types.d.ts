@@ -1,4 +1,4 @@
-import { MacroType, ViewState, VolumeAction } from './enums'
+import { MacroType, ViewState, VolumeAction, MouseButton } from './enums'
 
 // Contexts
 export interface CurrentSelection {
@@ -64,14 +64,6 @@ export interface Keypress {
   keypress: number
   press_duration: number
   keytype: string
-}
-
-enum MouseButton {
-  Left = 1,
-  Right = 2,
-  Middle = 3,
-  Mouse4 = 4,
-  Mouse5 = 5,
 }
 
 export type MousePressAction =

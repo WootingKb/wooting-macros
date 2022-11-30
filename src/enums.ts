@@ -27,6 +27,14 @@ export enum KeyType {
   DownUp
 }
 
+export enum MouseButton {
+  Left = 1,
+  Right = 2,
+  Middle = 3,
+  Mouse4 = 4,
+  Mouse5 = 5
+}
+
 export enum VolumeAction {
   LowerVolume,
   IncreaseVolume,

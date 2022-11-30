@@ -144,9 +144,9 @@ const SelectElementArea = () => {
                   }}
                 />
               ))}
-              {/* {MouseInput.all.map((info: MouseInputInfo) => (
+              {MouseInput.all.map((info: MouseInputInfo) => (
                 <SequenceElementButton
-                  key={info.button}
+                  key={info.webButtonVal}
                   displayText={info.displayString}
                   properties={{
                     type: 'MouseEventAction',
@@ -154,12 +154,12 @@ const SelectElementArea = () => {
                       type: 'Press',
                       data: {
                         type: 'Down',
-                        button: info.button
+                        button: info.enumVal
                       }
                     }
                   }}
                 />
-              ))} */}
+              ))}
               {Hid.all.map((HIDinfo: HidInfo) => (
                 <SequenceElementButton
                   key={HIDinfo.HIDcode}
@@ -196,23 +196,22 @@ const SelectElementArea = () => {
           </TabPanel>
           <TabPanel w="full" p="4px">
             <SimpleGrid h="100%" columns={[2, 2, 3]} spacing="1">
-              {/* {MouseInput.all.map((info: MouseInputInfo) => (
+              {MouseInput.all.map((info: MouseInputInfo) => (
                 <SequenceElementButton
-                  key={info.button}
+                  key={info.webButtonVal}
                   displayText={info.displayString}
                   properties={{
                     type: 'MouseEventAction',
                     data: {
                       type: 'Press',
                       data: {
-                        type: 'DownUp',
-                        button: info.button,
-                        duration: 0
+                        type: 'Down',
+                        button: info.enumVal
                       }
                     }
                   }}
                 />
-              ))} */}
+              ))}
             </SimpleGrid>
           </TabPanel>
           <TabPanel w="full" p="4px">

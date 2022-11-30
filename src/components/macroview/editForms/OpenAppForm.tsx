@@ -11,16 +11,38 @@ import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 
 const OpenAppForm = () => {
-  const inputFile = useRef<HTMLInputElement | null>(null)
-  const [file, setFile] = useState('')
+  const [path, setPath] = useState('')
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
-    console.log(inputFile.current?.files)
-  }, [inputFile.current?.files])
-  
+    if (selectedElement === undefined) {
+      return
+    }
+
+    if (selectedElement.type !== 'SystemEventAction') {
+      return
+    }
+    if (selectedElement.data.type !== 'Open') {
+      return
+    }
+
+    setPath(selectedElement.data.path)
+  }, [selectedElement])
+
+  const onPathChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedElement === undefined || selectedElementId === undefined) {
+      return
+    }
+    if (selectedElement.type !== 'SystemEventAction') {
+      return
+    }
+    setPath(event.target.value)
+    const temp = { ...selectedElement }
+    temp.data = { type: 'Open', path: event.target.value }
+    updateElement(temp, selectedElementId)
+  }
 
   return (
     <>
@@ -29,19 +51,10 @@ const OpenAppForm = () => {
       </Text>
       <Divider borderColor={dividerColour} />
       <Input
-        type="file"
-        id="file"
-        ref={inputFile}
-        style={{ display: 'none' }}
+        value={path}
+        onChange={onPathChange}
+        placeholder="path"
       />
-      <Button
-        colorScheme={'yellow'}
-        onClick={() => {
-          inputFile.current?.click()
-        }}
-      >
-        Browse
-      </Button>
     </>
   )
 }

@@ -348,6 +348,43 @@ export class Hid {
     }
   }
 
+  static get F13(): HidInfo {
+    return { HIDcode: 104, displayString: 'F13', webKeyId: 'F13' }
+  }
+  static get F14(): HidInfo {
+    return { HIDcode: 105, displayString: 'F14', webKeyId: 'F14' }
+  }
+  static get F15(): HidInfo {
+    return { HIDcode: 106, displayString: 'F15', webKeyId: 'F15' }
+  }
+  static get F16(): HidInfo {
+    return { HIDcode: 107, displayString: 'F16', webKeyId: 'F16' }
+  }
+  static get F17(): HidInfo {
+    return { HIDcode: 108, displayString: 'F17', webKeyId: 'F17' }
+  }
+  static get F18(): HidInfo {
+    return { HIDcode: 109, displayString: 'F18', webKeyId: 'F18' }
+  }
+  static get F19(): HidInfo {
+    return { HIDcode: 110, displayString: 'F19', webKeyId: 'F19' }
+  }
+  static get F20(): HidInfo {
+    return { HIDcode: 111, displayString: 'F20', webKeyId: 'F20' }
+  }
+  static get F21(): HidInfo {
+    return { HIDcode: 112, displayString: 'F21', webKeyId: 'F21' }
+  }
+  static get F22(): HidInfo {
+    return { HIDcode: 113, displayString: 'F22', webKeyId: 'F22' }
+  }
+  static get F23(): HidInfo {
+    return { HIDcode: 114, displayString: 'F23', webKeyId: 'F23' }
+  }
+  static get F24(): HidInfo {
+    return { HIDcode: 115, displayString: 'F24', webKeyId: 'F24' }
+  }
+
   /** KEYS TO ADD
    * Internation Backslash
    * Context Menu
@@ -523,6 +560,18 @@ export class Hid {
     Hid.NUMADD,
     Hid.NUMENTER,
     Hid.NUMDECIMAL,
+    Hid.F13,
+    Hid.F14,
+    Hid.F15,
+    Hid.F16,
+    Hid.F17,
+    Hid.F18,
+    Hid.F19,
+    Hid.F20,
+    Hid.F21,
+    Hid.F22,
+    Hid.F23,
+    Hid.F24,
     Hid.SHIFTL,
     Hid.CONTROLL,
     Hid.ALTL,
