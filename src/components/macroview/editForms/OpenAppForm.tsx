@@ -1,4 +1,4 @@
-import { Divider, Input, Text, useColorModeValue } from '@chakra-ui/react'
+import { Divider, Input, Text, Textarea, useColorModeValue } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -24,7 +24,7 @@ export default function OpenAppForm() {
     setPath(selectedElement.data.path)
   }, [selectedElement])
 
-  const onPathChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onPathChange = (event: any) => {
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }
@@ -43,7 +43,8 @@ export default function OpenAppForm() {
         {'Open Application'}
       </Text>
       <Divider borderColor={dividerColour} />
-      <Input value={path} onChange={onPathChange} placeholder="path" />
+      <Text fontSize={['xs', 'sm', 'md']}>Path to application</Text>
+      <Textarea value={path} onChange={onPathChange} placeholder="path"/>
     </>
   )
 }
