@@ -1,10 +1,7 @@
 import React from 'react'
 
-
-const MousePressForm = () => {
+export default function MousePressForm() {
   return (
     <div>MousePressForm</div>
   )
 }
-
-export default MousePressForm

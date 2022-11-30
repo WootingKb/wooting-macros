@@ -33,7 +33,7 @@ import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 
 // ask about how to deal with dndkit's types, e.g. UniqueIdentifier
-const SequencingArea = () => {
+export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
   const { recording, startRecording, stopRecording, items } = useRecording(
     RecordingType.Sequence
@@ -149,5 +149,3 @@ const SequencingArea = () => {
     </VStack>
   )
 }
-
-export default SequencingArea

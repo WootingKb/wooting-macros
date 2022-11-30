@@ -10,7 +10,7 @@ type Props = {
   toggleCollection: (index: number) => void
 }
 
-function CollectionButton({
+export default function CollectionButton({
   collection,
   index,
   isFocused,
@@ -48,5 +48,3 @@ function CollectionButton({
     </Box>
   )
 }
-
-export default CollectionButton

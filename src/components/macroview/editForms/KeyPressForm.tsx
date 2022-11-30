@@ -15,7 +15,7 @@ import { useSelectedElement } from '../../../contexts/selectors'
 import { KeyType } from '../../../enums'
 import { HIDLookup } from '../../../maps/HIDmap'
 
-const KeyPressForm = () => {
+export default function KeyPressForm() {
   const [headingText, setHeadingText] = useState('')
   const [keypressDuration, setKeypressDuration] = useState(1)
   const [keypressType, setKeypressType] = useState<KeyType>()
@@ -141,5 +141,3 @@ const KeyPressForm = () => {
     </>
   )
 }
-
-export default KeyPressForm

@@ -10,7 +10,7 @@ type Props = {
   isEditing: boolean
 }
 
-const Macroview = ({ isEditing }: Props) => {
+export default function Macroview({ isEditing }: Props) {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
@@ -37,5 +37,3 @@ const Macroview = ({ isEditing }: Props) => {
     </VStack>
   )
 }
-
-export default Macroview

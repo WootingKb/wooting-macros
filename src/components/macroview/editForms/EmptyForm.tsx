@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react'
 
-const EmptyForm = () => {
+export default function EmptyForm() {
   return (
     <Flex h="100vh" justifyContent="center" alignItems="center">
       <Text
@@ -14,5 +14,3 @@ const EmptyForm = () => {
     </Flex>
   )
 }
-
-export default EmptyForm

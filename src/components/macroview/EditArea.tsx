@@ -6,7 +6,7 @@ import KeyPressForm from './editForms/KeyPressForm'
 import MousePressForm from './editForms/MousePressForm'
 import OpenAppForm from './editForms/OpenAppForm'
 
-const EditArea = () => {
+export default function EditArea() {
   const selectedElement = useSelectedElement()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
@@ -20,5 +20,3 @@ const EditArea = () => {
     </VStack>
   )
 }
-
-export default EditArea

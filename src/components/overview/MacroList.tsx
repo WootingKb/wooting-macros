@@ -7,8 +7,9 @@ import { Collection, Macro } from '../../types'
 import FadeInWrapper from '../FadeInWrapper'
 import MacroCard from './MacroCard'
 
-const MacroList = () => {
-  const { selection, onCollectionUpdate, changeViewState } = useApplicationContext()
+export default function MacroList() {
+  const { selection, onCollectionUpdate, changeViewState } =
+    useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
 
   const onMacroDelete = (macroIndex: number) => {
@@ -48,5 +49,3 @@ const MacroList = () => {
     </FadeInWrapper>
   )
 }
-
-export default MacroList

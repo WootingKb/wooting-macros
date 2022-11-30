@@ -3,7 +3,7 @@ import CollectionModal from '../components/overview/CollectionModal'
 import LeftPanel from '../components/overview/LeftPanel'
 import CollectionPanel from '../components/overview/CollectionPanel'
 
-function Overview() {
+export default function Overview() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -17,5 +17,3 @@ function Overview() {
     </HStack>
   )
 }
-
-export default Overview

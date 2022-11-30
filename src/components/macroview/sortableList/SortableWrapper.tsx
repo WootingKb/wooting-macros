@@ -11,7 +11,7 @@ type Props = {
   children: ReactNode
 }
 
-const SortableWrapper = ({ id, element, children }: Props) => {
+export default function SortableWrapper({ id, element, children }: Props) {
   const {
     attributes,
     listeners,
@@ -56,5 +56,3 @@ const SortableWrapper = ({ id, element, children }: Props) => {
     </HStack>
   )
 }
-
-export default SortableWrapper

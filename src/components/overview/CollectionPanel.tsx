@@ -17,7 +17,7 @@ type Props = {
   onOpen: () => void
 }
 
-const CollectionPanel = ({ onOpen }: Props) => {
+export default function CollectionPanel({ onOpen }: Props) {
   const { selection, onSelectedCollectionDelete, updateIsRenamingCollection } =
     useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
@@ -78,5 +78,3 @@ const CollectionPanel = ({ onOpen }: Props) => {
     </VStack>
   )
 }
-
-export default CollectionPanel

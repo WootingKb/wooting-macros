@@ -8,7 +8,7 @@ import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
-import { mouseEnumLookup, webButtonLookup } from '../../../maps/MouseMap'
+import { mouseEnumLookup } from '../../../maps/MouseMap'
 import { ActionEventType } from '../../../types'
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
   element: ActionEventType
 }
 
-const SortableItem = ({ id, element }: Props) => {
+export default function SortableItem({ id, element }: Props) {
   const [displayText, setDisplayText] = useState<string | undefined>('')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
   const { selectedElementId, onElementDelete, updateSelectedElementId } =
@@ -31,7 +31,9 @@ const SortableItem = ({ id, element }: Props) => {
         setDisplayText(element.data.toString() + ' ms')
         break
       case 'MouseEventAction':
-        setDisplayText(mouseEnumLookup.get(element.data.data.button)?.displayString)
+        setDisplayText(
+          mouseEnumLookup.get(element.data.data.button)?.displayString
+        )
         break
       case 'SystemEventAction':
         setDisplayText(element.data.type.toString())
@@ -79,5 +81,3 @@ const SortableItem = ({ id, element }: Props) => {
     </HStack>
   )
 }
-
-export default SortableItem

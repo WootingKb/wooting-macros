@@ -10,7 +10,7 @@ import { useMacroContext } from '../../contexts/macroContext'
 import { MacroType, MacroTypeDefinitions } from '../../enums'
 import { checkIfStringIsNonNumeric } from '../../utils'
 
-const MacroTypeArea = () => {
+export default function MacroTypeArea() {
   const { macro, updateMacroType } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
   const typeIcons = [
@@ -97,11 +97,13 @@ const MacroTypeArea = () => {
           {macro.macro_type}
         </Text>
         <Text fontSize={['xs', 'sm', 'md', 'lg', 'xl']}>
-          {MacroTypeDefinitions[MacroType[macro.macro_type as keyof typeof MacroType]]}
+          {
+            MacroTypeDefinitions[
+              MacroType[macro.macro_type as keyof typeof MacroType]
+            ]
+          }
         </Text>
       </VStack>
     </HStack>
   )
 }
-
-export default MacroTypeArea

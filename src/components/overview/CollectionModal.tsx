@@ -19,11 +19,16 @@ type Props = {
   onClose: () => void
 }
 
-const CollectionModal = ({ isOpen, onClose }: Props) => {
+export default function CollectionModal({ isOpen, onClose }: Props) {
   const [collectionName, setCollectionName] = useState('')
   const [isNameUsable, setIsNameUsable] = useState(true)
-  const { selection, collections, isRenamingCollection, onCollectionAdd, onCollectionUpdate } =
-    useApplicationContext()
+  const {
+    selection,
+    collections,
+    isRenamingCollection,
+    onCollectionAdd,
+    onCollectionUpdate
+  } = useApplicationContext()
   const collection: Collection = useSelectedCollection()
 
   const onModalSuccessClose = () => {
@@ -95,5 +100,3 @@ const CollectionModal = ({ isOpen, onClose }: Props) => {
     </Modal>
   )
 }
-
-export default CollectionModal

@@ -1,25 +1,25 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { KeyType, RecordingType } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { Keypress, MousePressAction } from '../types'
 
-const useRecording = (
+export default function useRecording(
   type: RecordingType,
   initialItems: Array<Keypress | MousePressAction> = []
-) => {
+) {
   const [recording, setRecording] = useState(false)
   const [items, setItems] =
     useState<Array<Keypress | MousePressAction>>(initialItems)
 
   const startRecording = useCallback(() => {
     setItems([])
-    console.log("setting recording to true")
+    console.log('setting recording to true')
     setRecording(true)
   }, [setItems, setRecording])
 
   const stopRecording = useCallback(() => {
-    console.log("setting recording to false")
+    console.log('setting recording to false')
     setRecording(false)
   }, [setRecording])
 
@@ -62,7 +62,9 @@ const useRecording = (
     (event: MouseEvent) => {
       event.preventDefault()
       console.log(recording)
-      if (!recording) { return }
+      if (!recording) {
+        return
+      }
 
       if (type === RecordingType.Trigger) {
         return
@@ -86,14 +88,14 @@ const useRecording = (
     if (!recording) {
       return
     }
-    console.log("event listeners added")
+    console.log('event listeners added')
     window.addEventListener('keypress', addKeypress, false)
     window.addEventListener('mousedown', addMousepress, false)
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
     })
     return () => {
-      console.log("event listeners removed")
+      console.log('event listeners removed')
       window.removeEventListener('keypress', addKeypress, false)
       window.removeEventListener('mousedown', addMousepress, false)
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
@@ -104,5 +106,3 @@ const useRecording = (
 
   return { recording, startRecording, stopRecording, items }
 }
-
-export default useRecording

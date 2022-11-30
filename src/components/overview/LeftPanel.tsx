@@ -17,7 +17,7 @@ type Props = {
   onOpen: () => void
 }
 
-const LeftPanel = ({ onOpen }: Props) => {
+export default function LeftPanel({ onOpen }: Props) {
   const {
     collections,
     selection,
@@ -111,5 +111,3 @@ const LeftPanel = ({ onOpen }: Props) => {
     </VStack>
   )
 }
-
-export default LeftPanel

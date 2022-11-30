@@ -18,7 +18,7 @@ import { Hid, HidInfo } from '../../maps/HIDmap'
 import { MouseInput, MouseInputInfo } from '../../maps/MouseMap'
 import { SystemEvent, SystemEventInfo } from '../../maps/SystemEventMap'
 
-const SelectElementArea = () => {
+export default function SelectElementArea() {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
@@ -239,5 +239,3 @@ const SelectElementArea = () => {
     </VStack>
   )
 }
-
-export default SelectElementArea

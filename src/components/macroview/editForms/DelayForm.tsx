@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 
-const DelayForm = () => {
+export default function DelayForm() {
   const [delayDuration, setDelayDuration] = useState(0)
   const { selectedElementId, updateElement } = useMacroContext()
   const selectedElement = useSelectedElement()
@@ -74,5 +74,3 @@ const DelayForm = () => {
     </>
   )
 }
-
-export default DelayForm

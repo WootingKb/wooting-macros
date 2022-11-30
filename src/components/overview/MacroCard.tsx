@@ -25,8 +25,9 @@ type Props = {
   onDelete: (index: number) => void
 }
 
-function MacroCard({ macro, index, onDelete }: Props) {
-  const { selection, onCollectionUpdate, changeSelectedMacroIndex } = useApplicationContext()
+export default function MacroCard({ macro, index, onDelete }: Props) {
+  const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
+    useApplicationContext()
   const currentCollection = useSelectedCollection()
 
   const subtextColour = useColorModeValue('gray.500', 'gray.400')
@@ -123,5 +124,3 @@ function MacroCard({ macro, index, onDelete }: Props) {
     </VStack>
   )
 }
-
-export default MacroCard

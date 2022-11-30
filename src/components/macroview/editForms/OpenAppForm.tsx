@@ -1,16 +1,9 @@
-import {
-  Button,
-  Divider,
-  Flex,
-  Input,
-  Text,
-  useColorModeValue
-} from '@chakra-ui/react'
-import { useEffect, useRef, useState } from 'react'
+import { Divider, Input, Text, useColorModeValue } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 
-const OpenAppForm = () => {
+export default function OpenAppForm() {
   const [path, setPath] = useState('')
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
@@ -50,13 +43,7 @@ const OpenAppForm = () => {
         {'Open Application'}
       </Text>
       <Divider borderColor={dividerColour} />
-      <Input
-        value={path}
-        onChange={onPathChange}
-        placeholder="path"
-      />
+      <Input value={path} onChange={onPathChange} placeholder="path" />
     </>
   )
 }
-
-export default OpenAppForm

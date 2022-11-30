@@ -8,7 +8,7 @@ type Props = {
   children: ReactNode
 }
 
-const DragWrapper = ({ element, children }: Props) => {
+export default function DragWrapper({ element, children }: Props) {
   const bg = useColorModeValue('white', 'gray.800')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
@@ -35,5 +35,3 @@ const DragWrapper = ({ element, children }: Props) => {
     </HStack>
   )
 }
-
-export default DragWrapper
