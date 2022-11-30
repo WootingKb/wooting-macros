@@ -21,6 +21,7 @@ rodio = "0.16.0"
 copypasta = { version = "0.8.1", features = ["smithay-clipboard"] }
 
 wifi-rs = "0.2.2"
+serde_repr = "0.1.9"
 
 
 [target.'cfg(target_os = "windows")'.dependencies]

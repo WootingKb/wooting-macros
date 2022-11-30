@@ -1,5 +1,6 @@
 use rdev::{Button, Event};
 use tokio::sync::mpsc::Sender;
+use serde_repr;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 use std::time;
@@ -10,7 +11,9 @@ pub enum MouseAction {
     Move { x: i32, y: i32 },
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[derive(Debug, Clone, serde_repr::Serialize_repr, serde_repr::Deserialize_repr, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
+#[repr(u8)]
 // TODO: Implement https://serde.rs/enum-number.html to ensure representation to frontend is correct
 pub enum MouseButton {
     Left = 1,
