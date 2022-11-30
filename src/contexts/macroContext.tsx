@@ -25,11 +25,14 @@ function useMacroContext() {
 }
 
 function MacroProvider({ children }: MacroProviderProps) {
-  const [macroName, setMacroName] = useState('')
-  const [triggerKeys, setTriggerKeys] = useState<Keypress[]>([])
-  const [allowWhileOtherKeys, setAllowWhileOtherKeys] = useState(false) // allows the trigger to be registered if the input contains more than the trigger keys
-  const [macroType, setMacroType] = useState(0)
-  const [sequence, setSequence] = useState<ActionEventType[]>([])
+  const [macro, setMacro] = useState<Macro>({
+    name: '',
+    active: true,
+    macro_type: 'Single',
+    trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
+    sequence: []
+  })
+  const [sequence, setSequence] = useState<ActionEventType[]>([]) // still needed because of how the sortable list works
   const [ids, setIds] = useState<number[]>([])
   const [selectedElementId, setSelectedElementId] = useState<
     number | undefined
@@ -43,41 +46,48 @@ function MacroProvider({ children }: MacroProviderProps) {
     if (currentMacro === undefined) {
       return
     }
-    console.log(currentMacro)
-    setMacroName(currentMacro.name)
-    setTriggerKeys(currentMacro.trigger.data)
-    setMacroType(MacroType[currentMacro.macro_type as keyof typeof MacroType])
-    setSequence(currentMacro.sequence)
+    setMacro(currentMacro)
     setIds(currentMacro.sequence.map((_, i) => i + 1))
   }, [currentMacro])
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      console.log(newName)
-      setMacroName(newName)
+      setMacro((macro) => {
+        return { ...macro, name: newName }
+      })
     },
-    [setMacroName]
+    [setMacro]
   )
 
   const updateMacroType = useCallback(
     (newType: MacroType) => {
-      setMacroType(newType)
+      setMacro((macro) => {
+        return { ...macro, macro_type: MacroType[newType] }
+      })
     },
-    [setMacroType]
+    [setMacro]
   )
 
   const updateTriggerKeys = useCallback(
     (newArray: Keypress[]) => {
-      setTriggerKeys(newArray)
+      setMacro((macro) => {
+        const temp = { ...macro }
+        temp.trigger.data = newArray
+        return temp
+      })
     },
-    [setTriggerKeys]
+    [setMacro]
   )
 
   const updateAllowWhileOtherKeys = useCallback(
     (value: boolean) => {
-      setAllowWhileOtherKeys(value)
+      setMacro((macro) => {
+        const temp = { ...macro }
+        temp.trigger.allow_while_other_keys = value
+        return temp
+      })
     },
-    [setAllowWhileOtherKeys]
+    [setMacro]
   )
 
   const onIdAdd = useCallback(
@@ -162,16 +172,9 @@ function MacroProvider({ children }: MacroProviderProps) {
   const updateMacro = useCallback(() => {
     // activated when the user presses the "Save Macro" button
     // Updates the collection data with new macro / edited macro data
-    const itemToAdd: Macro = {
-      name: macroName,
-      active: true,
-      macro_type: MacroType[macroType],
-      trigger: {
-        type: 'KeyPressEvent',
-        data: triggerKeys,
-        allow_while_other_keys: allowWhileOtherKeys
-      },
-      sequence: ids.map((id) => sequence[id - 1])
+    const itemToAdd = {
+      ...macro,
+      sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
     }
 
     const newCollection = { ...currentCollection }
@@ -192,26 +195,20 @@ function MacroProvider({ children }: MacroProviderProps) {
     // next time user goes to macroview, there will be a new macro context with the default data
     // ask about the sheer number of dependencies lol, turn this into a store?
   }, [
-    allowWhileOtherKeys,
     changeSelectedMacroIndex,
     currentCollection,
     ids,
-    macroName,
-    macroType,
+    macro,
     onCollectionUpdate,
     selection.collectionIndex,
     selection.macroIndex,
     sequence,
-    triggerKeys,
     viewState
   ])
 
   const value = useMemo<MacroState>(
     () => ({
-      macroName,
-      macroType,
-      triggerKeys,
-      allowWhileOtherKeys,
+      macro,
       sequence,
       ids,
       selectedElementId,
@@ -230,10 +227,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateMacro
     }),
     [
-      macroName,
-      macroType,
-      triggerKeys,
-      allowWhileOtherKeys,
+      macro,
       sequence,
       ids,
       selectedElementId,

@@ -6,9 +6,9 @@ type Props = {
   isEditing: boolean
 }
 
-const MacroviewHeader = ({ isEditing }: Props) => {
+export default function MacroviewHeader({ isEditing }: Props) {
   const { changeSelectedMacroIndex } = useApplicationContext()
-  const { macroName, triggerKeys, sequence, updateMacroName, updateMacro } =
+  const { macro, sequence, updateMacroName, updateMacro } =
     useMacroContext()
 
   return (
@@ -45,7 +45,7 @@ const MacroviewHeader = ({ isEditing }: Props) => {
               onChange={(event) => {
                 updateMacroName(event.target.value)
               }}
-              value={macroName}
+              value={macro.name}
             />
           )}
           {!isEditing && (
@@ -64,7 +64,7 @@ const MacroviewHeader = ({ isEditing }: Props) => {
       <Button
         colorScheme="yellow"
         isDisabled={
-          triggerKeys.length === 0 || sequence.length === 0 || macroName === ''
+          macro.trigger.data.length === 0 || sequence.length === 0 || macro.name === ''
         }
         onClick={updateMacro}
       >
@@ -73,5 +73,3 @@ const MacroviewHeader = ({ isEditing }: Props) => {
     </HStack>
   )
 }
-
-export default MacroviewHeader

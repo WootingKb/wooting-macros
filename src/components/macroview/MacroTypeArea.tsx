@@ -1,4 +1,3 @@
-import { EditIcon } from '@chakra-ui/icons'
 import {
   HStack,
   VStack,
@@ -12,7 +11,7 @@ import { MacroType, MacroTypeDefinitions } from '../../enums'
 import { checkIfStringIsNonNumeric } from '../../utils'
 
 const MacroTypeArea = () => {
-  const { macroType, updateMacroType } = useMacroContext()
+  const { macro, updateMacroType } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
   const typeIcons = [
     <svg
@@ -85,7 +84,7 @@ const MacroTypeArea = () => {
                 icon={typeIcons[index]}
                 aria-label="macro type button"
                 size="lg"
-                colorScheme={MacroType[macroType] === value ? 'yellow' : 'gray'}
+                colorScheme={macro.macro_type === value ? 'yellow' : 'gray'}
                 onClick={() => updateMacroType(index)}
                 key={value}
               ></IconButton>
@@ -95,10 +94,10 @@ const MacroTypeArea = () => {
       <Divider orientation="vertical" borderColor={dividerColour} />
       <VStack w="full" h="full" alignItems="normal" justifyContent="center">
         <Text fontWeight="semibold" fontSize={['md', 'lg', 'xl']}>
-          {MacroType[macroType]}
+          {macro.macro_type}
         </Text>
         <Text fontSize={['xs', 'sm', 'md', 'lg', 'xl']}>
-          {MacroTypeDefinitions[macroType]}
+          {MacroTypeDefinitions[MacroType[macro.macro_type as keyof typeof MacroType]]}
         </Text>
       </VStack>
     </HStack>

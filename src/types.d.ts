@@ -25,10 +25,7 @@ export type AppState = {
 }
 
 export type MacroState = {
-  macroName: string
-  macroType: MacroType
-  triggerKeys: Keypress[] // update to allow for mouse buttons
-  allowWhileOtherKeys: boolean
+  macro: Macro
   sequence: ActionEventType[]
   ids: number[]
   selectedElementId: number | undefined

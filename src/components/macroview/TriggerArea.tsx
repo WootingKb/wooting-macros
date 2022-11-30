@@ -17,11 +17,11 @@ import useRecording from '../../hooks/useRecording'
 import { HIDLookup } from '../../maps/HIDmap'
 import { Keypress } from '../../types'
 
-const TriggerArea = () => {
+export default function TriggerArea() {
   const { recording, startRecording, stopRecording, items } = useRecording(
     RecordingType.Trigger
   )
-  const { triggerKeys, updateTriggerKeys } = useMacroContext()
+  const { macro, updateTriggerKeys } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const TriggerArea = () => {
       <HStack w="100%" justifyContent="space-between">
         <VStack alignItems="normal" w="full" h="full">
           <HStack spacing="4px" h="full">
-            {triggerKeys.map((key: Keypress) => (
+            {macro.trigger.data.map((key: Keypress) => (
               <Kbd key={key.keypress}>
                 {HIDLookup.get(key.keypress)?.displayString}
               </Kbd>
@@ -85,5 +85,3 @@ const TriggerArea = () => {
     </VStack>
   )
 }
-
-export default TriggerArea
