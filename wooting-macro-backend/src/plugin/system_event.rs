@@ -12,6 +12,7 @@ use rdev::{Event, EventType};
 use tokio::sync::mpsc::Sender;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum SystemAction {
     Open { path: String },
     Volume { action: VolumeAction },
@@ -26,7 +27,8 @@ impl SystemAction {
     pub async fn execute(&self, send_channel: Sender<EventType>) {
         match &self {
             SystemAction::Open { path } => {
-                opener::open(std::path::Path::new(path));
+                //TODO: THIS CANNOT BE UNWRAPPED
+                opener::open(std::path::Path::new(path)).unwrap();
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
@@ -190,6 +192,7 @@ async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightn
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum ClipboardAction {
     SetClipboard { data: String },
     Copy,
@@ -198,12 +201,14 @@ pub enum ClipboardAction {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum MonitorBrightnessAction {
     Get,
     Set { level: u32 },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum VolumeAction {
     LowerVolume,
     IncreaseVolume,
@@ -211,6 +216,7 @@ pub enum VolumeAction {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum WifiAction {
     Connect,
     Disconnect,

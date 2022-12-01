@@ -246,7 +246,8 @@ type Collections = Vec<Collection>;
 //     lookup: HashMap<u32, Vec<&'a MacroExecutor>>,
 // }
 
-type TriggerLookup = HashMap<u32, Vec<Macro>>;
+type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
+//type MouseButtonTriggerLookup = HashMap<u32, Vec<Macro>>;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -267,7 +268,7 @@ pub struct BrightnessDevice {
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
-    pub triggers: Arc<RwLock<TriggerLookup>>,
+    pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
 }
 
@@ -357,6 +358,7 @@ impl MacroBackend {
         let inner_triggers = self.triggers.clone();
 
         let inner_is_listening = self.is_listening.clone();
+        println!("TRIGGERS: {:?}", inner_triggers.read().await);
 
         // let inner_keys_pressed = self.keys_pressed.clone();
 
@@ -427,9 +429,16 @@ impl MacroBackend {
                                     Some(event)
                                 }
 
-                                EventType::ButtonPress(key) => {
+                                EventType::ButtonPress(button) => {
                                     // BUTTON_TO_HID[key]
-                                    println!("Button pressed: {:?}", key);
+                                    //TODO: Make a simple one click mouse button lookup here
+                                    //let button_32_pushed: u32 = button.into();
+
+
+
+
+                                   // println!("Button pressed: {:?}", button);
+                                    //println!("Button pressed: {:?}", button);
                                     Some(event)
                                 }
                                 EventType::ButtonRelease(key) => {
@@ -599,10 +608,10 @@ impl MacroData {
         .unwrap();
     }
 
-    pub fn extract_triggers(&self) -> TriggerLookup {
-        let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
+    pub fn extract_triggers(&self) -> MacroTriggerLookup {
+        // let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
 
-        let mut output_hashmap = TriggerLookup::new();
+        let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
             if collections.active == true {
@@ -610,10 +619,10 @@ impl MacroData {
                     if macros.active == true {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
-                                output_tuple.push((
-                                    SCANCODE_TO_RDEV[&data.first().unwrap().keypress],
-                                    data.first().unwrap().keypress.clone(),
-                                ));
+                                // output_tuple.push((
+                                //     SCANCODE_TO_RDEV[&data.first().unwrap().keypress],
+                                //     data.first().unwrap().keypress.clone(),
+                                // ));
                                 //output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, macros.clone());
 
                                 match output_hashmap.get_mut(&data.first().unwrap().keypress) {
@@ -625,7 +634,15 @@ impl MacroData {
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
-                                let code: u32 = data.into();
+                                let data: u32 = data.into();
+
+                                match output_hashmap.get_mut(&data) {
+                                    Some(value) => value.push(macros.clone()),
+                                    None => output_hashmap.insert_nocheck(
+                                        data,
+                                        vec![macros.clone()],
+                                    ),
+                                }
                             }
                         }
                     }
