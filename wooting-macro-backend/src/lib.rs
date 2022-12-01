@@ -20,7 +20,6 @@ use crate::plugin::delay;
 use crate::plugin::discord;
 use crate::plugin::key_press;
 use crate::plugin::mouse;
-use crate::plugin::mouse::{MouseAction, MousePressAction};
 #[allow(unused_imports)]
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
@@ -364,7 +363,9 @@ impl MacroBackend {
 
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
+            let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
             let keys_pressed = keys_pressed.clone();
+
             grab(move |event: rdev::Event| {
                 match Ok::<&rdev::Event, GrabError>(&event) {
                     Ok(_data) => {
@@ -424,7 +425,7 @@ impl MacroBackend {
                                     keys_pressed
                                         .blocking_write()
                                         .retain(|x| *x != key_to_remove);
-                                    println!("Conifg: {:?}", keys_pressed.blocking_read());
+                                    println!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
                                 }
@@ -432,22 +433,76 @@ impl MacroBackend {
                                 EventType::ButtonPress(button) => {
                                     // BUTTON_TO_HID[key]
                                     //TODO: Make a simple one click mouse button lookup here
-                                    //let button_32_pushed: u32 = button.into();
 
+                                    println!("Button pressed: {:?}", button);
+                                    let converted_button_to_u32: u32 = match button {
+                                        rdev::Button::Left => 1,
+                                        rdev::Button::Right => 2,
+                                        rdev::Button::Middle => 3,
+                                        rdev::Button::Unknown(1) => 4,
+                                        rdev::Button::Unknown(2) => 5,
+                                        _ => 1,
+                                    };
 
+                                    //let mut buttons_pressed = buttons_pressed.blocking_write();
 
+                                    println!("Pressed Keys: {:?}", buttons_pressed);
 
-                                   // println!("Button pressed: {:?}", button);
-                                    //println!("Button pressed: {:?}", button);
-                                    Some(event)
+                                    // let pressed_buttons_copy_converted: Vec<u32> = buttons_pressed
+                                    //     .iter()
+                                    //     .map(|x| match x {
+                                    //         rdev::Button::Left => 1,
+                                    //         rdev::Button::Right => 2,
+                                    //         rdev::Button::Middle => 3,
+                                    //         rdev::Button::Unknown(1) => 4,
+                                    //         rdev::Button::Unknown(2) => 5,
+                                    //         _ => 1,
+                                    //     })
+                                    //     .collect();
+
+                                    let trigger_list = inner_triggers.blocking_read().clone();
+
+                                    let check_these_macros =
+                                        match trigger_list.get(&converted_button_to_u32) {
+                                            None => {
+                                                vec![]
+                                            }
+                                            Some(data_found) => data_found.to_vec(),
+                                        };
+
+                                    let channel_clone = schan_execute.clone();
+
+                                    let should_grab = check_macro_execution_efficiently(
+                                        vec![converted_button_to_u32],
+                                        check_these_macros,
+                                        channel_clone,
+                                    );
+
+                                    if should_grab {
+                                        None
+                                    } else {
+                                        Some(event)
+                                    }
                                 }
-                                EventType::ButtonRelease(key) => {
-                                    println!("Button pressed: {:?}", key);
+                                EventType::ButtonRelease(button) => {
+                                    println!("Button released: {:?}", button);
+
+                                    // let button_to_remove = button.clone();
+                                    //
+                                    // buttons_pressed
+                                    //     .blocking_write()
+                                    //     .retain(|x| *x != button_to_remove.into());
+                                    // println!(
+                                    //     "Mouse buttons state: {:?}",
+                                    //     buttons_pressed.blocking_read()
+                                    // );
+
                                     Some(event)
                                 }
                                 EventType::MouseMove { .. } => Some(event),
                                 EventType::Wheel { delta_x, delta_y } => {
-                                    println!("Button pressed: {:?} {:?}", delta_x, delta_y);
+                                    println!("Scrolled: {:?} {:?}", delta_x, delta_y);
+
                                     Some(event)
                                 }
                             }
@@ -460,90 +515,6 @@ impl MacroBackend {
                 }
             })
         });
-
-        // let (schan_grab, rchan_grab) = channel(); //TODO: async tokio version
-        // let _grabber = thread::spawn(move || {
-        //     grab(
-        //         move |event: rdev::Event| match schan_grab.send(event.clone()) {
-        //             Ok(T) => {
-        //                 let mut keys_pressed: Vec<rdev::Key>;
-        //                 match &event.event_type {
-        //                     //TODO: Grab and discard the trigger actually
-        //                     EventType::KeyPress(key) => Some(event),
-        //
-        //
-        //
-        //                     _ => Some(event),
-        //                 }
-        //             }
-        //             Err(_) => None,
-        //         },
-        //     )
-        // });
-        //
-        // for event in &rchan_grab {
-        //     events.push(event);
-        //
-        //     let test = 0;
-        //     //TODO: channel this
-        //     let macro_collections = APPLICATION_STATE.data.read().unwrap();
-        //     let triggers = TRIGGERS_LIST.data.read().unwrap();
-        //
-        //     for i in &events {
-        //         match i.event_type {
-        //             EventType::KeyPress(listened_key) => {
-        //                 pressed_keys.push(listened_key.clone());
-        //
-        //                 print!("\n{:?}", pressed_keys);
-        //             }
-        //             EventType::KeyRelease(listened_key) => {
-        //                 pressed_keys.retain(|x| *x != listened_key);
-        //                 println!("{:?}", pressed_keys);
-        //             }
-        //             EventType::ButtonPress(listened_key) => {
-        //                 println!("MB Pressed:{:?}", listened_key)
-        //             }
-        //             EventType::ButtonRelease(listened_key) => {
-        //                 println!("MB Released:{:?}", listened_key)
-        //             }
-        //             EventType::MouseMove { x, y } => (),
-        //             EventType::Wheel { delta_x, delta_y } => {}
-        //         }
-        //
-        //         let pressed_keys_copy_converted: Vec<u32> = pressed_keys
-        //             .iter()
-        //             .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
-        //             .collect();
-        //
-        //         let first_key: u32 = match pressed_keys_copy_converted.first() {
-        //             None => 0,
-        //             Some(T) => *T,
-        //         };
-        //
-        //         let trigger_list = TRIGGERS_LIST.data.read().unwrap();
-        //
-        //         let check_these_macros = match trigger_list.get(&first_key) {
-        //             None => {
-        //                 vec![]
-        //             }
-        //             Some(T) => T.to_vec(),
-        //         };
-        //
-        //         let channel_copy_send = schan_execute.clone();
-        //
-        //         task::spawn(async move {
-        //             check_macro_execution_efficiently(
-        //                 pressed_keys_copy_converted,
-        //                 check_these_macros,
-        //                 channel_copy_send,
-        //             )
-        //                 .await;
-        //         });
-        //     }
-        //
-        //     events.pop();
-        // }
-        //     });
     }
 }
 
@@ -638,10 +609,9 @@ impl MacroData {
 
                                 match output_hashmap.get_mut(&data) {
                                     Some(value) => value.push(macros.clone()),
-                                    None => output_hashmap.insert_nocheck(
-                                        data,
-                                        vec![macros.clone()],
-                                    ),
+                                    None => {
+                                        output_hashmap.insert_nocheck(data, vec![macros.clone()])
+                                    }
                                 }
                             }
                         }
@@ -742,7 +712,7 @@ async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) 
 }
 
 fn check_macro_execution_efficiently(
-    pressed_keys: Vec<u32>,
+    pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
@@ -750,14 +720,14 @@ fn check_macro_execution_efficiently(
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                let keypress_to_check: Vec<u32> = data.iter().map(|x| x.keypress).collect();
+                let event_to_check: Vec<u32> = data.iter().map(|x| x.keypress).collect();
 
                 println!(
                     "CheckMacroExec: Converted keys to vec<u32>\n {:#?}",
-                    keypress_to_check
+                    event_to_check
                 );
 
-                if keypress_to_check == pressed_keys {
+                if event_to_check == pressed_events {
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
 
@@ -767,7 +737,24 @@ fn check_macro_execution_efficiently(
                     output = output || true;
                 }
             }
-            TriggerEventType::MouseEvent { data } => {}
+            TriggerEventType::MouseEvent { data } => {
+                let event_to_check: Vec<u32> = vec![data.into()];
+
+                println!(
+                    "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
+                    event_to_check
+                );
+
+                if event_to_check == pressed_events {
+                    let channel_clone = channel_sender.clone();
+                    let macro_clone = macros.clone();
+
+                    task::spawn(async move {
+                        execute_macro(macro_clone, channel_clone).await;
+                    });
+                    output = output || true;
+                }
+            }
         }
     }
 
