@@ -94,7 +94,7 @@ export default function LeftPanel({ onOpen }: Props) {
           w="100%"
           size={'sm'}
         >
-          <Text fontSize={'xs'}>
+          <Text fontSize={['2xs', 'xs']}>
             Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
           </Text>
         </Button>
@@ -105,7 +105,7 @@ export default function LeftPanel({ onOpen }: Props) {
           size={'sm'}
           isDisabled
         >
-          <Text fontSize={'xs'}>Give Feedback</Text>
+          <Text fontSize={['2xs', 'xs']}>Give Feedback</Text>
         </Button>
       </HStack>
     </VStack>

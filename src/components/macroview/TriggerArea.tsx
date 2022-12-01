@@ -2,34 +2,22 @@ import { EditIcon } from '@chakra-ui/icons'
 import {
   HStack,
   VStack,
-  Alert,
-  AlertIcon,
   Kbd,
   Button,
   Text,
   Divider,
-  useColorModeValue
+  useColorModeValue,
+  useDisclosure
 } from '@chakra-ui/react'
-import { useEffect } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
-import { RecordingType } from '../../enums'
-import useRecording from '../../hooks/useRecording'
 import { HIDLookup } from '../../maps/HIDmap'
 import { Keypress } from '../../types'
+import TriggerModal from './TriggerModal'
 
 export default function TriggerArea() {
-  const { recording, startRecording, stopRecording, items } = useRecording(
-    RecordingType.Trigger
-  )
-  const { macro, updateTriggerKeys } = useMacroContext()
+  const { macro } = useMacroContext()
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-
-  useEffect(() => {
-    // remove the filter when backend updates trigger to allow mouse press
-    updateTriggerKeys(
-      items.filter((element): element is Keypress => 'keypress' in element)
-    )
-  }, [items, updateTriggerKeys])
 
   return (
     <VStack
@@ -46,20 +34,6 @@ export default function TriggerArea() {
         <Text fontWeight="semibold" fontSize={['sm', 'md']}>
           Trigger Key(s)
         </Text>
-        {recording && (
-          <Alert
-            status="info"
-            colorScheme="yellow"
-            rounded="md"
-            h="28px"
-            w="55%"
-          >
-            <AlertIcon />
-            <Text fontSize={['2xs', 'xs', 'sm', 'md']}>
-              Input recording in progress.
-            </Text>
-          </Alert>
-        )}
       </HStack>
       <Divider borderColor={dividerColour} />
       <HStack w="100%" justifyContent="space-between">
@@ -75,13 +49,13 @@ export default function TriggerArea() {
         <VStack alignItems="normal">
           <Button
             leftIcon={<EditIcon />}
-            onClick={recording ? stopRecording : startRecording}
-            colorScheme={recording ? 'red' : 'gray'}
+            onClick={onOpen}
           >
-            {recording ? 'Stop' : 'Record'}
+            Edit
           </Button>
         </VStack>
       </HStack>
+      <TriggerModal isOpen={isOpen} onClose={onClose}/>
     </VStack>
   )
 }

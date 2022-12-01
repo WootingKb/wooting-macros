@@ -63,7 +63,7 @@ export default function SequencingArea() {
     setActiveId(undefined)
   }
 
-  function handleDragStart(event: any) {
+  function handleDragStart(event: any) { // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
     const { active } = event
     setActiveId(active.id)
   }
@@ -132,7 +132,7 @@ export default function SequencingArea() {
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
             {ids.map((id) => (
-              <SortableWrapper id={id} key={id} element={sequence[id - 1]}>
+              <SortableWrapper id={id} key={id} isSmall={sequence[id - 1].type === "DelayEventAction"}>
                 <SortableItem id={id} element={sequence[id - 1]} />
               </SortableWrapper>
             ))}

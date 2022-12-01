@@ -7,11 +7,11 @@ import { ActionEventType } from '../../../types'
 
 type Props = {
   id: number
-  element: ActionEventType
+  isSmall: boolean
   children: ReactNode
 }
 
-export default function SortableWrapper({ id, element, children }: Props) {
+export default function SortableWrapper({ id, isSmall, children }: Props) {
   const {
     attributes,
     listeners,
@@ -34,7 +34,7 @@ export default function SortableWrapper({ id, element, children }: Props) {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      w={element.type === 'DelayEventAction' ? 'fit-content' : '100%'}
+      w={isSmall ? 'fit-content' : '100%'}
       border="1px"
       borderColor={dividerColour}
       rounded="md"

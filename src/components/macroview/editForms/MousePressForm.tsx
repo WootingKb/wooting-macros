@@ -13,9 +13,7 @@ import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { KeyType } from '../../../enums'
-import { HIDLookup } from '../../../maps/HIDmap'
 import { mouseEnumLookup } from '../../../maps/MouseMap'
-import { MousePressAction } from '../../../types'
 
 export default function MousePressForm() {
   const [headingText, setHeadingText] = useState('')

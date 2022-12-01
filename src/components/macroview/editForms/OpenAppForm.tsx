@@ -1,4 +1,4 @@
-import { Divider, Input, Text, Textarea, useColorModeValue } from '@chakra-ui/react'
+import { Divider, Text, Textarea, useColorModeValue } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'

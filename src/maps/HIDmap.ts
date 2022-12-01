@@ -310,35 +310,35 @@ export class Hid {
     }
   }
   static get NP1(): HidInfo {
-    return { HIDcode: 89, displayString: '1', webKeyId: 'Numpad1' }
+    return { HIDcode: 89, displayString: 'NP1', webKeyId: 'Numpad1' }
   }
 
   static get NP2(): HidInfo {
-    return { HIDcode: 90, displayString: '2', webKeyId: 'Numpad2' }
+    return { HIDcode: 90, displayString: 'NP2', webKeyId: 'Numpad2' }
   }
   static get NP3(): HidInfo {
-    return { HIDcode: 91, displayString: '3', webKeyId: 'Numpad3' }
+    return { HIDcode: 91, displayString: 'NP3', webKeyId: 'Numpad3' }
   }
   static get NP4(): HidInfo {
-    return { HIDcode: 92, displayString: '4', webKeyId: 'Numpad4' }
+    return { HIDcode: 92, displayString: 'NP4', webKeyId: 'Numpad4' }
   }
   static get NP5(): HidInfo {
-    return { HIDcode: 93, displayString: '5', webKeyId: 'Numpad5' }
+    return { HIDcode: 93, displayString: 'NP5', webKeyId: 'Numpad5' }
   }
   static get NP6(): HidInfo {
-    return { HIDcode: 94, displayString: '6', webKeyId: 'Numpad6' }
+    return { HIDcode: 94, displayString: 'NP6', webKeyId: 'Numpad6' }
   }
   static get NP7(): HidInfo {
-    return { HIDcode: 95, displayString: '7', webKeyId: 'Numpad7' }
+    return { HIDcode: 95, displayString: 'NP7', webKeyId: 'Numpad7' }
   }
   static get NP8(): HidInfo {
-    return { HIDcode: 96, displayString: '8', webKeyId: 'Numpad8' }
+    return { HIDcode: 96, displayString: 'NP8', webKeyId: 'Numpad8' }
   }
   static get NP9(): HidInfo {
-    return { HIDcode: 97, displayString: '9', webKeyId: 'Numpad9' }
+    return { HIDcode: 97, displayString: 'NP9', webKeyId: 'Numpad9' }
   }
   static get NP0(): HidInfo {
-    return { HIDcode: 98, displayString: '0', webKeyId: 'Numpad0' }
+    return { HIDcode: 98, displayString: 'NP0', webKeyId: 'Numpad0' }
   }
   static get NUMDECIMAL(): HidInfo {
     return {
@@ -385,81 +385,55 @@ export class Hid {
     return { HIDcode: 115, displayString: 'F24', webKeyId: 'F24' }
   }
 
-  /** KEYS TO ADD
-   * Internation Backslash
-   * Context Menu
-   * Power
-   * Numpad Equal
-   * F13 - 24
-   * Open
-   * Help
-   * Again
-   * Undo
-   * Cut
-   * Copy
-   * Paste
-   * Find
-   * Volume Mute
-   * Volume Up
-   * Volume Down
-   * Numpad Comma
-   * International RO
-   * Kana Mode
-   * International Yen
-   * Convert
-   * NonConvert
-   * Lang1 - 4
-   */
-
   static get CONTROLL(): HidInfo {
     return {
       HIDcode: 224,
-      displayString: 'Left Control',
+      displayString: 'L-CTRL',
       webKeyId: 'ControlLeft'
     }
   }
   static get SHIFTL(): HidInfo {
     return {
       HIDcode: 225,
-      displayString: 'Left Shift',
+      displayString: 'L-SHIFT',
       webKeyId: 'ShiftLeft'
     }
   }
   static get ALTL(): HidInfo {
-    return { HIDcode: 226, displayString: 'Left Alt', webKeyId: 'AltLeft' }
+    return { HIDcode: 226, displayString: 'L-ALT', webKeyId: 'AltLeft' }
   }
   static get METAL(): HidInfo {
     return {
       HIDcode: 227,
-      displayString: 'Left Meta',
+      displayString: 'L-Meta',
       webKeyId: 'MetaLeft'
     }
   }
   static get CONTROLR(): HidInfo {
     return {
       HIDcode: 228,
-      displayString: 'Right Control',
+      displayString: 'R-CTRL',
       webKeyId: 'ControlRight'
     }
   }
   static get SHIFTR(): HidInfo {
     return {
       HIDcode: 229,
-      displayString: 'Right Shift',
+      displayString: 'R-SHIFT',
       webKeyId: 'ShiftRight'
     }
   }
   static get ALTR(): HidInfo {
     return {
       HIDcode: 230,
-      displayString: 'Right Alt',
+      displayString: 'R-ALT',
       webKeyId: 'AltRight'
     }
   }
   static get METAR(): HidInfo {
     return {
       HIDcode: 231,
-      displayString: 'Right Meta',
+      displayString: 'R-Meta',
       webKeyId: 'MetaRight'
     }
   }

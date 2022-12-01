@@ -5,7 +5,8 @@ export enum ViewState {
 }
 
 export enum RecordingType {
-  Trigger,
+  MainTrigger,
+  OptionalTrigger,
   Sequence
 }
 
