@@ -134,10 +134,6 @@ impl Macro {
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                     }
                     key_press::KeyType::Up => {
-                        //     send(&rdev::EventType::KeyRelease(
-                        //     SCANCODE_TO_RDEV[&data.keypress],
-                        // ))
-                        //TODO: send only event_type
                         send_channel
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
@@ -146,14 +142,6 @@ impl Macro {
                             .unwrap();
                     }
                     key_press::KeyType::DownUp => {
-                        //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]));
-                        //thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
-                        //send(&rdev::EventType::KeyRelease(
-                        //    SCANCODE_TO_RDEV[&data.keypress],
-                        //));
-
-                        //println!("Found a press/release event, sending it now");
-
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .await
@@ -193,60 +181,7 @@ impl Macro {
 ///Collections are groups of macros.
 type Collections = Vec<Collection>;
 
-// struct MacroExecutor {
-//     data: Macro,
-//     event_channel: Sender<Event>,
-//     task: JoinHandle<()>
-// }
-
-// impl MacroExecutor {
-//     fn new(data: Macro, event_channel: Sender<Event>) -> MacroExecutor {
-//         let (tx, rx) = channel();
-//         let handle = task::spawn(async move {
-//             let is_running = false;
-//             loop {
-
-//                 let event = rx.try_recv().await;
-//                 if let Ok(event) = event {
-//                    // if event === keypress { is_running = true; }
-//                     // if event === keyrelease { is_running = false; }
-//                 }
-
-//                 // if is_running { execute macro }
-
-//                 let event = rx.recv().await;
-//                 match event {
-//                     Some(event) => {
-
-//                         data.execute(event_channel).await;
-//                     }
-//                     None => {
-
-//                     }
-//                 }
-//             }
-//         });
-
-//         MacroExecutor {
-//             data,
-//             event_channel,
-//             task: handle
-//         }
-//     }
-
-//     fn event(&self, event: Event) {
-//         self.event_channel.send(event);
-//     }
-// }
-
-// struct TriggerLookup2<'a>
-// {
-//     macros:  Vec<MacroExecutor>,
-//     lookup: HashMap<u32, Vec<&'a MacroExecutor>>,
-// }
-
 type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
-//type MouseButtonTriggerLookup = HashMap<u32, Vec<Macro>>;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -375,13 +310,9 @@ impl MacroBackend {
                                 EventType::KeyPress(key) => {
                                     let key_to_push = key.clone();
 
-                                    // println!("Key pressed: {:?}", key);
-
                                     let mut keys_pressed = keys_pressed.blocking_write();
 
                                     keys_pressed.push(key_to_push);
-
-                                    // keys_pressed.push(key_to_push);
 
                                     println!("Pressed Keys: {:?}", keys_pressed);
 
@@ -431,9 +362,6 @@ impl MacroBackend {
                                 }
 
                                 EventType::ButtonPress(button) => {
-                                    // BUTTON_TO_HID[key]
-                                    //TODO: Make a simple one click mouse button lookup here
-
                                     println!("Button pressed: {:?}", button);
                                     let converted_button_to_u32: u32 = match button {
                                         rdev::Button::Left => 1,
@@ -444,21 +372,7 @@ impl MacroBackend {
                                         _ => 1,
                                     };
 
-                                    //let mut buttons_pressed = buttons_pressed.blocking_write();
-
                                     println!("Pressed Keys: {:?}", buttons_pressed);
-
-                                    // let pressed_buttons_copy_converted: Vec<u32> = buttons_pressed
-                                    //     .iter()
-                                    //     .map(|x| match x {
-                                    //         rdev::Button::Left => 1,
-                                    //         rdev::Button::Right => 2,
-                                    //         rdev::Button::Middle => 3,
-                                    //         rdev::Button::Unknown(1) => 4,
-                                    //         rdev::Button::Unknown(2) => 5,
-                                    //         _ => 1,
-                                    //     })
-                                    //     .collect();
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
@@ -486,16 +400,6 @@ impl MacroBackend {
                                 }
                                 EventType::ButtonRelease(button) => {
                                     println!("Button released: {:?}", button);
-
-                                    // let button_to_remove = button.clone();
-                                    //
-                                    // buttons_pressed
-                                    //     .blocking_write()
-                                    //     .retain(|x| *x != button_to_remove.into());
-                                    // println!(
-                                    //     "Mouse buttons state: {:?}",
-                                    //     buttons_pressed.blocking_read()
-                                    // );
 
                                     Some(event)
                                 }
@@ -580,8 +484,6 @@ impl MacroData {
     }
 
     pub fn extract_triggers(&self) -> MacroTriggerLookup {
-        // let mut output_tuple: Vec<(rdev::Key, u32)> = vec![];
-
         let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
@@ -590,12 +492,6 @@ impl MacroData {
                     if macros.active == true {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
-                                // output_tuple.push((
-                                //     SCANCODE_TO_RDEV[&data.first().unwrap().keypress],
-                                //     data.first().unwrap().keypress.clone(),
-                                // ));
-                                //output_hashmap.insert_nocheck(data.clone().first().unwrap().keypress, macros.clone());
-
                                 match output_hashmap.get_mut(&data.first().unwrap().keypress) {
                                     Some(value) => value.push(macros.clone()),
                                     None => output_hashmap.insert_nocheck(

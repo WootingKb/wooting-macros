@@ -1,15 +1,12 @@
-use rdev::{Button,Event, EventType};
+use rdev::{Button, Event, EventType};
 use serde_repr;
 use tokio::sync::mpsc::Sender;
 
-
-pub use rdev as rdev;
-
+pub use rdev;
 
 use std::time;
 
 // struct Button(rdev::Button);
-
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -69,7 +66,6 @@ impl From<&rdev::Button> for &MouseButton {
     }
 }
 
-
 impl Into<MouseButton> for rdev::Button {
     fn into(self) -> MouseButton {
         match self {
@@ -101,7 +97,6 @@ impl Into<u32> for &MouseButton {
 // MouseButton::Mouse4 => 0x104,
 // MouseButton::Mouse5 => 0x105,
 // _ => 0x101,
-
 
 // impl From<&Button> for &u32 {
 //     fn from(self) -> Button {
