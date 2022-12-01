@@ -6,6 +6,7 @@ use crate::hid_table::SCANCODE_TO_RDEV;
 use std::time;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
 pub enum MouseAction {
     Press { data: MousePressAction },
     Move { x: i32, y: i32 },
@@ -41,7 +42,9 @@ impl Into<MouseButton> for rdev::Button {
             rdev::Button::Left => MouseButton::Left,
             rdev::Button::Right => MouseButton::Right,
             rdev::Button::Middle => MouseButton::Middle,
-            _ => MouseButton::Left,
+            rdev::Button::Unknown(4) => MouseButton::Mouse4,
+            rdev::Button::Unknown(5) => MouseButton::Mouse5,
+            rdev::Button::Unknown(_) => MouseButton::Left,
         }
     }
 }
@@ -50,7 +53,10 @@ impl Into<u32> for &MouseButton {
         match *self {
             MouseButton::Left => 0x101,
             MouseButton::Right => 0x102,
-            _ => 0x100,
+            MouseButton::Middle => 0x103,
+            MouseButton::Mouse4 => 0x104,
+            MouseButton::Mouse5 => 0x105,
+            _ => 0x101,
         }
     }
 }
