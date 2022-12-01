@@ -56,7 +56,10 @@ async fn get_brightness_devices(
 }
 
 #[tauri::command]
-async fn control_grabbing(state: tauri::State<'_, MacroBackend>, frontend_bool: bool) -> Result<(), ()> {
+async fn control_grabbing(
+    state: tauri::State<'_, MacroBackend>,
+    frontend_bool: bool,
+) -> Result<(), ()> {
     state.is_listening.store(frontend_bool, Ordering::Relaxed);
     Ok(())
 }

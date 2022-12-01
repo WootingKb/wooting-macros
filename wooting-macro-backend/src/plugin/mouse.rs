@@ -1,6 +1,6 @@
 use rdev::{Button, Event, EventType};
-use tokio::sync::mpsc::Sender;
 use serde_repr;
+use tokio::sync::mpsc::Sender;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 use std::time;
@@ -12,7 +12,9 @@ pub enum MouseAction {
     Move { x: i32, y: i32 },
 }
 
-#[derive(Debug, Clone, serde_repr::Serialize_repr, serde_repr::Deserialize_repr, PartialEq, Hash, Eq)]
+#[derive(
+    Debug, Clone, serde_repr::Serialize_repr, serde_repr::Deserialize_repr, PartialEq, Hash, Eq,
+)]
 #[serde(tag = "type")]
 #[repr(u8)]
 // TODO: Implement https://serde.rs/enum-number.html to ensure representation to frontend is correct
@@ -75,30 +77,26 @@ impl MouseAction {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {
                     send_channel
-                        .send(rdev::EventType::ButtonPress(button.into())
-                        )
+                        .send(rdev::EventType::ButtonPress(button.into()))
                         .await
                         .unwrap();
                 }
                 MousePressAction::Up { button } => {
                     send_channel
-                        .send(rdev::EventType::ButtonRelease(button.into())
-                        )
+                        .send(rdev::EventType::ButtonRelease(button.into()))
                         .await
                         .unwrap();
                 }
                 MousePressAction::DownUp { button, duration } => {
                     send_channel
-                        .send(rdev::EventType::ButtonPress(button.into())
-                        )
+                        .send(rdev::EventType::ButtonPress(button.into()))
                         .await
                         .unwrap();
 
                     tokio::time::sleep(time::Duration::from_millis(*duration as u64)).await;
 
                     send_channel
-                        .send(rdev::EventType::ButtonRelease(button.into())
-                        )
+                        .send(rdev::EventType::ButtonRelease(button.into()))
                         .await
                         .unwrap();
                 }
@@ -110,10 +108,9 @@ impl MouseAction {
 
                 send_channel
                     .send(rdev::EventType::MouseMove {
-                            x: *x as f64,
-                            y: *y as f64,
-                        },
-                    )
+                        x: *x as f64,
+                        y: *y as f64,
+                    })
                     .await
                     .unwrap();
             }

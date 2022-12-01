@@ -129,9 +129,7 @@ impl Macro {
                 ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
                         send_channel
-                            .send(rdev::EventType::KeyPress(
-                                    SCANCODE_TO_RDEV[&data.keypress],
-                                ))
+                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .await
                             .unwrap();
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
@@ -158,9 +156,7 @@ impl Macro {
                         //println!("Found a press/release event, sending it now");
 
                         send_channel
-                            .send(rdev::EventType::KeyPress(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))
+                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .await
                             .unwrap();
                         thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));

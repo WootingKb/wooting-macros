@@ -30,35 +30,35 @@ impl SystemAction {
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    send_channel.send(
-                            rdev::EventType::KeyPress(rdev::Key::Unknown(173)))
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(173)))
                         .await
                         .unwrap();
 
-                    send_channel.send(
-                        rdev::EventType::KeyRelease(rdev::Key::Unknown(173)))
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(173)))
                         .await
                         .unwrap();
                 }
                 VolumeAction::LowerVolume => {
-                    send_channel.send(
-                        rdev::EventType::KeyPress(rdev::Key::Unknown(174)))
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(174)))
                         .await
                         .unwrap();
 
-                    send_channel.send(
-                        rdev::EventType::KeyRelease(rdev::Key::Unknown(174)))
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(174)))
                         .await
                         .unwrap();
                 }
                 VolumeAction::IncreaseVolume => {
-                    send_channel.send(
-                        rdev::EventType::KeyPress(rdev::Key::Unknown(175)))
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(175)))
                         .await
                         .unwrap();
 
-                    send_channel.send(
-                        rdev::EventType::KeyRelease(rdev::Key::Unknown(175)))
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(175)))
                         .await
                         .unwrap();
                 }
@@ -86,23 +86,19 @@ impl SystemAction {
                 }
                 ClipboardAction::Copy => {
                     send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft)
-                        )
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
                         .await
                         .unwrap();
                     send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC)
-                        )
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC))
                         .await
                         .unwrap();
                     send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC)
-                        )
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC))
                         .await
                         .unwrap();
                     send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft)
-                        )
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
                         .await
                         .unwrap();
                 }
@@ -115,23 +111,19 @@ impl SystemAction {
                 }
                 ClipboardAction::Paste => {
                     send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft)
-                        )
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
                         .await
                         .unwrap();
                     send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV)
-                        )
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
                         .await
                         .unwrap();
                     send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV)
-                        )
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
                         .await
                         .unwrap();
                     send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft)
-                        )
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
                         .await
                         .unwrap();
                 }
