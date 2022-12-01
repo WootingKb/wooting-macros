@@ -1,4 +1,4 @@
-use rdev::{Button, Event};
+use rdev::{Button, Event, EventType};
 use tokio::sync::mpsc::Sender;
 use serde_repr;
 
@@ -70,47 +70,35 @@ pub enum MousePressAction {
 }
 
 impl MouseAction {
-    pub async fn execute(&self, send_channel: Sender<Event>) {
+    pub async fn execute(&self, send_channel: Sender<EventType>) {
         match &self {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::ButtonPress(button.into()),
-                        })
+                        .send(rdev::EventType::ButtonPress(button.into())
+                        )
                         .await
                         .unwrap();
                 }
                 MousePressAction::Up { button } => {
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::ButtonRelease(button.into()),
-                        })
+                        .send(rdev::EventType::ButtonRelease(button.into())
+                        )
                         .await
                         .unwrap();
                 }
                 MousePressAction::DownUp { button, duration } => {
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::ButtonPress(button.into()),
-                        })
+                        .send(rdev::EventType::ButtonPress(button.into())
+                        )
                         .await
                         .unwrap();
 
                     tokio::time::sleep(time::Duration::from_millis(*duration as u64)).await;
 
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::ButtonRelease(button.into()),
-                        })
+                        .send(rdev::EventType::ButtonRelease(button.into())
+                        )
                         .await
                         .unwrap();
                 }
@@ -121,14 +109,11 @@ impl MouseAction {
                 println!("Display size: {:?}", display_size);
 
                 send_channel
-                    .send(Event {
-                        time: time::SystemTime::now(),
-                        name: None,
-                        event_type: rdev::EventType::MouseMove {
+                    .send(rdev::EventType::MouseMove {
                             x: *x as f64,
                             y: *y as f64,
                         },
-                    })
+                    )
                     .await
                     .unwrap();
             }

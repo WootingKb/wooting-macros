@@ -8,7 +8,7 @@ use std::time;
 use wifi_rs;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
-use rdev::Event;
+use rdev::{Event, EventType};
 use tokio::sync::mpsc::Sender;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -23,66 +23,42 @@ pub enum SystemAction {
 }
 
 impl SystemAction {
-    pub async fn execute(&self, send_channel: Sender<Event>) {
+    pub async fn execute(&self, send_channel: Sender<EventType>) {
         match &self {
             SystemAction::Open { path } => {
                 opener::open(std::path::Path::new(path));
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(173)),
-                        })
+                    send_channel.send(
+                            rdev::EventType::KeyPress(rdev::Key::Unknown(173)))
                         .await
                         .unwrap();
 
-                    send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(173)),
-                        })
+                    send_channel.send(
+                        rdev::EventType::KeyRelease(rdev::Key::Unknown(173)))
                         .await
                         .unwrap();
                 }
                 VolumeAction::LowerVolume => {
-                    send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(174)),
-                        })
+                    send_channel.send(
+                        rdev::EventType::KeyPress(rdev::Key::Unknown(174)))
                         .await
                         .unwrap();
 
-                    send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(174)),
-                        })
+                    send_channel.send(
+                        rdev::EventType::KeyRelease(rdev::Key::Unknown(174)))
                         .await
                         .unwrap();
                 }
                 VolumeAction::IncreaseVolume => {
-                    send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::Unknown(175)),
-                        })
+                    send_channel.send(
+                        rdev::EventType::KeyPress(rdev::Key::Unknown(175)))
                         .await
                         .unwrap();
 
-                    send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::Unknown(175)),
-                        })
+                    send_channel.send(
+                        rdev::EventType::KeyRelease(rdev::Key::Unknown(175)))
                         .await
                         .unwrap();
                 }
@@ -110,35 +86,23 @@ impl SystemAction {
                 }
                 ClipboardAction::Copy => {
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::ControlLeft),
-                        })
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft)
+                        )
                         .await
                         .unwrap();
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::KeyC),
-                        })
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC)
+                        )
                         .await
                         .unwrap();
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::KeyC),
-                        })
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC)
+                        )
                         .await
                         .unwrap();
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::ControlLeft),
-                        })
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft)
+                        )
                         .await
                         .unwrap();
                 }
@@ -151,35 +115,23 @@ impl SystemAction {
                 }
                 ClipboardAction::Paste => {
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::ControlLeft),
-                        })
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft)
+                        )
                         .await
                         .unwrap();
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyPress(rdev::Key::KeyV),
-                        })
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV)
+                        )
                         .await
                         .unwrap();
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::KeyV),
-                        })
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV)
+                        )
                         .await
                         .unwrap();
                     send_channel
-                        .send(Event {
-                            time: time::SystemTime::now(),
-                            name: None,
-                            event_type: rdev::EventType::KeyRelease(rdev::Key::ControlLeft),
-                        })
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft)
+                        )
                         .await
                         .unwrap();
                 }

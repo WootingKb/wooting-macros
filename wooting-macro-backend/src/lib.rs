@@ -118,7 +118,7 @@ impl Macro {
         }
     }
 
-    async fn execute(&self, send_channel: Sender<Event>) {
+    async fn execute(&self, send_channel: Sender<EventType>) {
         for action in &self.sequence {
             match action {
                 //TODO: make a channel for send to accept stuff
@@ -129,13 +129,9 @@ impl Macro {
                 ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
                         send_channel
-                            .send(Event {
-                                time: time::SystemTime::now(),
-                                name: None,
-                                event_type: rdev::EventType::KeyPress(
+                            .send(rdev::EventType::KeyPress(
                                     SCANCODE_TO_RDEV[&data.keypress],
-                                ),
-                            })
+                                ))
                             .await
                             .unwrap();
                         //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
@@ -146,13 +142,9 @@ impl Macro {
                         // ))
                         //TODO: send only event_type
                         send_channel
-                            .send(Event {
-                                time: time::SystemTime::now(),
-                                name: None,
-                                event_type: rdev::EventType::KeyRelease(
-                                    SCANCODE_TO_RDEV[&data.keypress],
-                                ),
-                            })
+                            .send(rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))
                             .await
                             .unwrap();
                     }
@@ -166,24 +158,16 @@ impl Macro {
                         //println!("Found a press/release event, sending it now");
 
                         send_channel
-                            .send(Event {
-                                time: time::SystemTime::now(),
-                                name: None,
-                                event_type: rdev::EventType::KeyPress(
-                                    SCANCODE_TO_RDEV[&data.keypress],
-                                ),
-                            })
+                            .send(rdev::EventType::KeyPress(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))
                             .await
                             .unwrap();
                         thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
                         send_channel
-                            .send(Event {
-                                time: time::SystemTime::now(),
-                                name: None,
-                                event_type: rdev::EventType::KeyRelease(
-                                    SCANCODE_TO_RDEV[&data.keypress],
-                                ),
-                            })
+                            .send(rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))
                             .await
                             .unwrap();
                     }
@@ -713,7 +697,7 @@ pub struct Collection {
 //TODO: trait generic this executing
 //TODO: async
 ///Executes a given macro (requires a reference to a macro).
-async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
+async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
             println!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
@@ -734,9 +718,10 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::Event>) {
     }
 }
 
-async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
+async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-        let result = rchan_execute.recv().await.unwrap().event_type;
+        let result = rchan_execute.recv().await.unwrap();
+
         //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
         thread::sleep(time::Duration::from_millis(20));
@@ -746,7 +731,7 @@ async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::Event>) {
 fn check_macro_execution_efficiently(
     pressed_keys: Vec<u32>,
     trigger_overview: Vec<Macro>,
-    channel_sender: Sender<rdev::Event>,
+    channel_sender: Sender<rdev::EventType>,
 ) -> bool {
     let mut output = false;
     for macros in &trigger_overview {
