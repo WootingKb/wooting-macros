@@ -52,14 +52,14 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
-    // ask about this useeffect
+    // ask about this useeffect and it's dependencies, how to fix
     initItemsMain(
       macro.trigger.data.filter((_, i) => i === macro.trigger.data.length - 1)
     )
     initItemsOptional(
       macro.trigger.data.filter((_, i) => i !== macro.trigger.data.length - 1)
     )
-  }, [])
+  }, [macro])
 
   function onModalSuccessClose() {
     updateAllowWhileOtherKeys(isAllowed)
