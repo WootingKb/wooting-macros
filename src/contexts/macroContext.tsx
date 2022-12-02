@@ -46,11 +46,9 @@ function MacroProvider({ children }: MacroProviderProps) {
     if (currentMacro === undefined) {
       return
     }
-    console.log("setting edit info")
     setIds(currentMacro.sequence.map((_, i) => i + 1))
     setSequence(currentMacro.sequence)
     setMacro(currentMacro)
-    console.log(currentMacro.sequence)
   }, [currentMacro])
 
   const updateMacroName = useCallback(

@@ -35,9 +35,3 @@ export enum MouseButton {
   Mouse4 = 4,
   Mouse5 = 5
 }
-
-export enum VolumeAction {
-  LowerVolume,
-  IncreaseVolume,
-  ToggleMute
-}

@@ -1,4 +1,4 @@
-import { MacroType, ViewState, VolumeAction, MouseButton } from './enums'
+import { MacroType, ViewState, MouseButton } from './enums'
 
 // Contexts
 export interface CurrentSelection {
@@ -74,22 +74,33 @@ export type SystemAction =
   | { type: 'Open'; path: string }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-  | { type: 'Brightness'; action: undefined }
+  | { type: 'Brightness'; action: MonitorBrightnessAction }
 
 // test to see if having different word, i.e. 'path' vs 'data' vs 'action', affects how the data is serialized
 
-export type ClipboardAction = 
-  | { type: 'SetClipboard'; data: string}
-  | { type: 'Copy'}
-  | { type: 'GetClipboard'}
-  | { type: 'Paste'}
+export type ClipboardAction =
+  | { type: 'SetClipboard'; data: string }
+  | { type: 'Copy' }
+  | { type: 'GetClipboard' }
+  | { type: 'Paste' }
+
+export type VolumeAction =
+  | { type: "LowerVolume" }
+  | { type: "IncreaseVolume" }
+  | { type: "ToggleMute" }
+
+export type MonitorBrightnessAction = 
+  | { type: 'Get' }
+  | { type: 'Set'; level: number}
 
 // Input Event Types
-export type TriggerEventType = {
-  type: 'KeyPressEvent'
-  data: Keypress[]
-  allow_while_other_keys: boolean
-}
+export type TriggerEventType =
+  | {
+      type: 'KeyPressEvent'
+      data: Keypress[]
+      allow_while_other_keys: boolean
+    }
+  // | { type: 'MouseEvent'; data: MouseButton }
 
 export type ActionEventType =
   | { type: 'KeyPressEventAction'; data: Keypress }
