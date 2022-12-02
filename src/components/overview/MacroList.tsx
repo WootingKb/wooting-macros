@@ -1,10 +1,9 @@
 import { AddIcon } from '@chakra-ui/icons'
-import { Button, Flex, Grid, GridItem } from '@chakra-ui/react'
+import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
 import { Collection, Macro } from '../../types'
-import FadeInWrapper from '../FadeInWrapper'
 import MacroCard from './MacroCard'
 
 export default function MacroList() {
@@ -21,15 +20,35 @@ export default function MacroList() {
   }
 
   return (
-    <FadeInWrapper transitionDuration={500}>
+    <Box
+      w="100%"
+      h="100%"
+      p="2"
+      overflowY="auto"
+      css={{
+        '&::-webkit-scrollbar': {
+          width: '10px'
+        },
+        '&::-webkit-scrollbar-track': {
+          background: '#f1f1f1',
+          borderRadius: '10px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#888',
+          borderRadius: '10px'
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#555',
+          borderRadius: '10px'
+        }
+      }}
+    >
       <Grid
         w="100%"
         templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        p="2"
         gap="2"
-        overflowY="auto"
       >
-        <Flex minH="163px" justifyContent="center" alignItems="center">
+        <Flex h="163px" justifyContent="center" alignItems="center">
           <Button
             colorScheme="yellow"
             leftIcon={<AddIcon />}
@@ -41,11 +60,11 @@ export default function MacroList() {
           </Button>
         </Flex>
         {currentCollection.macros.map((macro: Macro, index: number) => (
-          <GridItem w="100%" key={`${index}:${macro.name}`}>
+          <GridItem w="100%" h="163px" key={`${index}:${macro.name}`}>
             <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
           </GridItem>
         ))}
       </Grid>
-    </FadeInWrapper>
+    </Box>
   )
 }
