@@ -144,6 +144,7 @@ export default function MousePressForm() {
         <GridItem w="100%">
           <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
             <Input
+              type="number"
               variant="outline"
               borderColor="gray.400"
               isDisabled={mousepressType === KeyType.DownUp ? false : true}

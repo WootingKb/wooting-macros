@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
 import { mouseEnumLookup } from '../../../maps/MouseMap'
+import { sysEventLookup } from '../../../maps/SystemEventMap'
 import { ActionEventType } from '../../../types'
 
 type Props = {
@@ -36,7 +37,7 @@ export default function SortableItem({ id, element }: Props) {
         )
         break
       case 'SystemEventAction':
-        setDisplayText(element.data.type.toString())
+        setDisplayText(sysEventLookup.get(element.data.type)?.displayString)
         break
       default:
         break
