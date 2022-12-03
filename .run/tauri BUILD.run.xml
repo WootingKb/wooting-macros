@@ -2,7 +2,6 @@
     <configuration default="false" name="tauri BUILD" type="js.build_tools.npm">
         <package-json value="$PROJECT_DIR$/package.json"/>
         <command value="build"/>
-        <arguments value="dev"/>
         <node-interpreter value="project"/>
         <envs/>
         <method v="2"/>

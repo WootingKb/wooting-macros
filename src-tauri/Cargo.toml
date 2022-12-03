@@ -1,6 +1,6 @@
 [package]
 name = "wooting-macros"
-version = "0.2.0"
+version = "0.5.0"
 description = "Macro software made by Wooting."
 authors = ["David Manca, Khang"]
 license = ""
