@@ -37,7 +37,29 @@ export default function SortableItem({ id, element }: Props) {
         )
         break
       case 'SystemEventAction':
-        setDisplayText(sysEventLookup.get(element.data.type)?.displayString)
+        switch (element.data.type) {
+          case 'Open':
+            setDisplayText(sysEventLookup.get(element.data.type)?.displayString)
+            break
+          case 'Volume':
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
+            break
+          case 'Clipboard':
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
+            break
+          case 'Brightness':
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
+            break
+          default:
+            setDisplayText('err')
+            break
+        }
         break
       default:
         break

@@ -66,7 +66,7 @@ export type MousePressAction =
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
-  | { type: 'Open'; path: string }
+  | { type: 'Open'; action: string }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
   | { type: 'Brightness'; action: MonitorBrightnessAction }

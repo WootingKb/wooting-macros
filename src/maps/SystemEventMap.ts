@@ -2,6 +2,7 @@ import { SystemAction } from '../types'
 
 export interface SystemEventInfo {
   type: string
+  subtype: string
   displayString: string
   defaultData: SystemAction
 }
@@ -10,13 +11,15 @@ export class SystemEvent {
   static get OpenApplication(): SystemEventInfo {
     return {
       type: 'Open',
+      subtype: 'Open',
       displayString: 'Open Application',
-      defaultData: { type: 'Open', path: '' }
+      defaultData: { type: 'Open', action : '' }
     }
   }
   static get Clipboard(): SystemEventInfo {
     return {
       type: 'Clipboard',
+      subtype: 'PasteUserDefinedString',
       displayString: 'Paste Text',
       defaultData: {
         type: 'Clipboard',
@@ -27,6 +30,7 @@ export class SystemEvent {
   static get Sarcasm(): SystemEventInfo {
     return {
       type: 'Clipboard',
+      subtype: 'Sarcasm',
       displayString: 'Sarcastify Text',
       defaultData: {
         type: 'Clipboard',
@@ -37,6 +41,7 @@ export class SystemEvent {
   static get IncreaseVolume(): SystemEventInfo {
     return {
       type: 'Volume',
+      subtype: 'IncreaseVolume',
       displayString: 'Increase Volume',
       defaultData: { type: 'Volume', action: { type: 'IncreaseVolume' } }
     }
@@ -44,6 +49,7 @@ export class SystemEvent {
   static get DecreaseVolume(): SystemEventInfo {
     return {
       type: 'Volume',
+      subtype: 'LowerVolume',
       displayString: 'Decrease Volume',
       defaultData: { type: 'Volume', action: { type: 'LowerVolume' } }
     }
@@ -51,6 +57,7 @@ export class SystemEvent {
   static get ToggleMuteVolume(): SystemEventInfo {
     return {
       type: 'Volume',
+      subtype: 'ToggleMute',
       displayString: 'Toggle Mute Volume',
       defaultData: { type: 'Volume', action: { type: 'ToggleMute' } }
     }
@@ -58,6 +65,7 @@ export class SystemEvent {
   static get SetBrightness(): SystemEventInfo {
     return {
       type: 'Brightness',
+      subtype: 'Set',
       displayString: 'Set Brightness',
       defaultData: { type: 'Brightness', action: { type: 'Set', level: 75 } }
     }
@@ -65,6 +73,7 @@ export class SystemEvent {
   static get IncreaseBrightness(): SystemEventInfo {
     return {
       type: 'Brightness',
+      subtype: 'Increase',
       displayString: 'Increase Brightness',
       defaultData: { type: 'Brightness', action: { type: 'Increase' } }
     }
@@ -72,6 +81,7 @@ export class SystemEvent {
   static get DecreaseBrightness(): SystemEventInfo {
     return {
       type: 'Brightness',
+      subtype: 'Decrease',
       displayString: 'Decrease Brightness',
       defaultData: { type: 'Brightness', action: { type: 'Decrease' } }
     }
@@ -92,6 +102,6 @@ export class SystemEvent {
 
 export const sysEventLookup = new Map<string, SystemEventInfo>(
   SystemEvent.all
-    .filter((event) => event.type !== undefined)
-    .map((event) => [event.type!, event])
+    .filter((event) => event.subtype !== undefined)
+    .map((event) => [event.subtype!, event])
 )
