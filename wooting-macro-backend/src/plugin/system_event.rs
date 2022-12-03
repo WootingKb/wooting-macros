@@ -220,7 +220,7 @@ impl SystemAction {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Monitor {
     pub name: String,
     pub current_brightness: u32,
