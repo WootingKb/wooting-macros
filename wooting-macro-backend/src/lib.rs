@@ -363,10 +363,10 @@ impl MacroBackend {
                                 EventType::KeyRelease(key) => {
                                     let key_to_remove = key.clone();
 
-                                    // keys_pressed
-                                    //     .blocking_write()
-                                    //     .retain(|x| *x != key_to_remove);
-                                    // println!("Key state: {:?}", keys_pressed.blocking_read());
+                                    keys_pressed
+                                        .blocking_write()
+                                        .retain(|x| *x != key_to_remove);
+                                    println!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
                                 }
