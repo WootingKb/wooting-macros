@@ -623,7 +623,7 @@ async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) 
 
         //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
-        thread::sleep(time::Duration::from_millis(20));
+        thread::sleep(time::Duration::from_millis(50));
     }
 }
 

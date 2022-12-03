@@ -53,12 +53,12 @@ async fn set_macros(
 
 
 #[tauri::command]
-async fn get_monitor_data(state: tauri::State<'_, MacroBackend>) -> Result<(), ()> {
+async fn get_monitor_data(state: tauri::State<'_, MacroBackend>) -> Result<Vec<Monitor>, ()> {
     let mut monitors = backend_load_monitors().await;
     let mut state_writing = state.display_list.write().await;
-    *state_writing = monitors;
+    *state_writing = monitors.clone();
 
-    Ok(())
+    Ok(monitors)
 }
 
 
