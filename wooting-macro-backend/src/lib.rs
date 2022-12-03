@@ -28,6 +28,7 @@ use crate::plugin::system_event;
 use crate::plugin::system_event::{
     ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
 };
+use crate::plugin::system_event::{Monitor};
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
 
@@ -204,6 +205,7 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
+    pub display_list: Arc<RwLock<Vec<Monitor>>>
 }
 
 impl MacroBackend {
@@ -216,6 +218,7 @@ impl MacroBackend {
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
+            display_list: Arc::new(RwLock::from(vec![]))
         }
     }
 
@@ -258,7 +261,13 @@ impl MacroBackend {
         // let channel_execute_copy = schan_execute.clone();
 
         // task::spawn(async move {
-        //     //==============TESTING GROUND======================
+            //==============TESTING GROUND======================
+        let result = self.display_list.read().await;
+        println!("Display list: {:?}", result);
+
+
+
+
         //     let action_type = ActionEventType::MouseEventAction {
         //         data: MouseAction::Move { x: 1920, y: 1080 },
         //     };

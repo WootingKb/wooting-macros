@@ -5,6 +5,7 @@ use copypasta::{ClipboardContext, ClipboardProvider};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{executor::block_on, TryStreamExt};
 use std::time;
+use futures::{AsyncReadExt, AsyncWriteExt, StreamExt, TryFutureExt};
 use wifi_rs;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
@@ -136,22 +137,26 @@ impl SystemAction {
 }
 
 #[derive(Debug, Clone)]
-struct Monitor {
-    name: String,
-    current_brightness: u32,
-    description: String,
-    registry_key: String,
+pub struct Monitor {
+    pub name: String,
+    pub current_brightness: u32,
+    pub description: String,
+    pub registry_key: String,
 }
 
-#[tauri::command]
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn get_data_to_frontend() -> Vec<Monitor> {
+
+pub async fn backend_load_monitors() -> Vec<Monitor>  {
     let mut monitors = Vec::new();
 
-
-    // let (count, dev) = brightness::brightness_devices();
-
-    println!("{:#?}", monitors);
+    for i in brightness::brightness_devices().into_future().await.0.unwrap() {
+        //println!("{:#?}", i);
+        monitors.push( Monitor {
+            name: i.device_name().into_future().await.unwrap(),
+            current_brightness: i.get().into_future().await.unwrap(),
+            description: i.device_description().unwrap(),
+            registry_key: i.device_registry_key().unwrap(),
+        });
+    }
 
     monitors
 

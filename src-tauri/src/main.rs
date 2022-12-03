@@ -12,6 +12,9 @@ use tauri::{
 };
 
 use wooting_macro_backend::*;
+use wooting_macro_backend::plugin::system_event::Monitor;
+
+use crate::plugin::system_event::backend_load_monitors;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -48,6 +51,17 @@ async fn set_macros(
     Ok(())
 }
 
+
+#[tauri::command]
+async fn get_monitor_data(state: tauri::State<'_, MacroBackend>) -> Result<(), ()> {
+    let mut monitors = backend_load_monitors().await;
+    let mut state_writing = state.display_list.write().await;
+    *state_writing = monitors;
+
+    Ok(())
+}
+
+
 #[tauri::command]
 async fn get_brightness_devices(
     state: tauri::State<'_, MacroBackend>,
@@ -75,6 +89,7 @@ async fn main() {
     println!("Running the macro backend");
     backend.init().await;
 
+
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
@@ -95,7 +110,8 @@ async fn main() {
             get_config,
             set_config,
             get_brightness_devices,
-            control_grabbing
+            control_grabbing,
+            get_monitor_data
         ])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
