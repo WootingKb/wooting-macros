@@ -23,9 +23,9 @@ export enum KeyType {
 }
 
 export enum MouseButton {
-  Left = 1,
-  Right = 2,
-  Middle = 3,
-  Mouse4 = 4,
-  Mouse5 = 5
+  Left = 257,
+  Right = 258,
+  Middle = 259,
+  Mouse4 = 260,
+  Mouse5 = 261
 }
