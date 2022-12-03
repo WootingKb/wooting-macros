@@ -1,14 +1,12 @@
-import { useColorModeValue, Divider, Text, Input } from "@chakra-ui/react"
-import { useState, useEffect } from "react"
-import { useMacroContext } from "../../../contexts/macroContext"
-import { useSelectedElement } from "../../../contexts/selectors"
-
+import { Divider, Text, Input } from '@chakra-ui/react'
+import { useState, useEffect } from 'react'
+import { useMacroContext } from '../../../contexts/macroContext'
+import { useSelectedElement } from '../../../contexts/selectors'
 
 export default function ScreenBrightnessForm() {
   const [brightnessVal, setBrightnessVal] = useState(75)
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (selectedElement === undefined) {
@@ -29,6 +27,7 @@ export default function ScreenBrightnessForm() {
   }, [selectedElement])
 
   const onValueChange = (event: any) => {
+    // target doesn't exist for React.ChangeEventHandler<HTMLInputElement> for some reason?? same for other components like textarea
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }
@@ -37,7 +36,9 @@ export default function ScreenBrightnessForm() {
     }
 
     const newValue = parseInt(event.target.value)
-    if (newValue === undefined) { return }
+    if (newValue === undefined) {
+      return
+    }
 
     setBrightnessVal(newValue)
     const temp = { ...selectedElement }
@@ -53,9 +54,14 @@ export default function ScreenBrightnessForm() {
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         {'Set Screen Brightness'}
       </Text>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       <Text fontSize={['xs', 'sm', 'md']}>Brightness value</Text>
-      <Input type="number" value={brightnessVal} onChange={onValueChange} placeholder="path"/>
+      <Input
+        type="number"
+        value={brightnessVal}
+        onChange={onValueChange}
+        placeholder="path"
+      />
     </>
   )
 }

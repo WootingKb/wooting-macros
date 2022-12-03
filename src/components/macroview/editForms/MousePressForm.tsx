@@ -7,7 +7,6 @@ import {
   Button,
   Input,
   Text,
-  useColorModeValue
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -21,7 +20,6 @@ export default function MousePressForm() {
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (selectedElement === undefined) {
@@ -96,7 +94,7 @@ export default function MousePressForm() {
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       <Grid templateRows={'20px 1fr'} gap="2" w="100%">
         <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']}>Type of keystroke</Text>

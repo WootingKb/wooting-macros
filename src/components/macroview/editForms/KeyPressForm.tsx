@@ -7,7 +7,6 @@ import {
   Button,
   Input,
   Text,
-  useColorModeValue
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'

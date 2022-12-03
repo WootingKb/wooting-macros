@@ -12,7 +12,7 @@ import { checkIfStringIsNonNumeric } from '../../utils'
 
 export default function MacroTypeArea() {
   const { macro, updateMacroType } = useMacroContext()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
   const typeIcons = [
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +68,7 @@ export default function MacroTypeArea() {
       py="4px"
       px="16px"
       border="1px"
-      borderColor={dividerColour}
+      borderColor={borderColour}
       rounded="md"
       spacing="16px"
     >
@@ -91,7 +91,7 @@ export default function MacroTypeArea() {
             ))}
         </HStack>
       </VStack>
-      <Divider orientation="vertical" borderColor={dividerColour} />
+      <Divider orientation="vertical" />
       <VStack w="full" h="full" alignItems="normal" justifyContent="center">
         <Text fontWeight="semibold" fontSize={['md', 'lg', 'xl']}>
           {macro.macro_type}

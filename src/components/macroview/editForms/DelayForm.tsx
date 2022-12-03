@@ -6,7 +6,6 @@ import {
   Input,
   Button,
   Text,
-  useColorModeValue
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -16,7 +15,6 @@ export default function DelayForm() {
   const [delayDuration, setDelayDuration] = useState(0)
   const { selectedElementId, updateElement } = useMacroContext()
   const selectedElement = useSelectedElement()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (selectedElement === undefined) {
@@ -45,7 +43,7 @@ export default function DelayForm() {
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         {'Delay Element'}
       </Text>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       <Grid templateRows={'20px 1fr'} gap="2" w="100%">
         <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
