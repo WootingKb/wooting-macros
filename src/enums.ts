@@ -4,12 +4,6 @@ export enum ViewState {
   Editview
 }
 
-export enum RecordingType {
-  MainTrigger,
-  OptionalTrigger,
-  Sequence
-}
-
 export enum MacroType {
   Single,
   Toggle,

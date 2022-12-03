@@ -31,7 +31,7 @@ export type MacroState = {
   selectedElementId: number | undefined
   updateMacroName: (newName: string) => void
   updateMacroType: (newType: MacroType) => void
-  updateTriggerKeys: (newArray: Keypress[]) => void
+  updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
   onElementAdd: (newElement: ActionEventType) => void
   updateElement: (newElement: ActionEventType, index: number) => void
@@ -42,18 +42,6 @@ export type MacroState = {
   overwriteIds: (newArray: number[]) => void
   updateSelectedElementId: (newIndex: number | undefined) => void
   updateMacro: () => void
-}
-
-export type SequenceState = {
-  sequence: ActionEventType[]
-  ids: number[]
-  selectedElementId: number
-  onElementAdd: (element: ActionEventType) => void
-  onElementDelete: (index: number) => void
-  overwriteSequence: (newSequence: ActionEventType[]) => void
-  onIdAdd: (newId: number) => VoidExpression
-  overwriteIds: (newArray: number[]) => void
-  updateSelectedElementId: (newIndex: number) => void
 }
 
 // Action Event Structs
@@ -85,13 +73,13 @@ export type ClipboardAction =
   | { type: 'Paste' }
 
 export type VolumeAction =
-  | { type: "LowerVolume" }
-  | { type: "IncreaseVolume" }
-  | { type: "ToggleMute" }
+  | { type: 'LowerVolume' }
+  | { type: 'IncreaseVolume' }
+  | { type: 'ToggleMute' }
 
-export type MonitorBrightnessAction = 
+export type MonitorBrightnessAction =
   | { type: 'Get' }
-  | { type: 'Set'; level: number}
+  | { type: 'Set'; level: number }
 
 // Input Event Types
 export type TriggerEventType =
@@ -100,7 +88,9 @@ export type TriggerEventType =
       data: Keypress[]
       allow_while_other_keys: boolean
     }
-  // | { type: 'MouseEvent'; data: MouseButton }
+  | { type: 'MouseEvent'; data: MouseButton }
+
+export type TriggerTypes = Keypress[] | MouseButton[]
 
 export type ActionEventType =
   | { type: 'KeyPressEventAction'; data: Keypress }

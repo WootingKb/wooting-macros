@@ -8,7 +8,12 @@ import {
   useEffect
 } from 'react'
 import { MacroType, ViewState } from '../enums'
-import { MacroState, ActionEventType, Keypress, Macro } from '../types'
+import {
+  MacroState,
+  ActionEventType,
+  Macro,
+  TriggerEventType
+} from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 
@@ -69,11 +74,12 @@ function MacroProvider({ children }: MacroProviderProps) {
     [setMacro]
   )
 
-  const updateTriggerKeys = useCallback(
-    (newArray: Keypress[]) => {
+  const updateTrigger = useCallback(
+    (newElement: TriggerEventType) => {
       setMacro((macro) => {
         const temp = { ...macro }
-        temp.trigger.data = newArray
+        temp.trigger = newElement
+        console.log(temp)
         return temp
       })
     },
@@ -84,7 +90,9 @@ function MacroProvider({ children }: MacroProviderProps) {
     (value: boolean) => {
       setMacro((macro) => {
         const temp = { ...macro }
-        temp.trigger.allow_while_other_keys = value
+        if (temp.trigger.type === 'KeyPressEvent') {
+          temp.trigger.allow_while_other_keys = value
+        }
         return temp
       })
     },
@@ -177,6 +185,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       ...macro,
       sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
     }
+    console.log(itemToAdd)
 
     const newCollection = { ...currentCollection }
 
@@ -215,7 +224,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       selectedElementId,
       updateMacroName,
       updateMacroType,
-      updateTriggerKeys,
+      updateTrigger: updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,
       updateElement,
@@ -234,7 +243,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       selectedElementId,
       updateMacroName,
       updateMacroType,
-      updateTriggerKeys,
+      updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,
       updateElement,

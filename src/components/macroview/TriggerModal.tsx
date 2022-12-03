@@ -9,20 +9,22 @@ import {
   ModalFooter,
   Button,
   Divider,
-  useColorModeValue,
   HStack,
   VStack,
   Kbd,
   Switch,
-  Stack
+  Stack,
+  Flex,
+  Spacer
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
-import { RecordingType } from '../../enums'
-import useRecording from '../../hooks/useRecording'
+import { MouseButton } from '../../enums'
+import useRecordingTrigger from '../../hooks/useRecordingTrigger'
 import { HIDLookup } from '../../maps/HIDmap'
 import { mouseEnumLookup } from '../../maps/MouseMap'
-import { Keypress, MousePressAction } from '../../types'
+import { Keypress } from '../../types'
+import { isKeypressArray } from '../../utils'
 
 type Props = {
   isOpen: boolean
@@ -30,64 +32,60 @@ type Props = {
 }
 
 export default function TriggerModal({ isOpen, onClose }: Props) {
-  const { macro, updateTriggerKeys, updateAllowWhileOtherKeys } =
-    useMacroContext()
+  const { macro, updateTrigger, updateAllowWhileOtherKeys } = useMacroContext()
   const {
-    recording: isRecordingMain,
-    startRecording: startRecordingMain,
-    stopRecording: stopRecordingMain,
-    items: mainTriggerKey,
-    resetItems: resetItemsMain,
-    initItems: initItemsMain
-  } = useRecording(RecordingType.MainTrigger)
-  const {
-    recording: isRecordingOptional,
-    startRecording: startRecordingOptional,
-    stopRecording: stopRecordingOptional,
-    items: optionalTriggerKeys,
-    resetItems: resetItemsOptional,
-    initItems: initItemsOptional
-  } = useRecording(RecordingType.OptionalTrigger)
+    recording,
+    startRecording,
+    stopRecording,
+    items,
+    resetItems,
+    initItems
+  } = useRecordingTrigger()
   const [isAllowed, setIsAllowed] = useState(false)
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const [isTriggerMousepress, setIsTriggerMousepress] = useState(false)
 
   useEffect(() => {
     // ask about this useeffect and it's dependencies, how to fix
-    initItemsMain(
-      macro.trigger.data.filter((_, i) => i === macro.trigger.data.length - 1)
-    )
-    initItemsOptional(
-      macro.trigger.data.filter((_, i) => i !== macro.trigger.data.length - 1)
-    )
-  }, [macro])
+    if (macro.trigger.type === 'KeyPressEvent') {
+      initItems(macro.trigger.data)
+      setIsTriggerMousepress(false)
+    } else {
+      initItems([macro.trigger.data])
+      setIsTriggerMousepress(true)
+    }
+  }, [initItems, macro])
 
-  function onModalSuccessClose() {
-    updateAllowWhileOtherKeys(isAllowed)
-    // updateTriggerKeys([...optionalTriggerKeys, mainTriggerKey])  // use instead when trigger keys can take in mouse input
-    updateTriggerKeys(
-      optionalTriggerKeys
-        .filter((element): element is Keypress => 'keypress' in element)
-        .concat(
-          mainTriggerKey.filter(
-            (element): element is Keypress => 'keypress' in element
-          )
-        )
-    )
+  useEffect(() => {
+    setIsTriggerMousepress(!isKeypressArray(items))
+  }, [items])
+
+
+  const onModalSuccessClose = () => {
+    if (isKeypressArray(items)) {
+      updateAllowWhileOtherKeys(isAllowed)
+      updateTrigger({
+        type: 'KeyPressEvent',
+        data: items,
+        allow_while_other_keys: isAllowed
+      })
+    } else {
+      updateTrigger({
+        type: 'MouseEvent',
+        data: items[0]
+      })
+    }
     onClose()
   }
 
-  function getDisplayString(element: Keypress | MousePressAction): string {
-    if (element === undefined) {
-      return 'err'
-    }
-    if ('keypress' in element) {
-      const displayString = HIDLookup.get(element.keypress)?.displayString
+  const getDisplayString = (element: Keypress | MouseButton): string => {
+    if (typeof element === 'number') {
+      const displayString = mouseEnumLookup.get(element)?.displayString
       if (displayString === undefined) {
         return 'error'
       }
       return displayString
     } else {
-      const displayString = mouseEnumLookup.get(element.button)?.displayString
+      const displayString = HIDLookup.get(element.keypress)?.displayString
       if (displayString === undefined) {
         return 'error'
       }
@@ -100,7 +98,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Trigger Keys</ModalHeader>
-        <Divider w="90%" alignSelf="center" borderColor={dividerColour} />
+        <Divider w="90%" alignSelf="center" />
         <ModalBody>
           <Stack
             direction={['column']}
@@ -108,60 +106,30 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             mb={['4', '8']}
           >
             <VStack alignItems="start" spacing="0">
-              <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']}>
-                Main Trigger Key
-              </Text>
               <Text fontSize={['2xs', 'xs', 'sm']}>
-                Set any non-modifer key to use to trigger the macro.
+                Set any up to 4 keys (1 non-modifer, up to 3 modifiers) or set a
+                single mouse button to use as the trigger.
               </Text>
             </VStack>
-            <HStack justifyContent="end" spacing={['32', '48', '56', '64']}>
-              {mainTriggerKey.map((element, index) => (
-                <Kbd key={index}>{getDisplayString(element)}</Kbd>
-              ))}
-              <Button
-                leftIcon={<EditIcon />}
-                onClick={
-                  isRecordingMain ? stopRecordingMain : startRecordingMain
-                }
-                colorScheme={isRecordingMain ? 'red' : 'gray'}
-              >
-                {isRecordingMain ? 'Stop' : 'Record'}
-              </Button>
-            </HStack>
-          </Stack>
-          <Stack direction={['column']} justifyContent="space-between">
-            <VStack alignItems="start" spacing="0">
-              <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']}>
-                Optional Trigger Keys
-              </Text>
-              <Text fontSize={['2xs', 'xs', 'sm']}>
-                Set up to 3 modifier keys (e.g. CTRL) to use in the trigger.
-              </Text>
-            </VStack>
-            <HStack justifyContent="end" spacing={['16', '28', '32', '40']}>
+            <Flex justifyContent="end">
               <HStack>
-                {optionalTriggerKeys.map((element, index) => (
-                  <Kbd key={index}>{getDisplayString(element)}</Kbd> // ask about the keys here
+                {items.map((element, index) => (
+                  <Kbd key={index}>{getDisplayString(element)}</Kbd>
                 ))}
               </HStack>
+              <Spacer />
               <Button
                 leftIcon={<EditIcon />}
-                onClick={
-                  isRecordingOptional
-                    ? stopRecordingOptional
-                    : startRecordingOptional
-                }
-                colorScheme={isRecordingOptional ? 'red' : 'gray'}
+                onClick={recording ? stopRecording : startRecording}
+                colorScheme={recording ? 'red' : 'gray'}
               >
-                {isRecordingOptional ? 'Stop' : 'Record'}
+                {recording ? 'Stop' : 'Record'}
               </Button>
-            </HStack>
+            </Flex>
           </Stack>
           <Divider
             w="100%"
             alignSelf="center"
-            borderColor={dividerColour}
             my={['4', '8']}
           />
           <HStack justifyContent="space-between">
@@ -180,6 +148,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               colorScheme="yellow"
               defaultChecked={isAllowed}
               isChecked={isAllowed}
+              isDisabled={isTriggerMousepress}
               onChange={() => setIsAllowed(!isAllowed)}
             />
           </HStack>
@@ -189,8 +158,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             mr={3}
             onClick={() => {
               onClose()
-              resetItemsMain()
-              resetItemsOptional()
+              resetItems()
             }}
           >
             Close
@@ -198,7 +166,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
           <Button
             colorScheme="yellow"
             onClick={onModalSuccessClose}
-            isDisabled={mainTriggerKey.length !== 1}
+            isDisabled={!isTriggerMousepress && items.length === 0} // need to update this condition to not enable when only modifier keys are added
           >
             Save
           </Button>

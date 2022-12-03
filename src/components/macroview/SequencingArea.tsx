@@ -27,17 +27,21 @@ import { useEffect, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
-import { RecordingType } from '../../enums'
-import useRecording from '../../hooks/useRecording'
 import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
+import useRecordingSequence from '../../hooks/useRecordingSequence'
+
+const isKeypress = (
+  e: Keypress | MousePressAction | undefined
+): e is Keypress => {
+  return (e as Keypress).keypress !== undefined
+}
 
 // ask about how to deal with dndkit's types, e.g. UniqueIdentifier
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
-  const { recording, startRecording, stopRecording, items } = useRecording(
-    RecordingType.Sequence
-  )
+  const { recording, startRecording, stopRecording, item, timeSinceLast } =
+    useRecordingSequence()
   const { sequence, ids, onElementAdd, overwriteIds } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
@@ -49,6 +53,7 @@ export default function SequencingArea() {
   )
 
   function handleDragEnd(event: any) {
+    // events are objects, how to deal with getting the library's types easily?
     const { active, over } = event
 
     if (over === null) {
@@ -63,32 +68,37 @@ export default function SequencingArea() {
     setActiveId(undefined)
   }
 
-  function handleDragStart(event: any) { // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
+  function handleDragStart(event: any) {
+    // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
     const { active } = event
     setActiveId(active.id)
   }
 
   useEffect(() => {
-    if (items.length > 0) {
-      const element = items[items.length - 1]
-
-      const isKeypress = (e: Keypress | MousePressAction): e is Keypress => {
-        return (e as Keypress).keypress !== undefined
-      }
-
-      if (isKeypress(element)) {
-        onElementAdd({
-          type: 'KeyPressEventAction',
-          data: element
-        })
-      } else {
-        onElementAdd({
-          type: 'MouseEventAction',
-          data: { type: 'Press', data: element }
-        })
-      }
+    // When item changes, add it to the sequence
+    if (item === undefined) {
+      return
     }
-  }, [items, onElementAdd])
+    // TODO: add a delay based on the difference in event timestamps
+    // if (timeSinceLast !== undefined && timeSinceLast > 0) {
+    //   onElementAdd({
+    //     type: 'DelayEventAction',
+    //     data: timeSinceLast
+    //   })
+    // }
+
+    if (isKeypress(item)) {
+      onElementAdd({
+        type: 'KeyPressEventAction',
+        data: item
+      })
+    } else {
+      onElementAdd({
+        type: 'MouseEventAction',
+        data: { type: 'Press', data: item }
+      })
+    }
+  }, [item, onElementAdd])
 
   return (
     <VStack w="41%" h="full" p="3">
@@ -132,7 +142,11 @@ export default function SequencingArea() {
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
             {ids.map((id) => (
-              <SortableWrapper id={id} key={id} isSmall={sequence[id - 1].type === "DelayEventAction"}>
+              <SortableWrapper
+                id={id}
+                key={id}
+                isSmall={sequence[id - 1].type === 'DelayEventAction'}
+              >
                 <SortableItem id={id} element={sequence[id - 1]} />
               </SortableWrapper>
             ))}

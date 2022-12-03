@@ -7,17 +7,19 @@ import {
   Text,
   Divider,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
+  Box
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../contexts/macroContext'
 import { HIDLookup } from '../../maps/HIDmap'
+import { mouseEnumLookup } from '../../maps/MouseMap'
 import { Keypress } from '../../types'
 import TriggerModal from './TriggerModal'
 
 export default function TriggerArea() {
   const { macro } = useMacroContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
     <VStack
@@ -26,7 +28,7 @@ export default function TriggerArea() {
       py="4px"
       px="16px"
       border="1px"
-      borderColor={dividerColour}
+      borderColor={borderColour}
       rounded="md"
       justifyContent="center"
     >
@@ -35,27 +37,28 @@ export default function TriggerArea() {
           Trigger Key(s)
         </Text>
       </HStack>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       <HStack w="100%" justifyContent="space-between">
         <VStack alignItems="normal" w="full" h="full">
           <HStack spacing="4px" h="full">
-            {macro.trigger.data.map((key: Keypress) => (
+            {macro.trigger.type === "KeyPressEvent" && macro.trigger.data.map((key: Keypress) => (
               <Kbd key={key.keypress}>
                 {HIDLookup.get(key.keypress)?.displayString}
               </Kbd>
             ))}
+            {macro.trigger.type === "MouseEvent" &&
+              <Box>
+                {mouseEnumLookup.get(macro.trigger.data)?.displayString}
+              </Box>}
           </HStack>
         </VStack>
         <VStack alignItems="normal">
-          <Button
-            leftIcon={<EditIcon />}
-            onClick={onOpen}
-          >
+          <Button leftIcon={<EditIcon />} onClick={onOpen}>
             Edit
           </Button>
         </VStack>
       </HStack>
-      <TriggerModal isOpen={isOpen} onClose={onClose}/>
+      <TriggerModal isOpen={isOpen} onClose={onClose} />
     </VStack>
   )
 }

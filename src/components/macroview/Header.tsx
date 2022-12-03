@@ -63,7 +63,8 @@ export default function MacroviewHeader({ isEditing }: Props) {
       <Button
         colorScheme="yellow"
         isDisabled={
-          macro.trigger.data.length === 0 ||
+          (macro.trigger.type === "KeyPressEvent" && macro.trigger.data.length === 0) ||
+          (macro.trigger.type === "MouseEvent" && macro.trigger.data === undefined) ||
           sequence.length === 0 ||
           macro.name === ''
         }

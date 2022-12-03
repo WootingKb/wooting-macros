@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default function Macroview({ isEditing }: Props) {
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
     <VStack h="100%" spacing="0px" overflow="hidden">
@@ -26,7 +26,7 @@ export default function Macroview({ isEditing }: Props) {
         w="100%"
         h="calc(100% - 190px)"
         borderTop="1px"
-        borderColor={dividerColour}
+        borderColor={borderColour}
         spacing="0"
       >
         {/** Bottom Panels */}

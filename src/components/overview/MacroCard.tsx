@@ -11,13 +11,15 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useColorModeValue
+  useColorModeValue,
+  Box
 } from '@chakra-ui/react'
 import { EditIcon, StarIcon } from '@chakra-ui/icons'
 import { Keypress, Macro } from '../../types'
 import { HIDLookup } from '../../maps/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
+import { mouseEnumLookup } from '../../maps/MouseMap'
 
 type Props = {
   macro: Macro
@@ -101,11 +103,15 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         Trigger Keys:
       </Text>
       <Flex w="100%" gap="4px">
-        {macro.trigger.data.map((key: Keypress) => (
-          <Kbd key={key.keypress} p="1">
-            {HIDLookup.get(key.keypress)?.displayString}
-          </Kbd>
-        ))}
+        {macro.trigger.type === 'KeyPressEvent' &&
+          macro.trigger.data.map((key: Keypress) => (
+            <Kbd key={key.keypress}>
+              {HIDLookup.get(key.keypress)?.displayString}
+            </Kbd>
+          ))}
+        {macro.trigger.type === 'MouseEvent' && (
+          <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
+        )}
       </Flex>
       <Divider borderColor={borderColour} />
       {/** Buttons */}
