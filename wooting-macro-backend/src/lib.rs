@@ -161,7 +161,8 @@ impl Macro {
                 ActionEventType::DiscordEventAction { .. } => {}
                 ActionEventType::UnicodeEventAction { .. } => {}
                 ActionEventType::DelayEventAction { data } => {
-                    thread::sleep(time::Duration::from_millis(*data))
+                    tokio::time::sleep(time::Duration::from_millis(*data)).await;
+                    //thread::sleep(time::Duration::from_millis(*data))
                 }
 
                 ActionEventType::SystemEventAction { data } => {
@@ -372,14 +373,19 @@ impl MacroBackend {
 
                                 EventType::ButtonPress(button) => {
                                     println!("Button pressed: {:?}", button);
+
+
+
                                     let converted_button_to_u32: u32 = match button {
-                                        rdev::Button::Left => 1,
-                                        rdev::Button::Right => 2,
-                                        rdev::Button::Middle => 3,
-                                        rdev::Button::Unknown(1) => 4,
-                                        rdev::Button::Unknown(2) => 5,
-                                        _ => 1,
+                                        rdev::Button::Left => 0x101,
+                                        rdev::Button::Right => 0x102,
+                                        rdev::Button::Middle => 0x103,
+                                        rdev::Button::Unknown(1) => 0x104,
+                                        rdev::Button::Unknown(2) => 0x105,
+                                        _ => 0x101,
                                     };
+
+                                    //let converted_button_to_u32: u32 = BUTTON_TO_HID.get(&button).unwrap_or(&0).clone();
 
                                     println!("Pressed button: {:?}", buttons_pressed.blocking_read());
 
