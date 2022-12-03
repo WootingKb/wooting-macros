@@ -87,6 +87,8 @@ export type VolumeAction =
 export type MonitorBrightnessAction =
   | { type: 'Get' }
   | { type: 'Set'; level: number }
+  | { type: 'Increase' }
+  | { type: 'Decrease' }
 
 // Input Event Types
 export type TriggerEventType =

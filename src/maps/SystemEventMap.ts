@@ -55,11 +55,25 @@ export class SystemEvent {
       defaultData: { type: 'Volume', action: { type: 'ToggleMute' } }
     }
   }
-  static get AdjustBrightness(): SystemEventInfo {
+  static get SetBrightness(): SystemEventInfo {
     return {
       type: 'Brightness',
-      displayString: 'Adjust Brightness',
+      displayString: 'Set Brightness',
       defaultData: { type: 'Brightness', action: { type: 'Set', level: 75 } }
+    }
+  }
+  static get IncreaseBrightness(): SystemEventInfo {
+    return {
+      type: 'Brightness',
+      displayString: 'Increase Brightness',
+      defaultData: { type: 'Brightness', action: { type: 'Increase' } }
+    }
+  }
+  static get DecreaseBrightness(): SystemEventInfo {
+    return {
+      type: 'Brightness',
+      displayString: 'Decrease Brightness',
+      defaultData: { type: 'Brightness', action: { type: 'Decrease' } }
     }
   }
 
@@ -70,7 +84,9 @@ export class SystemEvent {
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
-    SystemEvent.AdjustBrightness
+    SystemEvent.SetBrightness,
+    SystemEvent.IncreaseBrightness,
+    SystemEvent.DecreaseBrightness
   ]
 }
 
