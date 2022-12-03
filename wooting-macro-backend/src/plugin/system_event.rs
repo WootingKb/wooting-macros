@@ -81,7 +81,20 @@ impl SystemAction {
                 }
                 MonitorBrightnessAction::Set { level } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_set_info(*level).await;
+                    brightness_set(*level).await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
+                }
+                MonitorBrightnessAction::Decrease => {
+                    #[cfg(any(target_os = "windows", target_os = "linux"))]
+                    brightness_decrease(2).await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
+                }
+                MonitorBrightnessAction::Increase => {
+                    #[cfg(any(target_os = "windows", target_os = "linux"))]
+
+                    brightness_increase(2).await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
                 }
@@ -248,7 +261,7 @@ pub async fn backend_load_monitors() -> Vec<Monitor>  {
 
 //TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn brightness_set_info(percentage_level: u32) {
+async fn brightness_set(percentage_level: u32) {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
             set_brightness(&mut dev, percentage_level).await?;
@@ -259,18 +272,43 @@ async fn brightness_set_info(percentage_level: u32) {
     println!("Found {} displays", count);
 }
 
+//TODO: accept device from frontend
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+async fn brightness_increase(percentage_level: u32) {
+    let count = brightness::brightness_devices()
+        .try_fold(0, |count, mut dev| async move {
+            let current_brightness = dev.get().await.unwrap();
+
+            set_brightness(&mut dev,  current_brightness + percentage_level).await?;
+            Ok(count + 1)
+        })
+        .await
+        .unwrap();
+    println!("Found {} displays", count);
+}
+
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+async fn brightness_decrease(percentage_level: u32) {
+    let count = brightness::brightness_devices()
+        .try_fold(0, |count, mut dev| async move {
+            let current_brightness = dev.get().await.unwrap();
+
+            set_brightness(&mut dev,  current_brightness - percentage_level).await?;
+            Ok(count + 1)
+        })
+        .await
+        .unwrap();
+    println!("Found {} displays", count);
+}
+
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn get_info(dev: &BrightnessDevice) -> Monitor {
-
-
     Monitor{
         name: dev.device_name().await.unwrap(),
         current_brightness: dev.get().await.unwrap(),
         description: dev.device_description().unwrap(),
         registry_key: dev.device_registry_key().unwrap(),
     }
-
-
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -345,6 +383,8 @@ pub enum ClipboardAction {
 pub enum MonitorBrightnessAction {
     Get,
     Set { level: u32 },
+    Decrease,
+    Increase
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
