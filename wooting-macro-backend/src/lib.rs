@@ -385,6 +385,8 @@ impl MacroBackend {
                                         _ => 0x101,
                                     };
 
+                                    //let converted_button_to_u32: u32 = button.into();
+
                                     // let converted_button_to_u32 = BUTTON_TO_HID.get(&button).unwrap().clone();
 
                                     println!("Pressed button: {:?}", buttons_pressed.blocking_read());

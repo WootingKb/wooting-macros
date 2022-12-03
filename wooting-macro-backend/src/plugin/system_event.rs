@@ -11,6 +11,7 @@ use wifi_rs;
 use crate::hid_table::SCANCODE_TO_RDEV;
 use rdev::{Event, EventType};
 use tokio::sync::mpsc::Sender;
+use crate::plugin::system_event::SystemAction::Clipboard;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -158,24 +159,8 @@ impl SystemAction {
                 }
 
                 ClipboardAction::Sarcasm => {
+                    let mut ctx = ClipboardContext::new().unwrap();
 
-                    //Select the current row
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ShiftLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Home))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Home))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ShiftLeft))
-                        .await
-                        .unwrap();
 
                     //Get the text into clipboard
                     send_channel
@@ -196,24 +181,14 @@ impl SystemAction {
                         .unwrap();
 
 
-                    //Set the cursor to the end
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::End))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::End))
-                        .await
-                        .unwrap();
-
                     //Transform the text
-                    let mut ctx = ClipboardContext::new().unwrap();
+
 
                     let content = ctx.get_contents().unwrap();
 
-                    let content = transform_text(content);
+                    let content_new = transform_text(content);
 
-                    ctx.set_contents(content).unwrap();
+                    ctx.set_contents(content_new).unwrap();
 
 
 
