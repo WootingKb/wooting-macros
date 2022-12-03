@@ -17,7 +17,7 @@ use tokio::sync::mpsc::Sender;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum SystemAction {
-    Open { path: String },
+    Open { action: String },
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
@@ -29,7 +29,7 @@ pub enum SystemAction {
 impl SystemAction {
     pub async fn execute(&self, send_channel: Sender<EventType>) {
         match &self {
-            SystemAction::Open { path } => {
+            SystemAction::Open { action: path } => {
                 //TODO: THIS CANNOT BE UNWRAPPED
                 match opener::open(std::path::Path::new(path)) {
                     Ok(x) => x,
