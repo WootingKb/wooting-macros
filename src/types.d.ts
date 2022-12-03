@@ -51,6 +51,13 @@ export interface Keypress {
   keytype: string
 }
 
+export interface Monitor {
+  name: string
+  current_brightness: number
+  description: string
+  registery_key: string
+}
+
 export type MousePressAction =
   | { type: 'Down'; button: MouseButton }
   | { type: 'Up'; button: MouseButton }

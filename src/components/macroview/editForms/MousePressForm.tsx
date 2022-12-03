@@ -6,7 +6,7 @@ import {
   Flex,
   Button,
   Input,
-  Text,
+  Text
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -41,7 +41,7 @@ export default function MousePressForm() {
     )
   }, [selectedElement])
 
-  const onMousepressDurationChange = (newVal: number) => {
+  const onMousepressDurationChange = (event: any) => {
     // need to ask about these guards, seems really redundant
     if (selectedElement === undefined) {
       return
@@ -56,8 +56,12 @@ export default function MousePressForm() {
     if (temp.data.data.type !== 'DownUp') {
       return
     }
-    temp.data.data.duration = newVal
-    setMousepressDuration(newVal)
+    const newValue = parseInt(event.target.value)
+    if (newValue === undefined) {
+      return
+    }
+    temp.data.data.duration = newValue
+    setMousepressDuration(newValue)
     updateElement(temp, selectedElementId)
   }
 
@@ -147,9 +151,7 @@ export default function MousePressForm() {
               borderColor="gray.400"
               isDisabled={mousepressType === KeyType.DownUp ? false : true}
               value={mousepressDuration}
-              onChange={(event) =>
-                onMousepressDurationChange(parseInt(event.target.value) || 0)
-              }
+              onChange={onMousepressDurationChange}
             />
           </Flex>
         </GridItem>

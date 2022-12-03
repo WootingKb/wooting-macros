@@ -6,7 +6,7 @@ import {
   Flex,
   Button,
   Input,
-  Text,
+  Text
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -20,7 +20,6 @@ export default function KeyPressForm() {
   const [keypressType, setKeypressType] = useState<KeyType>()
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
-
 
   useEffect(() => {
     if (selectedElement === undefined) {
@@ -40,7 +39,7 @@ export default function KeyPressForm() {
     )
   }, [selectedElement])
 
-  const onKeypressDurationChange = (newVal: number) => {
+  const onKeypressDurationChange = (event: any) => {
     // need to ask about these guards, seems really redundant
     if (selectedElement === undefined) {
       return
@@ -51,9 +50,13 @@ export default function KeyPressForm() {
     if (selectedElementId === undefined) {
       return
     }
-    setKeypressDuration(newVal)
+    const newValue = parseInt(event.target.value)
+    if (newValue === undefined) {
+      return
+    }
+    setKeypressDuration(newValue)
     const temp = { ...selectedElement }
-    temp.data.press_duration = newVal
+    temp.data.press_duration = newValue
     updateElement(temp, selectedElementId)
   }
 
@@ -131,9 +134,7 @@ export default function KeyPressForm() {
               borderColor="gray.400"
               isDisabled={keypressType === KeyType.DownUp ? false : true}
               value={keypressDuration}
-              onChange={(event) =>
-                onKeypressDurationChange(parseInt(event.target.value) || 0)
-              }
+              onChange={onKeypressDurationChange}
             />
           </Flex>
         </GridItem>

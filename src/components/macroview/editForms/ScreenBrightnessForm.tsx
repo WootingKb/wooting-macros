@@ -1,10 +1,13 @@
-import { Divider, Text, Input } from '@chakra-ui/react'
+import { Divider, Text, Input, Select } from '@chakra-ui/react'
+import { invoke } from '@tauri-apps/api'
 import { useState, useEffect } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
+import { Monitor } from '../../../types'
 
 export default function ScreenBrightnessForm() {
   const [brightnessVal, setBrightnessVal] = useState(75)
+  const [monitors, setMonitors] = useState<Monitor[]>([])
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
 
@@ -22,7 +25,14 @@ export default function ScreenBrightnessForm() {
     if (selectedElement.data.action.type !== 'Set') {
       return
     }
-
+    invoke<Monitor[]>('get_monitor_data')
+      .then((res) => {
+        console.log(res)
+        setMonitors(res)
+      })
+      .catch((e) => {
+        console.error(e)
+      })
     setBrightnessVal(selectedElement.data.action.level)
   }, [selectedElement])
 
@@ -55,6 +65,12 @@ export default function ScreenBrightnessForm() {
         {'Set Screen Brightness'}
       </Text>
       <Divider />
+      <Text fontSize={['xs', 'sm', 'md']}>Monitor</Text>
+      <Select placeholder="Select Monitor">
+        {monitors.map((monitor, index) => (
+          <option value={index} key={monitor.name}>{monitor.name}</option>
+        ))}
+      </Select>
       <Text fontSize={['xs', 'sm', 'md']}>Brightness value</Text>
       <Input
         type="number"

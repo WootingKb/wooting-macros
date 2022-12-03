@@ -5,7 +5,7 @@ import {
   Flex,
   Input,
   Button,
-  Text,
+  Text
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -28,13 +28,19 @@ export default function DelayForm() {
     setDelayDuration(selectedElement.data)
   }, [selectedElement])
 
-  const onDelayDurationChange = (newVal: number) => {
+  const onDelayDurationChange = (event: any) => {
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }
-    setDelayDuration(newVal)
+
+    const newValue = parseInt(event.target.value)
+    if (newValue === undefined) {
+      return
+    }
+
+    setDelayDuration(newValue)
     const temp = { ...selectedElement }
-    temp.data = newVal
+    temp.data = newValue
     updateElement(temp, selectedElementId)
   }
 
@@ -51,12 +57,11 @@ export default function DelayForm() {
         <GridItem w="100%">
           <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
             <Input
+              type="number"
               variant="outline"
               borderColor="gray.400"
               value={delayDuration}
-              onChange={(event) =>
-                onDelayDurationChange(parseInt(event.target.value) || 0)
-              }
+              onChange={onDelayDurationChange}
             />
           </Flex>
         </GridItem>
