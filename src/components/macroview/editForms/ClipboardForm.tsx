@@ -19,7 +19,7 @@ export default function ClipboardForm() {
     if (selectedElement.data.type !== 'Clipboard') {
       return
     }
-    if (selectedElement.data.action.type !== 'SetClipboard') {
+    if (selectedElement.data.action.type !== 'PasteUserDefinedString') {
       return
     }
 
@@ -37,7 +37,7 @@ export default function ClipboardForm() {
     const temp = { ...selectedElement }
     temp.data = {
       type: 'Clipboard',
-      action: { type: 'SetClipboard', data: event.target.value }
+      action: { type: 'PasteUserDefinedString', data: event.target.value }
     }
     updateElement(temp, selectedElementId)
   }
@@ -49,7 +49,7 @@ export default function ClipboardForm() {
       </Text>
       <Divider />
       <Text fontSize={['xs', 'sm', 'md']}>Text to paste</Text>
-      <Textarea value={text} onChange={onTextChange} placeholder="glhf" />
+      <Textarea value={text} onChange={onTextChange} placeholder="e.g. glhf" />
     </>
   )
 }

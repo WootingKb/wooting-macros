@@ -64,13 +64,12 @@ export type SystemAction =
   | { type: 'Clipboard'; action: ClipboardAction }
   | { type: 'Brightness'; action: MonitorBrightnessAction }
 
-// test to see if having different word, i.e. 'path' vs 'data' vs 'action', affects how the data is serialized
-
 export type ClipboardAction =
   | { type: 'SetClipboard'; data: string }
   | { type: 'Copy' }
   | { type: 'GetClipboard' }
   | { type: 'Paste' }
+  | { type: 'PasteUserDefinedString'; data: string }
 
 export type VolumeAction =
   | { type: 'LowerVolume' }

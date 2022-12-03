@@ -20,7 +20,7 @@ export class SystemEvent {
       displayString: 'Paste Text',
       defaultData: {
         type: 'Clipboard',
-        action: { type: 'SetClipboard', data: 'string' }
+        action: { type: 'PasteUserDefinedString', data: '' }
       }
     }
   }
