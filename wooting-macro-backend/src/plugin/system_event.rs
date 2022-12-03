@@ -133,6 +133,29 @@ impl SystemAction {
                         .await
                         .unwrap();
                 }
+
+                ClipboardAction::PasteUserDefinedString { data } => {
+                    let mut ctx = ClipboardContext::new().unwrap();
+
+                    ctx.set_contents(data.to_owned()).unwrap();
+
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
+                        .await
+                        .unwrap();
+                }
             },
             SystemAction::Wifi { .. } => {}
         }
@@ -222,6 +245,7 @@ pub enum ClipboardAction {
     Copy,
     GetClipboard,
     Paste,
+    PasteUserDefinedString { data: String },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
