@@ -153,8 +153,9 @@ export default function SelectElementArea() {
                     data: {
                       type: 'Press',
                       data: {
-                        type: 'Down',
-                        button: info.enumVal
+                        type: 'DownUp',
+                        button: info.enumVal,
+                        duration: 1
                       }
                     }
                   }}
@@ -205,8 +206,9 @@ export default function SelectElementArea() {
                     data: {
                       type: 'Press',
                       data: {
-                        type: 'Down',
-                        button: info.enumVal
+                        type: 'DownUp',
+                        button: info.enumVal,
+                        duration: 1
                       }
                     }
                   }}
