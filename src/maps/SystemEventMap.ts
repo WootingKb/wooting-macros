@@ -24,6 +24,16 @@ export class SystemEvent {
       }
     }
   }
+  static get Sarcasm(): SystemEventInfo {
+    return {
+      type: 'Clipboard',
+      displayString: 'Sarcastify Text',
+      defaultData: {
+        type: 'Clipboard',
+        action: { type: 'Sarcasm' }
+      }
+    }
+  }
   static get IncreaseVolume(): SystemEventInfo {
     return {
       type: 'Volume',
@@ -56,6 +66,7 @@ export class SystemEvent {
   static readonly all: SystemEventInfo[] = [
     SystemEvent.OpenApplication,
     SystemEvent.Clipboard,
+    SystemEvent.Sarcasm,
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,

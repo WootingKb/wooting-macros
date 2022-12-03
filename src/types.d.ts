@@ -70,6 +70,7 @@ export type ClipboardAction =
   | { type: 'GetClipboard' }
   | { type: 'Paste' }
   | { type: 'PasteUserDefinedString'; data: string }
+  | { type: 'Sarcasm' }
 
 export type VolumeAction =
   | { type: 'LowerVolume' }
