@@ -7,6 +7,7 @@ use futures::{executor::block_on, TryStreamExt};
 use std::time;
 use futures::{AsyncReadExt, AsyncWriteExt, StreamExt, TryFutureExt};
 use wifi_rs;
+use fastrand;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 use rdev::{Event, EventType};
@@ -299,7 +300,7 @@ async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightn
 fn transform_text (text: String) -> String {
     let mut transformed_text = String::new();
     for c in text.chars() {
-        if c.is_ascii_alphabetic() {
+        if c.is_ascii_alphabetic() && fastrand::bool() {
             if c.is_ascii_lowercase() {
                 transformed_text.push(c.to_ascii_uppercase());
             } else {
@@ -311,6 +312,22 @@ fn transform_text (text: String) -> String {
     }
     transformed_text
 }
+
+// fn transform_text (text: String) -> String {
+//     let mut transformed_text = String::new();
+//     for c in text.chars() {
+//         if c.is_ascii_alphabetic() {
+//             if c.is_ascii_lowercase() {
+//                 transformed_text.push(c.to_ascii_uppercase());
+//             } else {
+//                 transformed_text.push(c.to_ascii_lowercase());
+//             }
+//         } else {
+//             transformed_text.push(c);
+//         }
+//     }
+//     transformed_text
+// }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
