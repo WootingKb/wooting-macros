@@ -69,7 +69,7 @@ impl SystemAction {
                 MonitorBrightnessAction::Get => {
                     // println!("{:#?}", show_brightness().await.unwrap());
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_get_info().await;
+                    // brightness_get_info().await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
                 }
@@ -135,16 +135,26 @@ impl SystemAction {
     }
 }
 
+#[derive(Debug, Clone)]
+struct Monitor {
+    name: String,
+    current_brightness: u32,
+    description: String,
+    registry_key: String,
+}
+
+#[tauri::command]
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn brightness_get_info() {
-    let count = brightness::brightness_devices()
-        .try_fold(0, |count, dev| async move {
-            show_brightness(&dev).await?;
-            Ok(count + 1)
-        })
-        .await
-        .unwrap();
-    println!("Found {} displays", count);
+async fn get_data_to_frontend() -> Vec<Monitor> {
+    let mut monitors = Vec::new();
+
+
+    // let (count, dev) = brightness::brightness_devices();
+
+    println!("{:#?}", monitors);
+
+    monitors
+
 }
 
 //TODO: accept device from frontend
@@ -161,11 +171,17 @@ async fn brightness_set_info(percentage_level: u32) {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn show_brightness(dev: &BrightnessDevice) -> Result<(), brightness::Error> {
-    println!("Display {}", dev.device_name().await?);
-    println!("\tBrightness = {}%", dev.get().await?);
-    show_platform_specific_info(dev).await?;
-    Ok(())
+async fn get_info(dev: &BrightnessDevice) -> Monitor {
+
+
+    Monitor{
+        name: dev.device_name().await.unwrap(),
+        current_brightness: dev.get().await.unwrap(),
+        description: dev.device_description().unwrap(),
+        registry_key: dev.device_registry_key().unwrap(),
+    }
+
+
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]

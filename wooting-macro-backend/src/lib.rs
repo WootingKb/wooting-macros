@@ -372,7 +372,7 @@ impl MacroBackend {
                                         _ => 1,
                                     };
 
-                                    println!("Pressed Keys: {:?}", buttons_pressed);
+                                    println!("Pressed button: {:?}", buttons_pressed.blocking_read());
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
