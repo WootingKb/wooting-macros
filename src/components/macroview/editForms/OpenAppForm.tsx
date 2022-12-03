@@ -20,7 +20,7 @@ export default function OpenAppForm() {
       return
     }
 
-    setPath(selectedElement.data.path)
+    setPath(selectedElement.data.action)
   }, [selectedElement])
 
   const onPathChange = (event: any) => {
@@ -32,7 +32,7 @@ export default function OpenAppForm() {
     }
     setPath(event.target.value)
     const temp = { ...selectedElement }
-    temp.data = { type: 'Open', path: event.target.value }
+    temp.data = { type: 'Open', action: event.target.value }
     updateElement(temp, selectedElementId)
   }
 
