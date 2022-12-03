@@ -8,9 +8,9 @@ use std::{thread, time};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use crate::ActionEventType::{KeyPressEventAction, MouseEventAction};
+
 use halfbrown::HashMap;
-use rdev::{grab, simulate, Event, EventType, GrabError, SimulateError};
+use rdev::{grab, simulate, EventType, GrabError, SimulateError};
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
@@ -691,17 +691,17 @@ fn send(event_type: &EventType) {
     //thread::sleep(delay);
 }
 
-///Gets user input on the backend. Dev purposes only.
-fn get_user_input(display_text: String) -> String {
-    println!("{}\n", display_text);
-
-    let mut buffer: String = String::new();
-
-    std::io::stdin()
-        .read_line(&mut buffer)
-        .expect("Invalid type");
-    buffer.trim().to_string()
-}
+// ///Gets user input on the backend. Dev purposes only.
+// fn get_user_input(display_text: String) -> String {
+//     println!("{}\n", display_text);
+//
+//     let mut buffer: String = String::new();
+//
+//     std::io::stdin()
+//         .read_line(&mut buffer)
+//         .expect("Invalid type");
+//     buffer.trim().to_string()
+// }
 
 #[cfg(test)]
 mod tests {

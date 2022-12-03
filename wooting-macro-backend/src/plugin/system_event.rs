@@ -3,16 +3,16 @@ use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 
 use copypasta::{ClipboardContext, ClipboardProvider};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-use futures::{executor::block_on, TryStreamExt};
-use std::time;
-use futures::{AsyncReadExt, AsyncWriteExt, StreamExt, TryFutureExt};
-use wifi_rs;
+use futures::{TryStreamExt};
+
+use futures::{StreamExt, TryFutureExt};
+
 use fastrand;
 
-use crate::hid_table::SCANCODE_TO_RDEV;
-use rdev::{Event, EventType};
+
+use rdev::{EventType};
 use tokio::sync::mpsc::Sender;
-use crate::plugin::system_event::SystemAction::Clipboard;
+
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]

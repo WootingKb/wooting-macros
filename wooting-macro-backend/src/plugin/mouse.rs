@@ -1,4 +1,4 @@
-use rdev::{Button, Event, EventType};
+use rdev::{EventType};
 use serde_repr;
 use tokio::sync::mpsc::Sender;
 
@@ -86,7 +86,6 @@ impl Into<u32> for &MouseButton {
             MouseButton::Middle => 0x103,
             MouseButton::Mouse4 => 0x104,
             MouseButton::Mouse5 => 0x105,
-            _ => 0x101,
         }
     }
 }
