@@ -156,6 +156,88 @@ impl SystemAction {
                         .await
                         .unwrap();
                 }
+
+                ClipboardAction::Sarcasm => {
+
+                    //Select the current row
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::ShiftLeft))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::Home))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::Home))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ShiftLeft))
+                        .await
+                        .unwrap();
+
+                    //Get the text into clipboard
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
+                        .await
+                        .unwrap();
+
+
+                    //Set the cursor to the end
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::End))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::End))
+                        .await
+                        .unwrap();
+
+                    //Transform the text
+                    let mut ctx = ClipboardContext::new().unwrap();
+
+                    let content = ctx.get_contents().unwrap();
+
+                    let content = transform_text(content);
+
+                    ctx.set_contents(content).unwrap();
+
+
+
+                    //Paste the text again
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
+                        .await
+                        .unwrap();
+                    send_channel
+                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
+                        .await
+                        .unwrap();
+
+
+
+                }
             },
             SystemAction::Wifi { .. } => {}
         }
@@ -238,6 +320,23 @@ async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightn
     Ok(())
 }
 
+
+fn transform_text (text: String) -> String {
+    let mut transformed_text = String::new();
+    for c in text.chars() {
+        if c.is_ascii_alphabetic() {
+            if c.is_ascii_lowercase() {
+                transformed_text.push(c.to_ascii_uppercase());
+            } else {
+                transformed_text.push(c.to_ascii_lowercase());
+            }
+        } else {
+            transformed_text.push(c);
+        }
+    }
+    transformed_text
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum ClipboardAction {
@@ -246,6 +345,7 @@ pub enum ClipboardAction {
     GetClipboard,
     Paste,
     PasteUserDefinedString { data: String },
+    Sarcasm,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
