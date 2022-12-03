@@ -390,7 +390,10 @@ impl MacroBackend {
                                             None => {
                                                 vec![]
                                             }
-                                            Some(data_found) => data_found.to_vec(),
+                                            Some(data_found) => {
+                                                println!("Found data: {:#?}", data_found.to_vec().clone());
+                                                data_found.to_vec()
+                                            },
                                         };
 
                                     let channel_clone = schan_execute.clone();

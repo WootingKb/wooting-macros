@@ -19,14 +19,14 @@ pub enum MouseAction {
     Debug, Clone, serde_repr::Serialize_repr, serde_repr::Deserialize_repr, PartialEq, Hash, Eq,
 )]
 #[serde(tag = "type")]
-#[repr(u8)]
+#[repr(u16)]
 // TODO: Implement https://serde.rs/enum-number.html to ensure representation to frontend is correct
 pub enum MouseButton {
-    Left = 1,
-    Right = 2,
-    Middle = 3,
-    Mouse4 = 4,
-    Mouse5 = 5,
+    Left = 0x101,
+    Right = 0x102,
+    Middle = 0x103,
+    Mouse4 = 0x104,
+    Mouse5 = 0x105,
 }
 
 impl Into<rdev::Button> for &MouseButton {
@@ -81,12 +81,12 @@ impl Into<MouseButton> for rdev::Button {
 impl Into<u32> for &MouseButton {
     fn into(self) -> u32 {
         match *self {
-            MouseButton::Left => 1,
-            MouseButton::Right => 2,
-            MouseButton::Middle => 3,
-            MouseButton::Mouse4 => 4,
-            MouseButton::Mouse5 => 5,
-            _ => 1,
+            MouseButton::Left => 0x101,
+            MouseButton::Right => 0x102,
+            MouseButton::Middle => 0x103,
+            MouseButton::Mouse4 => 0x104,
+            MouseButton::Mouse5 => 0x105,
+            _ => 0x101,
         }
     }
 }

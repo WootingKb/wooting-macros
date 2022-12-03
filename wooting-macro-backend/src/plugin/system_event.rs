@@ -29,7 +29,10 @@ impl SystemAction {
         match &self {
             SystemAction::Open { path } => {
                 //TODO: THIS CANNOT BE UNWRAPPED
-                opener::open(std::path::Path::new(path)).unwrap();
+                match opener::open(std::path::Path::new(path)) {
+                    Ok(x) => x,
+                    Err(e) => eprintln!("Error: {}", e),
+                };
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
