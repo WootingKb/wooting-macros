@@ -63,6 +63,8 @@ export default function SequencingArea() {
     if (active.id !== over.id) {
       const oldIndex = ids.indexOf(active.id)
       const newIndex = ids.indexOf(over.id)
+      console.log(oldIndex)
+      console.log(newIndex)
       overwriteIds(arrayMove(ids, oldIndex, newIndex))
     }
     setActiveId(undefined)

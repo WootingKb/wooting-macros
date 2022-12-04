@@ -1,0 +1,581 @@
+{
+  "data": [
+    {
+      "name": "Default",
+      "icon": "i",
+      "macros": [
+        {
+          "name": "Havo",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 20,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 10,
+                "press_duration": 20,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 20,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 51,
+                "press_duration": 0,
+                "keytype": "DownUp"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        },
+        {
+          "name": "macro 5",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 4,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 5,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 84,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        }
+      ],
+      "active": true
+    },
+    {
+      "name": "test",
+      "icon": "i",
+      "macros": [
+        {
+          "name": "Test Macro 1",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 8,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "Delay",
+              "data": 50
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 7,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 6,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 14,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 11,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 11,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 11,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 10,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 12,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 16,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 11,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 11,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 17,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 15,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 13,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 12,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 224,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 15,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        },
+        {
+          "name": "test 2",
+          "sequence": [
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 4,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 8,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 10,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            },
+            {
+              "type": "KeyPressEvent",
+              "data": {
+                "keypress": 9,
+                "press_duration": 1,
+                "keytype": "DownUp"
+              }
+            }
+          ],
+          "macro_type": "Single",
+          "trigger": {
+            "type": "KeyPressEvent",
+            "data": [
+              {
+                "keypress": 4,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 22,
+                "press_duration": 0,
+                "keytype": "Down"
+              },
+              {
+                "keypress": 7,
+                "press_duration": 0,
+                "keytype": "Down"
+              }
+            ],
+            "allow_while_other_keys": false
+          },
+          "active": true
+        }
+      ],
+      "active": true
+    }
+  ]
+}
