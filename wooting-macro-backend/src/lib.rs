@@ -435,7 +435,7 @@ impl StateManagement for ApplicationConfig {
             use_input_grab: false,
             startup_delay: 0,
         };
-        match File::open("config.json") {
+        match File::open("../config.json") {
             Ok(data) => {
                 let data: ApplicationConfig = serde_json::from_reader(&data).unwrap();
                 data
@@ -451,7 +451,7 @@ impl StateManagement for ApplicationConfig {
 
     fn write_to_file(&self) {
         match std::fs::write(
-            "config.json",
+            "../config.json",
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
@@ -478,7 +478,7 @@ impl MacroData {
     /// Basically sends the entire struct to the frontend
     pub fn export_data(&self) {
         std::fs::write(
-            "data_json.json",
+            "../data_json.json",
             serde_json::to_string_pretty(&self).unwrap(),
         )
         .unwrap();
@@ -526,7 +526,7 @@ impl StateManagement for MacroData {
     /// Writes out the data to a file. If unsuccessful, it will use the default data.
     fn write_to_file(&self) {
         match std::fs::write(
-            "data_json.json",
+            "../data_json.json",
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
@@ -551,7 +551,8 @@ impl StateManagement for MacroData {
             }],
         };
 
-        match File::open("data_json.json") {
+        match File::open("../data_json.json") {
+
             Ok(data) => {
                 let data: MacroData = match serde_json::from_reader(&data) {
                     Ok(x) => x,
