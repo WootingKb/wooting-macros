@@ -574,7 +574,10 @@ impl StateManagement for MacroData {
 
         return match File::open("../data_json.json") {
             Ok(data) => {
-                let data: MacroData = serde_json::from_reader(&data).unwrap();
+                let data: MacroData = match serde_json::from_reader(&data) {
+                    Ok(x) => x,
+                    Err(error) => { eprintln!("Error reading data.json, using default data. {}", error); default.clone() }
+                };
                 data
             }
 
