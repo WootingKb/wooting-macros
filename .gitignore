@@ -22,4 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+/src-tauri/Cargo.lock
 /data_json.json
