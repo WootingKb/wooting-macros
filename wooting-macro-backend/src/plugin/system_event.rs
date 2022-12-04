@@ -352,6 +352,7 @@ fn transform_text(text: String) -> String {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// The type of action to perform. This is used to determine which action to perform.
 pub enum ClipboardAction {
     SetClipboard { data: String },
     Copy,
@@ -363,6 +364,7 @@ pub enum ClipboardAction {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// Monitor get, set brightness (currently Get is unused).
 pub enum MonitorBrightnessAction {
     Get,
     Set { level: u32 },
@@ -372,6 +374,7 @@ pub enum MonitorBrightnessAction {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// Key shortcut alias to mute/increase/decrease volume.
 pub enum VolumeAction {
     LowerVolume,
     IncreaseVolume,
@@ -380,6 +383,7 @@ pub enum VolumeAction {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// Currently unused
 pub enum WifiAction {
     Connect,
     Disconnect,

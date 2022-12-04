@@ -8,7 +8,6 @@ use std::{thread, time};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-
 use halfbrown::HashMap;
 use rdev::{grab, simulate, EventType, GrabError, SimulateError};
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -24,11 +23,11 @@ use crate::plugin::mouse;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
+use crate::plugin::system_event::Monitor;
 #[allow(unused_imports)]
 use crate::plugin::system_event::{
     ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
 };
-use crate::plugin::system_event::{Monitor};
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
 
@@ -41,9 +40,6 @@ pub enum MacroType {
     // press to start, press to finish cycle and terminate
     OnHold, // while held Execute macro (repeats)
 }
-
-//TODO: SERDE CAMEL CASE RENAME
-//TODO: Press a key to open file browser with a specific path
 
 ///This enum is the registry for all actions that can be executed
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -80,7 +76,7 @@ pub enum ActionEventType {
 #[serde(tag = "type")]
 pub enum TriggerEventType {
     KeyPressEvent {
-        // TODO: This should be a Vec of u32, it shouldn't be sharing the type of the KeyPressEventAction
+        // TODO: This should be a Vec of u32, it shouldn't be sharing the type of the KeyPressEventAction: FOR POLISH PHASE
         data: Vec<key_press::KeyPress>,
         allow_while_other_keys: bool,
     },
@@ -121,11 +117,6 @@ impl Macro {
     async fn execute(&self, send_channel: Sender<EventType>) {
         for action in &self.sequence {
             match action {
-                //TODO: make a channel for send to accept stuff
-                //TODO: all of these should be sent onto a channel, while another thread is listening and executing
-                //TODO: Keypress manager task <- enum EventType send and channel recv. Keypress manager task would spawn tasks for the actions
-                //TODO: one task: listening for events and enforcing sleep time
-                //TODO: keypressevent has access to the data and spawns a task for downup
                 ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
                         send_channel
@@ -162,7 +153,6 @@ impl Macro {
                 ActionEventType::UnicodeEventAction { .. } => {}
                 ActionEventType::DelayEventAction { data } => {
                     tokio::time::sleep(time::Duration::from_millis(*data)).await;
-                    //thread::sleep(time::Duration::from_millis(*data))
                 }
 
                 ActionEventType::SystemEventAction { data } => {
@@ -206,7 +196,7 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
-    pub display_list: Arc<RwLock<Vec<Monitor>>>
+    pub display_list: Arc<RwLock<Vec<Monitor>>>,
 }
 
 impl MacroBackend {
@@ -219,7 +209,7 @@ impl MacroBackend {
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
-            display_list: Arc::new(RwLock::from(vec![]))
+            display_list: Arc::new(RwLock::from(vec![])),
         }
     }
 
@@ -253,21 +243,17 @@ impl MacroBackend {
     }
 
     pub async fn init(&self) {
+        // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
 
+        //Create the executor
         task::spawn(async move {
             keypress_executor_sender(rchan_execute).await;
         });
 
-        // let channel_execute_copy = schan_execute.clone();
-
-        // task::spawn(async move {
-            //==============TESTING GROUND======================
-        let result = self.display_list.read().await;
-        println!("Display list: {:?}", result);
-
-
-
+        //==============TESTING GROUND======================
+        // let result = self.display_list.read().await;
+        // println!("Display list: {:?}", result);
 
         //     let action_type = ActionEventType::MouseEventAction {
         //         data: MouseAction::Move { x: 1920, y: 1080 },
@@ -285,8 +271,6 @@ impl MacroBackend {
 
         //==============TESTING GROUND======================
         //==================================================
-
-        //TODO: make this a grab instead of listen
         //TODO: try to make this interact better (cleanup the code a bit)
 
         //TODO: io-uring async read files and write files
@@ -295,8 +279,6 @@ impl MacroBackend {
         //TODO: Make the modifier keys non-ordered?
         //==================================================
 
-        //let (schan_grab, rchan_grab) = tokio::sync::mpsc::channel(1); //TODO: async tokio version
-
         //let inner_config = self.config.clone();
         //let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
@@ -304,8 +286,7 @@ impl MacroBackend {
         let inner_is_listening = self.is_listening.clone();
         println!("TRIGGERS: {:?}", inner_triggers.read().await);
 
-        // let inner_keys_pressed = self.keys_pressed.clone();
-
+        // Spawn the grabbing
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
@@ -374,8 +355,6 @@ impl MacroBackend {
                                 EventType::ButtonPress(button) => {
                                     println!("Button pressed: {:?}", button);
 
-
-
                                     let converted_button_to_u32: u32 = match button {
                                         rdev::Button::Left => 0x101,
                                         rdev::Button::Right => 0x102,
@@ -386,10 +365,12 @@ impl MacroBackend {
                                     };
 
                                     //let converted_button_to_u32: u32 = button.into();
-
                                     // let converted_button_to_u32 = BUTTON_TO_HID.get(&button).unwrap().clone();
 
-                                    println!("Pressed button: {:?}", buttons_pressed.blocking_read());
+                                    println!(
+                                        "Pressed button: {:?}",
+                                        buttons_pressed.blocking_read()
+                                    );
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
@@ -398,10 +379,7 @@ impl MacroBackend {
                                             None => {
                                                 vec![]
                                             }
-                                            Some(data_found) => {
-                                                //println!("Found data: {:#?}", data_found.to_vec());
-                                                data_found.to_vec()
-                                            },
+                                            Some(data_found) => data_found.to_vec(),
                                         };
 
                                     let channel_clone = schan_execute.clone();
@@ -421,9 +399,7 @@ impl MacroBackend {
                                 EventType::ButtonRelease(button) => {
                                     println!("Button released: {:?}", button);
 
-                                    buttons_pressed
-                                        .blocking_write()
-                                        .retain(|x| *x != button);
+                                    buttons_pressed.blocking_write().retain(|x| *x != button);
 
                                     Some(event)
                                 }
@@ -446,6 +422,7 @@ impl MacroBackend {
     }
 }
 
+/// Trait to get data or write out data from the state to file.
 pub trait StateManagement {
     fn read_data() -> Self;
 
@@ -507,6 +484,7 @@ impl MacroData {
         .unwrap();
     }
 
+    /// Extracts the training data from the macro data.
     pub fn extract_triggers(&self) -> MacroTriggerLookup {
         let mut output_hashmap = MacroTriggerLookup::new();
 
@@ -545,6 +523,7 @@ impl MacroData {
 }
 
 impl StateManagement for MacroData {
+    /// Writes out the data to a file. If unsuccessful, it will use the default data.
     fn write_to_file(&self) {
         match std::fs::write(
             "../data_json.json",
@@ -561,7 +540,7 @@ impl StateManagement for MacroData {
             }
         };
     }
-    ///Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
+    /// Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
     fn read_data() -> MacroData {
         let default: MacroData = MacroData {
             data: vec![Collection {
@@ -576,7 +555,10 @@ impl StateManagement for MacroData {
             Ok(data) => {
                 let data: MacroData = match serde_json::from_reader(&data) {
                     Ok(x) => x,
-                    Err(error) => { eprintln!("Error reading data.json, using default data. {}", error); default }
+                    Err(error) => {
+                        eprintln!("Error reading data.json, using default data. {}", error);
+                        default
+                    }
                 };
                 data
             }
@@ -600,8 +582,6 @@ pub struct Collection {
     pub active: bool,
 }
 
-//TODO: trait generic this executing
-//TODO: async
 ///Executes a given macro (requires a reference to a macro).
 async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
@@ -624,16 +604,17 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     }
 }
 
+/// Receives and executes a macro based on the trigger event. Puts a mandatory 20-50 ms delay between each macro execution.
 async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
         let result = rchan_execute.recv().await.unwrap();
 
-        //println!("RECEIVED RESULT {:#?}", &result);
         send(&result);
         thread::sleep(time::Duration::from_millis(50));
     }
 }
 
+/// A more efficient way using hashtables to check whether the triggerkeys match the macro.
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
@@ -687,28 +668,14 @@ fn check_macro_execution_efficiently(
 ///Sends an event to the library to Execute on an OS level.
 fn send(event_type: &EventType) {
     //let delay = time::Duration::from_millis(20);
+    //TODO: maybe make this a config option?
     match simulate(event_type) {
         Ok(()) => (),
         Err(SimulateError) => {
             println!("We could not send {:?}", event_type);
         }
     }
-    // Let ths OS catchup (at least MacOS)
-    //TODO: remove the delay at least for windows, mac needs testing (done by executor)
-    //thread::sleep(delay);
 }
-
-// ///Gets user input on the backend. Dev purposes only.
-// fn get_user_input(display_text: String) -> String {
-//     println!("{}\n", display_text);
-//
-//     let mut buffer: String = String::new();
-//
-//     std::io::stdin()
-//         .read_line(&mut buffer)
-//         .expect("Invalid type");
-//     buffer.trim().to_string()
-// }
 
 #[cfg(test)]
 mod tests {

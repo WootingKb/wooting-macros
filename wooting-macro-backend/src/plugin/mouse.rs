@@ -1,4 +1,4 @@
-use rdev::{EventType};
+use rdev::EventType;
 use serde_repr;
 use tokio::sync::mpsc::Sender;
 
@@ -10,6 +10,7 @@ use std::time;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// Mouse action: Press presses a defined button. Move moves to absolute coordinates X and Y.
 pub enum MouseAction {
     Press { data: MousePressAction },
     Move { x: i32, y: i32 },
@@ -20,7 +21,7 @@ pub enum MouseAction {
 )]
 #[serde(tag = "type")]
 #[repr(u16)]
-// TODO: Implement https://serde.rs/enum-number.html to ensure representation to frontend is correct
+/// Mouse buttons have a specified non-colisional number with the HID codes internally used within the library.
 pub enum MouseButton {
     Left = 0x101,
     Right = 0x102,
@@ -115,6 +116,8 @@ impl Into<u32> for &MouseButton {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// Mouse press action: Press presses a defined button. Release releases a defined button.
+/// DownUp presses and releases a defined button.
 pub enum MousePressAction {
     Down { button: MouseButton },
     Up { button: MouseButton },
@@ -122,6 +125,7 @@ pub enum MousePressAction {
 }
 
 impl MouseAction {
+    /// Creates a new MouseAction from a rdev event and sends it to the channel for async execution.
     pub async fn execute(&self, send_channel: Sender<EventType>) {
         match &self {
             MouseAction::Press { data } => match data {
