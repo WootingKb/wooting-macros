@@ -6,7 +6,7 @@ import {
   Divider,
   useColorModeValue
 } from '@chakra-ui/react'
-import { EditIcon } from '@chakra-ui/icons'
+import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import {
   closestCenter,
   DndContext,
@@ -23,26 +23,27 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useSequenceContext } from '../../contexts/sequenceContext'
 import { useEffect, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
-import { ActionEventType } from '../../types'
+import { Keypress, MousePressAction } from '../../types'
+import { useMacroContext } from '../../contexts/macroContext'
+import useRecordingSequence from '../../hooks/useRecordingSequence'
 
-// TODO: Record functionality
-const SequencingArea = () => {
-  const [activeId, setActiveId] = useState(undefined)
-  const { sequence, ids, addToSequence, overwriteIds } = useSequenceContext()
+const isKeypress = (
+  e: Keypress | MousePressAction | undefined
+): e is Keypress => {
+  return (e as Keypress).keypress !== undefined
+}
+
+// ask about how to deal with dndkit's types, e.g. UniqueIdentifier
+export default function SequencingArea() {
+  const [activeId, setActiveId] = useState<number | undefined>(undefined)
+  const { recording, startRecording, stopRecording, item, timeSinceLast } =
+    useRecordingSequence()
+  const { sequence, ids, onElementAdd, overwriteIds } = useMacroContext()
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-
-  useEffect(() => {
-    console.log(ids.length)
-    if (ids.length === 0) {
-      overwriteIds(sequence.map((element, index) => index + 1))
-      console.log("initialized ids")
-    }
-  }, [sequence])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -52,6 +53,7 @@ const SequencingArea = () => {
   )
 
   function handleDragEnd(event: any) {
+    // events are objects, how to deal with getting the library's types easily?
     const { active, over } = event
 
     if (over === null) {
@@ -69,18 +71,36 @@ const SequencingArea = () => {
   }
 
   function handleDragStart(event: any) {
+    // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
     const { active } = event
     setActiveId(active.id)
   }
 
-  const onAddDelayButtonPress = () => {
-    const delayElement: ActionEventType = {
-      type: 'Delay',
-      data: 50
+  useEffect(() => {
+    // When item changes, add it to the sequence
+    if (item === undefined) {
+      return
     }
+    // TODO: add a delay based on the difference in event timestamps
+    // if (timeSinceLast !== undefined && timeSinceLast > 0) {
+    //   onElementAdd({
+    //     type: 'DelayEventAction',
+    //     data: timeSinceLast
+    //   })
+    // }
 
-    addToSequence(delayElement)
-  }
+    if (isKeypress(item)) {
+      onElementAdd({
+        type: 'KeyPressEventAction',
+        data: item
+      })
+    } else {
+      onElementAdd({
+        type: 'MouseEventAction',
+        data: { type: 'Press', data: item }
+      })
+    }
+  }, [item, onElementAdd])
 
   return (
     <VStack w="41%" h="full" p="3">
@@ -90,13 +110,23 @@ const SequencingArea = () => {
           Sequence
         </Text>
         <HStack>
-          <Button leftIcon={<EditIcon />} size={['xs', 'sm', 'md']}>
-            Record
-          </Button>
           <Button
             leftIcon={<EditIcon />}
             size={['xs', 'sm', 'md']}
-            onClick={onAddDelayButtonPress}
+            colorScheme={recording ? 'red' : 'gray'}
+            onClick={recording ? stopRecording : startRecording}
+          >
+            {recording ? 'Stop' : 'Record'}
+          </Button>
+          <Button
+            leftIcon={<AddIcon />}
+            size={['xs', 'sm', 'md']}
+            onClick={() => {
+              onElementAdd({
+                type: 'DelayEventAction',
+                data: 50
+              })
+            }}
           >
             Add Delay
           </Button>
@@ -114,7 +144,11 @@ const SequencingArea = () => {
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
             {ids.map((id) => (
-              <SortableWrapper id={id} key={id} element={sequence[id - 1]}>
+              <SortableWrapper
+                id={id}
+                key={id}
+                isSmall={sequence[id - 1].type === 'DelayEventAction'}
+              >
                 <SortableItem id={id} element={sequence[id - 1]} />
               </SortableWrapper>
             ))}
@@ -122,7 +156,7 @@ const SequencingArea = () => {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
+            <DragWrapper element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}
@@ -131,5 +165,3 @@ const SequencingArea = () => {
     </VStack>
   )
 }
-
-export default SequencingArea

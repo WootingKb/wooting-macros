@@ -10,6 +10,7 @@ import {
 } from 'react'
 import { ViewState } from '../enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
+import { updateBackendConfig } from '../utils'
 
 type ApplicationProviderProps = { children: ReactNode }
 
@@ -31,8 +32,9 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [collections, setCollections] = useState<Collection[]>([])
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
-    macroIndex: -1
+    macroIndex: undefined
   })
+  const [isRenamingCollection, setIsRenamingCollection] = useState(false)
 
   useEffect(() => {
     invoke<MacroData>('get_macros')
@@ -44,6 +46,10 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         console.error(e)
       })
   }, [])
+
+  useEffect(() => {
+    updateBackendConfig(collections)
+  }, [collections])
 
   const changeViewState = useCallback(
     (newState: ViewState) => {
@@ -60,13 +66,52 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   )
 
   const changeSelectedMacroIndex = useCallback(
-    (index: number) => {
+    (index: number | undefined) => {
       setSelection((prevState) => ({
         ...prevState,
         macroIndex: index
       }))
+
+      if ((index !== undefined) && (index >= 0)) {
+        setViewState(ViewState.Editview)
+      } else {
+        setViewState(ViewState.Overview)
+      }
     },
     [setSelection]
+  )
+
+  const onCollectionAdd = useCallback(
+    (newCollection: Collection) => {
+      setCollections((collections) => [...collections, newCollection])
+      changeSelectedCollectionIndex(collections.length)
+    },
+    [changeSelectedCollectionIndex, collections.length]
+  )
+
+  const onSelectedCollectionDelete = useCallback(() => {
+    const newCollections = collections.filter(
+      (_, i) => i !== selection.collectionIndex
+    )
+    setCollections(newCollections)
+    changeSelectedCollectionIndex(0)
+  }, [changeSelectedCollectionIndex, collections, selection.collectionIndex])
+
+  const onCollectionUpdate = useCallback(
+    (updatedCollection: Collection, collectionIndex: number) => {
+      const newCollections = collections.map((collection, index) =>
+        index === collectionIndex ? updatedCollection : collection
+      )
+      setCollections(newCollections)
+    },
+    [collections]
+  )
+
+  const updateIsRenamingCollection = useCallback(
+    (newVal: boolean) => {
+      setIsRenamingCollection(newVal)
+    },
+    [setIsRenamingCollection]
   )
 
   const value = useMemo<AppState>(
@@ -75,18 +120,28 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       collections,
       initComplete,
       selection,
+      isRenamingCollection,
+      changeViewState,
+      onSelectedCollectionDelete,
+      onCollectionAdd,
+      onCollectionUpdate,
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
-      changeViewState
+      updateIsRenamingCollection
     }),
     [
       viewState,
       collections,
       initComplete,
       selection,
+      isRenamingCollection,
+      changeViewState,
+      onSelectedCollectionDelete,
+      onCollectionAdd,
+      onCollectionUpdate,
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
-      changeViewState
+      updateIsRenamingCollection
     ]
   )
 

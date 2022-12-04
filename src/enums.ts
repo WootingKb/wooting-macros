@@ -21,3 +21,11 @@ export enum KeyType {
   Up,
   DownUp
 }
+
+export enum MouseButton {
+  Left = 257,
+  Right = 258,
+  Middle = 259,
+  Mouse4 = 260,
+  Mouse5 = 261
+}

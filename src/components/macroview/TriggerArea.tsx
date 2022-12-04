@@ -2,29 +2,24 @@ import { EditIcon } from '@chakra-ui/icons'
 import {
   HStack,
   VStack,
-  Alert,
-  AlertIcon,
   Kbd,
   Button,
   Text,
   Divider,
-  useColorModeValue
+  useColorModeValue,
+  useDisclosure,
+  Box
 } from '@chakra-ui/react'
+import { useMacroContext } from '../../contexts/macroContext'
 import { HIDLookup } from '../../maps/HIDmap'
+import { mouseEnumLookup } from '../../maps/MouseMap'
 import { Keypress } from '../../types'
+import TriggerModal from './TriggerModal'
 
-type Props = {
-  recording: boolean
-  triggerKeys: Keypress[]
-  onRecordButtonPress: () => void
-}
-
-const TriggerArea = ({
-  recording,
-  triggerKeys,
-  onRecordButtonPress
-}: Props) => {
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+export default function TriggerArea() {
+  const { macro } = useMacroContext()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
     <VStack
@@ -33,7 +28,7 @@ const TriggerArea = ({
       py="4px"
       px="16px"
       border="1px"
-      borderColor={dividerColour}
+      borderColor={borderColour}
       rounded="md"
       justifyContent="center"
     >
@@ -41,44 +36,29 @@ const TriggerArea = ({
         <Text fontWeight="semibold" fontSize={['sm', 'md']}>
           Trigger Key(s)
         </Text>
-        {recording && (
-          <Alert
-            status="info"
-            colorScheme="yellow"
-            rounded="md"
-            h="28px"
-            w="55%"
-          >
-            <AlertIcon />
-            <Text fontSize={['2xs', 'xs', 'sm', 'md']}>
-              Input recording in progress.
-            </Text>
-          </Alert>
-        )}
       </HStack>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       <HStack w="100%" justifyContent="space-between">
         <VStack alignItems="normal" w="full" h="full">
           <HStack spacing="4px" h="full">
-            {triggerKeys.map((key: Keypress, index: number) => (
-              <Kbd key={index}>
+            {macro.trigger.type === "KeyPressEvent" && macro.trigger.data.map((key: Keypress) => (
+              <Kbd key={key.keypress}>
                 {HIDLookup.get(key.keypress)?.displayString}
               </Kbd>
             ))}
+            {macro.trigger.type === "MouseEvent" &&
+              <Box>
+                {mouseEnumLookup.get(macro.trigger.data)?.displayString}
+              </Box>}
           </HStack>
         </VStack>
         <VStack alignItems="normal">
-          <Button
-            leftIcon={<EditIcon />}
-            onClick={onRecordButtonPress}
-            colorScheme={recording ? 'red' : 'gray'}
-          >
-            Record
+          <Button leftIcon={<EditIcon />} onClick={onOpen}>
+            Edit
           </Button>
         </VStack>
       </HStack>
+      <TriggerModal isOpen={isOpen} onClose={onClose} />
     </VStack>
   )
 }
-
-export default TriggerArea

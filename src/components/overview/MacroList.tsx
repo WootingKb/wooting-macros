@@ -1,40 +1,70 @@
-import { Grid, GridItem } from '@chakra-ui/react'
-import { useState } from 'react'
+import { AddIcon } from '@chakra-ui/icons'
+import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
+import { ViewState } from '../../enums'
 import { Collection, Macro } from '../../types'
-import { updateBackendConfig } from '../../utils'
-import FadeInWrapper from '../FadeInWrapper'
 import MacroCard from './MacroCard'
 
-const MacroList = () => {
-  const { collections, selection } = useApplicationContext()
+export default function MacroList() {
+  const { selection, onCollectionUpdate, changeViewState } =
+    useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
-  const [temp, setTemp] = useState(false)
 
   const onMacroDelete = (macroIndex: number) => {
-    collections[selection.collectionIndex].macros.splice(macroIndex, 1)
-    setTemp(!temp)
-    updateBackendConfig(collections)
+    const newCollection = { ...currentCollection }
+    newCollection.macros = newCollection.macros.filter(
+      (_, i) => i !== macroIndex
+    )
+    onCollectionUpdate(newCollection, selection.collectionIndex)
   }
 
   return (
-    <FadeInWrapper transitionDuration={1000}>
+    <Box
+      w="100%"
+      h="100%"
+      p="2"
+      overflowY="auto"
+      css={{
+        '&::-webkit-scrollbar': {
+          width: '10px'
+        },
+        '&::-webkit-scrollbar-track': {
+          background: '#f1f1f1',
+          borderRadius: '10px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#888',
+          borderRadius: '10px'
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#555',
+          borderRadius: '10px'
+        }
+      }}
+    >
       <Grid
         w="100%"
         templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        p="2"
         gap="2"
-        overflowY="auto"
       >
+        <Flex h="163px" justifyContent="center" alignItems="center">
+          <Button
+            colorScheme="yellow"
+            leftIcon={<AddIcon />}
+            size={['sm', 'md', 'lg']}
+            maxW="50%"
+            onClick={() => changeViewState(ViewState.Addview)}
+          >
+            Add Macro
+          </Button>
+        </Flex>
         {currentCollection.macros.map((macro: Macro, index: number) => (
-          <GridItem w="100%" key={index}>
+          <GridItem w="100%" h="163px" key={`${index}:${macro.name}`}>
             <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
           </GridItem>
         ))}
       </Grid>
-    </FadeInWrapper>
+    </Box>
   )
 }
-
-export default MacroList

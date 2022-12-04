@@ -10,14 +10,14 @@ type Props = {
   toggleCollection: (index: number) => void
 }
 
-function CollectionButton({
+export default function CollectionButton({
   collection,
   index,
   isFocused,
   setFocus,
   toggleCollection
 }: Props) {
-  const buttonBg = useColorModeValue('gray.400', 'gray.700')
+  const buttonBg = useColorModeValue('gray.300', 'gray.700')
 
   return (
     <Box
@@ -48,5 +48,3 @@ function CollectionButton({
     </Box>
   )
 }
-
-export default CollectionButton

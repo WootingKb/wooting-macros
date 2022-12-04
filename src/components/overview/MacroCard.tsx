@@ -11,15 +11,15 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useColorModeValue
+  useColorModeValue,
+  Box
 } from '@chakra-ui/react'
 import { EditIcon, StarIcon } from '@chakra-ui/icons'
 import { Keypress, Macro } from '../../types'
-import { BaseSyntheticEvent } from 'react'
 import { HIDLookup } from '../../maps/HIDmap'
-import { updateBackendConfig } from '../../utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
-import { ViewState } from '../../enums'
+import { useSelectedCollection } from '../../contexts/selectors'
+import { mouseEnumLookup } from '../../maps/MouseMap'
 
 type Props = {
   macro: Macro
@@ -27,17 +27,25 @@ type Props = {
   onDelete: (index: number) => void
 }
 
-function MacroCard({ macro, index, onDelete }: Props) {
-  const { collections, changeSelectedMacroIndex, changeViewState } =
+export default function MacroCard({ macro, index, onDelete }: Props) {
+  const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
+  const currentCollection = useSelectedCollection()
+
   const subtextColour = useColorModeValue('gray.500', 'gray.400')
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
 
-  const onToggle = (event: BaseSyntheticEvent) => {
-    macro.active = event.target.checked
-    // update backend
-    updateBackendConfig(collections)
+  function onToggle(event: React.ChangeEvent<HTMLInputElement>) {
+    const newCollection = { ...currentCollection }
+    newCollection.macros[index].active = event.target.checked
+    onCollectionUpdate(newCollection, selection.collectionIndex)
+  }
+
+  function onDuplicate() {
+    const newCollection = { ...currentCollection }
+    newCollection.macros.push(macro)
+    onCollectionUpdate(newCollection, selection.collectionIndex)
   }
 
   return (
@@ -80,7 +88,7 @@ function MacroCard({ macro, index, onDelete }: Props) {
             variant="link"
           ></MenuButton>
           <MenuList>
-            <MenuItem isDisabled>Duplicate</MenuItem>
+            <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             <MenuItem isDisabled>Move to Collection</MenuItem>
             <MenuItem isDisabled>Export</MenuItem>
             <Divider />
@@ -95,11 +103,15 @@ function MacroCard({ macro, index, onDelete }: Props) {
         Trigger Keys:
       </Text>
       <Flex w="100%" gap="4px">
-        {macro.trigger.data.map((key: Keypress, index: number) => (
-          <Kbd key={index} p="1">
-            {HIDLookup.get(key.keypress)?.displayString}
-          </Kbd>
-        ))}
+        {macro.trigger.type === 'KeyPressEvent' &&
+          macro.trigger.data.map((key: Keypress) => (
+            <Kbd key={key.keypress}>
+              {HIDLookup.get(key.keypress)?.displayString}
+            </Kbd>
+          ))}
+        {macro.trigger.type === 'MouseEvent' && (
+          <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
+        )}
       </Flex>
       <Divider borderColor={borderColour} />
       {/** Buttons */}
@@ -109,7 +121,6 @@ function MacroCard({ macro, index, onDelete }: Props) {
           leftIcon={<EditIcon />}
           onClick={() => {
             changeSelectedMacroIndex(index)
-            changeViewState(ViewState.Editview)
           }}
         >
           Edit
@@ -119,5 +130,3 @@ function MacroCard({ macro, index, onDelete }: Props) {
     </VStack>
   )
 }
-
-export default MacroCard

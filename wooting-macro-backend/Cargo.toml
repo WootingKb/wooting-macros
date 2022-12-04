@@ -1,0 +1,30 @@
+[package]
+name = "wooting-macro-backend"
+version = "0.5.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive", "rc"] }
+tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
+rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
+halfbrown = { version = "0.1", features = ["serde"] }
+idasen-cli = "0.1"
+lazy_static = "1.4"
+tokio = { version = "1.22", features = ["full"] }
+tokio-serde = { version = "0.8", features = ["json"] }
+opener = "0.5"
+obws = { version = "0.10.0" }
+rodio = "0.16.0"
+copypasta = { version = "0.8.1", features = ["smithay-clipboard"] }
+
+wifi-rs = "0.2.2"
+serde_repr = "0.1.9"
+fastrand = "1.8.0"
+
+
+[target.'cfg(target_os = "windows")'.dependencies]
+brightness = { version = "0.5"}
+futures = "0.3"

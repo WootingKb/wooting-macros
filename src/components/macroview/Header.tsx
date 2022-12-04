@@ -1,37 +1,20 @@
 import { Input, Button, Flex, HStack } from '@chakra-ui/react'
-import { BaseSyntheticEvent } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
-import { useSequenceContext } from '../../contexts/sequenceContext'
-import { ViewState } from '../../enums'
-import { Keypress } from '../../types'
+import { useMacroContext } from '../../contexts/macroContext'
 
 type Props = {
-  triggerKeys: Keypress[]
-  macroName: string
   isEditing: boolean
-  onMacroNameChange: (event: BaseSyntheticEvent) => void
-  onSaveButtonPress: () => void
 }
 
-const MacroviewHeader = ({
-  triggerKeys,
-  macroName,
-  isEditing,
-  onMacroNameChange,
-  onSaveButtonPress
-}: Props) => {
-  const { changeViewState } = useApplicationContext()
-  const { updateElementIndex, overwriteSequence, overwriteIds } =
-    useSequenceContext()
+export default function MacroviewHeader({ isEditing }: Props) {
+  const { changeSelectedMacroIndex } = useApplicationContext()
+  const { macro, sequence, updateMacroName, updateMacro } = useMacroContext()
 
   return (
     <HStack w="100%" h="60px" px="2" spacing="16px">
       <Button
         onClick={() => {
-          changeViewState(ViewState.Overview)
-          overwriteSequence([])
-          overwriteIds([])
-          updateElementIndex(-1)
+          changeSelectedMacroIndex(undefined)
         }}
       >
         Back
@@ -54,32 +37,41 @@ const MacroviewHeader = ({
           </svg>
           {isEditing && (
             <Input
-              variant="unstyled"
+              variant="flushed"
+              w="35%"
               placeholder="Macro Name"
               isRequired
-              onChange={onMacroNameChange}
-              value={macroName}
+              onChange={(event) => {
+                updateMacroName(event.target.value)
+              }}
+              value={macro.name}
             />
           )}
           {!isEditing && (
             <Input
-              variant="unstyled"
+              variant="flushed"
+              w="35%"
               placeholder="Macro Name"
               isRequired
-              onChange={onMacroNameChange}
+              onChange={(event) => {
+                updateMacroName(event.target.value)
+              }}
             />
           )}
         </Flex>
       </Flex>
       <Button
         colorScheme="yellow"
-        isDisabled={!(triggerKeys.length > 0)}
-        onClick={onSaveButtonPress}
+        isDisabled={
+          (macro.trigger.type === "KeyPressEvent" && macro.trigger.data.length === 0) ||
+          (macro.trigger.type === "MouseEvent" && macro.trigger.data === undefined) ||
+          sequence.length === 0 ||
+          macro.name === ''
+        }
+        onClick={updateMacro}
       >
         Save Macro
       </Button>
     </HStack>
   )
 }
-
-export default MacroviewHeader

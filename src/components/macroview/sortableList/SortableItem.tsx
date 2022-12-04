@@ -4,15 +4,12 @@ import {
   DeleteIcon,
   EditIcon
 } from '@chakra-ui/icons'
-import {
-  HStack,
-  IconButton,
-  Text,
-  useColorModeValue
-} from '@chakra-ui/react'
+import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { useSequenceContext } from '../../../contexts/sequenceContext'
+import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
+import { mouseEnumLookup } from '../../../maps/MouseMap'
+import { sysEventLookup } from '../../../maps/SystemEventMap'
 import { ActionEventType } from '../../../types'
 
 type Props = {
@@ -20,45 +17,74 @@ type Props = {
   element: ActionEventType
 }
 
-const SortableItem = ({ id, element }: Props) => {
+export default function SortableItem({ id, element }: Props) {
   const [displayText, setDisplayText] = useState<string | undefined>('')
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
-  const { selectedElementIndex, removeFromSequence, updateElementIndex } =
-    useSequenceContext()
+  const { selectedElementId, onElementDelete, updateSelectedElementId } =
+    useMacroContext()
 
   useEffect(() => {
     switch (element.type) {
-      case 'KeyPressEvent':
+      case 'KeyPressEventAction':
         setDisplayText(HIDLookup.get(element.data.keypress)?.displayString)
         break
-      case 'Delay':
+      case 'DelayEventAction':
         setDisplayText(element.data.toString() + ' ms')
+        break
+      case 'MouseEventAction':
+        setDisplayText(
+          mouseEnumLookup.get(element.data.data.button)?.displayString
+        )
+        break
+      case 'SystemEventAction':
+        switch (element.data.type) {
+          case 'Open':
+            setDisplayText(sysEventLookup.get(element.data.type)?.displayString)
+            break
+          case 'Volume':
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
+            break
+          case 'Clipboard':
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
+            break
+          case 'Brightness':
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
+            break
+          default:
+            setDisplayText('err')
+            break
+        }
         break
       default:
         break
     }
-  }, [element])
+  }, [element.data, element.type, id])
 
   const onEditButtonPress = () => {
-    if (selectedElementIndex === id - 1) {
+    if (selectedElementId === id - 1) {
       return
     }
-    updateElementIndex(id - 1)
+    updateSelectedElementId(id - 1)
   }
 
   const onDeleteButtonPress = () => {
-    if (selectedElementIndex === id - 1) {
-      updateElementIndex(-1)
+    if (selectedElementId === id - 1) {
+      updateSelectedElementId(undefined)
     }
-
-    removeFromSequence(element)
+    onElementDelete(id - 1)
   }
 
   return (
     <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
       <HStack p="4px" px="8px" w="100%">
-        {element.type === 'Delay' && <RepeatClockIcon />}
-        {element.type === 'KeyPressEvent' && <StarIcon />}
+        {element.type === 'DelayEventAction' && <RepeatClockIcon />}
+        {element.type === 'KeyPressEventAction' && <StarIcon />}
         <Text>{displayText}</Text>
       </HStack>
       <HStack p="4px" h="100%" borderLeft="1px" borderColor={dividerColour}>
@@ -78,5 +104,3 @@ const SortableItem = ({ id, element }: Props) => {
     </HStack>
   )
 }
-
-export default SortableItem
