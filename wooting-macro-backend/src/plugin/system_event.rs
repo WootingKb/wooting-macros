@@ -1,18 +1,12 @@
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
-
 use copypasta::{ClipboardContext, ClipboardProvider};
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-use futures::{TryStreamExt};
-
-use futures::{StreamExt, TryFutureExt};
-
 use fastrand;
-
-
-use rdev::{EventType};
+use rdev::EventType;
 use tokio::sync::mpsc::Sender;
 
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+use futures::{StreamExt, TryFutureExt, TryStreamExt};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -21,8 +15,6 @@ pub enum SystemAction {
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
-    // Wifi needs more communication between frontend and backend,
-    // though same could be said for the brightness devices
     Wifi { action: WifiAction },
 }
 
@@ -30,7 +22,6 @@ impl SystemAction {
     pub async fn execute(&self, send_channel: Sender<EventType>) {
         match &self {
             SystemAction::Open { action: path } => {
-                //TODO: THIS CANNOT BE UNWRAPPED
                 match opener::open(std::path::Path::new(path)) {
                     Ok(x) => x,
                     Err(e) => eprintln!("Error: {}", e),
@@ -93,7 +84,6 @@ impl SystemAction {
                 }
                 MonitorBrightnessAction::Increase => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
-
                     brightness_increase(2).await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
@@ -175,7 +165,6 @@ impl SystemAction {
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-
                     //Get the text into clipboard
                     send_channel
                         .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
@@ -194,17 +183,12 @@ impl SystemAction {
                         .await
                         .unwrap();
 
-
                     //Transform the text
-
-
                     let content = ctx.get_contents().unwrap();
 
                     let content_new = transform_text(content);
 
                     ctx.set_contents(content_new).unwrap();
-
-
 
                     //Paste the text again
                     send_channel
@@ -223,9 +207,6 @@ impl SystemAction {
                         .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
                         .await
                         .unwrap();
-
-
-
                 }
             },
             SystemAction::Wifi { .. } => {}
@@ -241,13 +222,17 @@ pub struct Monitor {
     pub registry_key: String,
 }
 
-
-pub async fn backend_load_monitors() -> Vec<Monitor>  {
+pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
 
-    for i in brightness::brightness_devices().into_future().await.0.unwrap() {
+    for i in brightness::brightness_devices()
+        .into_future()
+        .await
+        .0
+        .unwrap()
+    {
         //println!("{:#?}", i);
-        monitors.push( Monitor {
+        monitors.push(Monitor {
             name: i.device_name().into_future().await.unwrap(),
             current_brightness: i.get().into_future().await.unwrap(),
             description: i.device_description().unwrap(),
@@ -256,7 +241,6 @@ pub async fn backend_load_monitors() -> Vec<Monitor>  {
     }
 
     monitors
-
 }
 
 //TODO: accept device from frontend
@@ -279,7 +263,7 @@ async fn brightness_increase(percentage_level: u32) {
         .try_fold(0, |count, mut dev| async move {
             let current_brightness = dev.get().await.unwrap();
 
-            set_brightness(&mut dev,  current_brightness + percentage_level).await?;
+            set_brightness(&mut dev, current_brightness + percentage_level).await?;
             Ok(count + 1)
         })
         .await
@@ -293,7 +277,7 @@ async fn brightness_decrease(percentage_level: u32) {
         .try_fold(0, |count, mut dev| async move {
             let current_brightness = dev.get().await.unwrap();
 
-            set_brightness(&mut dev,  current_brightness - percentage_level).await?;
+            set_brightness(&mut dev, current_brightness - percentage_level).await?;
             Ok(count + 1)
         })
         .await
@@ -301,15 +285,15 @@ async fn brightness_decrease(percentage_level: u32) {
     println!("Found {} displays", count);
 }
 
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn get_info(dev: &BrightnessDevice) -> Monitor {
-    Monitor{
-        name: dev.device_name().await.unwrap(),
-        current_brightness: dev.get().await.unwrap(),
-        description: dev.device_description().unwrap(),
-        registry_key: dev.device_registry_key().unwrap(),
-    }
-}
+// #[cfg(any(target_os = "windows", target_os = "linux"))]
+// async fn get_info(dev: &BrightnessDevice) -> Monitor {
+//     Monitor{
+//         name: dev.device_name().await.unwrap(),
+//         current_brightness: dev.get().await.unwrap(),
+//         description: dev.device_description().unwrap(),
+//         registry_key: dev.device_registry_key().unwrap(),
+//     }
+// }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn set_brightness(
@@ -334,8 +318,7 @@ async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightn
     Ok(())
 }
 
-
-fn transform_text (text: String) -> String {
+fn transform_text(text: String) -> String {
     let mut transformed_text = String::new();
     for c in text.chars() {
         if c.is_ascii_alphabetic() && fastrand::bool() {
@@ -384,7 +367,7 @@ pub enum MonitorBrightnessAction {
     Get,
     Set { level: u32 },
     Decrease,
-    Increase
+    Increase,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]

@@ -105,18 +105,18 @@ pub struct Macro {
 }
 
 impl Macro {
-    fn new() -> Macro {
-        Macro {
-            name: "".to_string(),
-            sequence: vec![],
-            macro_type: MacroType::Single,
-            trigger: TriggerEventType::KeyPressEvent {
-                data: vec![],
-                allow_while_other_keys: false,
-            },
-            active: false,
-        }
-    }
+    // fn new() -> Macro {
+    //     Macro {
+    //         name: "".to_string(),
+    //         sequence: vec![],
+    //         macro_type: MacroType::Single,
+    //         trigger: TriggerEventType::KeyPressEvent {
+    //             data: vec![],
+    //             allow_while_other_keys: false,
+    //         },
+    //         active: false,
+    //     }
+    // }
 
     async fn execute(&self, send_channel: Sender<EventType>) {
         for action in &self.sequence {
@@ -147,7 +147,7 @@ impl Macro {
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .await
                             .unwrap();
-                        thread::sleep(time::Duration::from_millis(*&data.press_duration as u64));
+                        thread::sleep(time::Duration::from_millis(data.press_duration as u64));
                         send_channel
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
@@ -230,7 +230,7 @@ impl MacroBackend {
     pub async fn get_brightness_devices(&self) -> Vec<BrightnessDevice> {
         #[cfg(any(target_os = "windows", target_os = "linux"))]
         {
-            let result = brightness::brightness_devices();
+            //let result = brightness::brightness_devices();
             vec![]
         }
 
@@ -297,8 +297,8 @@ impl MacroBackend {
 
         //let (schan_grab, rchan_grab) = tokio::sync::mpsc::channel(1); //TODO: async tokio version
 
-        let inner_config = self.config.clone();
-        let inner_data = self.data.clone();
+        //let inner_config = self.config.clone();
+        //let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
 
         let inner_is_listening = self.is_listening.clone();
@@ -309,16 +309,16 @@ impl MacroBackend {
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
-            let keys_pressed = keys_pressed.clone();
+            //let keys_pressed = keys_pressed.clone();
 
             grab(move |event: rdev::Event| {
                 match Ok::<&rdev::Event, GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
-                            match event.event_type.clone() {
+                            match event.event_type {
                                 //TODO: Grab and discard the trigger actually
                                 EventType::KeyPress(key) => {
-                                    let key_to_push = key.clone();
+                                    let key_to_push = key;
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
 
@@ -328,7 +328,7 @@ impl MacroBackend {
 
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(&x).unwrap_or(&0))
+                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
                                         .collect();
 
                                     let first_key: u32 = match pressed_keys_copy_converted.first() {
@@ -361,7 +361,7 @@ impl MacroBackend {
                                 }
 
                                 EventType::KeyRelease(key) => {
-                                    let key_to_remove = key.clone();
+                                    let key_to_remove = key;
 
                                     keys_pressed
                                         .blocking_write()
@@ -399,7 +399,7 @@ impl MacroBackend {
                                                 vec![]
                                             }
                                             Some(data_found) => {
-                                                println!("Found data: {:#?}", data_found.to_vec().clone());
+                                                //println!("Found data: {:#?}", data_found.to_vec());
                                                 data_found.to_vec()
                                             },
                                         };
@@ -458,7 +458,7 @@ impl StateManagement for ApplicationConfig {
             use_input_grab: false,
             startup_delay: 0,
         };
-        return match File::open("../config.json") {
+        match File::open("../config.json") {
             Ok(data) => {
                 let data: ApplicationConfig = serde_json::from_reader(&data).unwrap();
                 data
@@ -469,7 +469,7 @@ impl StateManagement for ApplicationConfig {
                 default.write_to_file();
                 default
             }
-        };
+        }
     }
 
     fn write_to_file(&self) {
@@ -511,9 +511,9 @@ impl MacroData {
         let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
-            if collections.active == true {
+            if collections.active {
                 for macros in &collections.macros {
-                    if macros.active == true {
+                    if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 match output_hashmap.get_mut(&data.first().unwrap().keypress) {
@@ -572,11 +572,11 @@ impl StateManagement for MacroData {
             }],
         };
 
-        return match File::open("../data_json.json") {
+        match File::open("../data_json.json") {
             Ok(data) => {
                 let data: MacroData = match serde_json::from_reader(&data) {
                     Ok(x) => x,
-                    Err(error) => { eprintln!("Error reading data.json, using default data. {}", error); default.clone() }
+                    Err(error) => { eprintln!("Error reading data.json, using default data. {}", error); default }
                 };
                 data
             }
@@ -586,7 +586,7 @@ impl StateManagement for MacroData {
                 default.write_to_file();
                 default
             }
-        };
+        }
     }
 }
 
@@ -607,7 +607,7 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
             println!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
-            let cloned_channel = channel.clone();
+            let cloned_channel = channel;
 
             task::spawn(async move {
                 macros.execute(cloned_channel).await;
@@ -657,7 +657,7 @@ fn check_macro_execution_efficiently(
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
                     });
-                    output = output || true;
+                    output = true;
                 }
             }
             TriggerEventType::MouseEvent { data } => {
@@ -675,13 +675,13 @@ fn check_macro_execution_efficiently(
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
                     });
-                    output = output || true;
+                    output = true;
                 }
             }
         }
     }
 
-    return output;
+    output
 }
 
 ///Sends an event to the library to Execute on an OS level.

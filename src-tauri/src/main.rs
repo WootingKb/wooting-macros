@@ -12,9 +12,6 @@ use tauri::{
 };
 
 use wooting_macro_backend::*;
-use wooting_macro_backend::plugin::system_event::Monitor;
-
-use crate::plugin::system_event::backend_load_monitors;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -51,10 +48,11 @@ async fn set_macros(
     Ok(())
 }
 
-
 #[tauri::command]
-async fn get_monitor_data(state: tauri::State<'_, MacroBackend>) -> Result<Vec<Monitor>, ()> {
-    let monitors = backend_load_monitors().await;
+async fn get_monitor_data(
+    state: tauri::State<'_, MacroBackend>,
+) -> Result<Vec<wooting_macro_backend::plugin::system_event::Monitor>, ()> {
+    let monitors = wooting_macro_backend::plugin::system_event::backend_load_monitors().await;
     let mut state_writing = state.display_list.write().await;
     *state_writing = monitors.clone();
 
@@ -63,6 +61,7 @@ async fn get_monitor_data(state: tauri::State<'_, MacroBackend>) -> Result<Vec<M
 
 
 #[tauri::command]
+/// Returns the monitors connected in the system to the frontend.
 async fn get_brightness_devices(
     state: tauri::State<'_, MacroBackend>,
 ) -> Result<Vec<BrightnessDevice>, ()> {
@@ -70,6 +69,7 @@ async fn get_brightness_devices(
 }
 
 #[tauri::command]
+/// Allows the frontend to disable the macro execution scanning completely.
 async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
     frontend_bool: bool,
@@ -79,16 +79,14 @@ async fn control_grabbing(
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
+/// Spawn the backend thread.
+/// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
+/// (will crash on key grab/listen)
 async fn main() {
-    // Spawn the backend thread.
-    // Note: this doesn't work on macOS since we cannot give the thread the proper permissions
-    // (will crash on key grab/listen)
-
     let backend = MacroBackend::new();
 
     println!("Running the macro backend");
     backend.init().await;
-
 
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
