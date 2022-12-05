@@ -5,17 +5,12 @@ import {
   Button,
   HStack,
   Text,
-  useColorMode,
   useColorModeValue,
-  Tooltip,
-  IconButton
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useState } from 'react'
-import { invoke } from '@tauri-apps/api'
 import ToggleGrabbingButton from './ToggleGrabbingButton'
 
 type Props = {
@@ -34,7 +29,6 @@ export default function LeftPanel({
     changeSelectedCollectionIndex,
     updateIsRenamingCollection
   } = useApplicationContext()
-  const { colorMode, toggleColorMode } = useColorMode()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const panelBg = useColorModeValue('gray.100', 'gray.900')
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
@@ -106,7 +100,7 @@ export default function LeftPanel({
           variant="outline"
           borderColor="gray.400"
           leftIcon={<SettingsIcon />}
-          _hover={{ bg: "yellow.400" }}
+          _hover={{ bg: 'yellow.400' }}
           onClick={onOpenSettingsModal}
         >
           <Text fontSize={['sm', 'md']}>Settings</Text>

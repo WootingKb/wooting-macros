@@ -29,3 +29,8 @@ export enum MouseButton {
   Mouse4 = 260,
   Mouse5 = 261
 }
+
+export enum SettingsCategory {
+  General,
+  Other
+}
