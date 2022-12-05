@@ -6,18 +6,27 @@ import {
   HStack,
   Text,
   useColorMode,
-  useColorModeValue
+  useColorModeValue,
+  Tooltip,
+  IconButton
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { useState } from 'react'
+import { invoke } from '@tauri-apps/api'
+import ToggleGrabbingButton from './ToggleGrabbingButton'
 
 type Props = {
-  onOpen: () => void
+  onOpenCollectionModal: () => void
+  onOpenSettingsModal: () => void
 }
 
-export default function LeftPanel({ onOpen }: Props) {
+export default function LeftPanel({
+  onOpenCollectionModal,
+  onOpenSettingsModal
+}: Props) {
   const {
     collections,
     selection,
@@ -33,6 +42,7 @@ export default function LeftPanel({ onOpen }: Props) {
   const onCollectionButtonPress = (newActiveIndex: number) => {
     changeSelectedCollectionIndex(newActiveIndex)
   }
+
   return (
     <VStack
       bg={panelBg}
@@ -50,9 +60,12 @@ export default function LeftPanel({ onOpen }: Props) {
       }}
     >
       <VStack w="100%">
-        <Text w="100%" fontWeight="bold">
-          Collections
-        </Text>
+        <HStack w="100%" justifyContent="space-between">
+          <Text w="100%" fontWeight="bold">
+            Collections
+          </Text>
+          <ToggleGrabbingButton />
+        </HStack>
         <Divider borderColor={dividerBg} />
         <VStack w="100%" ref={parent}>
           {collections.map((collection: Collection, index: number) => (
@@ -80,7 +93,7 @@ export default function LeftPanel({ onOpen }: Props) {
           leftIcon={<AddIcon />}
           onClick={() => {
             updateIsRenamingCollection(false)
-            onOpen()
+            onOpenCollectionModal()
           }}
         >
           New Collection
@@ -90,6 +103,15 @@ export default function LeftPanel({ onOpen }: Props) {
         <Button
           variant="outline"
           borderColor="gray.400"
+          onClick={onOpenSettingsModal}
+          w="100%"
+          size={'sm'}
+        >
+          <Text fontSize={['2xs', 'xs']}>Settings</Text>
+        </Button>
+        {/* <Button
+          variant="outline"
+          borderColor="gray.400"
           onClick={toggleColorMode}
           w="100%"
           size={'sm'}
@@ -97,8 +119,8 @@ export default function LeftPanel({ onOpen }: Props) {
           <Text fontSize={['2xs', 'xs']}>
             Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
           </Text>
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           variant="outline"
           borderColor="gray.400"
           w="100%"
@@ -106,7 +128,7 @@ export default function LeftPanel({ onOpen }: Props) {
           isDisabled
         >
           <Text fontSize={['2xs', 'xs']}>Give Feedback</Text>
-        </Button>
+        </Button> */}
       </HStack>
     </VStack>
   )

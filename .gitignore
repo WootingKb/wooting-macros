@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 /data_json.json
+/config.json
 /src-tauri/config.json
 /src-tauri/data_json.json
