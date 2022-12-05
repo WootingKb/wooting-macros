@@ -1,4 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, SettingsIcon } from '@chakra-ui/icons'
 import {
   VStack,
   Divider,
@@ -101,13 +101,15 @@ export default function LeftPanel({
       </VStack>
       <HStack w="100%">
         <Button
-          variant="outline"
-          borderColor="gray.400"
-          onClick={onOpenSettingsModal}
           w="100%"
           size={'sm'}
+          variant="outline"
+          borderColor="gray.400"
+          leftIcon={<SettingsIcon />}
+          _hover={{ bg: "yellow.400" }}
+          onClick={onOpenSettingsModal}
         >
-          <Text fontSize={['2xs', 'xs']}>Settings</Text>
+          <Text fontSize={['sm', 'md']}>Settings</Text>
         </Button>
         {/* <Button
           variant="outline"

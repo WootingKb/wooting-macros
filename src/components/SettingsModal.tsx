@@ -1,3 +1,4 @@
+import { CloseIcon } from '@chakra-ui/icons'
 import {
   Modal,
   ModalOverlay,
@@ -6,7 +7,9 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Button
+  Button,
+  VStack,
+  Text
 } from '@chakra-ui/react'
 
 type Props = {

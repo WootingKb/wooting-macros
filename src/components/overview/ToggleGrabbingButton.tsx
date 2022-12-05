@@ -12,20 +12,22 @@ export default function ToggleGrabbingButton() {
           ? 'Disable Input Grabbing'
           : 'Enable Input Grabbing'
       }
+      closeOnClick={false}
       aria-label="Toggle Input Grabbing button tooltip"
+      rounded="sm"
     >
       <IconButton
         aria-label="toggle app on/off button"
-        size="sm"
+        size="xs"
         icon={
           isInputGrabbingEnabled ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
+              fill="yellow"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              width={24}
+              width={20}
             >
               <path
                 strokeLinecap="round"
@@ -36,11 +38,11 @@ export default function ToggleGrabbingButton() {
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
+              fill="gray"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              width={24}
+              width={20}
             >
               <path
                 strokeLinecap="round"
