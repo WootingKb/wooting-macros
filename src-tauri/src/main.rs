@@ -52,11 +52,11 @@ async fn set_macros(
 async fn get_monitor_data(
     state: tauri::State<'_, MacroBackend>,
 ) -> Result<Vec<wooting_macro_backend::plugin::system_event::Monitor>, ()> {
-    let monitors = wooting_macro_backend::plugin::system_event::backend_load_monitors().await;
-    let mut state_writing = state.display_list.write().await;
-    *state_writing = monitors.clone();
-
-    Ok(monitors.clone())
+    // let monitors = wooting_macro_backend::plugin::system_event::backend_load_monitors().await;
+    // let mut state_writing = state.display_list.write().await;
+    // *state_writing = monitors.clone();
+    state.get_monitor_data();
+    Ok(state.display_list.read().await.clone())
 }
 
 

@@ -237,9 +237,14 @@ impl MacroBackend {
     }
 
     pub async fn set_config(&self, config: ApplicationConfig) {
-        // TODO: async this
         config.write_to_file();
         *self.config.write().await = config;
+    }
+    pub async fn get_monitor_data(&self) {
+        //let monitors = plugin::system_event::backend_load_monitors().await;
+        // let mut state_writing = self.display_list.write().await;
+        //*state_writing = monitors.clone();
+        *self.display_list.write().await = plugin::system_event::backend_load_monitors().await;
     }
 
     pub async fn init(&self) {
