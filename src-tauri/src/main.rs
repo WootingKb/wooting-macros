@@ -52,10 +52,7 @@ async fn set_macros(
 async fn get_monitor_data(
     state: tauri::State<'_, MacroBackend>,
 ) -> Result<Vec<wooting_macro_backend::plugin::system_event::Monitor>, ()> {
-    // let monitors = wooting_macro_backend::plugin::system_event::backend_load_monitors().await;
-    // let mut state_writing = state.display_list.write().await;
-    // *state_writing = monitors.clone();
-    state.get_monitor_data();
+    state.get_monitor_data().await;
     Ok(state.display_list.read().await.clone())
 }
 
@@ -85,7 +82,12 @@ async fn control_grabbing(
 async fn main() {
     let backend = MacroBackend::new();
 
+
     println!("Running the macro backend");
+
+    #[cfg(not(debug_assertions))]
+    wooting_macro_backend::MacroBackend::generate_directories();
+
     backend.init().await;
 
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
