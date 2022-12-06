@@ -1,6 +1,9 @@
+import { VStack } from '@chakra-ui/react'
 
 export default function LanguageSettings() {
   return (
-    <div>LanguageSettings</div>
+    <VStack w="100%" spacing={4}>
+      <div>LanguageSettings</div>
+    </VStack>
   )
 }

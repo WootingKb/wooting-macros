@@ -1,6 +1,9 @@
+import { VStack } from '@chakra-ui/react'
 
 export default function AccessibilitySettings() {
   return (
-    <div>AccessibilitySettings</div>
+    <VStack w="100%" spacing={4}>
+      <div>AccessibilitySettings</div>
+    </VStack>
   )
 }

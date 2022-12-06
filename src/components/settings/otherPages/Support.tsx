@@ -1,6 +1,9 @@
+import { VStack } from '@chakra-ui/react'
 
 export default function Support() {
   return (
-    <div>Support</div>
+    <VStack w="100%" spacing={4}>
+      <div>Support</div>
+    </VStack>
   )
 }

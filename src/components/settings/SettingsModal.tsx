@@ -7,15 +7,15 @@ import {
   HStack,
   VStack,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { settingInfoLookup } from '../../maps/SettingsMap'
 import AccessibilitySettings from './generalPages/AccessibilitySettings'
 import AppearanceSettings from './generalPages/AppearanceSettings'
 import IntegrationSettings from './generalPages/IntegrationSettings'
 import LanguageSettings from './generalPages/LanguageSettings'
 import WindowSettings from './generalPages/WindowSettings'
-import Feedback from './otherPages/Feedback'
 import Support from './otherPages/Support'
 import Updates from './otherPages/Updates'
 import SettingsLeftPanel from './SettingsLeftPanel'
@@ -27,6 +27,7 @@ type Props = {
 
 export default function SettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
+  const panelBg = useColorModeValue('white', 'gray.800')
 
   const SelectedPageComponent = useMemo(() => {
     switch (pageIndex) {
@@ -44,8 +45,6 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
         return <Updates />
       case 6:
         return <Support />
-      case 7:
-        return <Feedback />
       default:
         return <></>
     }
@@ -69,7 +68,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
               pageIndex={pageIndex}
               onSettingsButtonPress={setPageIndex}
             />
-            <ModalBody h="100vh" bg="white">
+            <ModalBody h="100vh" bg={panelBg}>
               <VStack w="95%" justifyContent="left" pt="8" spacing={4}>
                 <Text w="100%" fontWeight="bold" fontSize="large">
                   {settingInfoLookup.get(pageIndex)?.displayString}

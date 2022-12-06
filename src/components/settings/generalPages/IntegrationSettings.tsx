@@ -1,6 +1,9 @@
+import { VStack } from "@chakra-ui/react";
 
 export default function IntegrationSettings() {
   return (
-    <div>IntegrationSettings</div>
+    <VStack w="100%" spacing={4}>
+      <div>IntegrationSettings</div>
+    </VStack>
   )
 }

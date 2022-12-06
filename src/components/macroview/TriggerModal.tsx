@@ -94,7 +94,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
   }
 
   return (
-    <Modal isOpen={isOpen} size={['md', 'xl', '3xl', '3xl']} onClose={onClose}>
+    <Modal isOpen={isOpen} size={['md', 'xl', '3xl', '3xl']} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Trigger Keys</ModalHeader>

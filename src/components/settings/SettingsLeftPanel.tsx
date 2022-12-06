@@ -1,4 +1,10 @@
-import { VStack, Divider, Text, useColorModeValue, HStack } from '@chakra-ui/react'
+import {
+  VStack,
+  Divider,
+  Text,
+  useColorModeValue,
+  HStack
+} from '@chakra-ui/react'
 import { SettingsCategory } from '../../enums'
 import { Setting } from '../../maps/SettingsMap'
 import SettingsButton from './SettingsButton'
@@ -65,8 +71,8 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider borderColor={dividerBg} />
-      <VStack w="100%" spacing="0" px="1">
-        <HStack w="100%" mb="2">
+      <VStack w="100%" spacing="2" px="1">
+        <HStack w="100%">
           <svg
             width="15"
             height="15"
@@ -111,11 +117,16 @@ export default function SettingsLeftPanel({
           </svg>
         </HStack>
         <Text w="100%" fontSize={['xs', 'sm']}>
-          Version 1.0
+          Got Feedback? Let us know through these channels!
         </Text>
-        <Text w="100%" fontSize={['xs', 'sm']}>
-          Windows 64-Bit
-        </Text>
+        <VStack w="100%" spacing={0}>
+          <Text w="100%" fontSize={['xs', 'sm']}>
+            Version 1.0
+          </Text>
+          <Text w="100%" fontSize={['xs', 'sm']}>
+            Windows 64-Bit
+          </Text>
+        </VStack>
       </VStack>
     </VStack>
   )

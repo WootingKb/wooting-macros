@@ -1,4 +1,3 @@
-import { useMemo } from "react"
 import { SettingsCategory } from "../enums"
 
 export interface SettingInfo {
@@ -57,13 +56,6 @@ export class Setting {
       displayString: 'Help & Guides'
     }
   }
-  static get Feedback(): SettingInfo {
-    return {
-      pageIndex: 7,
-      category: SettingsCategory.Other,
-      displayString: 'Feedback'
-    }
-  }
 
   static readonly all: SettingInfo[] = [
     Setting.WindowSettings,
@@ -73,7 +65,6 @@ export class Setting {
     Setting.IntegrationSettings,
     Setting.Updates,
     Setting.Support,
-    Setting.Feedback
   ]
 }
 

@@ -98,33 +98,13 @@ export default function LeftPanel({
           w="100%"
           size={'sm'}
           variant="outline"
-          borderColor="gray.400"
+          borderColor={dividerBg}
           leftIcon={<SettingsIcon />}
           _hover={{ bg: 'yellow.400' }}
           onClick={onOpenSettingsModal}
         >
           <Text fontSize={['sm', 'md']}>Settings</Text>
         </Button>
-        {/* <Button
-          variant="outline"
-          borderColor="gray.400"
-          onClick={toggleColorMode}
-          w="100%"
-          size={'sm'}
-        >
-          <Text fontSize={['2xs', 'xs']}>
-            Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-          </Text>
-        </Button> */}
-        {/* <Button
-          variant="outline"
-          borderColor="gray.400"
-          w="100%"
-          size={'sm'}
-          isDisabled
-        >
-          <Text fontSize={['2xs', 'xs']}>Give Feedback</Text>
-        </Button> */}
       </HStack>
     </VStack>
   )
