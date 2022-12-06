@@ -22,6 +22,7 @@ export default function SettingsLeftPanel({
       borderColor={dividerBg}
       h="100vh"
       p="2"
+      pt="4"
       w={['25%']}
       overflowY="auto"
       css={{
@@ -30,8 +31,8 @@ export default function SettingsLeftPanel({
         }
       }}
     >
-      <VStack w="100%" spacing="0">
-        <Text w="100%" fontWeight="black">
+      <VStack w="100%" spacing="1">
+        <Text w="100%" textStyle="settingsCategoryHeader" ml="4">
           General Settings
         </Text>
         {Setting.all
@@ -47,8 +48,8 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider borderColor={dividerBg} />
-      <VStack w="100%" spacing="0">
-        <Text w="100%" fontWeight="black">
+      <VStack w="100%" spacing="1">
+        <Text w="100%" textStyle="settingsCategoryHeader" ml="4">
           Other
         </Text>
         {Setting.all
@@ -65,7 +66,7 @@ export default function SettingsLeftPanel({
       </VStack>
       <Divider borderColor={dividerBg} />
       <VStack w="100%" spacing="0" px="1">
-        <HStack w="100%">
+        <HStack w="100%" mb="2">
           <svg
             width="15"
             height="15"
@@ -109,8 +110,12 @@ export default function SettingsLeftPanel({
             ></path>
           </svg>
         </HStack>
-        <Text w="100%" fontSize={["xs", "sm"]}>Version 1.0</Text>
-        <Text w="100%" fontSize={["xs", "sm"]}>Windows 64-Bit</Text>
+        <Text w="100%" fontSize={['xs', 'sm']}>
+          Version 1.0
+        </Text>
+        <Text w="100%" fontSize={['xs', 'sm']}>
+          Windows 64-Bit
+        </Text>
       </VStack>
     </VStack>
   )

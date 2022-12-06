@@ -21,13 +21,14 @@ export default function SettingsButton({
       pos="relative"
       w="100%"
       bg={isFocused ? buttonBg : ''}
-      p="4px"
+      _hover={{ bg: buttonBg }}
+      px="2"
+      py="1"
       rounded="md"
-      textAlign="left"
       onClick={() => setFocus(index)}
       cursor="pointer"
     >
-      <Text>{setting.displayString}</Text>
+      <Text fontWeight="semibold">{setting.displayString}</Text>
     </Box>
   )
 }

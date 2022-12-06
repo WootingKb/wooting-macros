@@ -5,8 +5,11 @@ import {
   ModalBody,
   ModalCloseButton,
   HStack,
+  VStack,
+  Text,
 } from '@chakra-ui/react'
 import { useMemo, useState } from 'react'
+import { settingInfoLookup } from '../../maps/SettingsMap'
 import AccessibilitySettings from './generalPages/AccessibilitySettings'
 import AppearanceSettings from './generalPages/AppearanceSettings'
 import IntegrationSettings from './generalPages/IntegrationSettings'
@@ -52,10 +55,30 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
     <Modal isOpen={isOpen} size={'full'} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <HStack minH="100vh" spacing="0" overflow="hidden">
-          <SettingsLeftPanel pageIndex={pageIndex} onSettingsButtonPress={setPageIndex}/>
-          <ModalBody>{SelectedPageComponent}</ModalBody>
-          <ModalCloseButton />
+        <HStack
+          justifyContent="center"
+          bgGradient="linear(to-r, gray.100, gray.100, white, white)"
+        >
+          <HStack
+            w={['100%', '95%', '75%', '65%', '50%']}
+            minH="100vh"
+            spacing="0"
+            overflow="hidden"
+          >
+            <SettingsLeftPanel
+              pageIndex={pageIndex}
+              onSettingsButtonPress={setPageIndex}
+            />
+            <ModalBody h="100vh" bg="white">
+              <VStack w="95%" justifyContent="left" pt="8" spacing={4}>
+                <Text w="100%" fontWeight="bold" fontSize="large">
+                  {settingInfoLookup.get(pageIndex)?.displayString}
+                </Text>
+                {SelectedPageComponent}
+              </VStack>
+            </ModalBody>
+            <ModalCloseButton />
+          </HStack>
         </HStack>
       </ModalContent>
     </Modal>
