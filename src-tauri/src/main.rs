@@ -53,7 +53,6 @@ async fn set_macros(
 
 #[tauri::command]
 async fn get_monitor_data(
-    state: tauri::State<'_, MacroBackend>,
 ) -> Result<Vec<plugin::system_event::Monitor>, ()> {
     Ok(system_event::backend_load_monitors().await)
 }
@@ -93,8 +92,6 @@ async fn main() {
     let set_autolaunch: bool = backend.config.read().await.auto_start;
     let set_launch_minimized: bool = backend.config.read().await.minimize_at_launch;
 
-    let set_launch_minimized = false;
-
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
@@ -108,7 +105,8 @@ async fn main() {
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
-    let app = tauri::Builder::default()
+    // let app =
+    tauri::Builder::default()
         // This is where you pass in your commands
         .manage(backend)
         .invoke_handler(tauri::generate_handler![
@@ -130,12 +128,7 @@ async fn main() {
                 .set_use_launch_agent(true)
                 .build()
                 .unwrap();
-            //println!("Autolaunch is set to {:#?}", auto_start);
 
-
-            //auto_start.enable().unwrap();
-
-            //println!("Setting autolaunch to {}", set_autolaunch);
             match set_autolaunch {
                 true => auto_start.enable().unwrap(),
                 false => match auto_start.disable() {
@@ -143,8 +136,6 @@ async fn main() {
                     Err(_) => (),
                 },
             }
-
-            //println!("is autostart {}", auto_start.is_enabled().unwrap());
 
             Ok(())
         })

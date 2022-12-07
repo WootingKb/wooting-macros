@@ -3,7 +3,6 @@ pub mod plugin;
 
 use itertools::Itertools;
 use std::fs::File;
-use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
 
