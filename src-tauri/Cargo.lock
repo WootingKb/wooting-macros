@@ -2457,7 +2457,7 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e21c73734c69dc95696c9ed8926a2b393171d98b3f5f5935686a26a487ab9b90"
 dependencies = [
-    "cc",
+ "cc",
 ]
 
 [[package]]
@@ -2466,7 +2466,7 @@ version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b275950c28b37e794e8c55d88aeb5e139d0ce23fdbbeda68f8d7174abdf9e8fa"
 dependencies = [
-    "adler",
+ "adler",
 ]
 
 [[package]]
@@ -4216,53 +4216,53 @@ version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18203448b9d4dcad55607eafeda6dc7fe135848e5f567cd8bdade6cafd8b1a85"
 dependencies = [
-    "anyhow",
-    "attohttpc",
-    "cocoa 0.24.1",
-    "dirs-next",
-    "embed_plist",
-    "encoding_rs",
-    "flate2",
-    "futures-util",
-    "glib",
-    "glob",
-    "gtk",
-    "heck 0.4.0",
-    "http",
-    "ignore",
-    "infer 0.9.0",
-    "notify-rust",
-    "objc",
-    "once_cell",
-    "open",
-    "os_info",
-    "os_pipe",
-    "percent-encoding",
-    "png",
-    "rand 0.8.5",
-    "raw-window-handle",
-    "regex",
-    "rfd",
-    "semver 1.0.14",
-    "serde",
-    "serde_json",
-    "serde_repr",
-    "serialize-to-javascript",
-    "shared_child",
-    "state",
-    "tar",
-    "tauri-macros",
-    "tauri-runtime",
-    "tauri-runtime-wry",
-    "tauri-utils",
-    "tempfile",
-    "thiserror",
-    "tokio",
-    "url",
-    "uuid 1.2.2",
-    "webkit2gtk",
-    "webview2-com",
-    "windows 0.39.0",
+ "anyhow",
+ "attohttpc",
+ "cocoa 0.24.1",
+ "dirs-next",
+ "embed_plist",
+ "encoding_rs",
+ "flate2",
+ "futures-util",
+ "glib",
+ "glob",
+ "gtk",
+ "heck 0.4.0",
+ "http",
+ "ignore",
+ "infer 0.9.0",
+ "notify-rust",
+ "objc",
+ "once_cell",
+ "open",
+ "os_info",
+ "os_pipe",
+ "percent-encoding",
+ "png",
+ "rand 0.8.5",
+ "raw-window-handle",
+ "regex",
+ "rfd",
+ "semver 1.0.14",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "serialize-to-javascript",
+ "shared_child",
+ "state",
+ "tar",
+ "tauri-macros",
+ "tauri-runtime",
+ "tauri-runtime-wry",
+ "tauri-utils",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "url",
+ "uuid 1.2.2",
+ "webkit2gtk",
+ "webview2-com",
+ "windows 0.39.0",
 ]
 
 [[package]]
@@ -5466,24 +5466,24 @@ dependencies = [
 name = "wooting-macro-backend"
 version = "0.5.0"
 dependencies = [
-    "brightness",
-    "copypasta",
-    "dirs",
-    "fastrand",
-    "futures",
-    "halfbrown",
-    "idasen-cli",
-    "itertools",
-    "lazy_static",
-    "obws",
-    "opener",
-    "rdev",
-    "rodio",
-    "serde",
-    "serde_json",
-    "serde_repr",
-    "tauri",
-    "tokio",
+ "brightness",
+ "copypasta",
+ "dirs",
+ "fastrand",
+ "futures",
+ "halfbrown",
+ "idasen-cli",
+ "itertools",
+ "lazy_static",
+ "obws",
+ "opener",
+ "rdev",
+ "rodio",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "tauri",
+ "tokio",
  "tokio-serde",
  "wifi-rs",
 ]
@@ -5663,9 +5663,9 @@ version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c737644108627748a660d038974160e0cbb62605536091bdfa28fd7f64d43c8"
 dependencies = [
-    "serde",
-    "static_assertions",
-    "zvariant",
+ "serde",
+ "static_assertions",
+ "zvariant",
 ]
 
 [[package]]
@@ -5674,12 +5674,12 @@ version = "3.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56f8c89c183461e11867ded456db252eae90874bc6769b7adbea464caa777e51"
 dependencies = [
-    "byteorder",
-    "enumflags2",
-    "libc",
-    "serde",
-    "static_assertions",
-    "zvariant_derive",
+ "byteorder",
+ "enumflags2",
+ "libc",
+ "serde",
+ "static_assertions",
+ "zvariant_derive",
 ]
 
 [[package]]

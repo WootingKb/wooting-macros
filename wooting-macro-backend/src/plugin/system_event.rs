@@ -70,7 +70,7 @@ impl SystemAction {
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
                 }
-                MonitorBrightnessAction::Set { level } => {
+                MonitorBrightnessAction::SetAll { level } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set(*level).await;
                     #[cfg(target_os = "macos")]
@@ -87,6 +87,9 @@ impl SystemAction {
                     brightness_increase(2).await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
+                }
+                MonitorBrightnessAction::Set { level, name } => {
+                    brightness_set_specific_device(*level, name).await;
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -243,7 +246,6 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
     monitors
 }
 
-//TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 async fn brightness_set(percentage_level: u32) {
     let count = brightness::brightness_devices()
@@ -253,8 +255,31 @@ async fn brightness_set(percentage_level: u32) {
         })
         .await
         .unwrap();
-    println!("Found {} displays", count);
 }
+
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+async fn brightness_set_specific_device(percentage_level: u32, name: &String) {
+    let name_str = name.as_str();
+    // let count = brightness::brightness_devices()
+    //     .try_fold(0, |count, mut dev| async move {
+    //
+    //         if dev.device_name().into_future().await.unwrap() == name_str {
+    //             set_brightness(&mut dev, percentage_level).await.unwrap();
+    //         }
+    //         Ok(count + 1)
+    //     })
+    //     .await
+    //     .unwrap();
+
+    for mut devices in brightness::brightness_devices().into_future().await.0.unwrap(){
+        if devices.device_name().into_future().await.unwrap() == name_str {
+            set_brightness(&mut devices, percentage_level).await.unwrap();
+        }
+        println!("{:#?}", devices);
+    }
+
+}
+
 
 //TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -367,7 +392,8 @@ pub enum ClipboardAction {
 /// Monitor get, set brightness (currently Get is unused).
 pub enum MonitorBrightnessAction {
     Get,
-    Set { level: u32 },
+    SetAll { level: u32 },
+    Set { level: u32, name: String },
     Decrease,
     Increase,
 }

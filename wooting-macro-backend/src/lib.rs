@@ -37,8 +37,11 @@ use crate::plugin::system_event::{
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
 
+#[allow(dead_code)]
 const CONFIG_DIR: &str = "wooting-macro-app";
+#[allow(dead_code)]
 const CONFIG_FILE: &str = "config.json";
+#[allow(dead_code)]
 const DATA_FILE: &str = "config.json";
 
 ///Type of a macro.
@@ -277,22 +280,9 @@ impl MacroBackend {
         });
 
         //==============TESTING GROUND======================
-        // let result = self.display_list.read().await;
-        // println!("Display list: {:?}", result);
+        // println!("{:?}", system_event::backend_load_monitors().await);
 
-        //     let action_type = ActionEventType::MouseEventAction {
-        //         data: MouseAction::Move { x: 1920, y: 1080 },
-        //     };
-
-        //     match action_type {
-        //         ActionEventType::MouseEventAction { data } => {
-        //             println!("RUNNING MOUSE ACTION {:?}", data);
-        //             let channel_send = channel_execute_copy.clone();
-        //             data.execute(channel_send).await;
-        //         }
-        //         _ => {}
-        //     }
-        // });
+        // system_event::brightness_set_specific_device(75, &"\\\\.\\DISPLAY1\\Monitor0".to_string()).await;
 
         //==============TESTING GROUND======================
         //==================================================
