@@ -473,7 +473,14 @@ impl StateManagement for ApplicationConfig {
 
         match File::open(path.as_path().clone()) {
             Ok(data) => {
-                let data: ApplicationConfig = serde_json::from_reader(&data).unwrap();
+                let data: ApplicationConfig = match serde_json::from_reader(&data) {
+                    Ok(x) => x,
+                    Err(error) => {
+                        eprintln!("Error reading config.json, using default data. {}", error);
+                        default.write_to_file();
+                        default
+                    }
+                };
                 data
             }
 
@@ -621,6 +628,7 @@ impl StateManagement for MacroData {
                     Ok(x) => x,
                     Err(error) => {
                         eprintln!("Error reading data.json, using default data. {}", error);
+                        default.write_to_file();
                         default
                     }
                 };
