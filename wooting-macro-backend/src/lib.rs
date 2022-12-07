@@ -5,7 +5,7 @@ use std::fs::File;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
 
-use std::sync::Arc;
+use std::sync::{Arc};
 use tokio::sync::RwLock;
 
 use halfbrown::HashMap;
@@ -13,6 +13,7 @@ use rdev::{grab, simulate, EventType, GrabError, SimulateError};
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
+#[allow(unused_imports)]
 use dirs;
 
 use crate::hid_table::*;
@@ -182,7 +183,7 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 #[serde(rename_all = "PascalCase")]
 pub struct ApplicationConfig {
     pub use_input_grab: bool,
-    pub startup_delay: u64,
+    pub global_key_delay: u64,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
@@ -264,10 +265,11 @@ impl MacroBackend {
     pub async fn init(&self) {
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
+        //let config = self.config.read().await;
 
         //Create the executor
-        task::spawn(async move {
-            keypress_executor_sender(rchan_execute).await;
+        thread::spawn(move || {
+            keypress_executor_sender(rchan_execute, );
         });
 
         //==============TESTING GROUND======================
@@ -452,7 +454,7 @@ impl StateManagement for ApplicationConfig {
     fn read_data() -> ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             use_input_grab: false,
-            startup_delay: 0,
+            global_key_delay: 0,
         };
 
         #[cfg(debug_assertions)]
@@ -598,7 +600,6 @@ impl StateManagement for MacroData {
             }],
         };
 
-
         #[cfg(debug_assertions)]
             let path = std::path::PathBuf::from("../data_json.json");
 
@@ -664,12 +665,13 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 }
 
 /// Receives and executes a macro based on the trigger event. Puts a mandatory 20-50 ms delay between each macro execution.
-async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
+fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-        let result = rchan_execute.recv().await.unwrap();
+
+        let result = rchan_execute.blocking_recv().unwrap();
 
         send(&result);
-        thread::sleep(time::Duration::from_millis(50));
+        //thread::sleep(time::Duration::from_millis(backend.config.blocking_read().global_key_delay));
     }
 }
 
