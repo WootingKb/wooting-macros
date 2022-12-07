@@ -1,7 +1,9 @@
 mod hid_table;
 pub mod plugin;
 
+use itertools::Itertools;
 use std::fs::File;
+
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
 
@@ -12,6 +14,9 @@ use halfbrown::HashMap;
 use rdev::{grab, simulate, EventType, GrabError, SimulateError};
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
+
+#[allow(unused_imports)]
+use dirs;
 
 use crate::hid_table::*;
 use crate::plugin::delay;
@@ -28,8 +33,16 @@ use crate::plugin::system_event::Monitor;
 use crate::plugin::system_event::{
     ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
 };
+
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
+
+#[allow(dead_code)]
+const CONFIG_DIR: &str = "wooting-macro-app";
+#[allow(dead_code)]
+const CONFIG_FILE: &str = "config.json";
+#[allow(dead_code)]
+const DATA_FILE: &str = "data_json.json";
 
 ///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -178,8 +191,15 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct ApplicationConfig {
-    pub use_input_grab: bool,
-    pub startup_delay: u64,
+    pub auto_start: bool,
+    pub global_key_delay: u64,
+    pub auto_add_delay: bool,
+    pub auto_select_element: bool,
+    pub minimize_at_launch: bool,
+    pub theme: &str,
+    pub minimize_to_tray: bool,
+
+
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
@@ -213,6 +233,14 @@ impl MacroBackend {
         }
     }
 
+    #[cfg(not(debug_assertions))]
+    pub fn generate_directories() {
+        match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
+            Ok(x) => x,
+            Err(error) => eprintln!("Directory creation failed, OS error: {}", error),
+        };
+    }
+
     pub fn set_is_listening(&self, is_listening: bool) {
         self.is_listening.store(is_listening, Ordering::Relaxed);
     }
@@ -237,37 +265,30 @@ impl MacroBackend {
     }
 
     pub async fn set_config(&self, config: ApplicationConfig) {
-        // TODO: async this
         config.write_to_file();
         *self.config.write().await = config;
+    }
+    pub async fn get_monitor_data(&self) {
+        //let monitors = plugin::system_event::backend_load_monitors().await;
+        // let mut state_writing = self.display_list.write().await;
+        //*state_writing = monitors.clone();
+        *self.display_list.write().await = plugin::system_event::backend_load_monitors().await;
     }
 
     pub async fn init(&self) {
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
+        //let config = self.config.read().await;
 
         //Create the executor
-        task::spawn(async move {
-            keypress_executor_sender(rchan_execute).await;
+        thread::spawn(move || {
+            keypress_executor_sender(rchan_execute);
         });
 
         //==============TESTING GROUND======================
-        // let result = self.display_list.read().await;
-        // println!("Display list: {:?}", result);
+        // println!("{:?}", system_event::backend_load_monitors().await);
 
-        //     let action_type = ActionEventType::MouseEventAction {
-        //         data: MouseAction::Move { x: 1920, y: 1080 },
-        //     };
-
-        //     match action_type {
-        //         ActionEventType::MouseEventAction { data } => {
-        //             println!("RUNNING MOUSE ACTION {:?}", data);
-        //             let channel_send = channel_execute_copy.clone();
-        //             data.execute(channel_send).await;
-        //         }
-        //         _ => {}
-        //     }
-        // });
+        // system_event::brightness_set_specific_device(75, &"\\\\.\\DISPLAY1\\Monitor0".to_string()).await;
 
         //==============TESTING GROUND======================
         //==================================================
@@ -305,12 +326,25 @@ impl MacroBackend {
 
                                     keys_pressed.push(key_to_push);
 
-                                    println!("Pressed Keys: {:?}", keys_pressed);
+                                    // println!("Pressed Keys: {:?}", keys_pressed);
 
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
                                         .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .collect::<Vec<u32>>()
+                                        .into_iter()
+                                        .unique()
                                         .collect();
+
+                                    println!(
+                                        "Pressed Keys: {:?}",
+                                        pressed_keys_copy_converted
+                                            .iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
                                     let first_key: u32 = match pressed_keys_copy_converted.first() {
                                         None => 0,
@@ -342,11 +376,9 @@ impl MacroBackend {
                                 }
 
                                 EventType::KeyRelease(key) => {
-                                    let key_to_remove = key;
-
                                     keys_pressed
                                         .blocking_write()
-                                        .retain(|x| *x != key_to_remove);
+                                        .retain(|x| *x != key);
                                     println!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
@@ -432,12 +464,34 @@ pub trait StateManagement {
 impl StateManagement for ApplicationConfig {
     fn read_data() -> ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
-            use_input_grab: false,
-            startup_delay: 0,
+            auto_start: false,
+            global_key_delay: 0,
+            auto_add_delay: false,
+            auto_select_element: false,
+            minimize_at_launch: false,
+            theme: "light",
+            minimize_to_tray: false,
         };
-        match File::open("../config.json") {
+
+        #[cfg(debug_assertions)]
+        let path = std::path::PathBuf::from("../config.json");
+
+        #[cfg(not(debug_assertions))]
+        let path = dirs::config_dir()
+            .unwrap()
+            .join(CONFIG_DIR)
+            .join(CONFIG_FILE);
+
+        match File::open(path.as_path().clone()) {
             Ok(data) => {
-                let data: ApplicationConfig = serde_json::from_reader(&data).unwrap();
+                let data: ApplicationConfig = match serde_json::from_reader(&data) {
+                    Ok(x) => x,
+                    Err(error) => {
+                        eprintln!("Error reading config.json, using default data. {}", error);
+                        default.write_to_file();
+                        default
+                    }
+                };
                 data
             }
 
@@ -450,8 +504,17 @@ impl StateManagement for ApplicationConfig {
     }
 
     fn write_to_file(&self) {
+        #[cfg(debug_assertions)]
+        let path = std::path::PathBuf::from("../config.json");
+
+        #[cfg(not(debug_assertions))]
+        let path = dirs::config_dir()
+            .unwrap()
+            .join(CONFIG_DIR)
+            .join(CONFIG_FILE);
+
         match std::fs::write(
-            "../config.json",
+            path.as_path().clone(),
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
@@ -477,8 +540,15 @@ impl MacroData {
     /// This exports data for the frontend to process it.
     /// Basically sends the entire struct to the frontend
     pub fn export_data(&self) {
+        #[cfg(debug_assertions)]
+        let path = std::path::PathBuf::from("../data_json.json");
+
+        #[cfg(not(debug_assertions))]
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
+
+        #[cfg(debug_assertions)]
         std::fs::write(
-            "../data_json.json",
+            path.as_path().clone(),
             serde_json::to_string_pretty(&self).unwrap(),
         )
         .unwrap();
@@ -525,8 +595,14 @@ impl MacroData {
 impl StateManagement for MacroData {
     /// Writes out the data to a file. If unsuccessful, it will use the default data.
     fn write_to_file(&self) {
+        #[cfg(debug_assertions)]
+        let path = std::path::PathBuf::from("../data_json.json");
+
+        #[cfg(not(debug_assertions))]
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
+
         match std::fs::write(
-            "../data_json.json",
+            path.as_path().clone(),
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
@@ -551,13 +627,19 @@ impl StateManagement for MacroData {
             }],
         };
 
-        match File::open("../data_json.json") {
+        #[cfg(debug_assertions)]
+        let path = std::path::PathBuf::from("../data_json.json");
 
+        #[cfg(not(debug_assertions))]
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
+
+        match File::open(path.as_path()) {
             Ok(data) => {
                 let data: MacroData = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
                         eprintln!("Error reading data.json, using default data. {}", error);
+                        default.write_to_file();
                         default
                     }
                 };
@@ -606,12 +688,13 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 }
 
 /// Receives and executes a macro based on the trigger event. Puts a mandatory 20-50 ms delay between each macro execution.
-async fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
+fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-        let result = rchan_execute.recv().await.unwrap();
+        send(&rchan_execute.blocking_recv().unwrap());
 
-        send(&result);
-        thread::sleep(time::Duration::from_millis(50));
+        //MacOS requires some strange delays so putting it here just in case.
+        #[cfg(target_os = "macos")]
+        thread::sleep(time::Duration::from_millis(20));
     }
 }
 

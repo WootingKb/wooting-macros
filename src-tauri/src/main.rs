@@ -5,13 +5,16 @@ windows_subsystem = "windows"
 
 extern crate core;
 
+use std::env::current_exe;
 use std::sync::atomic::Ordering;
 
+use auto_launch;
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
 
 use wooting_macro_backend::*;
+use wooting_macro_backend::plugin::system_event;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -50,15 +53,9 @@ async fn set_macros(
 
 #[tauri::command]
 async fn get_monitor_data(
-    state: tauri::State<'_, MacroBackend>,
-) -> Result<Vec<wooting_macro_backend::plugin::system_event::Monitor>, ()> {
-    let monitors = wooting_macro_backend::plugin::system_event::backend_load_monitors().await;
-    let mut state_writing = state.display_list.write().await;
-    *state_writing = monitors.clone();
-
-    Ok(monitors.clone())
+) -> Result<Vec<plugin::system_event::Monitor>, ()> {
+    Ok(system_event::backend_load_monitors().await)
 }
-
 
 #[tauri::command]
 /// Returns the monitors connected in the system to the frontend.
@@ -83,10 +80,17 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
+    #[cfg(not(debug_assertions))]
+    wooting_macro_backend::MacroBackend::generate_directories();
+
     let backend = MacroBackend::new();
 
     println!("Running the macro backend");
+
     backend.init().await;
+
+    let set_autolaunch: bool = backend.config.read().await.auto_start;
+    let set_launch_minimized: bool = backend.config.read().await.minimize_at_launch;
 
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
@@ -99,9 +103,9 @@ async fn main() {
         .add_item(quit)
         .add_item(show);
 
-
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
+    // let app =
     tauri::Builder::default()
         // This is where you pass in your commands
         .manage(backend)
@@ -114,6 +118,27 @@ async fn main() {
             control_grabbing,
             get_monitor_data
         ])
+        .setup(move |app| {
+            let app_name = &app.package_info().name;
+            let current_exe = current_exe().unwrap();
+
+            let auto_start = auto_launch::AutoLaunchBuilder::new()
+                .set_app_name(&app_name)
+                .set_app_path(&current_exe.as_path().to_str().unwrap())
+                .set_use_launch_agent(true)
+                .build()
+                .unwrap();
+
+            match set_autolaunch {
+                true => auto_start.enable().unwrap(),
+                false => match auto_start.disable() {
+                    Ok(x) => x,
+                    Err(_) => (),
+                },
+            }
+
+            Ok(())
+        })
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => {
@@ -147,6 +172,48 @@ async fn main() {
             _ => {}
         })
         //.any_thread()
+        .on_page_load(move |window, _| {
+            if set_launch_minimized {
+                window.hide().unwrap();
+            }
+        })
         .run(tauri::generate_context!())
+        // .build(tauri::generate_context!())
         .expect("error while running tauri application");
+
+
+    // app.run(|_app_handle, event| match event {
+    //     tauri::RunEvent::Updater(updater_event) => {
+    //         match updater_event {
+    //             UpdaterEvent::UpdateAvailable { body, date, version } => {
+    //                 println!("update available {} {:?} {}", body, date, version);
+    //             }
+    //             // Emitted when the download is about to be started.
+    //             UpdaterEvent::Pending => {
+    //                 println!("update is pending!");
+    //             }
+    //             UpdaterEvent::DownloadProgress { chunk_length, content_length } => {
+    //                 println!("downloaded {} of {:?}", chunk_length, content_length);
+    //             }
+    //             // Emitted when the download has finished and the update is about to be installed.
+    //             UpdaterEvent::Downloaded => {
+    //                 println!("update has been downloaded!");
+    //             }
+    //             // Emitted when the update was installed. You can then ask to restart the app.
+    //             UpdaterEvent::Updated => {
+    //                 println!("app has been updated");
+    //             }
+    //             // Emitted when the app already has the latest version installed and an update is not needed.
+    //             UpdaterEvent::AlreadyUpToDate => {
+    //                 println!("app is already up to date");
+    //             }
+    //             // Emitted when there is an error with the updater. We suggest to listen to this event even if the default dialog is enabled.
+    //             UpdaterEvent::Error(error) => {
+    //                 println!("failed to update: {}", error);
+    //             }
+    //             _ => (),
+    //         }
+    //     }
+    //     _ => {}
+    // });
 }
