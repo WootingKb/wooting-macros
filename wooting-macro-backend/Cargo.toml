@@ -20,7 +20,6 @@ obws = { version = "0.10.0" }
 rodio = "0.16.0"
 copypasta = { version = "0.8.1", features = ["smithay-clipboard"] }
 
-wifi-rs = "0.2.2"
 serde_repr = "0.1.9"
 fastrand = "1.8.0"
 dirs = "4.0.0"

@@ -15,7 +15,7 @@ pub enum SystemAction {
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
-    Wifi { action: WifiAction },
+
 }
 
 impl SystemAction {
@@ -72,7 +72,7 @@ impl SystemAction {
                 }
                 MonitorBrightnessAction::SetAll { level } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_set(*level).await;
+                    brightness_set_all_device(*level).await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
                 }
@@ -212,7 +212,6 @@ impl SystemAction {
                         .unwrap();
                 }
             },
-            SystemAction::Wifi { .. } => {}
         }
     }
 }
@@ -247,8 +246,8 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn brightness_set(percentage_level: u32) {
-    let count = brightness::brightness_devices()
+async fn brightness_set_all_device(percentage_level: u32) {
+    brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
             set_brightness(&mut dev, percentage_level).await?;
             Ok(count + 1)
@@ -405,13 +404,4 @@ pub enum VolumeAction {
     LowerVolume,
     IncreaseVolume,
     ToggleMute,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-#[serde(tag = "type")]
-/// Currently unused
-pub enum WifiAction {
-    Connect,
-    Disconnect,
-    Hotspot,
 }
