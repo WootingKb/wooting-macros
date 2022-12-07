@@ -5,8 +5,10 @@ windows_subsystem = "windows"
 
 extern crate core;
 
+use std::env::current_exe;
 use std::sync::atomic::Ordering;
 
+use auto_launch;
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
@@ -113,6 +115,22 @@ async fn main() {
             control_grabbing,
             get_monitor_data
         ])
+        .setup(|app| {
+            let app_name = &app.package_info().name;
+            let current_exe = current_exe().unwrap();
+
+            let auto_start = auto_launch::AutoLaunchBuilder::new()
+                .set_app_name(&app_name)
+                .set_app_path(&current_exe.to_str().unwrap())
+                .set_use_launch_agent(true)
+                .build()
+                .unwrap();
+
+            auto_start.enable().unwrap();
+            println!("is autostart {}", auto_start.is_enabled().unwrap());
+
+            Ok(())
+        })
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => {
