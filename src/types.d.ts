@@ -11,7 +11,7 @@ export type AppState = {
   collections: Collection[]
   initComplete: boolean
   selection: CurrentSelection
-  isRenamingCollection: boolean
+  isUpdatingCollection: boolean
   changeViewState: (newState: ViewState) => void
   onCollectionAdd: (newCollection: Collection) => void
   onSelectedCollectionDelete: () => void
@@ -21,7 +21,7 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
-  updateIsRenamingCollection: (newVal: boolean) => void
+  changeIsUpdatingCollection: (newVal: boolean) => void
 }
 
 export type MacroState = {
@@ -30,6 +30,7 @@ export type MacroState = {
   ids: number[]
   selectedElementId: number | undefined
   updateMacroName: (newName: string) => void
+  updateMacroIcon: (newIcon: string) => void
   updateMacroType: (newType: MacroType) => void
   updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
@@ -94,12 +95,10 @@ export type MonitorBrightnessAction =
 export type TriggerEventType =
   | {
       type: 'KeyPressEvent'
-      data: Keypress[]
+      data: number[]
       allow_while_other_keys: boolean
     }
   | { type: 'MouseEvent'; data: MouseButton }
-
-export type TriggerTypes = Keypress[] | MouseButton[]
 
 export type ActionEventType =
   | { type: 'KeyPressEventAction'; data: Keypress }
@@ -115,6 +114,7 @@ export interface MacroData {
 
 export interface Macro {
   name: string
+  icon: string
   active: boolean
   macro_type: string
   trigger: TriggerEventType

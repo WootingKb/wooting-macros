@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
-import { appDir } from '@tauri-apps/api/path'
 
 export default function OpenAppForm() {
   const [path, setPath] = useState('')
@@ -74,7 +73,7 @@ export default function OpenAppForm() {
   }, [selectedElement, selectedElementId, updateElement])
 
   return (
-    <VStack textAlign="left">
+    <VStack textAlign="left" w="100%">
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         {'Open Application'}
       </Text>
@@ -83,10 +82,10 @@ export default function OpenAppForm() {
         Path to application
       </Text>
       <Textarea value={path} onChange={onPathChange} placeholder="path" />
-      <Button w="100%" onClick={() => onButtonPress(false)}>
+      <Button w={["100%", "75%", "50%"]} onClick={() => onButtonPress(false)}>
         Browse For Files
       </Button>
-      <Button w="100%" onClick={() => onButtonPress(true)}>
+      <Button w={["100%", "75%", "50%"]} onClick={() => onButtonPress(true)}>
         Browse For Folders
       </Button>
     </VStack>

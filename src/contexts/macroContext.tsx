@@ -32,6 +32,7 @@ function useMacroContext() {
 function MacroProvider({ children }: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>({
     name: '',
+    icon: '',
     active: true,
     macro_type: 'Single',
     trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
@@ -60,6 +61,14 @@ function MacroProvider({ children }: MacroProviderProps) {
     (newName: string) => {
       setMacro((macro) => {
         return { ...macro, name: newName }
+      })
+    },
+    [setMacro]
+  )
+  const updateMacroIcon = useCallback(
+    (newIcon: string) => {
+      setMacro((macro) => {
+        return { ...macro, icon: newIcon }
       })
     },
     [setMacro]
@@ -151,15 +160,10 @@ function MacroProvider({ children }: MacroProviderProps) {
   const updateElement = useCallback(
     (newElement: ActionEventType, index: number) => {
       console.log("updating element " + index)
-      setSequence((sequence) => {
-        console.log(sequence)
-        const newSequence = [...sequence]
-        newSequence[index] = newElement
-        console.log(newSequence)
-        return newSequence
-      })
+      const newSequence = sequence.map((element, i) => (i === index ? newElement : element))
+      setSequence(newSequence)
     },
-    [setSequence]
+    [sequence, setSequence]
   )
 
   const onElementDelete = useCallback(
@@ -224,6 +228,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       ids,
       selectedElementId,
       updateMacroName,
+      updateMacroIcon,
       updateMacroType,
       updateTrigger: updateTrigger,
       updateAllowWhileOtherKeys,
@@ -243,6 +248,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       ids,
       selectedElementId,
       updateMacroName,
+      updateMacroIcon,
       updateMacroType,
       updateTrigger,
       updateAllowWhileOtherKeys,

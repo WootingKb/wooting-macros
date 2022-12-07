@@ -1,22 +1,20 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
-import { KeyType, MouseButton } from '../enums'
+import { MouseButton } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { webButtonLookup } from '../maps/MouseMap'
-import { Keypress, TriggerTypes } from '../types'
-import { isKeypressArray } from '../utils'
 
 export default function useRecordingTrigger() {
   const [recording, setRecording] = useState(false)
-  const [items, setItems] = useState<TriggerTypes>([])
-  const [prevItems, setPrevItems] = useState<TriggerTypes>([])
+  const [items, setItems] = useState<number[]>([])
+  const [prevItems, setPrevItems] = useState<number[]>([])
 
   const resetItems = useCallback(() => {
     setItems(prevItems)
   }, [setItems, prevItems])
 
   const initItems = useCallback(
-    (newItems: TriggerTypes) => {
+    (newItems: number[]) => {
       setItems(newItems)
     },
     [setItems]
@@ -42,22 +40,16 @@ export default function useRecordingTrigger() {
         return
       }
 
-      const keypress: Keypress = {
-        keypress: HIDcode,
-        press_duration: 0,
-        keytype: KeyType[KeyType.DownUp]
-      }
-
-      setItems((items: Keypress[] | MouseButton[]) => {
-        let newItems = []
-        if (isKeypressArray(items)) {
-          if (items.filter((item) => item.keypress === HIDcode).length > 0) {
-            newItems = items
-          } else {
-            newItems = [...items, keypress]
-          }
+      setItems((items) => {
+        let newItems: number[] = []
+        if (items.filter((item) => item === HIDcode).length > 0) {
+          newItems = items
+        } else if (
+          items.filter((item) => item >= MouseButton.Left).length > 0
+        ) {
+          newItems = [HIDcode]
         } else {
-          newItems = [keypress]
+          newItems = [...items, HIDcode]
         }
         return newItems
       })

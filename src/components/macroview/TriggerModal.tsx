@@ -17,14 +17,12 @@ import {
   Flex,
   Spacer
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
-import { MouseButton } from '../../enums'
 import useRecordingTrigger from '../../hooks/useRecordingTrigger'
 import { HIDLookup } from '../../maps/HIDmap'
 import { mouseEnumLookup } from '../../maps/MouseMap'
-import { Keypress } from '../../types'
-import { isKeypressArray } from '../../utils'
+import { isMouseButtonArray } from '../../utils'
 
 type Props = {
   isOpen: boolean
@@ -45,7 +43,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
   const [isTriggerMousepress, setIsTriggerMousepress] = useState(false)
 
   useEffect(() => {
-    // ask about this useeffect and it's dependencies, how to fix
+    // ask about this useeffect and it's dependencies, need to fix?
     if (macro.trigger.type === 'KeyPressEvent') {
       initItems(macro.trigger.data)
       setIsTriggerMousepress(false)
@@ -56,45 +54,74 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
   }, [initItems, macro])
 
   useEffect(() => {
-    setIsTriggerMousepress(!isKeypressArray(items))
+    if (items.length === 0) {
+      setIsTriggerMousepress(true)
+      return
+    }
+    setIsTriggerMousepress(isMouseButtonArray(items))
   }, [items])
 
+  const getTriggerCanSave = useMemo((): boolean => {
+    if (items.length === 0) {
+      return false
+    } else {
+      if (isTriggerMousepress) {
+        return true
+      } else {
+        return items.some((element) => {
+          if (element < 224) {
+            return true
+          } else {
+            return false
+          }
+        })
+      }
+    }
+  }, [isTriggerMousepress, items])
 
-  const onModalSuccessClose = () => {
-    if (isKeypressArray(items)) {
+  const onModalSuccessClose = useCallback(() => {
+    if (isMouseButtonArray(items)) {
+      updateTrigger({
+        type: 'MouseEvent',
+        data: items[0]
+      })
+    } else {
       updateAllowWhileOtherKeys(isAllowed)
       updateTrigger({
         type: 'KeyPressEvent',
         data: items,
         allow_while_other_keys: isAllowed
       })
-    } else {
-      updateTrigger({
-        type: 'MouseEvent',
-        data: items[0]
-      })
     }
     onClose()
-  }
+  }, [isAllowed, items, onClose, updateAllowWhileOtherKeys, updateTrigger])
 
-  const getDisplayString = (element: Keypress | MouseButton): string => {
-    if (typeof element === 'number') {
-      const displayString = mouseEnumLookup.get(element)?.displayString
-      if (displayString === undefined) {
-        return 'error'
+  const getDisplayString = useCallback(
+    (element: number, isMouseButton: boolean): string => {
+      if (isMouseButton) {
+        const displayString = mouseEnumLookup.get(element)?.displayString
+        if (displayString === undefined) {
+          return 'error'
+        }
+        return displayString
+      } else {
+        const displayString = HIDLookup.get(element)?.displayString
+        if (displayString === undefined) {
+          return 'error'
+        }
+        return displayString
       }
-      return displayString
-    } else {
-      const displayString = HIDLookup.get(element.keypress)?.displayString
-      if (displayString === undefined) {
-        return 'error'
-      }
-      return displayString
-    }
-  }
+    },
+    []
+  )
 
   return (
-    <Modal isOpen={isOpen} size={['md', 'xl', '3xl', '3xl']} onClose={onClose} isCentered>
+    <Modal
+      isOpen={isOpen}
+      size={['md', 'xl', '3xl', '3xl']}
+      onClose={onClose}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Trigger Keys</ModalHeader>
@@ -113,8 +140,10 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             </VStack>
             <Flex justifyContent="end">
               <HStack>
-                {items.map((element, index) => (
-                  <Kbd key={index}>{getDisplayString(element)}</Kbd>
+                {items.map((element) => (
+                  <Kbd key={element}>
+                    {getDisplayString(element, isMouseButtonArray(items))}
+                  </Kbd>
                 ))}
               </HStack>
               <Spacer />
@@ -127,20 +156,17 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </Button>
             </Flex>
           </Stack>
-          <Divider
-            w="100%"
-            alignSelf="center"
-            my={['4', '8']}
-          />
+          <Divider w="100%" alignSelf="center" my={['4', '8']} />
           <HStack justifyContent="space-between">
-            <VStack alignItems="start" maxWidth={['75%']}>
+            <VStack alignItems="start" maxWidth={['85%']}>
               <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']}>
                 Strict Mode
               </Text>
               <Text fontSize={['2xs', 'xs', 'sm']}>
                 When enabled, the macro will activate when only the trigger keys
                 are being pressed. When disabled, the macro will activate even
-                if the trigger keys are pressed with other keys.
+                if the trigger keys are pressed with other keys. (Only if
+                trigger is not a mouse button)
               </Text>
             </VStack>
             <Switch
@@ -167,7 +193,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
           <Button
             colorScheme="yellow"
             onClick={onModalSuccessClose}
-            isDisabled={!isTriggerMousepress && items.length === 0} // need to update this condition to not enable when only modifier keys are added
+            isDisabled={!getTriggerCanSave}
           >
             Save
           </Button>

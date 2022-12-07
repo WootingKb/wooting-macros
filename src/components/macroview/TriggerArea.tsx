@@ -10,7 +10,6 @@ import {
 import { useMacroContext } from '../../contexts/macroContext'
 import { HIDLookup } from '../../maps/HIDmap'
 import { mouseEnumLookup } from '../../maps/MouseMap'
-import { Keypress } from '../../types'
 
 type Props = {
   onOpen: () => void
@@ -36,9 +35,9 @@ export default function TriggerArea({ onOpen }: Props) {
       </Text>
       <HStack spacing="4px" w="full" h="full" justifyContent="center">
         {macro.trigger.type === 'KeyPressEvent' &&
-          macro.trigger.data.map((key: Keypress) => (
-            <Kbd key={key.keypress}>
-              {HIDLookup.get(key.keypress)?.displayString}
+          macro.trigger.data.map((HIDcode) => (
+            <Kbd key={HIDcode}>
+              {HIDLookup.get(HIDcode)?.displayString}
             </Kbd>
           ))}
         {macro.trigger.type === 'MouseEvent' && (

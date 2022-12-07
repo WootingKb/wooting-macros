@@ -5,7 +5,7 @@ import {
   Button,
   HStack,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
@@ -27,7 +27,7 @@ export default function LeftPanel({
     selection,
     onCollectionUpdate,
     changeSelectedCollectionIndex,
-    updateIsRenamingCollection
+    changeIsUpdatingCollection: updateIsRenamingCollection
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const panelBg = useColorModeValue('gray.100', 'gray.900')

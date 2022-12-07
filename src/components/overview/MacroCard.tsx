@@ -7,15 +7,17 @@ import {
   Divider,
   VStack,
   Kbd,
+  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   useColorModeValue,
-  Box
+  Box,
+  Circle
 } from '@chakra-ui/react'
-import { EditIcon, StarIcon } from '@chakra-ui/icons'
-import { Keypress, Macro } from '../../types'
+import { EditIcon } from '@chakra-ui/icons'
+import { Macro } from '../../types'
 import { HIDLookup } from '../../maps/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
@@ -61,7 +63,16 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       {/** Top Row */}
       <Flex w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
-          <StarIcon />
+          <Circle position="relative" role="group">
+            <Image
+              borderRadius="full"
+              src={macro.icon}
+              fallbackSrc="https://via.placeholder.com/125"
+              alt="Macro Icon"
+              boxSize="25px"
+              objectFit="cover"
+            />
+          </Circle>
           <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
         <Menu>
@@ -104,10 +115,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       </Text>
       <Flex w="100%" gap="4px">
         {macro.trigger.type === 'KeyPressEvent' &&
-          macro.trigger.data.map((key: Keypress) => (
-            <Kbd key={key.keypress}>
-              {HIDLookup.get(key.keypress)?.displayString}
-            </Kbd>
+          macro.trigger.data.map((HIDcode) => (
+            <Kbd key={HIDcode}>{HIDLookup.get(HIDcode)?.displayString}</Kbd>
           ))}
         {macro.trigger.type === 'MouseEvent' && (
           <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>

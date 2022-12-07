@@ -34,7 +34,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     collectionIndex: 0,
     macroIndex: undefined
   })
-  const [isRenamingCollection, setIsRenamingCollection] = useState(false)
+  const [isUpdatingCollection, setIsUpdatingCollection] = useState(false)
 
   useEffect(() => {
     invoke<MacroData>('get_macros')
@@ -72,7 +72,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         macroIndex: index
       }))
 
-      if ((index !== undefined) && (index >= 0)) {
+      if (index !== undefined && index >= 0) {
         setViewState(ViewState.Editview)
       } else {
         setViewState(ViewState.Overview)
@@ -107,11 +107,11 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [collections]
   )
 
-  const updateIsRenamingCollection = useCallback(
+  const changeIsUpdatingCollection = useCallback(
     (newVal: boolean) => {
-      setIsRenamingCollection(newVal)
+      setIsUpdatingCollection(newVal)
     },
-    [setIsRenamingCollection]
+    [setIsUpdatingCollection]
   )
 
   const value = useMemo<AppState>(
@@ -120,28 +120,28 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       collections,
       initComplete,
       selection,
-      isRenamingCollection,
+      isUpdatingCollection: isUpdatingCollection,
       changeViewState,
       onSelectedCollectionDelete,
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
-      updateIsRenamingCollection
+      changeIsUpdatingCollection
     }),
     [
       viewState,
       collections,
       initComplete,
       selection,
-      isRenamingCollection,
+      isUpdatingCollection,
       changeViewState,
       onSelectedCollectionDelete,
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
-      updateIsRenamingCollection
+      changeIsUpdatingCollection
     ]
   )
 

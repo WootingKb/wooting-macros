@@ -1,5 +1,13 @@
-import { Box, HStack, Switch, Text, useColorModeValue } from '@chakra-ui/react'
 import { StarIcon } from '@chakra-ui/icons'
+import {
+  Box,
+  Circle,
+  Image,
+  HStack,
+  Switch,
+  Text,
+  useColorModeValue
+} from '@chakra-ui/react'
 import { Collection } from '../../types'
 
 type Props = {
@@ -35,7 +43,20 @@ export default function CollectionButton({
           h="full"
           onClick={() => setFocus(index)}
         ></Box>
-        <StarIcon />
+        {index === 0 ? (
+          <StarIcon />
+        ) : (
+          <Circle position="relative" role="group">
+            <Image
+              borderRadius="full"
+              src={collection.icon}
+              fallbackSrc="https://via.placeholder.com/125"
+              alt="Collection Icon"
+              boxSize="25px"
+              objectFit="cover"
+            />
+          </Circle>
+        )}
         <Text>{collection.name}</Text>
         <Switch
           size="sm"
