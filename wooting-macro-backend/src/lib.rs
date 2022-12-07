@@ -190,6 +190,7 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 pub struct ApplicationConfig {
     pub auto_start: bool,
     pub global_key_delay: u64,
+    pub minimize_at_launch: bool,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
@@ -458,6 +459,7 @@ impl StateManagement for ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             auto_start: false,
             global_key_delay: 0,
+            minimize_at_launch: false
         };
 
         #[cfg(debug_assertions)]

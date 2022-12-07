@@ -89,7 +89,7 @@ async fn main() {
     println!("Running the macro backend");
 
     let set_autolaunch = backend.config.read().await.auto_start;
-    println!("Setting autolaunch to {}", set_autolaunch);
+    let set_launch_minimized = backend.config.read().await.minimize_at_launch;
 
     backend.init().await;
 
@@ -171,6 +171,11 @@ async fn main() {
             _ => {}
         })
         //.any_thread()
+        .on_page_load(move |window, _| {
+            if set_launch_minimized {
+                window.hide().unwrap();
+            }
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
