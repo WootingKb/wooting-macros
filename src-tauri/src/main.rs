@@ -14,6 +14,7 @@ use tauri::{
 };
 
 use wooting_macro_backend::*;
+use wooting_macro_backend::plugin::system_event;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -53,9 +54,8 @@ async fn set_macros(
 #[tauri::command]
 async fn get_monitor_data(
     state: tauri::State<'_, MacroBackend>,
-) -> Result<Vec<wooting_macro_backend::plugin::system_event::Monitor>, ()> {
-    state.get_monitor_data().await;
-    Ok(state.display_list.read().await.clone())
+) -> Result<Vec<plugin::system_event::Monitor>, ()> {
+    Ok(system_event::backend_load_monitors().await)
 }
 
 #[tauri::command]
