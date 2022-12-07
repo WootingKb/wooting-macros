@@ -4,6 +4,7 @@ pub mod plugin;
 use std::fs::File;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
+use std::path::PathBuf;
 
 use std::sync::{Arc};
 use tokio::sync::RwLock;
@@ -34,6 +35,11 @@ use crate::plugin::system_event::{
 
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
+
+
+const CONFIG_DIR: &str = "wooting-macro-app";
+const CONFIG_FILE: &str = "config.json";
+const DATA_FILE: &str = "config.json";
 
 ///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -219,12 +225,9 @@ impl MacroBackend {
 
     #[cfg(not(debug_assertions))]
     pub fn generate_directories() {
-        let config_path = dirs::config_dir().unwrap().join("wooting-macro-app");
-        println!("creating path into {:?}", config_path);
-
-        match std::fs::create_dir_all(config_path.as_path()) {
+        match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
-            Err(error) => eprintln!("Directory creation halted: {}", error),
+            Err(error) => eprintln!("Directory creation failed, OS error: {}", error),
         };
     }
 
@@ -463,8 +466,8 @@ impl StateManagement for ApplicationConfig {
         #[cfg(not(debug_assertions))]
         let path = dirs::config_dir()
             .unwrap()
-            .join("wooting-macro-app")
-            .join("config.json");
+            .join(CONFIG_DIR)
+            .join(CONFIG_FILE);
 
         match File::open(path.as_path().clone()) {
             Ok(data) => {
@@ -487,8 +490,8 @@ impl StateManagement for ApplicationConfig {
         #[cfg(not(debug_assertions))]
         let path = dirs::config_dir()
             .unwrap()
-            .join("wooting-macro-app")
-            .join("config.json");
+            .join(CONFIG_DIR)
+            .join(CONFIG_FILE);
 
         match std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()) {
             Ok(_) => {
@@ -520,8 +523,8 @@ impl MacroData {
         #[cfg(not(debug_assertions))]
         let path = dirs::config_dir()
             .unwrap()
-            .join("wooting-macro-app")
-            .join("data_json.json");
+            .join(CONFIG_DIR)
+            .join(DATA_FILE);
 
         #[cfg(debug_assertions)]
         std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()).unwrap();
@@ -574,8 +577,8 @@ impl StateManagement for MacroData {
         #[cfg(not(debug_assertions))]
         let path = dirs::config_dir()
             .unwrap()
-            .join("wooting-macro-app")
-            .join("data_json.json");
+            .join(CONFIG_DIR)
+            .join(DATA_FILE);
 
         match std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()) {
             Ok(_) => {
@@ -606,8 +609,8 @@ impl StateManagement for MacroData {
         #[cfg(not(debug_assertions))]
         let path = dirs::config_dir()
             .unwrap()
-            .join("wooting-macro-app")
-            .join("data_json.json");
+            .join(CONFIG_DIR)
+            .join(DATA_FILE);
 
 
         match File::open(path.as_path()) {
