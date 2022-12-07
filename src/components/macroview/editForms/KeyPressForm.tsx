@@ -8,7 +8,7 @@ import {
   Input,
   Text
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { KeyType } from '../../../enums'
@@ -39,7 +39,7 @@ export default function KeyPressForm() {
     )
   }, [selectedElement])
 
-  const onKeypressDurationChange = (event: any) => {
+  const onKeypressDurationChange = useCallback((event: any) => {
     // need to ask about these guards, seems really redundant
     if (selectedElement === undefined) {
       return
@@ -58,9 +58,9 @@ export default function KeyPressForm() {
     const temp = { ...selectedElement }
     temp.data.press_duration = newValue
     updateElement(temp, selectedElementId)
-  }
+  }, [selectedElement, selectedElementId, updateElement])
 
-  const onKeypressTypeChange = (newType: KeyType) => {
+  const onKeypressTypeChange = useCallback((newType: KeyType) => {
     if (selectedElement === undefined) {
       return
     }
@@ -70,11 +70,14 @@ export default function KeyPressForm() {
     if (selectedElementId === undefined) {
       return
     }
+    console.log(selectedElement)
+    // BUG: selected element is updated before we update it...
     setKeypressType(newType)
     const temp = { ...selectedElement }
     temp.data.keytype = KeyType[newType]
     updateElement(temp, selectedElementId)
-  }
+    console.log(selectedElement)
+  }, [selectedElement, selectedElementId, updateElement])
 
   return (
     <>

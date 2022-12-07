@@ -1,13 +1,12 @@
 import {
   HStack,
-  VStack,
   IconButton,
   Text,
-  Divider,
-  useColorModeValue
+  useColorModeValue,
+  StackDivider
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../contexts/macroContext'
-import { MacroType, MacroTypeDefinitions } from '../../enums'
+import { MacroType } from '../../enums'
 import { checkIfStringIsNonNumeric } from '../../utils'
 
 export default function MacroTypeArea() {
@@ -20,8 +19,8 @@ export default function MacroTypeArea() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      width={32}
-      height={32}
+      width={24}
+      height={24}
     >
       <path
         strokeLinecap="round"
@@ -35,8 +34,8 @@ export default function MacroTypeArea() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      width={32}
-      height={32}
+      width={24}
+      height={24}
     >
       <path
         strokeLinecap="round"
@@ -50,8 +49,8 @@ export default function MacroTypeArea() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      width={32}
-      height={32}
+      width={24}
+      height={24}
     >
       <path
         strokeLinecap="round"
@@ -63,47 +62,32 @@ export default function MacroTypeArea() {
 
   return (
     <HStack
-      w="50%"
-      h="full"
-      py="4px"
-      px="16px"
+      w="fit"
+      h="fit"
+      p="2"
       border="1px"
       borderColor={borderColour}
+      divider={<StackDivider />}
       rounded="md"
       spacing="16px"
     >
-      <VStack w="fit-content" alignItems="normal">
-        <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-          Macro Type
-        </Text>
-        <HStack>
-          {(Object.keys(MacroType) as Array<keyof typeof MacroType>)
-            .filter(checkIfStringIsNonNumeric)
-            .map((value: string, index: number) => (
-              <IconButton
-                icon={typeIcons[index]}
-                aria-label="macro type button"
-                size="lg"
-                colorScheme={macro.macro_type === value ? 'yellow' : 'gray'}
-                onClick={() => updateMacroType(index)}
-                key={value}
-              ></IconButton>
-            ))}
-        </HStack>
-      </VStack>
-      <Divider orientation="vertical" />
-      <VStack w="full" h="full" alignItems="normal" justifyContent="center">
-        <Text fontWeight="semibold" fontSize={['md', 'lg', 'xl']}>
-          {macro.macro_type}
-        </Text>
-        <Text fontSize={['xs', 'sm', 'md', 'lg', 'xl']}>
-          {
-            MacroTypeDefinitions[
-              MacroType[macro.macro_type as keyof typeof MacroType]
-            ]
-          }
-        </Text>
-      </VStack>
+      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+        Macro Type
+      </Text>
+      <HStack>
+        {(Object.keys(MacroType) as Array<keyof typeof MacroType>)
+          .filter(checkIfStringIsNonNumeric)
+          .map((value: string, index: number) => (
+            <IconButton
+              icon={typeIcons[index]}
+              aria-label="macro type button"
+              size="sm"
+              colorScheme={macro.macro_type === value ? 'yellow' : 'gray'}
+              onClick={() => updateMacroType(index)}
+              key={value}
+            ></IconButton>
+          ))}
+      </HStack>
     </HStack>
   )
 }

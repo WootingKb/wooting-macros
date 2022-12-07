@@ -9,7 +9,7 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { settingInfoLookup } from '../../maps/SettingsMap'
 import AccessibilitySettings from './generalPages/AccessibilitySettings'
 import AppearanceSettings from './generalPages/AppearanceSettings'
@@ -28,6 +28,10 @@ type Props = {
 export default function SettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
   const panelBg = useColorModeValue('white', 'gray.800')
+
+  useEffect(() => {
+    setPageIndex(0)
+  }, [isOpen])
 
   const SelectedPageComponent = useMemo(() => {
     switch (pageIndex) {

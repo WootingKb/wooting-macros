@@ -17,7 +17,6 @@ function App() {
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
   }, [])
 
-  // TODO: Update Loading Screen & investigate loading time of application prior to loading screen taking effect
   if (!initComplete) {
     return (
       <Flex h="100vh" justifyContent="center" alignItems="center">
@@ -33,12 +32,12 @@ function App() {
       )}
       {viewState === ViewState.Addview && (
         <MacroProvider key={0}>
-          <Macroview isEditing={false} />
+          <Macroview />
         </MacroProvider>
       )}
       {viewState === ViewState.Editview && (
         <MacroProvider key={1}>
-          <Macroview isEditing={true} />
+          <Macroview />
         </MacroProvider>
       )}
       <SettingsModal isOpen={isOpen} onClose={onClose} />

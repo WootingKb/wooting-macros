@@ -157,8 +157,9 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
           <Button
             mr={3}
             onClick={() => {
-              onClose()
               resetItems()
+              stopRecording()
+              onClose()
             }}
           >
             Close

@@ -87,10 +87,10 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             }
             variant="link"
           ></MenuButton>
-          <MenuList>
+          <MenuList p="2">
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
-            <MenuItem isDisabled>Move to Collection</MenuItem>
-            <MenuItem isDisabled>Export</MenuItem>
+            {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
+            {/* <MenuItem isDisabled>Export</MenuItem> */}
             <Divider />
             <MenuItem onClick={() => onDelete(index)} textColor="red.500">
               Delete

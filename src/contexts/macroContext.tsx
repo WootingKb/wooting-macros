@@ -150,6 +150,7 @@ function MacroProvider({ children }: MacroProviderProps) {
 
   const updateElement = useCallback(
     (newElement: ActionEventType, index: number) => {
+      console.log("updating element " + index)
       setSequence((sequence) => {
         console.log(sequence)
         const newSequence = [...sequence]

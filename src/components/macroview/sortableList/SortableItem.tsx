@@ -70,6 +70,7 @@ export default function SortableItem({ id, element }: Props) {
     if (selectedElementId === id - 1) {
       return
     }
+    console.log(id - 1)
     updateSelectedElementId(id - 1)
   }
 

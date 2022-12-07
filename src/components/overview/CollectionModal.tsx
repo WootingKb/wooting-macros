@@ -9,7 +9,7 @@ import {
   ModalHeader,
   ModalOverlay
 } from '@chakra-ui/react'
-import { BaseSyntheticEvent, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { Collection } from '../../types'
@@ -31,6 +31,11 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
   } = useApplicationContext()
   const collection: Collection = useSelectedCollection()
 
+  useEffect(() => {
+    setCollectionName('')
+    setIsNameUsable(false)
+  }, [isOpen])
+
   const onModalSuccessClose = () => {
     if (isRenamingCollection) {
       onCollectionUpdate(
@@ -50,9 +55,12 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
 
   const onCollectionNameChange = (event: BaseSyntheticEvent) => {
     let newName: string = event.target.value
+    if (newName === '') {
+      setIsNameUsable(false)
+      return
+    }
     newName = newName.trim()
-    setCollectionName(newName)
-
+    
     for (let i = 0; i < collections.length; i++) {
       const collection = collections[i]
       if (collection.name.toUpperCase() === newName.toUpperCase()) {
@@ -60,6 +68,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
         return
       }
     }
+    setCollectionName(newName)
     setIsNameUsable(true)
   }
 

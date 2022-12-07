@@ -57,12 +57,12 @@ export default function CollectionPanel({ onOpen }: Props) {
             />
           </HStack>
           <HStack w="100%">
-            <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
+            {/* <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Export Collection
             </Button>
             <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Import Macros
-            </Button>
+            </Button> */}
             <Button
               leftIcon={<DeleteIcon />}
               size={['xs', 'sm', 'md']}

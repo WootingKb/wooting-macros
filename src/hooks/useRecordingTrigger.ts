@@ -33,10 +33,6 @@ export default function useRecordingTrigger() {
   }, [setRecording])
 
   const addKeypress = useCallback(
-    // limitation: either up to 4 keys or 1 mouse button can be set as the trigger
-    // when recording the macro if the user presses a non-modifer key, recording ends
-    // if the user presses a mouse button, recording ends
-    // if a user presses a modifier key, recording continues, until they press a non-modifer (finishes the keypress[]) or a mouse button (overwrites the keypress[])
     (event: KeyboardEvent) => {
       event.preventDefault()
       event.stopPropagation()
@@ -55,7 +51,11 @@ export default function useRecordingTrigger() {
       setItems((items: Keypress[] | MouseButton[]) => {
         let newItems = []
         if (isKeypressArray(items)) {
-          newItems = [...items, keypress]
+          if (items.filter((item) => item.keypress === HIDcode).length > 0) {
+            newItems = items
+          } else {
+            newItems = [...items, keypress]
+          }
         } else {
           newItems = [keypress]
         }
@@ -63,7 +63,6 @@ export default function useRecordingTrigger() {
       })
 
       if (HIDcode < 224) {
-        // handle cutting off at alphanumeric key here
         // this condition can be changed in the future, if we would like to increase the amount of "modifier keys"
         stopRecording()
       }
