@@ -87,7 +87,7 @@ pub enum ActionEventType {
 pub enum TriggerEventType {
     KeyPressEvent {
         // TODO: This should be a Vec of u32, it shouldn't be sharing the type of the KeyPressEventAction: FOR POLISH PHASE
-        data: Vec<key_press::KeyPress>,
+        data: Vec<u32>,
         allow_while_other_keys: bool,
     },
     MouseEvent {
@@ -562,13 +562,10 @@ impl MacroData {
                     if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
-                                match output_hashmap.get_mut(&data.first().unwrap().keypress) {
-                                    Some(value) => value.push(macros.clone()),
-                                    None => output_hashmap.insert_nocheck(
-                                        data.clone().first().unwrap().keypress,
-                                        vec![macros.clone()],
-                                    ),
-                                }
+                                output_hashmap.insert_nocheck(
+                                    *data.clone().first().unwrap(),
+                                    vec![macros.clone()],
+                                );
                             }
                             TriggerEventType::MouseEvent { data } => {
                                 let data: u32 = data.into();
@@ -706,14 +703,14 @@ fn check_macro_execution_efficiently(
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                let event_to_check: Vec<u32> = data.iter().map(|x| x.keypress).collect();
+               //let data: Vec<u32> = *data.iter().map(|x| x).collect();
 
-                println!(
-                    "CheckMacroExec: Converted keys to vec<u32>\n {:#?}",
-                    event_to_check
-                );
+                // println!(
+                //     "CheckMacroExec: Converted keys to vec<u32>\n {:#?}",
+                //     data
+                // );
 
-                if event_to_check == pressed_events {
+                if *data == pressed_events {
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
 
