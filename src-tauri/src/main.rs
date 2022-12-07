@@ -90,8 +90,8 @@ async fn main() {
 
     backend.init().await;
 
-    let set_autolaunch = backend.config.read().await.auto_start;
-    //let set_launch_minimized = backend.config.read().await.minimize_at_launch;
+    let set_autolaunch: bool = backend.config.read().await.auto_start;
+    let set_launch_minimized: bool = backend.config.read().await.minimize_at_launch;
 
     let set_launch_minimized = false;
 
@@ -120,28 +120,34 @@ async fn main() {
             control_grabbing,
             get_monitor_data
         ])
-        // .setup(move |app| {
-        //     let app_name = &app.package_info().name;
-        //     let current_exe = current_exe().unwrap();
-        //
-        //     let auto_start = auto_launch::AutoLaunchBuilder::new()
-        //         .set_app_name(&app_name)
-        //         .set_app_path(&current_exe.as_path().to_str().unwrap())
-        //         .set_use_launch_agent(true)
-        //         .build()
-        //         .unwrap();
-        //     //println!("Autolaunch is set to {:#?}", auto_start);
-        //
-        //     //println!("Setting autolaunch to {}", set_autolaunch);
-        //     match set_autolaunch {
-        //         true => auto_start.enable().unwrap(),
-        //         false => auto_start.disable().unwrap(),
-        //     }
-        //
-        //     //println!("is autostart {}", auto_start.is_enabled().unwrap());
-        //
-        //     Ok(())
-        // })
+        .setup(move |app| {
+            let app_name = &app.package_info().name;
+            let current_exe = current_exe().unwrap();
+
+            let auto_start = auto_launch::AutoLaunchBuilder::new()
+                .set_app_name(&app_name)
+                .set_app_path(&current_exe.as_path().to_str().unwrap())
+                .set_use_launch_agent(true)
+                .build()
+                .unwrap();
+            //println!("Autolaunch is set to {:#?}", auto_start);
+
+
+            //auto_start.enable().unwrap();
+
+            //println!("Setting autolaunch to {}", set_autolaunch);
+            match set_autolaunch {
+                true => auto_start.enable().unwrap(),
+                false => match auto_start.disable() {
+                    Ok(x) => x,
+                    Err(_) => (),
+                },
+            }
+
+            //println!("is autostart {}", auto_start.is_enabled().unwrap());
+
+            Ok(())
+        })
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => {
