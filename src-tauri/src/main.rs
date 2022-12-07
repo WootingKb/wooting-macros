@@ -88,6 +88,9 @@ async fn main() {
 
     println!("Running the macro backend");
 
+    let set_autolaunch = backend.config.read().await.auto_start;
+    println!("Setting autolaunch to {}", set_autolaunch);
+
     backend.init().await;
 
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
@@ -115,7 +118,7 @@ async fn main() {
             control_grabbing,
             get_monitor_data
         ])
-        .setup(|app| {
+        .setup(move |app| {
             let app_name = &app.package_info().name;
             let current_exe = current_exe().unwrap();
 
@@ -126,7 +129,11 @@ async fn main() {
                 .build()
                 .unwrap();
 
-            auto_start.enable().unwrap();
+            match set_autolaunch {
+                true => auto_start.enable().unwrap(),
+                false => auto_start.disable().unwrap(),
+            }
+
             println!("is autostart {}", auto_start.is_enabled().unwrap());
 
             Ok(())

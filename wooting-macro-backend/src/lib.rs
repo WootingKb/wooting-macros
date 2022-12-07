@@ -188,7 +188,7 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct ApplicationConfig {
-    pub use_input_grab: bool,
+    pub auto_start: bool,
     pub global_key_delay: u64,
 }
 
@@ -456,7 +456,7 @@ pub trait StateManagement {
 impl StateManagement for ApplicationConfig {
     fn read_data() -> ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
-            use_input_grab: false,
+            auto_start: false,
             global_key_delay: 0,
         };
 
