@@ -257,8 +257,8 @@ async fn brightness_set_all_device(percentage_level: u32) {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-async fn brightness_set_specific_device(percentage_level: u32, name: &String) {
-    let name_str = name.as_str();
+async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
+    // let name_str = name.as_str();
     // let count = brightness::brightness_devices()
     //     .try_fold(0, |count, mut dev| async move {
     //
@@ -271,7 +271,7 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &String) {
     //     .unwrap();
 
     for mut devices in brightness::brightness_devices().into_future().await.0.unwrap(){
-        if devices.device_name().into_future().await.unwrap() == name_str {
+        if devices.device_name().into_future().await.unwrap() == name {
             set_brightness(&mut devices, percentage_level).await.unwrap();
         }
         println!("{:#?}", devices);

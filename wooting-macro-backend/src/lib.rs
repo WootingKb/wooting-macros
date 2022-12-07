@@ -192,11 +192,11 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 #[serde(rename_all = "PascalCase")]
 pub struct ApplicationConfig {
     pub auto_start: bool,
-    pub global_key_delay: u64,
+    pub default_delay_value: u64,
     pub auto_add_delay: bool,
     pub auto_select_element: bool,
     pub minimize_at_launch: bool,
-    pub theme: &str,
+    pub theme: String,
     pub minimize_to_tray: bool,
 
 
@@ -465,12 +465,12 @@ impl StateManagement for ApplicationConfig {
     fn read_data() -> ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             auto_start: false,
-            global_key_delay: 0,
-            auto_add_delay: false,
-            auto_select_element: false,
+            default_delay_value: 20,
+            auto_add_delay: true,
+            auto_select_element: true,
             minimize_at_launch: false,
-            theme: "light",
-            minimize_to_tray: false,
+            theme: "light".to_string(),
+            minimize_to_tray: true,
         };
 
         #[cfg(debug_assertions)]
@@ -482,7 +482,7 @@ impl StateManagement for ApplicationConfig {
             .join(CONFIG_DIR)
             .join(CONFIG_FILE);
 
-        match File::open(path.as_path().clone()) {
+        match File::open(path.as_path()) {
             Ok(data) => {
                 let data: ApplicationConfig = match serde_json::from_reader(&data) {
                     Ok(x) => x,
@@ -514,7 +514,7 @@ impl StateManagement for ApplicationConfig {
             .join(CONFIG_FILE);
 
         match std::fs::write(
-            path.as_path().clone(),
+            path.as_path(),
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
@@ -548,7 +548,7 @@ impl MacroData {
 
         #[cfg(debug_assertions)]
         std::fs::write(
-            path.as_path().clone(),
+            path.as_path(),
             serde_json::to_string_pretty(&self).unwrap(),
         )
         .unwrap();
@@ -602,7 +602,7 @@ impl StateManagement for MacroData {
         let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
 
         match std::fs::write(
-            path.as_path().clone(),
+            path.as_path(),
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
