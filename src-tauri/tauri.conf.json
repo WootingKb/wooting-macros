@@ -55,7 +55,12 @@
       "iconAsTemplate": true
     },
     "updater": {
-      "active": false
+      "active": false,
+      "endpoints": [
+        ""
+      ],
+      "dialog": true,
+      "pubkey": ""
     },
     "windows": [
       {
