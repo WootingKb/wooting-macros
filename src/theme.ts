@@ -34,7 +34,7 @@ const theme = extendTheme({
     settingsCategoryHeader: {
       fontWeight: 'black',
       fontSize: 'xs',
-      textColor: 'gray.700',
+      textColor: 'gray.500', // how to make this colour mode dependant, mode() doesnt seem to work
       textTransform: 'uppercase'
     }
   }

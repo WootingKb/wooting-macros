@@ -127,3 +127,15 @@ export interface Collection {
   macros: Macro[]
   icon: string
 }
+
+// Misc
+export interface ApplicationSetting {
+  name: string
+  desc: string
+  type: 'numberInput' | 'toggle'
+}
+
+export interface ApplicationSettingsSubCategory {
+  name: string
+  settings: ApplicationSetting[]
+}

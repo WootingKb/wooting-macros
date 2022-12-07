@@ -7,18 +7,18 @@ import {
   HStack,
   VStack,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from '@chakra-ui/react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { settingInfoLookup } from '../../maps/SettingsMap'
 import AccessibilitySettings from './generalPages/AccessibilitySettings'
 import AppearanceSettings from './generalPages/AppearanceSettings'
 import IntegrationSettings from './generalPages/IntegrationSettings'
 import LanguageSettings from './generalPages/LanguageSettings'
-import WindowSettings from './generalPages/WindowSettings'
+import ApplicationSettings from './generalPages/ApplicationSettings'
 import Support from './otherPages/Support'
 import Updates from './otherPages/Updates'
-import SettingsLeftPanel from './SettingsLeftPanel'
+import SettingsLeftPanel from '../../components/settings/SettingsLeftPanel'
 
 type Props = {
   isOpen: boolean
@@ -32,7 +32,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   const SelectedPageComponent = useMemo(() => {
     switch (pageIndex) {
       case 0:
-        return <WindowSettings />
+        return <ApplicationSettings />
       case 1:
         return <AppearanceSettings />
       case 2:
@@ -51,7 +51,12 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   }, [pageIndex])
 
   return (
-    <Modal isOpen={isOpen} size={'full'} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      size={'full'}
+      onClose={onClose}
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
       <ModalContent>
         <HStack
@@ -69,7 +74,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
               onSettingsButtonPress={setPageIndex}
             />
             <ModalBody h="100vh" bg={panelBg}>
-              <VStack w="95%" justifyContent="left" pt="8" spacing={4}>
+              <VStack w="95%" justifyContent="left" py="8" spacing={4}>
                 <Text w="100%" fontWeight="bold" fontSize="large">
                   {settingInfoLookup.get(pageIndex)?.displayString}
                 </Text>

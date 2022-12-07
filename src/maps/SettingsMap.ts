@@ -1,4 +1,4 @@
-import { SettingsCategory } from "../enums"
+import { SettingsCategory } from '../enums'
 
 export interface SettingInfo {
   pageIndex: number
@@ -6,70 +6,70 @@ export interface SettingInfo {
   displayString: string
 }
 
-export class Setting {
-  static get WindowSettings(): SettingInfo {
+export class SettingsGroup {
+  static get Application(): SettingInfo {
     return {
       pageIndex: 0,
       category: SettingsCategory.General,
-      displayString: 'Window Settings'
+      displayString: 'Application',
     }
   }
-  static get AppearanceSettings(): SettingInfo {
+  static get Appearance(): SettingInfo {
     return {
       pageIndex: 1,
       category: SettingsCategory.General,
-      displayString: 'Appearance'
+      displayString: 'Appearance',
     }
   }
-  static get AccessibilitySettings(): SettingInfo {
+  static get Accessibility(): SettingInfo {
     return {
       pageIndex: 2,
       category: SettingsCategory.General,
-      displayString: 'Accessibility'
+      displayString: 'Accessibility',
     }
   }
-  static get LanguageSettings(): SettingInfo {
+  static get Language(): SettingInfo {
     return {
       pageIndex: 3,
       category: SettingsCategory.General,
-      displayString: 'Language'
+      displayString: 'Language',
     }
   }
-  static get IntegrationSettings(): SettingInfo {
+  static get Integration(): SettingInfo {
     return {
       pageIndex: 4,
       category: SettingsCategory.General,
-      displayString: 'Integrations'
+      displayString: 'Integrations',
     }
   }
   static get Updates(): SettingInfo {
     return {
       pageIndex: 5,
       category: SettingsCategory.Other,
-      displayString: 'Patch Notes'
+      displayString: 'Patch Notes',
     }
   }
   static get Support(): SettingInfo {
     return {
       pageIndex: 6,
       category: SettingsCategory.Other,
-      displayString: 'Help & Guides'
+      displayString: 'Help & Guides',
     }
   }
 
   static readonly all: SettingInfo[] = [
-    Setting.WindowSettings,
-    Setting.AppearanceSettings,
-    Setting.AccessibilitySettings,
-    Setting.LanguageSettings,
-    Setting.IntegrationSettings,
-    Setting.Updates,
-    Setting.Support,
+    SettingsGroup.Application,
+    SettingsGroup.Appearance,
+    SettingsGroup.Accessibility,
+    SettingsGroup.Language,
+    SettingsGroup.Integration,
+    SettingsGroup.Updates,
+    SettingsGroup.Support
   ]
 }
 
 export const settingInfoLookup = new Map<number, SettingInfo>(
-  Setting.all
+  SettingsGroup.all
     .filter((setting) => setting.pageIndex !== undefined)
     .map((setting) => [setting.pageIndex!, setting])
 )

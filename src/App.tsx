@@ -6,7 +6,7 @@ import { useApplicationContext } from './contexts/applicationContext'
 import Macroview from './views/Macroview'
 import { useEffect } from 'react'
 import { MacroProvider } from './contexts/macroContext'
-import SettingsModal from './components/settings/SettingsModal'
+import SettingsModal from './views/settings/SettingsModal'
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()

@@ -6,7 +6,7 @@ import {
   HStack
 } from '@chakra-ui/react'
 import { SettingsCategory } from '../../enums'
-import { Setting } from '../../maps/SettingsMap'
+import { SettingsGroup } from '../../maps/SettingsMap'
 import SettingsButton from './SettingsButton'
 
 type Props = {
@@ -41,7 +41,7 @@ export default function SettingsLeftPanel({
         <Text w="100%" textStyle="settingsCategoryHeader" ml="4">
           General Settings
         </Text>
-        {Setting.all
+        {SettingsGroup.all
           .filter((setting) => setting.category === SettingsCategory.General)
           .map((setting) => (
             <SettingsButton
@@ -58,7 +58,7 @@ export default function SettingsLeftPanel({
         <Text w="100%" textStyle="settingsCategoryHeader" ml="4">
           Other
         </Text>
-        {Setting.all
+        {SettingsGroup.all
           .filter((setting) => setting.category === SettingsCategory.Other)
           .map((setting) => (
             <SettingsButton

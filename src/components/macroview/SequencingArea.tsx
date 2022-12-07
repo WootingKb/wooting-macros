@@ -53,6 +53,7 @@ export default function SequencingArea() {
   )
 
   function handleDragEnd(event: any) {
+    // make usecallback
     // events are objects, how to deal with getting the library's types easily?
     const { active, over } = event
 
