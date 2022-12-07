@@ -1,12 +1,13 @@
 mod hid_table;
 pub mod plugin;
 
+use itertools::Itertools;
 use std::fs::File;
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
-use std::path::PathBuf;
 
-use std::sync::{Arc};
+use std::sync::Arc;
 use tokio::sync::RwLock;
 
 use halfbrown::HashMap;
@@ -35,7 +36,6 @@ use crate::plugin::system_event::{
 
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
-
 
 const CONFIG_DIR: &str = "wooting-macro-app";
 const CONFIG_FILE: &str = "config.json";
@@ -273,7 +273,7 @@ impl MacroBackend {
 
         //Create the executor
         thread::spawn(move || {
-            keypress_executor_sender(rchan_execute, );
+            keypress_executor_sender(rchan_execute);
         });
 
         //==============TESTING GROUND======================
@@ -330,12 +330,25 @@ impl MacroBackend {
 
                                     keys_pressed.push(key_to_push);
 
-                                    println!("Pressed Keys: {:?}", keys_pressed);
+                                    // println!("Pressed Keys: {:?}", keys_pressed);
 
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
                                         .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .collect::<Vec<u32>>()
+                                        .into_iter()
+                                        .unique()
                                         .collect();
+
+                                    println!(
+                                        "Pressed Keys: {:?}",
+                                        pressed_keys_copy_converted
+                                            .iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
                                     let first_key: u32 = match pressed_keys_copy_converted.first() {
                                         None => 0,
@@ -367,11 +380,9 @@ impl MacroBackend {
                                 }
 
                                 EventType::KeyRelease(key) => {
-                                    let key_to_remove = key;
-
                                     keys_pressed
                                         .blocking_write()
-                                        .retain(|x| *x != key_to_remove);
+                                        .retain(|x| *x != key);
                                     println!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
@@ -459,7 +470,7 @@ impl StateManagement for ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             auto_start: false,
             global_key_delay: 0,
-            minimize_at_launch: false
+            minimize_at_launch: false,
         };
 
         #[cfg(debug_assertions)]
@@ -502,7 +513,10 @@ impl StateManagement for ApplicationConfig {
             .join(CONFIG_DIR)
             .join(CONFIG_FILE);
 
-        match std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()) {
+        match std::fs::write(
+            path.as_path().clone(),
+            serde_json::to_string_pretty(&self).unwrap(),
+        ) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -530,13 +544,14 @@ impl MacroData {
         let path = std::path::PathBuf::from("../data_json.json");
 
         #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir()
-            .unwrap()
-            .join(CONFIG_DIR)
-            .join(DATA_FILE);
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
 
         #[cfg(debug_assertions)]
-        std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()).unwrap();
+        std::fs::write(
+            path.as_path().clone(),
+            serde_json::to_string_pretty(&self).unwrap(),
+        )
+        .unwrap();
     }
 
     /// Extracts the training data from the macro data.
@@ -584,12 +599,12 @@ impl StateManagement for MacroData {
         let path = std::path::PathBuf::from("../data_json.json");
 
         #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir()
-            .unwrap()
-            .join(CONFIG_DIR)
-            .join(DATA_FILE);
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
 
-        match std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()) {
+        match std::fs::write(
+            path.as_path().clone(),
+            serde_json::to_string_pretty(&self).unwrap(),
+        ) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -613,14 +628,10 @@ impl StateManagement for MacroData {
         };
 
         #[cfg(debug_assertions)]
-            let path = std::path::PathBuf::from("../data_json.json");
+        let path = std::path::PathBuf::from("../data_json.json");
 
         #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir()
-            .unwrap()
-            .join(CONFIG_DIR)
-            .join(DATA_FILE);
-
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
 
         match File::open(path.as_path()) {
             Ok(data) => {
@@ -641,7 +652,6 @@ impl StateManagement for MacroData {
                 default
             }
         }
-
     }
 }
 
@@ -680,7 +690,6 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 /// Receives and executes a macro based on the trigger event. Puts a mandatory 20-50 ms delay between each macro execution.
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-
         let result = rchan_execute.blocking_recv().unwrap();
 
         send(&result);

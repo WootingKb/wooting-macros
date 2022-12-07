@@ -2461,12 +2461,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "minisign-verify"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "933dca44d65cdd53b355d0b73d380a2ff5da71f87f036053188bf1eab6a19881"
-
-[[package]]
 name = "miniz_oxide"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4224,7 +4218,6 @@ checksum = "18203448b9d4dcad55607eafeda6dc7fe135848e5f567cd8bdade6cafd8b1a85"
 dependencies = [
     "anyhow",
     "attohttpc",
-    "base64",
     "cocoa 0.24.1",
     "dirs-next",
     "embed_plist",
@@ -4238,7 +4231,6 @@ dependencies = [
     "http",
     "ignore",
     "infer 0.9.0",
-    "minisign-verify",
     "notify-rust",
     "objc",
     "once_cell",
@@ -4249,12 +4241,12 @@ dependencies = [
     "png",
     "rand 0.8.5",
     "raw-window-handle",
- "regex",
- "rfd",
- "semver 1.0.14",
- "serde",
- "serde_json",
- "serde_repr",
+    "regex",
+    "rfd",
+    "semver 1.0.14",
+    "serde",
+    "serde_json",
+    "serde_repr",
     "serialize-to-javascript",
     "shared_child",
     "state",
@@ -4265,14 +4257,12 @@ dependencies = [
     "tauri-utils",
     "tempfile",
     "thiserror",
-    "time",
     "tokio",
     "url",
     "uuid 1.2.2",
     "webkit2gtk",
     "webview2-com",
     "windows 0.39.0",
-    "zip",
 ]
 
 [[package]]
@@ -5476,23 +5466,24 @@ dependencies = [
 name = "wooting-macro-backend"
 version = "0.5.0"
 dependencies = [
- "brightness",
- "copypasta",
- "dirs",
- "fastrand",
- "futures",
- "halfbrown",
- "idasen-cli",
- "lazy_static",
- "obws",
- "opener",
- "rdev",
- "rodio",
- "serde",
- "serde_json",
- "serde_repr",
- "tauri",
- "tokio",
+    "brightness",
+    "copypasta",
+    "dirs",
+    "fastrand",
+    "futures",
+    "halfbrown",
+    "idasen-cli",
+    "itertools",
+    "lazy_static",
+    "obws",
+    "opener",
+    "rdev",
+    "rodio",
+    "serde",
+    "serde_json",
+    "serde_repr",
+    "tauri",
+    "tokio",
  "tokio-serde",
  "wifi-rs",
 ]
@@ -5678,17 +5669,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "zip"
-version = "0.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "537ce7411d25e54e8ae21a7ce0b15840e7bfcff15b51d697ec3266cc76bdf080"
-dependencies = [
-    "byteorder",
-    "crc32fast",
-    "crossbeam-utils",
-]
-
-[[package]]
 name = "zvariant"
 version = "3.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5697,9 +5677,9 @@ dependencies = [
     "byteorder",
     "enumflags2",
     "libc",
- "serde",
- "static_assertions",
- "zvariant_derive",
+    "serde",
+    "static_assertions",
+    "zvariant_derive",
 ]
 
 [[package]]

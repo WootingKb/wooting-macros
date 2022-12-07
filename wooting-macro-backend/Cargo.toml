@@ -24,6 +24,7 @@ wifi-rs = "0.2.2"
 serde_repr = "0.1.9"
 fastrand = "1.8.0"
 dirs = "4.0.0"
+itertools = "0.10.5"
 
 
 [target.'cfg(target_os = "windows")'.dependencies]

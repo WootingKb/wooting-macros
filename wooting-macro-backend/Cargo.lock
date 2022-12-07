@@ -5418,6 +5418,7 @@ dependencies = [
  "futures",
  "halfbrown",
  "idasen-cli",
+ "itertools",
  "lazy_static",
  "obws",
  "opener",

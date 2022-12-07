@@ -18,7 +18,7 @@ tauri-build = { version = "1.2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
-tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray", "updater"] }
+tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
 tokio = { version = "1.22", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }

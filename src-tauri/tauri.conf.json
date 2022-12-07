@@ -57,10 +57,10 @@
     "updater": {
       "active": false,
       "endpoints": [
-        ""
+        "https://github.com/tauri-apps/tauri-test/releases/download/v1.0.0/app-x86_64.app.tar.gz"
       ],
       "dialog": true,
-      "pubkey": ""
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyMTA3RTUwMjM0RDZCOEUKUldTT2EwMGpVSDRRTW9oVHFXeTdIQ1NsMjZvVWxOUkJSVURLMVYvZGI1V0thYXZHV1J0a2phQkgK"
     },
     "windows": [
       {
