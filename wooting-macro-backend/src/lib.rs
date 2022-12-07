@@ -680,10 +680,11 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 /// Receives and executes a macro based on the trigger event. Puts a mandatory 20-50 ms delay between each macro execution.
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-        let result = rchan_execute.blocking_recv().unwrap();
+        send(&rchan_execute.blocking_recv().unwrap());
 
-        send(&result);
-        //thread::sleep(time::Duration::from_millis(backend.config.blocking_read().global_key_delay));
+        //MacOS requires some strange delays so putting it here just in case.
+        #[cfg(target_os = "macos")]
+        thread::sleep(time::Duration::from_millis(20));
     }
 }
 

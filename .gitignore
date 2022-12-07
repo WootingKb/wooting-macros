@@ -25,3 +25,5 @@ dist-ssr
 /data_json.json
 /src-tauri/config.json
 /src-tauri/data_json.json
+/config.json
+/data_json.json
