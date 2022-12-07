@@ -3,6 +3,7 @@ pub mod plugin;
 
 use itertools::Itertools;
 use std::fs::File;
+
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::{thread, time};
 
@@ -41,7 +42,7 @@ const CONFIG_DIR: &str = "wooting-macro-app";
 #[allow(dead_code)]
 const CONFIG_FILE: &str = "config.json";
 #[allow(dead_code)]
-const DATA_FILE: &str = "config.json";
+const DATA_FILE: &str = "data_json.json";
 
 ///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -192,7 +193,13 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 pub struct ApplicationConfig {
     pub auto_start: bool,
     pub global_key_delay: u64,
+    pub auto_add_delay: bool,
+    pub auto_select_element: bool,
     pub minimize_at_launch: bool,
+    pub theme: &str,
+    pub minimize_to_tray: bool,
+
+
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
@@ -459,7 +466,11 @@ impl StateManagement for ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             auto_start: false,
             global_key_delay: 0,
+            auto_add_delay: false,
+            auto_select_element: false,
             minimize_at_launch: false,
+            theme: "light",
+            minimize_to_tray: false,
         };
 
         #[cfg(debug_assertions)]
