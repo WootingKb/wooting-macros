@@ -67,11 +67,11 @@ export default function AppearanceSettings() {
         </RadioGroup>
       </VStack>
       <Divider />
-      <VStack w="100%" spacing={4} textAlign="left">
+      {/* <VStack w="100%" spacing={4} textAlign="left">
         <Text w="100%" fontSize="md" fontWeight="semibold">
           Accent Colour
         </Text>
-      </VStack>
+      </VStack> */}
     </VStack>
   )
 }
