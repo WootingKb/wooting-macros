@@ -34,8 +34,6 @@ use crate::plugin::system_event::{
     ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
 };
 
-#[allow(unused_imports)]
-use crate::plugin::unicode_direct;
 
 #[allow(dead_code)]
 const CONFIG_DIR: &str = "wooting-macro-app";
@@ -76,7 +74,6 @@ pub enum ActionEventType {
     MouseEventAction {
         data: mouse::MouseAction,
     },
-    UnicodeEventAction {},
     //TODO: Sound effects? Soundboards?
     //TODO: Sending a message through online webapi (twitch)
     DelayEventAction {
@@ -163,7 +160,6 @@ impl Macro {
                 ActionEventType::PhillipsHueEventAction { .. } => {}
                 ActionEventType::OBSEventAction { .. } => {}
                 ActionEventType::DiscordEventAction { .. } => {}
-                ActionEventType::UnicodeEventAction { .. } => {}
                 ActionEventType::DelayEventAction { data } => {
                     tokio::time::sleep(time::Duration::from_millis(*data)).await;
                 }
