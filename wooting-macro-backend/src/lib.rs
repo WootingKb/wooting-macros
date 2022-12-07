@@ -104,6 +104,8 @@ pub struct EventList(Vec<rdev::Key>);
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Macro {
     pub name: String,
+    //TODO: base64 encoding
+    pub icon: String,
     pub sequence: Vec<ActionEventType>,
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
