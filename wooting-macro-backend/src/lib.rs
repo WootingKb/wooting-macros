@@ -13,6 +13,8 @@ use rdev::{grab, simulate, EventType, GrabError, SimulateError};
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
+use dirs;
+
 use crate::hid_table::*;
 use crate::plugin::delay;
 #[allow(unused_imports)]
@@ -28,6 +30,7 @@ use crate::plugin::system_event::Monitor;
 use crate::plugin::system_event::{
     ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
 };
+
 #[allow(unused_imports)]
 use crate::plugin::unicode_direct;
 
@@ -215,11 +218,13 @@ impl MacroBackend {
 
     #[cfg(not(debug_assertions))]
     pub fn generate_directories() {
-        match std::fs::create_dir_all("./data") {
+        let config_path = dirs::config_dir().unwrap().join("wooting-macro-app");
+        println!("creating path into {:?}", config_path);
+
+        match std::fs::create_dir_all(config_path.as_path()) {
             Ok(x) => x,
             Err(error) => eprintln!("Directory creation halted: {}", error),
         };
-
     }
 
     pub fn set_is_listening(&self, is_listening: bool) {
@@ -451,20 +456,15 @@ impl StateManagement for ApplicationConfig {
         };
 
         #[cfg(debug_assertions)]
-        match File::open("../config.json") {
-            Ok(data) => {
-                let data: ApplicationConfig = serde_json::from_reader(&data).unwrap();
-                data
-            }
+        let path = std::path::PathBuf::from("../config.json");
 
-            Err(err) => {
-                eprintln!("Error opening file, using default config {}", err);
-                default.write_to_file();
-                default
-            }
-        }
         #[cfg(not(debug_assertions))]
-        match File::open("./data/config.json") {
+        let path = dirs::config_dir()
+            .unwrap()
+            .join("wooting-macro-app")
+            .join("config.json");
+
+        match File::open(path.as_path().clone()) {
             Ok(data) => {
                 let data: ApplicationConfig = serde_json::from_reader(&data).unwrap();
                 data
@@ -476,30 +476,19 @@ impl StateManagement for ApplicationConfig {
                 default
             }
         }
-
     }
 
     fn write_to_file(&self) {
         #[cfg(debug_assertions)]
-        match std::fs::write(
-            "../config.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
-            Ok(_) => {
-                println!("Success writing a new file");
-            }
-            Err(err) => {
-                eprintln!(
-                    "Error writing a new file, using only read only defaults. {}",
-                    err
-                );
-            }
-        };
+        let path = std::path::PathBuf::from("../config.json");
+
         #[cfg(not(debug_assertions))]
-        match std::fs::write(
-            "./data/config.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
+        let path = dirs::config_dir()
+            .unwrap()
+            .join("wooting-macro-app")
+            .join("config.json");
+
+        match std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -524,16 +513,16 @@ impl MacroData {
     /// Basically sends the entire struct to the frontend
     pub fn export_data(&self) {
         #[cfg(debug_assertions)]
-        std::fs::write(
-            "../data_json.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        )
-        .unwrap();
+        let path = std::path::PathBuf::from("../data_json.json");
+
         #[cfg(not(debug_assertions))]
-        std::fs::write(
-            "./data/data_json.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        ).unwrap();
+        let path = dirs::config_dir()
+            .unwrap()
+            .join("wooting-macro-app")
+            .join("data_json.json");
+
+        #[cfg(debug_assertions)]
+        std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()).unwrap();
     }
 
     /// Extracts the training data from the macro data.
@@ -578,26 +567,15 @@ impl StateManagement for MacroData {
     /// Writes out the data to a file. If unsuccessful, it will use the default data.
     fn write_to_file(&self) {
         #[cfg(debug_assertions)]
-        match std::fs::write(
+        let path = std::path::PathBuf::from("../data_json.json");
 
-            "../data_json.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
-            Ok(_) => {
-                println!("Success writing a new file");
-            }
-            Err(err) => {
-                eprintln!(
-                    "Error writing a new file, using only read only defaults. {}",
-                    err
-                );
-            }
-        };
         #[cfg(not(debug_assertions))]
-        match std::fs::write(
-            "./data/data_json.json",
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
+        let path = dirs::config_dir()
+            .unwrap()
+            .join("wooting-macro-app")
+            .join("data_json.json");
+
+        match std::fs::write(path.as_path().clone(), serde_json::to_string_pretty(&self).unwrap()) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -622,27 +600,16 @@ impl StateManagement for MacroData {
 
 
         #[cfg(debug_assertions)]
-        match File::open("../data_json.json") {
-            Ok(data) => {
-                let data: MacroData = match serde_json::from_reader(&data) {
-                    Ok(x) => x,
-                    Err(error) => {
-                        eprintln!("Error reading data.json, using default data. {}", error);
-                        default
-                    }
-                };
-                data
-            }
+            let path = std::path::PathBuf::from("../data_json.json");
 
-            Err(err) => {
-                eprintln!("Error opening file, using default macrodata {}", err);
-                default.write_to_file();
-                default
-            }
-        }
         #[cfg(not(debug_assertions))]
-        match File::open("./data/data_json.json") {
+        let path = dirs::config_dir()
+            .unwrap()
+            .join("wooting-macro-app")
+            .join("data_json.json");
 
+
+        match File::open(path.as_path()) {
             Ok(data) => {
                 let data: MacroData = match serde_json::from_reader(&data) {
                     Ok(x) => x,
@@ -660,6 +627,7 @@ impl StateManagement for MacroData {
                 default
             }
         }
+
     }
 }
 

@@ -56,7 +56,6 @@ async fn get_monitor_data(
     Ok(state.display_list.read().await.clone())
 }
 
-
 #[tauri::command]
 /// Returns the monitors connected in the system to the frontend.
 async fn get_brightness_devices(
@@ -80,13 +79,12 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    let backend = MacroBackend::new();
-
-
-    println!("Running the macro backend");
-
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
+
+    let backend = MacroBackend::new();
+
+    println!("Running the macro backend");
 
     backend.init().await;
 
@@ -100,7 +98,6 @@ async fn main() {
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit)
         .add_item(show);
-
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
