@@ -3,17 +3,21 @@ import CollectionModal from '../components/overview/CollectionModal'
 import LeftPanel from '../components/overview/LeftPanel'
 import CollectionPanel from '../components/overview/CollectionPanel'
 
-export default function Overview() {
+type Props = {
+  onOpenSettingsModal: () => void
+}
+
+export default function Overview({ onOpenSettingsModal }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <HStack minH="100vh" spacing="0" overflow="hidden">
-      <LeftPanel onOpen={onOpen} />
-      <CollectionPanel onOpen={onOpen} />
-      <CollectionModal
-        isOpen={isOpen}
-        onClose={onClose}
+      <LeftPanel
+        onOpenCollectionModal={onOpen}
+        onOpenSettingsModal={onOpenSettingsModal}
       />
+      <CollectionPanel onOpen={onOpen} />
+      <CollectionModal isOpen={isOpen} onClose={onClose} />
     </HStack>
   )
 }

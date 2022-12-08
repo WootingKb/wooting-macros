@@ -1,5 +1,6 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { Collection, Keypress, MacroData, TriggerTypes } from './types'
+import { MouseButton } from './enums'
+import { ApplicationConfig, Collection, MacroData } from './types'
 
 export const updateBackendConfig = (collections: Collection[]) => {
   const macroData: MacroData = { data: collections }
@@ -8,8 +9,21 @@ export const updateBackendConfig = (collections: Collection[]) => {
   })
 }
 
-export const isKeypressArray = (items: TriggerTypes): items is Keypress[] => {
-  return typeof (items as Keypress[])[0] !== 'number'
+export const updateSettings = (newConfig: ApplicationConfig) => {
+  if ('AutoStart' in newConfig) {
+    // BUG: without this type guard, some how macro data is passed through????
+    invoke<void>('set_config', { config: newConfig }).catch((e) => {
+      console.error(e)
+    })
+  }
+}
+
+export const isMouseButtonArray = (
+  items: number[] | MouseButton[]
+): items is MouseButton[] => {
+  return Object.keys(MouseButton).includes(
+    (items as MouseButton[])[0].toString()
+  )
 }
 
 export const checkIfStringIsNonNumeric: (text: string) => boolean = function (

@@ -20,12 +20,24 @@ const config: ThemeConfig = {
 }
 
 // 3. extend the theme
-const theme = extendTheme({ config, breakpoints, components: {
-  Divider: {
-    baseStyle: (props: StyleFunctionProps) => ({ 
-      borderColor: mode('gray.400', 'gray.600')(props)
-    })
+const theme = extendTheme({
+  config,
+  breakpoints,
+  components: {
+    Divider: {
+      baseStyle: (props: StyleFunctionProps) => ({
+        borderColor: mode('gray.400', 'gray.600')(props)
+      })
+    }
+  },
+  textStyles: {
+    settingsCategoryHeader: {
+      fontWeight: 'black',
+      fontSize: 'xs',
+      textColor: 'gray.500', // how to make this colour mode dependant, mode() doesnt seem to work
+      textTransform: 'uppercase'
+    }
   }
-} })
+})
 
 export default theme

@@ -1,22 +1,20 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
-import { KeyType, MouseButton } from '../enums'
+import { MouseButton } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { webButtonLookup } from '../maps/MouseMap'
-import { Keypress, TriggerTypes } from '../types'
-import { isKeypressArray } from '../utils'
 
 export default function useRecordingTrigger() {
   const [recording, setRecording] = useState(false)
-  const [items, setItems] = useState<TriggerTypes>([])
-  const [prevItems, setPrevItems] = useState<TriggerTypes>([])
+  const [items, setItems] = useState<number[]>([])
+  const [prevItems, setPrevItems] = useState<number[]>([])
 
   const resetItems = useCallback(() => {
     setItems(prevItems)
   }, [setItems, prevItems])
 
   const initItems = useCallback(
-    (newItems: TriggerTypes) => {
+    (newItems: number[]) => {
       setItems(newItems)
     },
     [setItems]
@@ -33,10 +31,6 @@ export default function useRecordingTrigger() {
   }, [setRecording])
 
   const addKeypress = useCallback(
-    // limitation: either up to 4 keys or 1 mouse button can be set as the trigger
-    // when recording the macro if the user presses a non-modifer key, recording ends
-    // if the user presses a mouse button, recording ends
-    // if a user presses a modifier key, recording continues, until they press a non-modifer (finishes the keypress[]) or a mouse button (overwrites the keypress[])
     (event: KeyboardEvent) => {
       event.preventDefault()
       event.stopPropagation()
@@ -46,24 +40,21 @@ export default function useRecordingTrigger() {
         return
       }
 
-      const keypress: Keypress = {
-        keypress: HIDcode,
-        press_duration: 0,
-        keytype: KeyType[KeyType.DownUp]
-      }
-
-      setItems((items: Keypress[] | MouseButton[]) => {
-        let newItems = []
-        if (isKeypressArray(items)) {
-          newItems = [...items, keypress]
+      setItems((items) => {
+        let newItems: number[] = []
+        if (items.filter((item) => item === HIDcode).length > 0) {
+          newItems = items
+        } else if (
+          items.filter((item) => item >= MouseButton.Left).length > 0
+        ) {
+          newItems = [HIDcode]
         } else {
-          newItems = [keypress]
+          newItems = [...items, HIDcode]
         }
         return newItems
       })
 
       if (HIDcode < 224) {
-        // handle cutting off at alphanumeric key here
         // this condition can be changed in the future, if we would like to increase the amount of "modifier keys"
         stopRecording()
       }

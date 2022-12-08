@@ -7,7 +7,7 @@ import {
   Button,
   Text
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 
@@ -28,7 +28,8 @@ export default function DelayForm() {
     setDelayDuration(selectedElement.data)
   }, [selectedElement])
 
-  const onDelayDurationChange = (event: any) => {
+  const onDelayDurationChange = useCallback((event: any) => {
+    console.log(event)
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }
@@ -42,7 +43,17 @@ export default function DelayForm() {
     const temp = { ...selectedElement }
     temp.data = newValue
     updateElement(temp, selectedElementId)
-  }
+  }, [selectedElement, selectedElementId, updateElement])
+
+  const resetDuration = useCallback(() => {
+    if (selectedElement === undefined || selectedElementId === undefined) {
+      return
+    }
+    setDelayDuration(50)
+    const temp = { ...selectedElement }
+    temp.data = 50
+    updateElement(temp, selectedElementId)
+  }, [selectedElement, selectedElementId, updateElement])
 
   return (
     <>
@@ -70,7 +81,7 @@ export default function DelayForm() {
         variant="outline"
         w="fit-content"
         colorScheme="yellow"
-        onClick={() => onDelayDurationChange(50)}
+        onClick={resetDuration}
       >
         Set to Default
       </Button>

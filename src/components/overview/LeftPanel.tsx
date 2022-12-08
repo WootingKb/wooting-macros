@@ -1,31 +1,34 @@
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, SettingsIcon } from '@chakra-ui/icons'
 import {
   VStack,
   Divider,
   Button,
   HStack,
   Text,
-  useColorMode,
   useColorModeValue
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import ToggleGrabbingButton from './ToggleGrabbingButton'
 
 type Props = {
-  onOpen: () => void
+  onOpenCollectionModal: () => void
+  onOpenSettingsModal: () => void
 }
 
-export default function LeftPanel({ onOpen }: Props) {
+export default function LeftPanel({
+  onOpenCollectionModal,
+  onOpenSettingsModal
+}: Props) {
   const {
     collections,
     selection,
     onCollectionUpdate,
     changeSelectedCollectionIndex,
-    updateIsRenamingCollection
+    changeIsUpdatingCollection: updateIsRenamingCollection
   } = useApplicationContext()
-  const { colorMode, toggleColorMode } = useColorMode()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const panelBg = useColorModeValue('gray.100', 'gray.900')
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
@@ -33,6 +36,7 @@ export default function LeftPanel({ onOpen }: Props) {
   const onCollectionButtonPress = (newActiveIndex: number) => {
     changeSelectedCollectionIndex(newActiveIndex)
   }
+
   return (
     <VStack
       bg={panelBg}
@@ -50,9 +54,12 @@ export default function LeftPanel({ onOpen }: Props) {
       }}
     >
       <VStack w="100%">
-        <Text w="100%" fontWeight="bold">
-          Collections
-        </Text>
+        <HStack w="100%" justifyContent="space-between">
+          <Text w="100%" fontWeight="bold">
+            Collections
+          </Text>
+          <ToggleGrabbingButton />
+        </HStack>
         <Divider borderColor={dividerBg} />
         <VStack w="100%" ref={parent}>
           {collections.map((collection: Collection, index: number) => (
@@ -80,7 +87,7 @@ export default function LeftPanel({ onOpen }: Props) {
           leftIcon={<AddIcon />}
           onClick={() => {
             updateIsRenamingCollection(false)
-            onOpen()
+            onOpenCollectionModal()
           }}
         >
           New Collection
@@ -88,24 +95,15 @@ export default function LeftPanel({ onOpen }: Props) {
       </VStack>
       <HStack w="100%">
         <Button
-          variant="outline"
-          borderColor="gray.400"
-          onClick={toggleColorMode}
           w="100%"
           size={'sm'}
-        >
-          <Text fontSize={['2xs', 'xs']}>
-            Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-          </Text>
-        </Button>
-        <Button
           variant="outline"
-          borderColor="gray.400"
-          w="100%"
-          size={'sm'}
-          isDisabled
+          borderColor={dividerBg}
+          leftIcon={<SettingsIcon />}
+          _hover={{ bg: 'yellow.400' }}
+          onClick={onOpenSettingsModal}
         >
-          <Text fontSize={['2xs', 'xs']}>Give Feedback</Text>
+          <Text fontSize={['sm', 'md']}>Settings</Text>
         </Button>
       </HStack>
     </VStack>

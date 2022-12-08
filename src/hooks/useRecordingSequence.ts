@@ -10,7 +10,9 @@ export default function useRecordingSequence() {
   const [item, setItem] = useState<Keypress | MousePressAction | undefined>(
     undefined
   )
-  const [timeSinceLast, setTimeSinceLast] = useState<number | undefined>(undefined)
+  const [timeSinceLast, setTimeSinceLast] = useState<number | undefined>(
+    undefined
+  )
 
   const startRecording = useCallback(() => {
     setTimeSinceLast(undefined)
@@ -37,8 +39,7 @@ export default function useRecordingSequence() {
       const keypress: Keypress = {
         keypress: HIDcode,
         press_duration: 0,
-        keytype:
-          event.type === 'keydown' ? KeyType[KeyType.Down] : KeyType[KeyType.Up]
+        keytype: KeyType[KeyType.DownUp]
       }
 
       setItem(keypress)
@@ -84,8 +85,8 @@ export default function useRecordingSequence() {
 
     window.addEventListener('keydown', addKeypress, true)
     window.addEventListener('mousedown', addMousepress, true)
-    window.addEventListener('keyup', addKeypress, true)
-    window.addEventListener('mouseup', addMousepress, true)
+    // window.addEventListener('keyup', addKeypress, true)
+    // window.addEventListener('mouseup', addMousepress, true)
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
     })
@@ -93,8 +94,8 @@ export default function useRecordingSequence() {
     return () => {
       window.removeEventListener('keydown', addKeypress, true)
       window.removeEventListener('mousedown', addMousepress, true)
-      window.removeEventListener('keyup', addKeypress, true)
-      window.removeEventListener('mouseup', addMousepress, true)
+      // window.removeEventListener('keyup', addKeypress, true)
+      // window.removeEventListener('mouseup', addMousepress, true)
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
       })

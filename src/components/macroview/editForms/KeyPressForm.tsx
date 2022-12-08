@@ -8,7 +8,7 @@ import {
   Input,
   Text
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { KeyType } from '../../../enums'
@@ -39,42 +39,48 @@ export default function KeyPressForm() {
     )
   }, [selectedElement])
 
-  const onKeypressDurationChange = (event: any) => {
-    // need to ask about these guards, seems really redundant
-    if (selectedElement === undefined) {
-      return
-    }
-    if (selectedElement.type !== 'KeyPressEventAction') {
-      return
-    }
-    if (selectedElementId === undefined) {
-      return
-    }
-    const newValue = parseInt(event.target.value)
-    if (newValue === undefined) {
-      return
-    }
-    setKeypressDuration(newValue)
-    const temp = { ...selectedElement }
-    temp.data.press_duration = newValue
-    updateElement(temp, selectedElementId)
-  }
+  const onKeypressDurationChange = useCallback(
+    (event: any) => {
+      // need to ask about these guards, seems really redundant
+      if (
+        selectedElement === undefined ||
+        selectedElement.type !== 'KeyPressEventAction'
+      ) {
+        return
+      }
+      if (selectedElementId === undefined) {
+        return
+      }
+      const newValue = parseInt(event.target.value)
+      if (newValue === undefined) {
+        return
+      }
+      setKeypressDuration(newValue)
+      const temp = { ...selectedElement }
+      temp.data.press_duration = newValue
+      updateElement(temp, selectedElementId)
+    },
+    [selectedElement, selectedElementId, updateElement]
+  )
 
-  const onKeypressTypeChange = (newType: KeyType) => {
-    if (selectedElement === undefined) {
-      return
-    }
-    if (selectedElement.type !== 'KeyPressEventAction') {
-      return
-    }
-    if (selectedElementId === undefined) {
-      return
-    }
-    setKeypressType(newType)
-    const temp = { ...selectedElement }
-    temp.data.keytype = KeyType[newType]
-    updateElement(temp, selectedElementId)
-  }
+  const onKeypressTypeChange = useCallback(
+    (newType: KeyType) => {
+      if (
+        selectedElement === undefined ||
+        selectedElement.type !== 'KeyPressEventAction'
+      ) {
+        return
+      }
+      if (selectedElementId === undefined) {
+        return
+      }
+      setKeypressType(newType)
+      const temp = { ...selectedElement, data: { ...selectedElement.data } }
+      temp.data.keytype = KeyType[newType].toString()
+      updateElement(temp, selectedElementId)
+    },
+    [selectedElement, selectedElementId, updateElement]
+  )
 
   return (
     <>

@@ -4,9 +4,12 @@ import {
   Text,
   Button,
   Divider,
-  useColorModeValue
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Stack
 } from '@chakra-ui/react'
-import { AddIcon, EditIcon } from '@chakra-ui/icons'
+import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import {
   closestCenter,
   DndContext,
@@ -23,13 +26,14 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
 import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingSequence from '../../hooks/useRecordingSequence'
+import { useSettingsContext } from '../../contexts/settingsContext'
 
 const isKeypress = (
   e: Keypress | MousePressAction | undefined
@@ -40,10 +44,11 @@ const isKeypress = (
 // ask about how to deal with dndkit's types, e.g. UniqueIdentifier
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
-  const { recording, startRecording, stopRecording, item, timeSinceLast } =
+  const { recording, startRecording, stopRecording, item } =
     useRecordingSequence()
-  const { sequence, ids, onElementAdd, overwriteIds } = useMacroContext()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const { sequence, ids, onElementAdd, overwriteIds, overwriteSequence } =
+    useMacroContext()
+  const { config } = useSettingsContext()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -52,32 +57,32 @@ export default function SequencingArea() {
     })
   )
 
-  function handleDragEnd(event: any) {
-    // events are objects, how to deal with getting the library's types easily?
-    const { active, over } = event
+  const handleDragEnd = useCallback(
+    (event: any) => {
+      // events are objects, how to deal with getting the library's types easily?
+      const { active, over } = event
 
-    if (over === null) {
-      return
-    }
+      if (over === null) {
+        return
+      }
 
-    if (active.id !== over.id) {
-      const oldIndex = ids.indexOf(active.id)
-      const newIndex = ids.indexOf(over.id)
-      console.log(oldIndex)
-      console.log(newIndex)
-      overwriteIds(arrayMove(ids, oldIndex, newIndex))
-    }
-    setActiveId(undefined)
-  }
+      if (active.id !== over.id) {
+        const oldIndex = ids.indexOf(active.id)
+        const newIndex = ids.indexOf(over.id)
+        overwriteIds(arrayMove(ids, oldIndex, newIndex))
+      }
+      setActiveId(undefined)
+    },
+    [ids, overwriteIds]
+  )
 
-  function handleDragStart(event: any) {
+  const handleDragStart = useCallback((event: any) => {
     // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
     const { active } = event
     setActiveId(active.id)
-  }
+  }, [])
 
   useEffect(() => {
-    // When item changes, add it to the sequence
     if (item === undefined) {
       return
     }
@@ -100,39 +105,61 @@ export default function SequencingArea() {
         data: { type: 'Press', data: item }
       })
     }
-  }, [item, onElementAdd])
+    // need to adjust this use effect / move functionality elsewhere, putting onElementAdd in the dependencies breaks it
+  }, [item])
 
   return (
     <VStack w="41%" h="full" p="3">
       {/** Header */}
-      <HStack justifyContent="space-between" w="100%" alignItems="center">
-        <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-          Sequence
-        </Text>
-        <HStack>
-          <Button
-            leftIcon={<EditIcon />}
-            size={['xs', 'sm', 'md']}
-            colorScheme={recording ? 'red' : 'gray'}
-            onClick={recording ? stopRecording : startRecording}
-          >
-            {recording ? 'Stop' : 'Record'}
-          </Button>
-          <Button
-            leftIcon={<AddIcon />}
-            size={['xs', 'sm', 'md']}
-            onClick={() => {
-              onElementAdd({
-                type: 'DelayEventAction',
-                data: 50
-              })
-            }}
-          >
-            Add Delay
-          </Button>
-        </HStack>
+      <VStack w="100%">
+        <Stack
+          direction={['column', 'row']}
+          w="100%"
+          textAlign="left"
+          justifyContent="space-between"
+          alignItems={['start', 'center']}
+        >
+          <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+            Sequence
+          </Text>
+          {/* <Alert status="warning" w={["full", "fit"]} rounded="md" py="1" px={["2", "3"]}>
+            <AlertIcon boxSize={['16px', '20px']} />
+            <AlertDescription fontSize={['xs', 'sm']} fontWeight="bold">
+              1+ elements may trigger another macro!
+            </AlertDescription>
+          </Alert> */}
+        </Stack>
+      </VStack>
+      <HStack justifyContent="right" w="100%" alignItems="center">
+        <Button
+          leftIcon={<EditIcon />}
+          size={['xs', 'sm', 'md']}
+          colorScheme={recording ? 'red' : 'gray'}
+          onClick={recording ? stopRecording : startRecording}
+        >
+          {recording ? 'Stop' : 'Record'}
+        </Button>
+        <Button
+          leftIcon={<DeleteIcon />}
+          size={['xs', 'sm', 'md']}
+          onClick={() => overwriteSequence([])}
+        >
+          Clear
+        </Button>
+        <Button
+          leftIcon={<AddIcon />}
+          size={['xs', 'sm', 'md']}
+          onClick={() => {
+            onElementAdd({
+              type: 'DelayEventAction',
+              data: config.DefaultDelayValue
+            })
+          }}
+        >
+          Add Delay
+        </Button>
       </HStack>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       {/** Timeline */}
       <DndContext
         sensors={sensors}

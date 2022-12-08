@@ -67,7 +67,7 @@ export class SystemEvent {
       type: 'Brightness',
       subtype: 'Set',
       displayString: 'Set Brightness',
-      defaultData: { type: 'Brightness', action: { type: 'Set', level: 75 } }
+      defaultData: { type: 'Brightness', action: { type: 'Set', level: 75, name: '' } }
     }
   }
   static get IncreaseBrightness(): SystemEventInfo {
@@ -95,8 +95,8 @@ export class SystemEvent {
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
     SystemEvent.SetBrightness,
-    SystemEvent.IncreaseBrightness,
-    SystemEvent.DecreaseBrightness
+    // SystemEvent.IncreaseBrightness,
+    // SystemEvent.DecreaseBrightness
   ]
 }
 

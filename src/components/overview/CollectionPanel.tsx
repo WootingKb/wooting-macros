@@ -1,4 +1,4 @@
-import { StarIcon, EditIcon, AddIcon, DeleteIcon } from '@chakra-ui/icons'
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons'
 import {
   VStack,
   Flex,
@@ -18,8 +18,11 @@ type Props = {
 }
 
 export default function CollectionPanel({ onOpen }: Props) {
-  const { selection, onSelectedCollectionDelete, updateIsRenamingCollection } =
-    useApplicationContext()
+  const {
+    selection,
+    onSelectedCollectionDelete,
+    changeIsUpdatingCollection: updateIsRenamingCollection
+  } = useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
 
@@ -35,13 +38,6 @@ export default function CollectionPanel({ onOpen }: Props) {
       >
         <VStack>
           <HStack w="100%">
-            <IconButton
-              aria-label="Collection Icon Button"
-              icon={<StarIcon />}
-              variant="ghost"
-              isDisabled
-              size={'sm'}
-            ></IconButton>
             <Text fontWeight="bold" fontSize="xl">
               {currentCollection.name}
             </Text>
@@ -57,12 +53,12 @@ export default function CollectionPanel({ onOpen }: Props) {
             />
           </HStack>
           <HStack w="100%">
-            <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
+            {/* <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Export Collection
             </Button>
             <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Import Macros
-            </Button>
+            </Button> */}
             <Button
               leftIcon={<DeleteIcon />}
               size={['xs', 'sm', 'md']}
