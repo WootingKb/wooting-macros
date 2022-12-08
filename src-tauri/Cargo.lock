@@ -5412,7 +5412,7 @@ dependencies = [
 
 [[package]]
 name = "wooting-macro-backend"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "brightness",
  "copypasta",
@@ -5437,7 +5437,7 @@ dependencies = [
 
 [[package]]
 name = "wooting-macros"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "auto-launch",
  "serde",

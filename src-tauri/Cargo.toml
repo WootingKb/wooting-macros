@@ -1,6 +1,6 @@
 [package]
 name = "wooting-macros"
-version = "0.5.0"
+version = "0.6.0"
 description = "Macro software made by Wooting."
 authors = ["David Manca, Khang"]
 license = ""
@@ -12,17 +12,14 @@ edition = "2021"
 [build-dependencies]
 tauri-build = { version = "1.2", features = [] }
 
-
-
-
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
-tokio = { version = "1.22", features = ["full"] }
+tokio = { version = "1.23", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
-auto-launch = "0.4.0"
+auto-launch = "0.4"
 
 
 

@@ -5,6 +5,18 @@ use lazy_static::lazy_static;
 use rdev::{Button, Key};
 
 lazy_static! {
+#[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
+pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
+    let mut scancode: HashMap<rdev::Button, u32> = HashMap::new();
+        scancode.insert(Button::Left, 0x101);
+        scancode.insert(Button::Right, 0x102);
+        scancode.insert(Button::Middle, 0x103);
+        scancode.insert(Button::Unknown(4), 0x104);
+        scancode.insert(Button::Unknown(5), 0x105);
+        scancode
+};}
+
+lazy_static! {
 ///Conversion from HID codes to the library backend enums.
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
 pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
@@ -153,10 +165,11 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         // scancode.insert(0x7c, Key::Key); //COPY
         // scancode.insert(0x7d, Key::Key); //PASTE
         // scancode.insert(0x7e, Key::Key); //FIND
-        // scancode.insert(0x7f, Key::Key); //VOLUME_MUTE
-        //
-        // scancode.insert(0x80, Key::Key); //VOLUME_UP
-        // scancode.insert(0x81, Key::Key); //VOLUME_DOWN
+
+        scancode.insert(0x7f, Key::Unknown(173)); //VOLUME_MUTE
+        scancode.insert(0x81, Key::Unknown(174)); //VOLUME_DOWN
+        scancode.insert(0x80, Key::Unknown(175)); //VOLUME_UP
+
         // scancode.insert(0x85, Key::Key); //NUMPAD_COMMA
         //
         // scancode.insert(0x87, Key::Key); //INTL_RO
@@ -182,18 +195,6 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
 };
 
 }
-
-lazy_static! {
-#[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
-pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
-    let mut scancode: HashMap<rdev::Button, u32> = HashMap::new();
-        scancode.insert(Button::Left, 0x101);
-        scancode.insert(Button::Right, 0x102);
-        scancode.insert(Button::Middle, 0x103);
-        scancode.insert(Button::Unknown(4), 0x104);
-        scancode.insert(Button::Unknown(5), 0x105);
-        scancode
-};}
 
 lazy_static! {
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]

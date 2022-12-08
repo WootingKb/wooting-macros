@@ -9,11 +9,10 @@ use std::env::current_exe;
 use std::sync::atomic::Ordering;
 
 use auto_launch;
-use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
-};
+use tauri::{CustomMenuItem, Manager, State, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
 use wooting_macro_backend::*;
+use wooting_macro_backend::config::ApplicationConfig;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -46,8 +45,7 @@ async fn set_macros(
     state: tauri::State<'_, MacroBackend>,
     frontend_data: MacroData,
 ) -> Result<(), ()> {
-    state.set_macros(frontend_data).await;
-    Ok(())
+    Ok(state.set_macros(frontend_data).await)
 }
 
 #[tauri::command]
@@ -61,9 +59,7 @@ async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
     frontend_bool: bool,
 ) -> Result<(), ()> {
-    // TODO: Move to backend and just call func from here
-    state.is_listening.store(frontend_bool, Ordering::Relaxed);
-    Ok(())
+    Ok(set_macro_listening(state, frontend_bool))
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]

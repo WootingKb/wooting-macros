@@ -1,12 +1,16 @@
+
+use super::util;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
 use rdev;
+use std::vec;
 use tokio::sync::mpsc::Sender;
 
+use crate::hid_table::SCANCODE_TO_RDEV;
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-use futures::{StreamExt, TryFutureExt, TryStreamExt};
+use futures::{StreamExt, TryFutureExt};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -20,7 +24,6 @@ pub enum SystemAction {
 
 // const COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::C];
 
-
 impl SystemAction {
     /// Execute the keys themselves
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
@@ -33,216 +36,91 @@ impl SystemAction {
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(173)))
-                        .await
-                        .unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(173)))
-                        .await
-                        .unwrap();
+                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()])
+                        .await;
                 }
                 VolumeAction::LowerVolume => {
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(174)))
-                        .await
-                        .unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(174)))
-                        .await
-                        .unwrap();
+                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()])
+                        .await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    // TODO: Make some nice helper func that can do a simple keypress
-                    // send_key(send_channel, rdev::Key::Unknown(175)).await;
-
-                    
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(175)))
-                        .await
-                        .unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(175)))
-                        .await
-                        .unwrap();
+                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()])
+                        .await;
                 }
             },
             SystemAction::Brightness { action } => match action {
-                MonitorBrightnessAction::Get => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    // brightness_get_info().await;
-                    #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
-                }
                 MonitorBrightnessAction::SetAll { level } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set_all_device(*level).await;
                     #[cfg(target_os = "macos")]
                     println!("Not supported on macOS");
                 }
-                MonitorBrightnessAction::Decrease => {
+                MonitorBrightnessAction::SetSpecific { level, name } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_decrease(2).await;
-                    #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
-                }
-                MonitorBrightnessAction::Increase => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_increase(2).await;
-                    #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
-                }
-                MonitorBrightnessAction::Set { level, name } => {
                     brightness_set_specific_device(*level, name).await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
+                }
+                MonitorBrightnessAction::ChangeSpecific { by_how_much, name } => {
+                    #[cfg(any(target_os = "windows", target_os = "linux"))]
+                    brightness_change_specific(*by_how_much, name).await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
+                }
+                MonitorBrightnessAction::ChangeAll { by_how_much } => {
+                    #[cfg(any(target_os = "windows", target_os = "linux"))]
+                    brightness_change_all(*by_how_much).await;
+                    #[cfg(target_os = "macos")]
+                    println!("Not supported on macOS");
                 }
             },
             SystemAction::Clipboard { action } => match action {
                 ClipboardAction::SetClipboard { data } => {
-                    let mut ctx = ClipboardContext::new().unwrap();
-
-                    ctx.set_contents(data.to_owned()).unwrap();
+                    ClipboardContext::new()
+                        .unwrap()
+                        .set_contents(data.to_owned())
+                        .unwrap();
                 }
                 ClipboardAction::Copy => {
-                    // TODO: Make a nice helper function that accepts a vec of keys and inputs them like a hotkey
-                    // send_hotkey(send_channel, COPY_HOTKEY).await;
-
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
+                        .await;
                 }
                 ClipboardAction::GetClipboard => {
-                    let mut ctx = ClipboardContext::new().unwrap();
-
-                    ctx.get_contents().unwrap();
+                    ClipboardContext::new().unwrap().get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                        .await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
-                    let mut ctx = ClipboardContext::new().unwrap();
+                    ClipboardContext::new()
+                        .unwrap()
+                        .set_contents(data.to_owned())
+                        .unwrap();
 
-                    ctx.set_contents(data.to_owned()).unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                        .await;
                 }
 
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-                    //Get the text into clipboard
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
+                        .await;
 
                     //Transform the text
-                    let content = ctx.get_contents().unwrap();
-
-                    let content_new = transform_text(content);
-
-                    ctx.set_contents(content_new).unwrap();
+                    let content = transform_text(ctx.get_contents().unwrap());
+                    ctx.set_contents(content).unwrap();
 
                     //Paste the text again
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                        .await;
                 }
             },
         }
     }
 }
-
-// trait Helpers {
-//     async fn send_key(&self, key: rdev::Key);
-// }
-
-// impl Helpers for Sender<rdev::EventType> {
-//     async fn send_key(&self, key: rdev::Key) {
-//         self.send(rdev::EventType::KeyPress(key)).await
-//             .unwrap();
-//         self.send(rdev::EventType::KeyRelease(key)).await
-//             .unwrap();
-//     }
-// }
-
-// async fn send_key(sender: Sender<rdev::EventType>, key: rdev::Key) {
-//     sender.send(rdev::EventType::KeyPress(key)).await
-//         .unwrap();
-//     sender.send(rdev::EventType::KeyRelease(key)).await
-//         .unwrap();
-// }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Monitor information.
@@ -251,6 +129,7 @@ pub struct Monitor {
     pub brightness: u32,
     pub display_name: String,
 }
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Loads the monitors and sends them to the frontend
 pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
@@ -275,13 +154,18 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Sets brightness of all monitors to the given level.
 async fn brightness_set_all_device(percentage_level: u32) {
-    brightness::brightness_devices()
-        .try_fold(0, |count, mut dev| async move {
-            set_brightness(&mut dev, percentage_level).await?;
-            Ok(count + 1)
-        })
+    for mut devices in brightness::brightness_devices()
+        .into_future()
         .await
-        .unwrap();
+        .0
+        .unwrap()
+    {
+        set_brightness(&mut devices, percentage_level)
+            .await
+            .unwrap();
+
+        println!("{:#?}", devices);
+    }
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -302,36 +186,40 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
     }
 }
 
-//TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Increases brightness of all devices by 2%
-async fn brightness_increase(percentage_level: u32) {
-    let count = brightness::brightness_devices()
-        .try_fold(0, |count, mut dev| async move {
-            let current_brightness = dev.get().await.unwrap();
-
-            set_brightness(&mut dev, current_brightness + percentage_level).await?;
-            Ok(count + 1)
-        })
+/// Decreases brightness of specific devices by 2%
+async fn brightness_change_specific(by_how_much: i32, name: &str) {
+    for mut devices in brightness::brightness_devices()
+        .into_future()
         .await
-        .unwrap();
-    println!("Found {} displays", count);
+        .0
+        .unwrap()
+    {
+        if devices.device_name().into_future().await.unwrap() == name {
+            let current_brightness: i32 = devices.get().await.unwrap() as i32;
+
+            set_brightness(&mut devices, (current_brightness.checked_add( by_how_much).unwrap_or(0)) as u32)
+                .await
+                .unwrap();
+        }
+    }
 }
 
-//TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Decrements brightness of all devices by 2%
-async fn brightness_decrease(percentage_level: u32) {
-    let count = brightness::brightness_devices()
-        .try_fold(0, |count, mut dev| async move {
-            let current_brightness = dev.get().await.unwrap();
-
-            set_brightness(&mut dev, current_brightness - percentage_level).await?;
-            Ok(count + 1)
-        })
+async fn brightness_change_all(by_how_much: i32) {
+    for mut devices in brightness::brightness_devices()
+        .into_future()
         .await
-        .unwrap();
-    println!("Found {} displays", count);
+        .0
+        .unwrap()
+    {
+        let current_brightness: i32 = devices.get().await.unwrap() as i32;
+
+        set_brightness(&mut devices, (current_brightness.checked_add( by_how_much).unwrap_or(0)) as u32)
+            .await
+            .unwrap();
+    }
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -391,11 +279,10 @@ pub enum ClipboardAction {
 #[serde(tag = "type")]
 /// Monitor get, set brightness (currently Get is unused).
 pub enum MonitorBrightnessAction {
-    Get,
     SetAll { level: u32 },
-    Set { level: u32, name: String },
-    Decrease,
-    Increase,
+    SetSpecific { level: u32, name: String },
+    ChangeSpecific {by_how_much: i32, name: String},
+    ChangeAll { by_how_much: i32 },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
