@@ -1,8 +1,6 @@
 use rdev;
 use tokio::sync::mpsc::Sender;
 
-
-
 /// Sends an event to the library to Execute on an OS level.
 pub fn send(event_type: &rdev::EventType) {
     match rdev::simulate(event_type) {

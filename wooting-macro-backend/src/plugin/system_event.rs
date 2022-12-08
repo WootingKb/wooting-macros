@@ -1,17 +1,15 @@
-use std::vec;
+use super::util;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
 use rdev;
+use std::vec;
 use tokio::sync::mpsc::Sender;
-use super::util;
 
+use crate::hid_table::SCANCODE_TO_RDEV;
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
-use crate::hid_table::SCANCODE_TO_RDEV;
-
-
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -25,7 +23,6 @@ pub enum SystemAction {
 
 // const COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::C];
 
-
 impl SystemAction {
     /// Execute the keys themselves
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
@@ -38,13 +35,16 @@ impl SystemAction {
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    util::send_key(&send_channel,vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()]).await;
+                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()])
+                        .await;
                 }
                 VolumeAction::LowerVolume => {
-                    util::send_key(&send_channel,vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()]).await;
+                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()])
+                        .await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::send_key(&send_channel,vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()]).await;
+                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()])
+                        .await;
                 }
             },
             SystemAction::Brightness { action } => match action {
@@ -72,35 +72,46 @@ impl SystemAction {
             },
             SystemAction::Clipboard { action } => match action {
                 ClipboardAction::SetClipboard { data } => {
-                    ClipboardContext::new().unwrap().set_contents(data.to_owned()).unwrap();
+                    ClipboardContext::new()
+                        .unwrap()
+                        .set_contents(data.to_owned())
+                        .unwrap();
                 }
                 ClipboardAction::Copy => {
-                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyC]).await;
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
+                        .await;
                 }
                 ClipboardAction::GetClipboard => {
                     ClipboardContext::new().unwrap().get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
-                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                        .await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
-                    ClipboardContext::new().unwrap().set_contents(data.to_owned()).unwrap();
+                    ClipboardContext::new()
+                        .unwrap()
+                        .set_contents(data.to_owned())
+                        .unwrap();
 
-                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                        .await;
                 }
 
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyC]).await;
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
+                        .await;
 
                     //Transform the text
                     let content = transform_text(ctx.get_contents().unwrap());
                     ctx.set_contents(content).unwrap();
 
                     //Paste the text again
-                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
+                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                        .await;
                 }
             },
         }
@@ -180,6 +191,47 @@ async fn brightness_increase(percentage_level: u32) {
         .await
         .unwrap();
     println!("Found {} displays", count);
+}
+
+
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Increases brightness of specific device by 2%
+async fn brightness_increase_specific(percentage_level: u32, name: &str) {
+    for mut devices in brightness::brightness_devices()
+        .into_future()
+        .await
+        .0
+        .unwrap()
+    {
+        if devices.device_name().into_future().await.unwrap() == name {
+            let current_brightness = devices.get().await.unwrap();
+
+            set_brightness(&mut devices, current_brightness + percentage_level)
+                .await
+                .unwrap();
+        }
+        println!("{:#?}", devices);
+    }
+}
+
+#[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Decreases brightness of specific devices by 2%
+async fn brightness_decrease_specific(percentage_level: u32, name: &str) {
+    for mut devices in brightness::brightness_devices()
+        .into_future()
+        .await
+        .0
+        .unwrap()
+    {
+        if devices.device_name().into_future().await.unwrap() == name {
+            let current_brightness = devices.get().await.unwrap();
+
+            set_brightness(&mut devices, current_brightness - percentage_level)
+                .await
+                .unwrap();
+        }
+        println!("{:#?}", devices);
+    }
 }
 
 //TODO: accept device from frontend

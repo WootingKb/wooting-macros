@@ -1,15 +1,7 @@
-use std::path::PathBuf;
+use crate::MacroData;
 use std::fs::File;
-use std::sync::Arc;
-use tokio::sync::RwLock;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::thread;
-use tokio::task;
-use itertools::Itertools;
-use crate::{MacroBackend, MacroData};
-use crate::hid_table::{BUTTON_TO_HID, SCANCODE_TO_HID, SCANCODE_TO_RDEV};
+use std::path::PathBuf;
 
-// TODO: Move all config stuff into a file called config.rs
 /// Trait to get data or write out data from the state to file.
 pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {
     fn file_name() -> PathBuf;
@@ -18,7 +10,6 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     /// If it errors out, it replaces and writes a default config
     fn read_data() -> Self {
         let default = Self::default();
-
 
         match File::open(Self::file_name().as_path()) {
             Ok(data) => {
@@ -41,9 +32,12 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
         }
     }
 
-      /// Writes the config file to the config directory.
-    fn write_to_file(&self)  {
-        match std::fs::write(Self::file_name().as_path(), serde_json::to_string_pretty(&self).unwrap()) {
+    /// Writes the config file to the config directory.
+    fn write_to_file(&self) {
+        match std::fs::write(
+            Self::file_name().as_path(),
+            serde_json::to_string_pretty(&self).unwrap(),
+        ) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -64,7 +58,7 @@ impl ConfigFile for ApplicationConfig {
             let x = PathBuf::from("..");
 
             #[cfg(not(debug_assertions))]
-            let x  = dirs::config_dir().unwrap().join(CONFIG_DIR);
+            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
 
             x
         };
@@ -80,7 +74,7 @@ impl ConfigFile for MacroData {
             let x = PathBuf::from("..");
 
             #[cfg(not(debug_assertions))]
-            let x  = dirs::config_dir().unwrap().join(CONFIG_DIR);
+            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
 
             x
         };
@@ -91,7 +85,7 @@ impl ConfigFile for MacroData {
 
 impl Default for ApplicationConfig {
     fn default() -> Self {
-         ApplicationConfig {
+        ApplicationConfig {
             auto_start: false,
             default_delay_value: 20,
             auto_add_delay: true,

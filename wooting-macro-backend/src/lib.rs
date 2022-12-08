@@ -1,11 +1,9 @@
+pub mod config;
 mod hid_table;
 pub mod plugin;
-pub mod config;
 
 use itertools::Itertools;
 
-use std::fs::File;
-use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
@@ -14,14 +12,14 @@ use tokio::sync::RwLock;
 
 use halfbrown::HashMap;
 
-
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
 //This has to be imported for release builds
+use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
-use config::{ApplicationConfig, ConfigFile};
+use tauri::State;
 
 use crate::hid_table::*;
 
@@ -68,8 +66,8 @@ pub enum ActionEventType {
     MouseEventAction {
         data: mouse::MouseAction,
     },
-    //TODO: Sound effects? Soundboards?
-    //TODO: Sending a message through online webapi (twitch)
+    //IDEA: Sound effects? Soundboards?
+    //IDEA: Sending a message through online webapi (twitch)
     DelayEventAction {
         data: delay::Delay,
     },
@@ -129,7 +127,8 @@ impl Macro {
                             .await
                             .unwrap();
 
-                        tokio::time::sleep(time::Duration::from_millis(data.press_duration as u64)).await;
+                        tokio::time::sleep(time::Duration::from_millis(data.press_duration as u64))
+                            .await;
 
                         send_channel
                             .send(rdev::EventType::KeyRelease(
@@ -323,7 +322,6 @@ fn check_macro_execution_efficiently(
     output
 }
 
-
 #[cfg(test)]
 mod tests {
     #[test]
@@ -334,20 +332,6 @@ mod tests {
 }
 
 impl MacroBackend {
-    // TODO: Move to Default trait
-    /// Generates a new state.
-    pub fn default() -> Self {
-        let macro_data = MacroData::read_data();
-        let triggers = macro_data.extract_triggers();
-        MacroBackend {
-            data: Arc::new(RwLock::from(macro_data)),
-            config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
-            triggers: Arc::new(RwLock::from(triggers)),
-            is_listening: Arc::new(AtomicBool::new(true)),
-            display_list: Arc::new(RwLock::from(vec![])),
-        }
-    }
-
     #[cfg(not(debug_assertions))]
     /// Creates the data directory if not present. (only in release)
     pub fn generate_directories() {
@@ -386,7 +370,7 @@ impl MacroBackend {
         //==============TESTING GROUND======================
         //==================================================
 
-        //TODO: io-uring async read files and write files
+        //IDEA: io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
         //TODO: Make the modifier keys non-ordered?
@@ -404,7 +388,6 @@ impl MacroBackend {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
                             match event.event_type {
-                                //TODO: Grab and discard the trigger actually
                                 rdev::EventType::KeyPress(key) => {
                                     let key_to_push = key;
 
@@ -525,4 +508,23 @@ impl MacroBackend {
             })
         });
     }
+}
+
+impl Default for MacroBackend {
+    /// Generates a new state.
+    fn default() -> Self {
+        let macro_data = MacroData::read_data();
+        let triggers = macro_data.extract_triggers();
+        MacroBackend {
+            data: Arc::new(RwLock::from(macro_data)),
+            config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
+            triggers: Arc::new(RwLock::from(triggers)),
+            is_listening: Arc::new(AtomicBool::new(true)),
+            display_list: Arc::new(RwLock::from(vec![])),
+        }
+    }
+}
+
+pub fn set_macro_listening(state: State<MacroBackend>, frontend_bool: bool) {
+    state.is_listening.store(frontend_bool, Ordering::Relaxed);
 }
