@@ -2,7 +2,7 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
-use log::{info, log_enabled, Level};
+use log::{info, log_enabled, Level, error};
 
 use itertools::Itertools;
 
@@ -17,11 +17,12 @@ use halfbrown::HashMap;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
-//This has to be imported for release builds
+//This has to be imported for release build
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
 use tauri::State;
+use crate::config::CONFIG_DIR;
 
 use crate::hid_table::*;
 
@@ -329,6 +330,8 @@ fn check_macro_execution_efficiently(
     output
 }
 
+
+
 impl MacroBackend {
     #[cfg(not(debug_assertions))]
     /// Creates the data directory if not present. (only in release)
@@ -338,6 +341,8 @@ impl MacroBackend {
             Err(error) => error!("Directory creation failed, OS error: {}", error),
         };
     }
+
+
 
     pub fn set_is_listening(&self, is_listening: bool) {
         self.is_listening.store(is_listening, Ordering::Relaxed);
