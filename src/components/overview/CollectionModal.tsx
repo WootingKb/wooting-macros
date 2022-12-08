@@ -105,7 +105,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
       filters: [
         {
           name: 'Image',
-          extensions: ['png', 'jpeg']
+          extensions: ['png', 'jpg', 'jpeg']
         }
       ]
     })
