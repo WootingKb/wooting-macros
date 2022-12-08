@@ -140,10 +140,6 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         scancode.insert(0x65, Key::Function); //CONTEXT_MENU
 
         // scancode.insert(0x67, Key::Key); //NUMPAD_EQUAL
-
-
-
-        // NOT GONNA USE THESE
         // scancode.insert(0x74, Key::Key); //OPEN
         //
         // scancode.insert(0x75, Key::Key); //HELP
@@ -181,11 +177,6 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         scancode.insert(0xe5, Key::ShiftRight); //SHIFT_RIGHT
         scancode.insert(0xe6, Key::Alt); //ALT_RIGHT
         scancode.insert(0xe7, Key::MetaRight); //META_RIGHT
-
-
-
-
-
 
     scancode
 };
@@ -341,8 +332,6 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
 
         // scancode.insert(0x67, Key::Key); //NUMPAD_EQUAL
 
-        // scancode.insert(0x68, Key::Unknown(44)); //F13
-
         // scancode.insert(0x74, Key::Key); //OPEN
         //
         // scancode.insert(0x75, Key::Key); //HELP
@@ -372,8 +361,6 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         // scancode.insert(0x92, Key::Key); //LANG3
         // scancode.insert(0x93, Key::Key); //LANG4
 
-
-
         scancode.insert(Key::ControlLeft, 0xe0); //CONTROL_LEFT
         scancode.insert(Key::ShiftLeft, 0xe1); //SHIFT_LEFT
         scancode.insert(Key::Alt, 0xe2); //ALT_LEFT
@@ -382,9 +369,6 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::ShiftRight, 0xe5); //SHIFT_RIGHT
         scancode.insert(Key::Alt, 0xe6); //ALT_RIGHT
         scancode.insert(Key::MetaRight, 0xe7); //META_RIGHT
-
-
-
 
     scancode
 };

@@ -1,2 +1,2 @@
-///Delay for the sequence
+/// Delay for the sequence
 pub type Delay = u64;

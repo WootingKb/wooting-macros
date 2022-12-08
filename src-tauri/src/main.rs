@@ -14,7 +14,6 @@ use tauri::{
 };
 
 use wooting_macro_backend::*;
-use wooting_macro_backend::plugin::system_event;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -52,18 +51,10 @@ async fn set_macros(
 }
 
 #[tauri::command]
-async fn get_monitor_data(
-) -> Result<Vec<plugin::system_event::Monitor>, ()> {
-    Ok(system_event::backend_load_monitors().await)
+async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
+    Ok(plugin::system_event::backend_load_monitors().await)
 }
 
-#[tauri::command]
-/// Returns the monitors connected in the system to the frontend.
-async fn get_brightness_devices(
-    state: tauri::State<'_, MacroBackend>,
-) -> Result<Vec<BrightnessDevice>, ()> {
-    Ok(state.get_brightness_devices().await)
-}
 
 #[tauri::command]
 /// Allows the frontend to disable the macro execution scanning completely.
@@ -83,7 +74,7 @@ async fn main() {
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
 
-    let backend = MacroBackend::new();
+    let backend = MacroBackend::default();
 
     println!("Running the macro backend");
 
@@ -114,7 +105,6 @@ async fn main() {
             set_macros,
             get_config,
             set_config,
-            get_brightness_devices,
             control_grabbing,
             get_monitor_data
         ])
@@ -180,7 +170,6 @@ async fn main() {
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
         .expect("error while running tauri application");
-
 
     // app.run(|_app_handle, event| match event {
     //     tauri::RunEvent::Updater(updater_event) => {

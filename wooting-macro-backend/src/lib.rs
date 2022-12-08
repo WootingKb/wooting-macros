@@ -2,23 +2,27 @@ mod hid_table;
 pub mod plugin;
 
 use itertools::Itertools;
-use std::fs::File;
 
+use std::fs::File;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::{thread, time};
 
-use std::sync::Arc;
 use tokio::sync::RwLock;
 
 use halfbrown::HashMap;
-use rdev::{grab, simulate, EventType, GrabError, SimulateError};
+
+
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
-#[allow(unused_imports)]
+//This has to be imported for release builds
+#[cfg(not(debug_assertions))]
 use dirs;
 
 use crate::hid_table::*;
+
+//Plugin imports
 use crate::plugin::delay;
 #[allow(unused_imports)]
 use crate::plugin::discord;
@@ -28,33 +32,28 @@ use crate::plugin::mouse;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
-use crate::plugin::system_event::Monitor;
-#[allow(unused_imports)]
-use crate::plugin::system_event::{
-    ClipboardAction, MonitorBrightnessAction, SystemAction, VolumeAction,
-};
 
-
-#[allow(dead_code)]
+//Has to be allowed to suppress warnings. Required for release builds.
+#[cfg(not(debug_assertions))]
 const CONFIG_DIR: &str = "wooting-macro-app";
-#[allow(dead_code)]
+#[cfg(not(debug_assertions))]
 const CONFIG_FILE: &str = "config.json";
-#[allow(dead_code)]
+#[cfg(not(debug_assertions))]
 const DATA_FILE: &str = "data_json.json";
 
-///Type of a macro.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+///Type of a macro. Currently only Single is implemented. Others have been postponed for now.
 pub enum MacroType {
     Single,
-    // single macro fire
+    // Single macro fire
     Toggle,
     // press to start, press to finish cycle and terminate
     OnHold, // while held Execute macro (repeats)
 }
 
-///This enum is the registry for all actions that can be executed
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
+///This enum is the registry for all actions that can be executed
 pub enum ActionEventType {
     KeyPressEventAction {
         data: key_press::KeyPress,
@@ -62,15 +61,15 @@ pub enum ActionEventType {
     SystemEventAction {
         data: system_event::SystemAction,
     },
-    //Paste, Run commandline program (terminal run? standard user?), audio, open filemanager, workspace switch left, right,
-    //TODO: System event - notification
+    //Paste, Run commandline program (terminal run? standard user?), audio, open file-manager, workspace switch left, right,
+    //IDEA: System event - notification
     PhillipsHueEventAction {
         data: phillips_hue::PhillipsHueStatus,
     },
-    //TODO: Phillips hue notification
+    //IDEA: Phillips hue notification
     OBSEventAction {},
     DiscordEventAction {},
-    //IKEADesk
+    //IDEA: IKEADesk
     MouseEventAction {
         data: mouse::MouseAction,
     },
@@ -81,30 +80,26 @@ pub enum ActionEventType {
     },
 }
 
-/// This enum is the registry for all incoming actions that can be analyzed for macro execution
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
+/// This enum is the registry for all incoming actions that can be analyzed for macro execution.
+/// Allow while other keys has not been implemented yet.
 pub enum TriggerEventType {
     KeyPressEvent {
-        // TODO: This should be a Vec of u32, it shouldn't be sharing the type of the KeyPressEventAction: FOR POLISH PHASE
         data: Vec<u32>,
         allow_while_other_keys: bool,
     },
     MouseEvent {
         data: mouse::MouseButton,
     },
-    //TODO: computer time (have timezone support?)
-    //TODO: computer temperature?
+    //IDEA: computer time (have timezone support?)
+    //IDEA: computer temperature?
 }
 
-#[derive(Debug, Clone)]
-pub struct EventList(Vec<rdev::Key>);
-
-///This is a macro struct. Includes all information a macro needs to run
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+///This is a macro struct. Includes all information a macro needs to run
 pub struct Macro {
     pub name: String,
-    //TODO: base64 encoding
     pub icon: String,
     pub sequence: Vec<ActionEventType>,
     pub macro_type: MacroType,
@@ -113,20 +108,9 @@ pub struct Macro {
 }
 
 impl Macro {
-    // fn new() -> Macro {
-    //     Macro {
-    //         name: "".to_string(),
-    //         sequence: vec![],
-    //         macro_type: MacroType::Single,
-    //         trigger: TriggerEventType::KeyPressEvent {
-    //             data: vec![],
-    //             allow_while_other_keys: false,
-    //         },
-    //         active: false,
-    //     }
-    // }
-
-    async fn execute(&self, send_channel: Sender<EventType>) {
+    /// This function is used to execute a macro. It is called by the macro checker.
+    /// It spawns async tasks to execute said events specifically.
+    async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         for action in &self.sequence {
             match action {
                 ActionEventType::KeyPressEventAction { data } => match data.keytype {
@@ -135,7 +119,6 @@ impl Macro {
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .await
                             .unwrap();
-                        //send(&rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                     }
                     key_press::KeyType::Up => {
                         send_channel
@@ -181,13 +164,15 @@ impl Macro {
     }
 }
 
-///Collections are groups of macros.
+/// Collections are groups of macros.
 type Collections = Vec<Collection>;
 
+/// Hashmap to check the first trigger key of each macro.
 type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
+/// Configuration of the application, loaded into the state and from this also written to config.
 pub struct ApplicationConfig {
     pub auto_start: bool,
     pub default_delay_value: u64,
@@ -196,30 +181,21 @@ pub struct ApplicationConfig {
     pub minimize_at_launch: bool,
     pub theme: String,
     pub minimize_to_tray: bool,
-
-
 }
 
-#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
-pub struct BrightnessDevice {
-    pub device_id: String,
-    pub display_name: String,
-    pub brightness: u32,
-}
-
-///State of the application in RAM (rwlock).
+/// State of the application in RAM (rwlock).
 #[derive(Debug)]
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
-    pub display_list: Arc<RwLock<Vec<Monitor>>>,
+    pub display_list: Arc<RwLock<Vec<system_event::Monitor>>>,
 }
 
 impl MacroBackend {
-    ///Generates a new state.
-    pub fn new() -> Self {
+    /// Generates a new state.
+    pub fn default() -> Self {
         let macro_data = MacroData::read_data();
         let triggers = macro_data.extract_triggers();
         MacroBackend {
@@ -232,6 +208,7 @@ impl MacroBackend {
     }
 
     #[cfg(not(debug_assertions))]
+    /// Creates the data directory if not present. (only in release)
     pub fn generate_directories() {
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
@@ -241,19 +218,6 @@ impl MacroBackend {
 
     pub fn set_is_listening(&self, is_listening: bool) {
         self.is_listening.store(is_listening, Ordering::Relaxed);
-    }
-
-    pub async fn get_brightness_devices(&self) -> Vec<BrightnessDevice> {
-        #[cfg(any(target_os = "windows", target_os = "linux"))]
-        {
-            //let result = brightness::brightness_devices();
-            vec![]
-        }
-
-        #[cfg(target_os = "macos")]
-        {
-            vec![]
-        }
     }
 
     pub async fn set_macros(&self, macros: MacroData) {
@@ -266,17 +230,10 @@ impl MacroBackend {
         config.write_to_file();
         *self.config.write().await = config;
     }
-    pub async fn get_monitor_data(&self) {
-        //let monitors = plugin::system_event::backend_load_monitors().await;
-        // let mut state_writing = self.display_list.write().await;
-        //*state_writing = monitors.clone();
-        *self.display_list.write().await = plugin::system_event::backend_load_monitors().await;
-    }
 
     pub async fn init(&self) {
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
-        //let config = self.config.read().await;
 
         //Create the executor
         thread::spawn(move || {
@@ -284,47 +241,35 @@ impl MacroBackend {
         });
 
         //==============TESTING GROUND======================
-        // println!("{:?}", system_event::backend_load_monitors().await);
-
-        // system_event::brightness_set_specific_device(75, &"\\\\.\\DISPLAY1\\Monitor0".to_string()).await;
 
         //==============TESTING GROUND======================
         //==================================================
-        //TODO: try to make this interact better (cleanup the code a bit)
 
         //TODO: io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
         //TODO: Make the modifier keys non-ordered?
         //==================================================
-
-        //let inner_config = self.config.clone();
-        //let inner_data = self.data.clone();
         let inner_triggers = self.triggers.clone();
-
         let inner_is_listening = self.is_listening.clone();
-        println!("TRIGGERS: {:?}", inner_triggers.read().await);
 
         // Spawn the grabbing
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
-            //let keys_pressed = keys_pressed.clone();
 
-            grab(move |event: rdev::Event| {
-                match Ok::<&rdev::Event, GrabError>(&event) {
+            rdev::grab(move |event: rdev::Event| {
+                match Ok::<&rdev::Event, rdev::GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
                             match event.event_type {
                                 //TODO: Grab and discard the trigger actually
-                                EventType::KeyPress(key) => {
+                                rdev::EventType::KeyPress(key) => {
                                     let key_to_push = key;
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
 
                                     keys_pressed.push(key_to_push);
-
-                                    // println!("Pressed Keys: {:?}", keys_pressed);
 
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
@@ -373,29 +318,18 @@ impl MacroBackend {
                                     }
                                 }
 
-                                EventType::KeyRelease(key) => {
-                                    keys_pressed
-                                        .blocking_write()
-                                        .retain(|x| *x != key);
+                                rdev::EventType::KeyRelease(key) => {
+                                    keys_pressed.blocking_write().retain(|x| *x != key);
                                     println!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
                                 }
 
-                                EventType::ButtonPress(button) => {
+                                rdev::EventType::ButtonPress(button) => {
                                     println!("Button pressed: {:?}", button);
 
-                                    let converted_button_to_u32: u32 = match button {
-                                        rdev::Button::Left => 0x101,
-                                        rdev::Button::Right => 0x102,
-                                        rdev::Button::Middle => 0x103,
-                                        rdev::Button::Unknown(1) => 0x104,
-                                        rdev::Button::Unknown(2) => 0x105,
-                                        _ => 0x101,
-                                    };
-
-                                    //let converted_button_to_u32: u32 = button.into();
-                                    // let converted_button_to_u32 = BUTTON_TO_HID.get(&button).unwrap().clone();
+                                    let converted_button_to_u32: u32 =
+                                        BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
                                     println!(
                                         "Pressed button: {:?}",
@@ -426,15 +360,15 @@ impl MacroBackend {
                                         Some(event)
                                     }
                                 }
-                                EventType::ButtonRelease(button) => {
+                                rdev::EventType::ButtonRelease(button) => {
                                     println!("Button released: {:?}", button);
 
                                     buttons_pressed.blocking_write().retain(|x| *x != button);
 
                                     Some(event)
                                 }
-                                EventType::MouseMove { .. } => Some(event),
-                                EventType::Wheel { delta_x, delta_y } => {
+                                rdev::EventType::MouseMove { .. } => Some(event),
+                                rdev::EventType::Wheel { delta_x, delta_y } => {
                                     println!("Scrolled: {:?} {:?}", delta_x, delta_y);
 
                                     Some(event)
@@ -460,6 +394,8 @@ pub trait StateManagement {
 }
 
 impl StateManagement for ApplicationConfig {
+    /// Reads the data from the file and returns it.
+    /// If it errors out, it replaces and writes a default config
     fn read_data() -> ApplicationConfig {
         let default: ApplicationConfig = ApplicationConfig {
             auto_start: false,
@@ -500,7 +436,7 @@ impl StateManagement for ApplicationConfig {
             }
         }
     }
-
+    /// Writes the config file to the config directory.
     fn write_to_file(&self) {
         #[cfg(debug_assertions)]
         let path = std::path::PathBuf::from("../config.json");
@@ -511,10 +447,7 @@ impl StateManagement for ApplicationConfig {
             .join(CONFIG_DIR)
             .join(CONFIG_FILE);
 
-        match std::fs::write(
-            path.as_path(),
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
+        match std::fs::write(path.as_path(), serde_json::to_string_pretty(&self).unwrap()) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -545,14 +478,10 @@ impl MacroData {
         let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
 
         #[cfg(debug_assertions)]
-        std::fs::write(
-            path.as_path(),
-            serde_json::to_string_pretty(&self).unwrap(),
-        )
-        .unwrap();
+        std::fs::write(path.as_path(), serde_json::to_string_pretty(&self).unwrap()).unwrap();
     }
 
-    /// Extracts the training data from the macro data.
+    /// Extracts the first trigger data from the macros.
     pub fn extract_triggers(&self) -> MacroTriggerLookup {
         let mut output_hashmap = MacroTriggerLookup::new();
 
@@ -588,29 +517,6 @@ impl MacroData {
 }
 
 impl StateManagement for MacroData {
-    /// Writes out the data to a file. If unsuccessful, it will use the default data.
-    fn write_to_file(&self) {
-        #[cfg(debug_assertions)]
-        let path = std::path::PathBuf::from("../data_json.json");
-
-        #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
-
-        match std::fs::write(
-            path.as_path(),
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
-            Ok(_) => {
-                println!("Success writing a new file");
-            }
-            Err(err) => {
-                eprintln!(
-                    "Error writing a new file, using only read only defaults. {}",
-                    err
-                );
-            }
-        };
-    }
     /// Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
     fn read_data() -> MacroData {
         let default: MacroData = MacroData {
@@ -648,19 +554,38 @@ impl StateManagement for MacroData {
             }
         }
     }
+    /// Writes out the data to a file. If unsuccessful, it will use the default data.
+    fn write_to_file(&self) {
+        #[cfg(debug_assertions)]
+        let path = std::path::PathBuf::from("../data_json.json");
+
+        #[cfg(not(debug_assertions))]
+        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
+
+        match std::fs::write(path.as_path(), serde_json::to_string_pretty(&self).unwrap()) {
+            Ok(_) => {
+                println!("Success writing a new file");
+            }
+            Err(err) => {
+                eprintln!(
+                    "Error writing a new file, using only read only defaults. {}",
+                    err
+                );
+            }
+        };
+    }
 }
 
-///Collection struct that defines what a group of macros looks like and what properties it carries
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+/// Collection struct that defines what a group of macros looks like and what properties it carries
 pub struct Collection {
     pub name: String,
-    //TODO: base64 encoding
     pub icon: String,
     pub macros: Vec<Macro>,
     pub active: bool,
 }
 
-///Executes a given macro (requires a reference to a macro).
+///Executes a given macro (according to its type).
 async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
@@ -672,20 +597,25 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
             });
         }
         MacroType::Toggle => {
-            //TODO: async channel (event)
+            //Postponed
             //execute_macro_toggle(&macros).await;
         }
         MacroType::OnHold => {
-            //TODO: async
+            //Postponed
             //execute_macro_onhold(&macros).await;
         }
     }
 }
 
-/// Receives and executes a macro based on the trigger event. Puts a mandatory 20-50 ms delay between each macro execution.
+/// Receives and executes a macro based on the trigger event.
+/// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
         send(&rchan_execute.blocking_recv().unwrap());
+
+        //Windows requires a delay between each macro execution.
+        #[cfg(any(target_os = "windows", target_os = "linux"))]
+        thread::sleep(time::Duration::from_millis(1));
 
         //MacOS requires some strange delays so putting it here just in case.
         #[cfg(target_os = "macos")]
@@ -693,7 +623,7 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     }
 }
 
-/// A more efficient way using hashtables to check whether the triggerkeys match the macro.
+/// A more efficient way using hashtable to check whether the trigger keys match the macro.
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
@@ -703,13 +633,6 @@ fn check_macro_execution_efficiently(
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-               //let data: Vec<u32> = *data.iter().map(|x| x).collect();
-
-                // println!(
-                //     "CheckMacroExec: Converted keys to vec<u32>\n {:#?}",
-                //     data
-                // );
-
                 if *data == pressed_events {
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
@@ -745,12 +668,10 @@ fn check_macro_execution_efficiently(
 }
 
 ///Sends an event to the library to Execute on an OS level.
-fn send(event_type: &EventType) {
-    //let delay = time::Duration::from_millis(20);
-    //TODO: maybe make this a config option?
-    match simulate(event_type) {
+fn send(event_type: &rdev::EventType) {
+    match rdev::simulate(event_type) {
         Ok(()) => (),
-        Err(SimulateError) => {
+        Err(_) => {
             println!("We could not send {:?}", event_type);
         }
     }

@@ -1,5 +1,6 @@
 use obws::Client;
 
+/// Engage the OBS plugin. Not done.
 pub async fn engage_obs() {
     // Connect to the OBS instance through obs-websocket.
     let client = Client::connect("localhost", 4455, Some("password"))

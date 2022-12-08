@@ -6,8 +6,6 @@ pub use rdev;
 
 use std::time;
 
-// struct Button(rdev::Button);
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 /// Mouse action: Press presses a defined button. Move moves to absolute coordinates X and Y.
@@ -21,7 +19,7 @@ pub enum MouseAction {
 )]
 #[serde(tag = "type")]
 #[repr(u16)]
-/// Mouse buttons have a specified non-colisional number with the HID codes internally used within the library.
+/// Mouse buttons have a specified non-collisional number with the HID codes internally used within the library.
 pub enum MouseButton {
     Left = 0x101,
     Right = 0x102,
@@ -90,29 +88,6 @@ impl Into<u32> for &MouseButton {
         }
     }
 }
-//
-// MouseButton::Left => 0x101,
-// MouseButton::Right => 0x102,
-// MouseButton::Middle => 0x103,
-// MouseButton::Mouse4 => 0x104,
-// MouseButton::Mouse5 => 0x105,
-// _ => 0x101,
-
-// impl From<&Button> for &u32 {
-//     fn from(self) -> Button {
-//         match *self {
-//
-//             0x101 => Button::Left,
-//             0x102 => Button::Right,
-//             rdev::Button::Left => ,
-//            rdev::Button::Right => 0x102,
-//            rdev::Button::Middle => 0x103,
-//            rdev::Button::Unknown(4) => 0x104,
-//            rdev::Button::Unknown(5) => 0x105,
-//             _ => 0x101,
-//         }
-//     }
-// }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]

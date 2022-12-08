@@ -1,6 +1,6 @@
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
-use rdev::EventType;
+use rdev;
 use tokio::sync::mpsc::Sender;
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -10,16 +10,17 @@ use futures::{StreamExt, TryFutureExt, TryStreamExt};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
+/// Types of actions related to the OS to perform.
 pub enum SystemAction {
     Open { action: String },
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
-
 }
 
 impl SystemAction {
-    pub async fn execute(&self, send_channel: Sender<EventType>) {
+    /// Execute the keys themselves
+    pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         match &self {
             SystemAction::Open { action: path } => {
                 match opener::open(std::path::Path::new(path)) {
@@ -64,7 +65,6 @@ impl SystemAction {
             },
             SystemAction::Brightness { action } => match action {
                 MonitorBrightnessAction::Get => {
-                    // println!("{:#?}", show_brightness().await.unwrap());
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     // brightness_get_info().await;
                     #[cfg(target_os = "macos")]
@@ -119,9 +119,7 @@ impl SystemAction {
                 ClipboardAction::GetClipboard => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-                    let content = ctx.get_contents().unwrap();
-
-                    println!("{}", content);
+                    ctx.get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
                     send_channel
@@ -217,13 +215,13 @@ impl SystemAction {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+/// Monitor information.
 pub struct Monitor {
-    pub name: String,
-    pub current_brightness: u32,
-    pub description: String,
-    pub registry_key: String,
+    pub device_id: String,
+    pub brightness: u32,
+    pub display_name: String,
 }
-
+/// Loads the monitors and sends them to the frontend
 pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
 
@@ -235,10 +233,9 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
     {
         //println!("{:#?}", i);
         monitors.push(Monitor {
-            name: i.device_name().into_future().await.unwrap(),
-            current_brightness: i.get().into_future().await.unwrap(),
-            description: i.device_description().unwrap(),
-            registry_key: i.device_registry_key().unwrap(),
+            device_id: i.device_name().into_future().await.unwrap(),
+            brightness: i.get().into_future().await.unwrap(),
+            display_name: i.device_description().unwrap(),
         });
     }
 
@@ -246,6 +243,7 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Sets brightness of all monitors to the given level.
 async fn brightness_set_all_device(percentage_level: u32) {
     brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
@@ -257,31 +255,26 @@ async fn brightness_set_all_device(percentage_level: u32) {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Sets brightness of a specific device (it's name) to the given level.
 async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
-    // let name_str = name.as_str();
-    // let count = brightness::brightness_devices()
-    //     .try_fold(0, |count, mut dev| async move {
-    //
-    //         if dev.device_name().into_future().await.unwrap() == name_str {
-    //             set_brightness(&mut dev, percentage_level).await.unwrap();
-    //         }
-    //         Ok(count + 1)
-    //     })
-    //     .await
-    //     .unwrap();
-
-    for mut devices in brightness::brightness_devices().into_future().await.0.unwrap(){
+    for mut devices in brightness::brightness_devices()
+        .into_future()
+        .await
+        .0
+        .unwrap()
+    {
         if devices.device_name().into_future().await.unwrap() == name {
-            set_brightness(&mut devices, percentage_level).await.unwrap();
+            set_brightness(&mut devices, percentage_level)
+                .await
+                .unwrap();
         }
         println!("{:#?}", devices);
     }
-
 }
-
 
 //TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Increases brightness of all devices by 2%
 async fn brightness_increase(percentage_level: u32) {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
@@ -295,7 +288,9 @@ async fn brightness_increase(percentage_level: u32) {
     println!("Found {} displays", count);
 }
 
+//TODO: accept device from frontend
 #[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Decrements brightness of all devices by 2%
 async fn brightness_decrease(percentage_level: u32) {
     let count = brightness::brightness_devices()
         .try_fold(0, |count, mut dev| async move {
@@ -309,17 +304,8 @@ async fn brightness_decrease(percentage_level: u32) {
     println!("Found {} displays", count);
 }
 
-// #[cfg(any(target_os = "windows", target_os = "linux"))]
-// async fn get_info(dev: &BrightnessDevice) -> Monitor {
-//     Monitor{
-//         name: dev.device_name().await.unwrap(),
-//         current_brightness: dev.get().await.unwrap(),
-//         description: dev.device_description().unwrap(),
-//         registry_key: dev.device_registry_key().unwrap(),
-//     }
-// }
-
 #[cfg(any(target_os = "windows", target_os = "linux"))]
+/// Sets brightness for a device
 async fn set_brightness(
     dev: &mut BrightnessDevice,
     percentage_level: u32,
@@ -331,6 +317,7 @@ async fn set_brightness(
 }
 
 #[cfg(windows)]
+/// Shows more information about displays connected
 async fn show_platform_specific_info(dev: &BrightnessDevice) -> Result<(), brightness::Error> {
     println!("\tDevice description = {}", dev.device_description()?);
     println!("\tDevice registry key = {}", dev.device_registry_key()?);
@@ -341,7 +328,7 @@ async fn show_platform_specific_info(dev: &BrightnessDevice) -> Result<(), brigh
 async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightness::Error> {
     Ok(())
 }
-
+/// Transforms the text into a sarcastic version.
 fn transform_text(text: String) -> String {
     let mut transformed_text = String::new();
     for c in text.chars() {
@@ -357,22 +344,6 @@ fn transform_text(text: String) -> String {
     }
     transformed_text
 }
-
-// fn transform_text (text: String) -> String {
-//     let mut transformed_text = String::new();
-//     for c in text.chars() {
-//         if c.is_ascii_alphabetic() {
-//             if c.is_ascii_lowercase() {
-//                 transformed_text.push(c.to_ascii_uppercase());
-//             } else {
-//                 transformed_text.push(c.to_ascii_lowercase());
-//             }
-//         } else {
-//             transformed_text.push(c);
-//         }
-//     }
-//     transformed_text
-// }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
