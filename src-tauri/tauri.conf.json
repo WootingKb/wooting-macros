@@ -68,7 +68,9 @@
         "height": 768,
         "resizable": true,
         "title": "Wooting Macros (THE WOOTCROS™)",
-        "width": 1024
+        "width": 1024,
+        "fileDropEnabled": false,
+        "focus": false
       }
     ]
   }
