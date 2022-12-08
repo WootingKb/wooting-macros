@@ -18,6 +18,9 @@ pub enum SystemAction {
     Clipboard { action: ClipboardAction },
 }
 
+// const COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::C];
+
+
 impl SystemAction {
     /// Execute the keys themselves
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
@@ -52,6 +55,10 @@ impl SystemAction {
                         .unwrap();
                 }
                 VolumeAction::IncreaseVolume => {
+                    // TODO: Make some nice helper func that can do a simple keypress
+                    // send_key(send_channel, rdev::Key::Unknown(175)).await;
+
+                    
                     send_channel
                         .send(rdev::EventType::KeyPress(rdev::Key::Unknown(175)))
                         .await
@@ -99,6 +106,9 @@ impl SystemAction {
                     ctx.set_contents(data.to_owned()).unwrap();
                 }
                 ClipboardAction::Copy => {
+                    // TODO: Make a nice helper function that accepts a vec of keys and inputs them like a hotkey
+                    // send_hotkey(send_channel, COPY_HOTKEY).await;
+
                     send_channel
                         .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
                         .await
@@ -213,6 +223,26 @@ impl SystemAction {
         }
     }
 }
+
+// trait Helpers {
+//     async fn send_key(&self, key: rdev::Key);
+// }
+
+// impl Helpers for Sender<rdev::EventType> {
+//     async fn send_key(&self, key: rdev::Key) {
+//         self.send(rdev::EventType::KeyPress(key)).await
+//             .unwrap();
+//         self.send(rdev::EventType::KeyRelease(key)).await
+//             .unwrap();
+//     }
+// }
+
+// async fn send_key(sender: Sender<rdev::EventType>, key: rdev::Key) {
+//     sender.send(rdev::EventType::KeyPress(key)).await
+//         .unwrap();
+//     sender.send(rdev::EventType::KeyRelease(key)).await
+//         .unwrap();
+// }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Monitor information.

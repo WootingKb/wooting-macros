@@ -1,6 +1,6 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 
 extern crate core;
@@ -55,13 +55,13 @@ async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
     Ok(plugin::system_event::backend_load_monitors().await)
 }
 
-
 #[tauri::command]
 /// Allows the frontend to disable the macro execution scanning completely.
 async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
     frontend_bool: bool,
 ) -> Result<(), ()> {
+    // TODO: Move to backend and just call func from here
     state.is_listening.store(frontend_bool, Ordering::Relaxed);
     Ok(())
 }

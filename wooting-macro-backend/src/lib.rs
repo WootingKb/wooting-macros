@@ -4,6 +4,7 @@ pub mod plugin;
 use itertools::Itertools;
 
 use std::fs::File;
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
@@ -36,9 +37,9 @@ use crate::plugin::system_event;
 //Has to be allowed to suppress warnings. Required for release builds.
 #[cfg(not(debug_assertions))]
 const CONFIG_DIR: &str = "wooting-macro-app";
-#[cfg(not(debug_assertions))]
+
 const CONFIG_FILE: &str = "config.json";
-#[cfg(not(debug_assertions))]
+
 const DATA_FILE: &str = "data_json.json";
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -194,6 +195,7 @@ pub struct MacroBackend {
 }
 
 impl MacroBackend {
+    // TODO: Move to Default trait
     /// Generates a new state.
     pub fn default() -> Self {
         let macro_data = MacroData::read_data();
@@ -221,7 +223,7 @@ impl MacroBackend {
     }
 
     pub async fn set_macros(&self, macros: MacroData) {
-        macros.export_data();
+        macros.write_to_file();
         *self.triggers.write().await = macros.extract_triggers();
         *self.data.write().await = macros;
     }
@@ -386,39 +388,20 @@ impl MacroBackend {
     }
 }
 
+// TODO: Move all config stuff into a file called config.rs
 /// Trait to get data or write out data from the state to file.
-pub trait StateManagement {
-    fn read_data() -> Self;
+pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {
+    fn file_name() -> PathBuf;
 
-    fn write_to_file(&self);
-}
-
-impl StateManagement for ApplicationConfig {
     /// Reads the data from the file and returns it.
     /// If it errors out, it replaces and writes a default config
-    fn read_data() -> ApplicationConfig {
-        let default: ApplicationConfig = ApplicationConfig {
-            auto_start: false,
-            default_delay_value: 20,
-            auto_add_delay: true,
-            auto_select_element: true,
-            minimize_at_launch: false,
-            theme: "light".to_string(),
-            minimize_to_tray: true,
-        };
+    fn read_data() -> Self {
+        let default = Self::default();
 
-        #[cfg(debug_assertions)]
-        let path = std::path::PathBuf::from("../config.json");
 
-        #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir()
-            .unwrap()
-            .join(CONFIG_DIR)
-            .join(CONFIG_FILE);
-
-        match File::open(path.as_path()) {
+        match File::open(Self::file_name().as_path()) {
             Ok(data) => {
-                let data: ApplicationConfig = match serde_json::from_reader(&data) {
+                let data: Self = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
                         eprintln!("Error reading config.json, using default data. {}", error);
@@ -436,18 +419,10 @@ impl StateManagement for ApplicationConfig {
             }
         }
     }
-    /// Writes the config file to the config directory.
-    fn write_to_file(&self) {
-        #[cfg(debug_assertions)]
-        let path = std::path::PathBuf::from("../config.json");
 
-        #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir()
-            .unwrap()
-            .join(CONFIG_DIR)
-            .join(CONFIG_FILE);
-
-        match std::fs::write(path.as_path(), serde_json::to_string_pretty(&self).unwrap()) {
+      /// Writes the config file to the config directory.
+    fn write_to_file(&self)  {
+        match std::fs::write(Self::file_name().as_path(), serde_json::to_string_pretty(&self).unwrap()) {
             Ok(_) => {
                 println!("Success writing a new file");
             }
@@ -461,26 +436,56 @@ impl StateManagement for ApplicationConfig {
     }
 }
 
+impl Default for ApplicationConfig {
+    fn default() -> Self {
+         ApplicationConfig {
+            auto_start: false,
+            default_delay_value: 20,
+            auto_add_delay: true,
+            auto_select_element: true,
+            minimize_at_launch: false,
+            theme: "light".to_string(),
+            minimize_to_tray: true,
+        }
+    }
+}
+
+impl ConfigFile for ApplicationConfig {
+    fn file_name() -> PathBuf {
+        let mut dir = {
+            #[cfg(debug_assertions)]
+            let x = PathBuf::from("..");
+
+            #[cfg(not(debug_assertions))]
+            let x  = dirs::config_dir().unwrap().join(CONFIG_DIR);
+
+            x
+        };
+        
+        dir.join(CONFIG_FILE)
+    }
+}
+
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct MacroData {
     pub data: Collections,
 }
 
-impl MacroData {
-    /// This exports data for the frontend to process it.
-    /// Basically sends the entire struct to the frontend
-    pub fn export_data(&self) {
-        #[cfg(debug_assertions)]
-        let path = std::path::PathBuf::from("../data_json.json");
-
-        #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
-
-        #[cfg(debug_assertions)]
-        std::fs::write(path.as_path(), serde_json::to_string_pretty(&self).unwrap()).unwrap();
+impl Default for MacroData {
+    fn default() -> Self {
+        MacroData {
+            data: vec![Collection {
+                name: "Default".to_string(),
+                icon: 'i'.to_string(),
+                macros: vec![],
+                active: true,
+            }],
+        }
     }
+}
 
+impl MacroData {
     /// Extracts the first trigger data from the macros.
     pub fn extract_triggers(&self) -> MacroTriggerLookup {
         let mut output_hashmap = MacroTriggerLookup::new();
@@ -516,63 +521,19 @@ impl MacroData {
     }
 }
 
-impl StateManagement for MacroData {
-    /// Reads the data.json file and loads it into a struct, passes to the application at first launch (backend).
-    fn read_data() -> MacroData {
-        let default: MacroData = MacroData {
-            data: vec![Collection {
-                name: "Default".to_string(),
-                icon: 'i'.to_string(),
-                macros: vec![],
-                active: true,
-            }],
+impl ConfigFile for MacroData {
+    fn file_name() -> PathBuf {
+        let mut dir = {
+            #[cfg(debug_assertions)]
+            let x = PathBuf::from("..");
+
+            #[cfg(not(debug_assertions))]
+            let x  = dirs::config_dir().unwrap().join(CONFIG_DIR);
+
+            x
         };
-
-        #[cfg(debug_assertions)]
-        let path = std::path::PathBuf::from("../data_json.json");
-
-        #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
-
-        match File::open(path.as_path()) {
-            Ok(data) => {
-                let data: MacroData = match serde_json::from_reader(&data) {
-                    Ok(x) => x,
-                    Err(error) => {
-                        eprintln!("Error reading data.json, using default data. {}", error);
-                        default.write_to_file();
-                        default
-                    }
-                };
-                data
-            }
-
-            Err(err) => {
-                eprintln!("Error opening file, using default macrodata {}", err);
-                default.write_to_file();
-                default
-            }
-        }
-    }
-    /// Writes out the data to a file. If unsuccessful, it will use the default data.
-    fn write_to_file(&self) {
-        #[cfg(debug_assertions)]
-        let path = std::path::PathBuf::from("../data_json.json");
-
-        #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir().unwrap().join(CONFIG_DIR).join(DATA_FILE);
-
-        match std::fs::write(path.as_path(), serde_json::to_string_pretty(&self).unwrap()) {
-            Ok(_) => {
-                println!("Success writing a new file");
-            }
-            Err(err) => {
-                eprintln!(
-                    "Error writing a new file, using only read only defaults. {}",
-                    err
-                );
-            }
-        };
+        
+        dir.join(DATA_FILE)
     }
 }
 
