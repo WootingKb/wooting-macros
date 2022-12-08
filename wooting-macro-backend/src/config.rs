@@ -3,7 +3,6 @@ use log::{error, info};
 use std::fs::File;
 use std::path::PathBuf;
 
-
 /// Trait to get data or write out data from the state to file.
 pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {
     fn file_name() -> PathBuf;
@@ -114,7 +113,6 @@ const CONFIG_FILE: &str = "config.json";
 
 const DATA_FILE: &str = "data_json.json";
 
-
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 /// Configuration of the application, loaded into the state and from this also written to config.
@@ -127,4 +125,3 @@ pub struct ApplicationConfig {
     pub theme: String,
     pub minimize_to_tray: bool,
 }
-

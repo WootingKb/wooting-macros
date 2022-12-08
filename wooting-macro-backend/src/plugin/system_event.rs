@@ -1,8 +1,7 @@
-
-use log::{error, info};
 use super::util;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
+use log::{error, info};
 use rdev;
 use std::vec;
 use tokio::sync::mpsc::Sender;
@@ -163,8 +162,6 @@ async fn brightness_set_all_device(percentage_level: u32) {
         set_brightness(&mut devices, percentage_level)
             .await
             .unwrap();
-
-
     }
 }
 
@@ -182,7 +179,6 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
                 .await
                 .unwrap();
         }
-
     }
 }
 
@@ -198,9 +194,12 @@ async fn brightness_change_specific(by_how_much: i32, name: &str) {
         if devices.device_name().into_future().await.unwrap() == name {
             let current_brightness: i32 = devices.get().await.unwrap() as i32;
 
-            set_brightness(&mut devices, (current_brightness.checked_add( by_how_much).unwrap_or(0)) as u32)
-                .await
-                .unwrap();
+            set_brightness(
+                &mut devices,
+                (current_brightness.checked_add(by_how_much).unwrap_or(0)) as u32,
+            )
+            .await
+            .unwrap();
         }
     }
 }
@@ -216,9 +215,12 @@ async fn brightness_change_all(by_how_much: i32) {
     {
         let current_brightness: i32 = devices.get().await.unwrap() as i32;
 
-        set_brightness(&mut devices, (current_brightness.checked_add( by_how_much).unwrap_or(0)) as u32)
-            .await
-            .unwrap();
+        set_brightness(
+            &mut devices,
+            (current_brightness.checked_add(by_how_much).unwrap_or(0)) as u32,
+        )
+        .await
+        .unwrap();
     }
 }
 
@@ -268,7 +270,7 @@ pub enum ClipboardAction {
 pub enum MonitorBrightnessAction {
     SetAll { level: u32 },
     SetSpecific { level: u32, name: String },
-    ChangeSpecific {by_how_much: i32, name: String},
+    ChangeSpecific { by_how_much: i32, name: String },
     ChangeAll { by_how_much: i32 },
 }
 

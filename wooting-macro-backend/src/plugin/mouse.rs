@@ -1,4 +1,4 @@
-use log::{info};
+use log::info;
 use rdev::EventType;
 use serde_repr;
 use tokio::sync::mpsc::Sender;
@@ -29,95 +29,42 @@ pub enum MouseButton {
     Mouse5 = 0x105,
 }
 
-// impl Into<rdev::Button> for &MouseButton {
-//     fn into(self) -> rdev::Button {
-//         match *self {
-//             MouseButton::Left => rdev::Button::Left,
-//             MouseButton::Right => rdev::Button::Right,
-//             MouseButton::Middle => rdev::Button::Middle,
-//             MouseButton::Mouse4 => rdev::Button::Unknown(1),
-//             MouseButton::Mouse5 => rdev::Button::Unknown(2),
-//         }
-//     }
-// }
-
-
-impl From<&rdev::Button> for &MouseButton {
+impl From<&rdev::Button> for MouseButton {
     fn from(value: &rdev::Button) -> Self {
         match *value {
-            rdev::Button::Left => &MouseButton::Left,
-            rdev::Button::Right => &MouseButton::Right,
-            rdev::Button::Middle => &MouseButton::Middle,
-            rdev::Button::Unknown(1) => &MouseButton::Mouse4,
-            rdev::Button::Unknown(2) => &MouseButton::Mouse5,
-            rdev::Button::Unknown(_) => &MouseButton::Left,
+            rdev::Button::Left => MouseButton::Left,
+            rdev::Button::Right => MouseButton::Right,
+            rdev::Button::Middle => MouseButton::Middle,
+            rdev::Button::Unknown(1) => MouseButton::Mouse4,
+            rdev::Button::Unknown(2) => MouseButton::Mouse5,
+            rdev::Button::Unknown(_) => MouseButton::Left,
         }
     }
 }
 
-
-
-impl From<&MouseButton> for &rdev::Button {
+impl From<&MouseButton> for rdev::Button {
     fn from(item: &MouseButton) -> Self {
         match *item {
-            MouseButton::Left => &rdev::Button::Left,
-            MouseButton::Right => &rdev::Button::Right,
-            MouseButton::Middle => &rdev::Button::Middle,
-            MouseButton::Mouse4 => &rdev::Button::Unknown(1),
-            MouseButton::Mouse5 => &rdev::Button::Unknown(2),
+            MouseButton::Left => rdev::Button::Left,
+            MouseButton::Right => rdev::Button::Right,
+            MouseButton::Middle => rdev::Button::Middle,
+            MouseButton::Mouse4 => rdev::Button::Unknown(1),
+            MouseButton::Mouse5 => rdev::Button::Unknown(2),
         }
     }
 }
 
-// impl From<&rdev::Button> for &MouseButton {
-//     fn from(item: &rdev::Button) -> Self {
-//         match *item {
-//             rdev::Button::Left => &MouseButton::Left,
-//             rdev::Button::Right => &MouseButton::Right,
-//             rdev::Button::Middle => &MouseButton::Middle,
-//             rdev::Button::Unknown(1) => &MouseButton::Mouse4,
-//             rdev::Button::Unknown(2) => &MouseButton::Mouse5,
-//             _ => &MouseButton::Left,
-//         }
-//     }
-// }
-//
-// impl Into<MouseButton> for rdev::Button {
-//     fn into(self) -> MouseButton {
-//         match self {
-//             rdev::Button::Left => MouseButton::Left,
-//             rdev::Button::Right => MouseButton::Right,
-//             rdev::Button::Middle => MouseButton::Middle,
-//             rdev::Button::Unknown(1) => MouseButton::Mouse4,
-//             rdev::Button::Unknown(2) => MouseButton::Mouse5,
-//             rdev::Button::Unknown(_) => MouseButton::Left,
-//         }
-//     }
-// }
-// impl Into<u32> for &MouseButton {
-//     fn into(self) -> u32 {
-//         match *self {
-//             MouseButton::Left => 0x101,
-//             MouseButton::Right => 0x102,
-//             MouseButton::Middle => 0x103,
-//             MouseButton::Mouse4 => 0x104,
-//             MouseButton::Mouse5 => 0x105,
-//         }
-//     }
-// }
-
-impl From<&MouseButton> for &u32 {
+impl From<&MouseButton> for u32 {
     fn from(value: &MouseButton) -> Self {
         match *value {
-            MouseButton::Left => &0x101,
-            MouseButton::Right => &0x102,
-            MouseButton::Middle => &0x103,
-            MouseButton::Mouse4 => &0x104,
-            MouseButton::Mouse5 => &0x105,
+            MouseButton::Left => 0x101,
+            MouseButton::Right => 0x102,
+            MouseButton::Middle => 0x103,
+            MouseButton::Mouse4 => 0x104,
+            MouseButton::Mouse5 => 0x105,
         }
     }
 }
-
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -136,26 +83,26 @@ impl MouseAction {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {
                     send_channel
-                        .send(rdev::EventType::ButtonPress(*<&MouseButton as Into<&rdev::Button>>::into(button)))
+                        .send(rdev::EventType::ButtonPress(button.into()))
                         .await
                         .unwrap();
                 }
                 MousePressAction::Up { button } => {
                     send_channel
-                        .send(rdev::EventType::ButtonRelease(*<&MouseButton as Into<&rdev::Button>>::into(button)))
+                        .send(rdev::EventType::ButtonRelease(button.into()))
                         .await
                         .unwrap();
                 }
                 MousePressAction::DownUp { button, duration } => {
                     send_channel
-                        .send(rdev::EventType::ButtonPress(*<&MouseButton as Into<&rdev::Button>>::into(button)))
+                        .send(rdev::EventType::ButtonPress(button.into()))
                         .await
                         .unwrap();
 
                     tokio::time::sleep(time::Duration::from_millis(*duration as u64)).await;
 
                     send_channel
-                        .send(rdev::EventType::ButtonRelease(*<&MouseButton as Into<&rdev::Button>>::into(button)))
+                        .send(rdev::EventType::ButtonRelease(button.into()))
                         .await
                         .unwrap();
                 }

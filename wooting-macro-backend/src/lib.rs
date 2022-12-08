@@ -214,7 +214,8 @@ impl MacroData {
                                 );
                             }
                             TriggerEventType::MouseEvent { data } => {
-                                let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
+                                // let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
+                                let data: u32 = data.into();
 
                                 match output_hashmap.get_mut(&data) {
                                     Some(value) => value.push(macros.clone()),
@@ -247,7 +248,8 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
             if log_enabled!(Level::Info) {
-                info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);}
+                info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
+            }
             let cloned_channel = channel;
 
             task::spawn(async move {
@@ -302,13 +304,14 @@ fn check_macro_execution_efficiently(
                 }
             }
             TriggerEventType::MouseEvent { data } => {
-                let event_to_check: Vec<u32> = vec![*<&mouse::MouseButton as Into<&u32>>::into(data)];
+                let event_to_check: Vec<u32> = vec![data.into()];
 
                 if log_enabled!(Level::Info) {
                     info!(
-                    "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
-                    event_to_check
-                );}
+                        "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
+                        event_to_check
+                    );
+                }
 
                 if event_to_check == pressed_events {
                     let channel_clone = channel_sender.clone();
@@ -324,15 +327,6 @@ fn check_macro_execution_efficiently(
     }
 
     output
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
 }
 
 impl MacroBackend {
@@ -363,9 +357,7 @@ impl MacroBackend {
     pub async fn init(&self) {
         env_logger::init();
 
-
         //let config = ApplicationConfig::read_data().minimize_to_tray;
-
 
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
@@ -554,4 +546,13 @@ impl Default for MacroBackend {
 
 pub fn set_macro_listening(state: State<MacroBackend>, frontend_bool: bool) {
     state.is_listening.store(frontend_bool, Ordering::Relaxed);
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        let result = 2 + 2;
+        assert_eq!(result, 4);
+    }
 }

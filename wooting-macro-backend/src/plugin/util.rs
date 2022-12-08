@@ -1,4 +1,4 @@
-use log::{error};
+use log::error;
 use rdev;
 use tokio::sync::mpsc::Sender;
 
