@@ -36,8 +36,7 @@ export default function ScreenBrightnessForm() {
     setBrightnessVal(selectedElement.data.action.level)
   }, [selectedElement])
 
-  const onValueChange = (event: any) => {
-    // target doesn't exist for React.ChangeEventHandler<HTMLInputElement> for some reason?? same for other components like textarea
+  const onValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }

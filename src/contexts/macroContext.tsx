@@ -93,22 +93,20 @@ function MacroProvider({ children }: MacroProviderProps) {
 
   const updateAllowWhileOtherKeys = useCallback(
     (value: boolean) => {
-      setMacro((macro) => {
-        const temp = { ...macro }
-        if (temp.trigger.type === 'KeyPressEvent') {
-          temp.trigger.allow_while_other_keys = value
-        }
-        return temp
-      })
+      const temp = { ...macro, trigger: macro.trigger }
+      if (temp.trigger.type === 'KeyPressEvent') {
+        temp.trigger.allow_while_other_keys = value
+      }
+      setMacro(temp)
     },
-    [setMacro]
+    [macro, setMacro]
   )
 
   const onIdAdd = useCallback(
     (newId: number) => {
-      setIds((ids) => [...ids, newId])
+      setIds([...ids, newId])
     },
-    [setIds]
+    [ids, setIds]
   )
 
   const onIdDelete = useCallback(
@@ -148,6 +146,13 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdAdd(newSequence.length)
       setSequence(newSequence)
       if (config.AutoSelectElement) {
+        if (newElement.type === "SystemEventAction") {
+          if (newElement.data.type === "Volume") {
+            return
+          } else if (newElement.data.type === "Clipboard" && newElement.data.action.type === "Sarcasm") {
+            return
+          }
+        }
         updateSelectedElementId(newSequence.length - 1)
       }
     },
@@ -164,6 +169,16 @@ function MacroProvider({ children }: MacroProviderProps) {
       })
       setSequence(newSequence)
       if (config.AutoSelectElement) {
+        if (newElements[1].type === 'SystemEventAction') {
+          if (newElements[1].data.type === 'Volume') {
+            return
+          } else if (
+            newElements[1].data.type === 'Clipboard' &&
+            newElements[1].data.action.type === 'Sarcasm'
+          ) {
+            return
+          }
+        }
         updateSelectedElementId(newSequence.length - 1)
       }
     },

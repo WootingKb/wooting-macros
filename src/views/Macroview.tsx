@@ -93,7 +93,6 @@ export default function Macroview() {
             icon={<ArrowBackIcon />}
             size="sm"
             onClick={() => {
-              // remove any event listeners from macroview, if the user closes the macro view while the sequence recording button is still going (same needs to be done in the save button below)
               changeSelectedMacroIndex(undefined)
             }}
           />

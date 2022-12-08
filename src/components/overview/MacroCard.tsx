@@ -22,6 +22,7 @@ import { HIDLookup } from '../../maps/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../maps/MouseMap'
+import { useCallback } from 'react'
 
 type Props = {
   macro: Macro
@@ -33,22 +34,24 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
-
   const subtextColour = useColorModeValue('gray.500', 'gray.400')
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const kebabColour = useColorModeValue('black', 'white')
 
-  function onToggle(event: React.ChangeEvent<HTMLInputElement>) {
-    const newCollection = { ...currentCollection }
-    newCollection.macros[index].active = event.target.checked
-    onCollectionUpdate(newCollection, selection.collectionIndex)
-  }
+  const onToggle = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newCollection = { ...currentCollection }
+      newCollection.macros[index].active = event.target.checked
+      onCollectionUpdate(newCollection, selection.collectionIndex)
+    },
+    [currentCollection, index, onCollectionUpdate, selection.collectionIndex]
+  )
 
-  function onDuplicate() {
+  const onDuplicate = useCallback(() => {
     const newCollection = { ...currentCollection }
     newCollection.macros.push(macro)
     onCollectionUpdate(newCollection, selection.collectionIndex)
-  }
+  }, [currentCollection, macro, onCollectionUpdate, selection.collectionIndex])
 
   return (
     <VStack

@@ -94,7 +94,7 @@ export class SystemEvent {
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
-    SystemEvent.SetBrightness,
+    // SystemEvent.SetBrightness,
     // SystemEvent.IncreaseBrightness,
     // SystemEvent.DecreaseBrightness
   ]

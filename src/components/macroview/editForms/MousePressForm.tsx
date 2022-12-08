@@ -41,7 +41,9 @@ export default function MousePressForm() {
     )
   }, [selectedElement])
 
-  const onMousepressDurationChange = (event: any) => {
+  const onMousepressDurationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     // need to ask about these guards, seems really redundant
     if (selectedElement === undefined) {
       return

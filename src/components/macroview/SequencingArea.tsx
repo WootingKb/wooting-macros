@@ -13,7 +13,9 @@ import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import {
   closestCenter,
   DndContext,
+  DragEndEvent,
   DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -34,6 +36,7 @@ import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingSequence from '../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../contexts/settingsContext'
+import { useApplicationContext } from '../../contexts/applicationContext'
 
 const isKeypress = (
   e: Keypress | MousePressAction | undefined
@@ -41,13 +44,14 @@ const isKeypress = (
   return (e as Keypress).keypress !== undefined
 }
 
-// ask about how to deal with dndkit's types, e.g. UniqueIdentifier
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
+  const [showAlert, setShowAlert] = useState(false)
   const { recording, startRecording, stopRecording, item } =
     useRecordingSequence()
   const { sequence, ids, onElementAdd, overwriteIds, overwriteSequence } =
     useMacroContext()
+  const { collections } = useApplicationContext()
   const { config } = useSettingsContext()
 
   const sensors = useSensors(
@@ -58,8 +62,7 @@ export default function SequencingArea() {
   )
 
   const handleDragEnd = useCallback(
-    (event: any) => {
-      // events are objects, how to deal with getting the library's types easily?
+    (event: DragEndEvent) => {
       const { active, over } = event
 
       if (over === null) {
@@ -67,8 +70,8 @@ export default function SequencingArea() {
       }
 
       if (active.id !== over.id) {
-        const oldIndex = ids.indexOf(active.id)
-        const newIndex = ids.indexOf(over.id)
+        const oldIndex = ids.indexOf(Number(active.id))
+        const newIndex = ids.indexOf(Number(over.id))
         overwriteIds(arrayMove(ids, oldIndex, newIndex))
       }
       setActiveId(undefined)
@@ -76,10 +79,9 @@ export default function SequencingArea() {
     [ids, overwriteIds]
   )
 
-  const handleDragStart = useCallback((event: any) => {
-    // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event
-    setActiveId(active.id)
+    setActiveId(Number(active.id))
   }, [])
 
   useEffect(() => {
@@ -108,6 +110,42 @@ export default function SequencingArea() {
     // need to adjust this use effect / move functionality elsewhere, putting onElementAdd in the dependencies breaks it
   }, [item])
 
+  useEffect(() => {
+    // Need to update this later, for some reason the useEffect doesn't end when returning, and the code outside the forEach loops is executed, thus having only 1 setState()
+    let matchFound = false
+    collections.forEach((collection) => {
+      collection.macros.forEach((macro) => {
+        if (macro.trigger.type === 'KeyPressEvent') {
+          macro.trigger.data.forEach((triggerKey) => {
+            if (
+              sequence.filter(
+                (element) =>
+                  element.type === 'KeyPressEventAction' &&
+                  element.data.keypress === triggerKey
+              ).length > 0
+            ) {
+              matchFound = true
+              return
+            }
+          })
+        } else {
+          if (
+            sequence.filter(
+              (element) =>
+                element.type === 'MouseEventAction' &&
+                macro.trigger.type === 'MouseEvent' &&
+                element.data.data.button === macro.trigger.data
+            ).length > 0
+          ) {
+            matchFound = true
+            return
+          }
+        }
+      })
+    })
+    setShowAlert(matchFound)
+  }, [collections, sequence, setShowAlert])
+
   return (
     <VStack w="41%" h="full" p="3">
       {/** Header */}
@@ -122,12 +160,20 @@ export default function SequencingArea() {
           <Text fontWeight="semibold" fontSize={['sm', 'md']}>
             Sequence
           </Text>
-          {/* <Alert status="warning" w={["full", "fit"]} rounded="md" py="1" px={["2", "3"]}>
-            <AlertIcon boxSize={['16px', '20px']} />
-            <AlertDescription fontSize={['xs', 'sm']} fontWeight="bold">
-              1+ elements may trigger another macro!
-            </AlertDescription>
-          </Alert> */}
+          {showAlert && (
+            <Alert
+              status="warning"
+              w={['full', 'fit']}
+              rounded="md"
+              py="1"
+              px={['2', '3']}
+            >
+              <AlertIcon boxSize={['16px', '20px']} />
+              <AlertDescription fontSize={['xs', 'sm']} fontWeight="bold">
+                1+ elements may trigger another macro!
+              </AlertDescription>
+            </Alert>
+          )}
         </Stack>
       </VStack>
       <HStack justifyContent="right" w="100%" alignItems="center">
@@ -183,7 +229,7 @@ export default function SequencingArea() {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper element={sequence[activeId - 1]}>
+            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}

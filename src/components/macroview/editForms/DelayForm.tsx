@@ -28,22 +28,24 @@ export default function DelayForm() {
     setDelayDuration(selectedElement.data)
   }, [selectedElement])
 
-  const onDelayDurationChange = useCallback((event: any) => {
-    console.log(event)
-    if (selectedElement === undefined || selectedElementId === undefined) {
-      return
-    }
+  const onDelayDurationChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (selectedElement === undefined || selectedElementId === undefined) {
+        return
+      }
 
-    const newValue = parseInt(event.target.value)
-    if (newValue === undefined) {
-      return
-    }
+      const newValue = parseInt(event.target.value)
+      if (newValue === undefined) {
+        return
+      }
 
-    setDelayDuration(newValue)
-    const temp = { ...selectedElement }
-    temp.data = newValue
-    updateElement(temp, selectedElementId)
-  }, [selectedElement, selectedElementId, updateElement])
+      setDelayDuration(newValue)
+      const temp = { ...selectedElement }
+      temp.data = newValue
+      updateElement(temp, selectedElementId)
+    },
+    [selectedElement, selectedElementId, updateElement]
+  )
 
   const resetDuration = useCallback(() => {
     if (selectedElement === undefined || selectedElementId === undefined) {

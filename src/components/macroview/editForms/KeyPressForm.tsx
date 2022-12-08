@@ -40,7 +40,7 @@ export default function KeyPressForm() {
   }, [selectedElement])
 
   const onKeypressDurationChange = useCallback(
-    (event: any) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       // need to ask about these guards, seems really redundant
       if (
         selectedElement === undefined ||
@@ -56,8 +56,10 @@ export default function KeyPressForm() {
         return
       }
       setKeypressDuration(newValue)
-      const temp = { ...selectedElement }
-      temp.data.press_duration = newValue
+      const temp = {
+        ...selectedElement,
+        data: { ...selectedElement.data, press_duration: newValue }
+      }
       updateElement(temp, selectedElementId)
     },
     [selectedElement, selectedElementId, updateElement]
@@ -75,8 +77,10 @@ export default function KeyPressForm() {
         return
       }
       setKeypressType(newType)
-      const temp = { ...selectedElement, data: { ...selectedElement.data } }
-      temp.data.keytype = KeyType[newType].toString()
+      const temp = {
+        ...selectedElement,
+        data: { ...selectedElement.data, keytype: KeyType[newType].toString() }
+      }
       updateElement(temp, selectedElementId)
     },
     [selectedElement, selectedElementId, updateElement]

@@ -26,7 +26,7 @@ export default function ClipboardForm() {
     setText(selectedElement.data.action.data)
   }, [selectedElement])
 
-  const onTextChange = (event: any) => {
+  const onTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }

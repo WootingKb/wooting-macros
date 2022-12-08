@@ -9,7 +9,7 @@ import {
   useColorMode,
   useColorModeValue
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSettingsContext } from '../../../contexts/settingsContext'
 
 export default function AppearanceSettings() {
@@ -26,12 +26,12 @@ export default function AppearanceSettings() {
     }
   }, [colorMode, setValue])
 
-  const onThemeChange = (newValue: string) => {
+  const onThemeChange = useCallback((newValue: string) => {
     if (newValue === colorMode) {
       return
     }
     updateTheme(newValue)
-  }
+  }, [colorMode, updateTheme])
 
   return (
     <VStack w="100%" spacing={4}>

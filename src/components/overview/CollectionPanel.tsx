@@ -6,11 +6,12 @@ import {
   IconButton,
   Button,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  useDisclosure
 } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { Collection } from '../../types'
+import DeleteCollectionModal from './DeleteCollectionModal'
 import MacroList from './MacroList'
 
 type Props = {
@@ -20,10 +21,10 @@ type Props = {
 export default function CollectionPanel({ onOpen }: Props) {
   const {
     selection,
-    onSelectedCollectionDelete,
-    changeIsUpdatingCollection: updateIsRenamingCollection
+    changeIsUpdatingCollection
   } = useApplicationContext()
-  const currentCollection: Collection = useSelectedCollection()
+  const currentCollection = useSelectedCollection()
+  const { isOpen, onOpen: onDeleteModalOpen, onClose } = useDisclosure()
   const dividerBg = useColorModeValue('gray.400', 'gray.600')
 
   return (
@@ -36,8 +37,8 @@ export default function CollectionPanel({ onOpen }: Props) {
         borderColor={dividerBg}
         w="100%"
       >
-        <VStack>
-          <HStack w="100%">
+        <HStack w="100%" justifyContent="space-between">
+          <HStack w="100%" pl="4">
             <Text fontWeight="bold" fontSize="xl">
               {currentCollection.name}
             </Text>
@@ -47,12 +48,12 @@ export default function CollectionPanel({ onOpen }: Props) {
               variant="ghost"
               isDisabled={selection.collectionIndex <= 0}
               onClick={() => {
-                updateIsRenamingCollection(true)
+                changeIsUpdatingCollection(true)
                 onOpen()
               }}
             />
           </HStack>
-          <HStack w="100%">
+          <HStack w="fit">
             {/* <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Export Collection
             </Button>
@@ -63,13 +64,14 @@ export default function CollectionPanel({ onOpen }: Props) {
               leftIcon={<DeleteIcon />}
               size={['xs', 'sm', 'md']}
               isDisabled={selection.collectionIndex <= 0}
-              onClick={onSelectedCollectionDelete}
+              onClick={onDeleteModalOpen}
             >
               Delete Collection
             </Button>
           </HStack>
-        </VStack>
+        </HStack>
       </Flex>
+      <DeleteCollectionModal isOpen={isOpen} onClose={onClose} />
       <MacroList />
     </VStack>
   )
