@@ -109,6 +109,10 @@ function MacroProvider({ children }: MacroProviderProps) {
     [ids, setIds]
   )
 
+  const onIdsAdd = useCallback((newIds: number[]) => {
+    setIds([...ids, ...newIds])
+  }, [ids, setIds])
+
   const onIdDelete = useCallback(
     // ask about how to clean this up, and prevent flickering (due to rerender)
     (IdToRemove: number) => {
@@ -161,12 +165,11 @@ function MacroProvider({ children }: MacroProviderProps) {
   const onElementsAdd = useCallback(
     (newElements: ActionEventType[]) => {
       const newSequence = [...sequence, ...newElements]
+      console.log(newSequence)
       const newIds = [...Array(newSequence.length).keys()].filter(
         (i) => i >= sequence.length
       )
-      newIds.forEach((id) => {
-        onIdAdd(id + 1)
-      })
+      onIdsAdd(newIds.map(i => i + 1))
       setSequence(newSequence)
       if (config.AutoSelectElement) {
         if (newElements[1].type === 'SystemEventAction') {
@@ -182,7 +185,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         updateSelectedElementId(newSequence.length - 1)
       }
     },
-    [config.AutoSelectElement, onIdAdd, sequence, updateSelectedElementId]
+    [config.AutoSelectElement, onIdsAdd, sequence, updateSelectedElementId]
   )
 
   const updateElement = useCallback(
@@ -261,6 +264,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       onElementDelete,
       overwriteSequence,
       onIdAdd,
+      onIdsAdd,
       onIdDelete,
       overwriteIds,
       updateSelectedElementId,
@@ -282,6 +286,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       onElementDelete,
       overwriteSequence,
       onIdAdd,
+      onIdsAdd,
       onIdDelete,
       overwriteIds,
       updateSelectedElementId,
