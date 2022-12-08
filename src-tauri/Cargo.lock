@@ -5414,15 +5414,15 @@ dependencies = [
 name = "wooting-macro-backend"
 version = "0.6.0"
 dependencies = [
-    "brightness",
-    "copypasta",
-    "dirs",
-    "fastrand",
-    "futures",
-    "halfbrown",
-    "idasen-cli",
-    "itertools",
-    "lazy_static",
+ "brightness",
+ "copypasta",
+ "dirs",
+ "fastrand",
+ "futures",
+ "halfbrown",
+ "idasen-cli",
+ "itertools",
+ "lazy_static",
  "obws",
  "opener",
  "rdev",
@@ -5439,14 +5439,14 @@ dependencies = [
 name = "wooting-macros"
 version = "0.6.0"
 dependencies = [
-    "auto-launch",
-    "serde",
-    "serde_json",
-    "tauri",
-    "tauri-build",
-    "tokio",
-    "tokio-serde",
-    "wooting-macro-backend",
+ "auto-launch",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tokio",
+ "tokio-serde",
+ "wooting-macro-backend",
 ]
 
 [[package]]
