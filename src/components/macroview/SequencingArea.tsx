@@ -7,7 +7,6 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  useColorModeValue,
   Stack
 } from '@chakra-ui/react'
 import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
@@ -34,6 +33,7 @@ import DragWrapper from './sortableList/DragWrapper'
 import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingSequence from '../../hooks/useRecordingSequence'
+import { useSettingsContext } from '../../contexts/settingsContext'
 
 const isKeypress = (
   e: Keypress | MousePressAction | undefined
@@ -46,8 +46,9 @@ export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
   const { recording, startRecording, stopRecording, item } =
     useRecordingSequence()
-  const { sequence, ids, onElementAdd, overwriteIds, overwriteSequence } = useMacroContext()
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const { sequence, ids, onElementAdd, overwriteIds, overwriteSequence } =
+    useMacroContext()
+  const { config } = useSettingsContext()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -56,24 +57,24 @@ export default function SequencingArea() {
     })
   )
 
-  const handleDragEnd = useCallback((event: any) => {
-    // make usecallback
-    // events are objects, how to deal with getting the library's types easily?
-    const { active, over } = event
+  const handleDragEnd = useCallback(
+    (event: any) => {
+      // events are objects, how to deal with getting the library's types easily?
+      const { active, over } = event
 
-    if (over === null) {
-      return
-    }
+      if (over === null) {
+        return
+      }
 
-    if (active.id !== over.id) {
-      const oldIndex = ids.indexOf(active.id)
-      const newIndex = ids.indexOf(over.id)
-      console.log(oldIndex)
-      console.log(newIndex)
-      overwriteIds(arrayMove(ids, oldIndex, newIndex))
-    }
-    setActiveId(undefined)
-  }, [ids, overwriteIds])
+      if (active.id !== over.id) {
+        const oldIndex = ids.indexOf(active.id)
+        const newIndex = ids.indexOf(over.id)
+        overwriteIds(arrayMove(ids, oldIndex, newIndex))
+      }
+      setActiveId(undefined)
+    },
+    [ids, overwriteIds]
+  )
 
   const handleDragStart = useCallback((event: any) => {
     // ask about dnd library types, esp. UniqueIdentifier and how to deal with it
@@ -104,7 +105,8 @@ export default function SequencingArea() {
         data: { type: 'Press', data: item }
       })
     }
-  }, [item, onElementAdd])
+    // need to adjust this use effect / move functionality elsewhere, putting onElementAdd in the dependencies breaks it
+  }, [item])
 
   return (
     <VStack w="41%" h="full" p="3">
@@ -115,7 +117,7 @@ export default function SequencingArea() {
           w="100%"
           textAlign="left"
           justifyContent="space-between"
-          alignItems={["start", "center"]}
+          alignItems={['start', 'center']}
         >
           <Text fontWeight="semibold" fontSize={['sm', 'md']}>
             Sequence
@@ -129,35 +131,35 @@ export default function SequencingArea() {
         </Stack>
       </VStack>
       <HStack justifyContent="right" w="100%" alignItems="center">
-          <Button
-            leftIcon={<EditIcon />}
-            size={['xs', 'sm', 'md']}
-            colorScheme={recording ? 'red' : 'gray'}
-            onClick={recording ? stopRecording : startRecording}
-          >
-            {recording ? 'Stop' : 'Record'}
-          </Button>
-          <Button
-            leftIcon={<DeleteIcon />}
-            size={['xs', 'sm', 'md']}
-            onClick={() => overwriteSequence([])}
-          >
-            Clear
-          </Button>
-          <Button
-            leftIcon={<AddIcon />}
-            size={['xs', 'sm', 'md']}
-            onClick={() => {
-              onElementAdd({
-                type: 'DelayEventAction',
-                data: 50
-              })
-            }}
-          >
-            Add Delay
-          </Button>
+        <Button
+          leftIcon={<EditIcon />}
+          size={['xs', 'sm', 'md']}
+          colorScheme={recording ? 'red' : 'gray'}
+          onClick={recording ? stopRecording : startRecording}
+        >
+          {recording ? 'Stop' : 'Record'}
+        </Button>
+        <Button
+          leftIcon={<DeleteIcon />}
+          size={['xs', 'sm', 'md']}
+          onClick={() => overwriteSequence([])}
+        >
+          Clear
+        </Button>
+        <Button
+          leftIcon={<AddIcon />}
+          size={['xs', 'sm', 'md']}
+          onClick={() => {
+            onElementAdd({
+              type: 'DelayEventAction',
+              data: config.DefaultDelayValue
+            })
+          }}
+        >
+          Add Delay
+        </Button>
       </HStack>
-      <Divider borderColor={dividerColour} />
+      <Divider />
       {/** Timeline */}
       <DndContext
         sensors={sensors}

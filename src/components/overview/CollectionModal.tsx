@@ -13,7 +13,8 @@ import {
   ModalOverlay,
   VStack,
   Circle,
-  Box
+  Box,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
@@ -39,6 +40,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     onCollectionUpdate
   } = useApplicationContext()
   const collection = useSelectedCollection()
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   useEffect(() => {
     if (isUpdatingCollection) {
@@ -137,6 +139,8 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
               <Circle position="relative" role="group" onClick={onIconPress}>
                 <Image
                   borderRadius="full"
+                  border="1px"
+                  borderColor={borderColour}
                   src={iconString}
                   fallbackSrc="https://via.placeholder.com/125"
                   alt="Macro Icon"

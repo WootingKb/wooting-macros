@@ -2,13 +2,7 @@ import {
   Text,
   VStack,
   Input,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   SimpleGrid,
-  Flex,
   Divider,
   useColorModeValue,
   HStack,
@@ -28,7 +22,6 @@ export default function SelectElementArea() {
   const dividerColour = useColorModeValue('gray.400', 'gray.600')
 
   const ElementsToShow = useMemo(() => {
-    console.log(searchValue)
     switch (tabIndex) {
       case 0:
         return (

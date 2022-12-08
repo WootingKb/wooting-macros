@@ -8,14 +8,10 @@ import {
   useEffect
 } from 'react'
 import { MacroType, ViewState } from '../enums'
-import {
-  MacroState,
-  ActionEventType,
-  Macro,
-  TriggerEventType
-} from '../types'
+import { MacroState, ActionEventType, Macro, TriggerEventType } from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
+import { useSettingsContext } from './settingsContext'
 
 type MacroProviderProps = { children: ReactNode }
 
@@ -47,6 +43,7 @@ function MacroProvider({ children }: MacroProviderProps) {
   const currentCollection = useSelectedCollection()
   const { viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
+  const { config } = useSettingsContext()
 
   useEffect(() => {
     if (currentMacro === undefined) {
@@ -88,7 +85,6 @@ function MacroProvider({ children }: MacroProviderProps) {
       setMacro((macro) => {
         const temp = { ...macro }
         temp.trigger = newElement
-        console.log(temp)
         return temp
       })
     },
@@ -148,19 +144,37 @@ function MacroProvider({ children }: MacroProviderProps) {
 
   const onElementAdd = useCallback(
     (newElement: ActionEventType) => {
-      setSequence((sequence) => {
-        const newSequence = [...sequence, newElement]
-        onIdAdd(newSequence.length)
-        return newSequence
-      })
+      const newSequence = [...sequence, newElement]
+      onIdAdd(newSequence.length)
+      setSequence(newSequence)
+      if (config.AutoSelectElement) {
+        updateSelectedElementId(newSequence.length - 1)
+      }
     },
-    [onIdAdd, setSequence]
+    [config.AutoSelectElement, onIdAdd, sequence, updateSelectedElementId]
+  )
+  const onElementsAdd = useCallback(
+    (newElements: ActionEventType[]) => {
+      const newSequence = [...sequence, ...newElements]
+      const newIds = [...Array(newSequence.length).keys()].filter(
+        (i) => i >= sequence.length
+      )
+      newIds.forEach((id) => {
+        onIdAdd(id + 1)
+      })
+      setSequence(newSequence)
+      if (config.AutoSelectElement) {
+        updateSelectedElementId(newSequence.length - 1)
+      }
+    },
+    [config.AutoSelectElement, onIdAdd, sequence, updateSelectedElementId]
   )
 
   const updateElement = useCallback(
     (newElement: ActionEventType, index: number) => {
-      console.log("updating element " + index)
-      const newSequence = sequence.map((element, i) => (i === index ? newElement : element))
+      const newSequence = sequence.map((element, i) => {
+        return i === index ? newElement : element
+      })
       setSequence(newSequence)
     },
     [sequence, setSequence]
@@ -190,10 +204,8 @@ function MacroProvider({ children }: MacroProviderProps) {
       ...macro,
       sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
     }
-    console.log(itemToAdd)
 
     const newCollection = { ...currentCollection }
-
     if (
       viewState === ViewState.Editview &&
       selection.macroIndex !== undefined
@@ -204,11 +216,7 @@ function MacroProvider({ children }: MacroProviderProps) {
     }
 
     onCollectionUpdate(newCollection, selection.collectionIndex)
-    // switches views
     changeSelectedMacroIndex(undefined)
-    // no need to set anything to null, macro context is done and thrown away
-    // next time user goes to macroview, there will be a new macro context with the default data
-    // ask about the sheer number of dependencies lol, turn this into a store?
   }, [
     changeSelectedMacroIndex,
     currentCollection,
@@ -233,6 +241,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateTrigger: updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,
+      onElementsAdd,
       updateElement,
       onElementDelete,
       overwriteSequence,
@@ -253,6 +262,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,
+      onElementsAdd,
       updateElement,
       onElementDelete,
       overwriteSequence,

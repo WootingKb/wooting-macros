@@ -66,6 +66,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <Circle position="relative" role="group">
             <Image
               borderRadius="full"
+              border="1px"
+              borderColor={borderColour}
               src={macro.icon}
               fallbackSrc="https://via.placeholder.com/125"
               alt="Macro Icon"

@@ -1,35 +1,96 @@
 import { Divider, Text, VStack } from '@chakra-ui/react'
-import { Fragment } from 'react'
 import NumberInputSetting from '../../../components/settings/NumberInputSetting'
 import ToggleSetting from '../../../components/settings/ToggleSetting'
-import { applicationSettings } from '../../../constants/applicationSettings'
+import { useSettingsContext } from '../../../contexts/settingsContext'
 
 export default function ApplicationSettings() {
-  
+  const {
+    config,
+    updateLaunchOnStartup,
+    updateMinimizeOnStartup,
+    updateMinimizeOnClose,
+    updateAutoAddDelay,
+    updateDefaultDelayVal,
+    updateAutoSelectElement
+  } = useSettingsContext()
+
   return (
     <VStack spacing="4">
-      {applicationSettings.map((subcategory) => (
-        <VStack key={subcategory.name}>
-          <Text w="100%" textStyle="settingsCategoryHeader">
-            {subcategory.name}
-          </Text>
-          <VStack w="100%" spacing={[4]}>
-            {subcategory.settings.map((setting) => (
-              <Fragment key={setting.name}>
-                {setting.type === "toggle" && <ToggleSetting
-                  title={setting.name}
-                  description={setting.desc}
-                />}
-                {setting.type === "numberInput" && <NumberInputSetting
-                  title={setting.name}
-                  description={setting.desc}
-                />}
-                <Divider />
-              </Fragment>
-            ))}
-          </VStack>
-        </VStack>
-      ))}
+      <VStack w="100%">
+        <Text w="100%" textStyle="settingsCategoryHeader">
+          Window Settings
+        </Text>
+      </VStack>
+      <VStack w="100%" spacing={[4]}>
+        <ToggleSetting
+          title={'Launch on startup'}
+          description={
+            "The app will open during your computer's startup phase."
+          }
+          value={config.AutoStart}
+          onChange={updateLaunchOnStartup}
+        />
+        <Divider />
+        <ToggleSetting
+          title={'Minimize on startup'}
+          description={
+            "The app will open quietly in the background on startup. Requires 'Launch on Startup' to be enabled."
+          }
+          value={config.MinimizeAtLaunch}
+          onChange={updateMinimizeOnStartup}
+        />
+        <Divider />
+        <ToggleSetting
+          title={'Minimize on close'}
+          description={
+            'Pressing X will minimize the app instead of closing it.'
+          }
+          value={config.MinimizeToTray}
+          onChange={updateMinimizeOnClose}
+        />
+        <Divider />
+      </VStack>
+      <VStack w="100%">
+        <Text w="100%" textStyle="settingsCategoryHeader">
+          Delay Settings
+        </Text>
+      </VStack>
+      <VStack w="100%" spacing={[4]}>
+        <ToggleSetting
+          title={'Auto-add Delay'}
+          description={
+            'When enabled, a delay element is automatically added to the sequence, if the last element of the sequence is not a delay.'
+          }
+          value={config.AutoAddDelay}
+          onChange={updateAutoAddDelay}
+        />
+        <Divider />
+        <NumberInputSetting
+          title={'Default Delay Value'}
+          description={
+            'The value (in ms) that all Delay elements will default to when added to the sequence.'
+          }
+          defaultValue={config.DefaultDelayValue}
+          onChange={updateDefaultDelayVal}
+        />
+        <Divider />
+      </VStack>
+      <VStack w="100%">
+        <Text w="100%" textStyle="settingsCategoryHeader">
+          Macro Creation Settings
+        </Text>
+      </VStack>
+      <VStack w="100%" spacing={[4]}>
+        <ToggleSetting
+          title={'Auto-select Element on Add'}
+          description={
+            'When enabled, adding a new element automatically selects it for Editing (if applicable), rendering related options in the Edit Panel.'
+          }
+          value={config.AutoSelectElement}
+          onChange={updateAutoSelectElement}
+        />
+        <Divider />
+      </VStack>
     </VStack>
   )
 }

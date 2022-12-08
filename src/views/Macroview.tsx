@@ -100,6 +100,8 @@ export default function Macroview() {
           <Circle position="relative" role="group" onClick={onIconPress}>
             <Image
               borderRadius="full"
+              border="1px"
+              borderColor={borderColour}
               src={macro.icon}
               fallbackSrc="https://via.placeholder.com/125"
               alt="Macro Icon"

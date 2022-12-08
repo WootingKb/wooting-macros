@@ -27,7 +27,8 @@ type Props = {
 
 export default function SettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
-  const panelBg = useColorModeValue('white', 'gray.800')
+  const rightPanelBg = useColorModeValue('white', 'gray.800')
+  const leftPanelBg = useColorModeValue('gray.100', 'gray.900')
 
   useEffect(() => {
     setPageIndex(0)
@@ -65,7 +66,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
       <ModalContent>
         <HStack
           justifyContent="center"
-          bgGradient="linear(to-r, gray.100, gray.100, white, white)"
+          bgGradient={`linear(to-r, ${leftPanelBg}, ${leftPanelBg}, ${rightPanelBg}, ${rightPanelBg})`}
         >
           <HStack
             w={['100%', '95%', '75%', '65%', '50%']}
@@ -77,14 +78,14 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
               pageIndex={pageIndex}
               onSettingsButtonPress={setPageIndex}
             />
-            <ModalBody h="100vh" bg={panelBg}>
-              <VStack w="95%" justifyContent="left" py="8" spacing={4}>
-                <Text w="100%" fontWeight="bold" fontSize="large">
-                  {settingInfoLookup.get(pageIndex)?.displayString}
-                </Text>
-                {SelectedPageComponent}
-              </VStack>
-            </ModalBody>
+              <ModalBody h="100vh" bg={rightPanelBg}>
+                <VStack w="95%" justifyContent="left" py="8" spacing={4}>
+                  <Text w="100%" fontWeight="bold" fontSize="large">
+                    {settingInfoLookup.get(pageIndex)?.displayString}
+                  </Text>
+                  {SelectedPageComponent}
+                </VStack>
+              </ModalBody>
             <ModalCloseButton />
           </HStack>
         </HStack>

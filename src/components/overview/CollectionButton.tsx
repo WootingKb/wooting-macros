@@ -26,6 +26,7 @@ export default function CollectionButton({
   toggleCollection
 }: Props) {
   const buttonBg = useColorModeValue('gray.300', 'gray.700')
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   return (
     <Box
@@ -49,6 +50,8 @@ export default function CollectionButton({
           <Circle position="relative" role="group">
             <Image
               borderRadius="full"
+              border="1px"
+              borderColor={borderColour}
               src={collection.icon}
               fallbackSrc="https://via.placeholder.com/125"
               alt="Collection Icon"

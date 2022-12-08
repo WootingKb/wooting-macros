@@ -10,9 +10,11 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { useSettingsContext } from '../../../contexts/settingsContext'
 
 export default function AppearanceSettings() {
-  const { colorMode, toggleColorMode } = useColorMode()
+  const { updateTheme } = useSettingsContext()
+  const { colorMode } = useColorMode()
   const radioBg = useColorModeValue('gray.100', 'gray.700')
   const [value, setValue] = useState('')
 
@@ -28,8 +30,7 @@ export default function AppearanceSettings() {
     if (newValue === colorMode) {
       return
     }
-    setValue(newValue)
-    toggleColorMode()
+    updateTheme(newValue)
   }
 
   return (

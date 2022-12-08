@@ -8,6 +8,7 @@ import { Monitor } from '../../../types'
 export default function ScreenBrightnessForm() {
   const [brightnessVal, setBrightnessVal] = useState(75)
   const [monitors, setMonitors] = useState<Monitor[]>([])
+  const [selectedMonitor, setSelectedMonitor] = useState('')
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
 
@@ -27,7 +28,6 @@ export default function ScreenBrightnessForm() {
     }
     invoke<Monitor[]>('get_monitor_data')
       .then((res) => {
-        console.log(res)
         setMonitors(res)
       })
       .catch((e) => {
@@ -54,7 +54,7 @@ export default function ScreenBrightnessForm() {
     const temp = { ...selectedElement }
     temp.data = {
       type: 'Brightness',
-      action: { type: 'Set', level: newValue }
+      action: { type: 'Set', level: newValue, name: selectedMonitor }
     }
     updateElement(temp, selectedElementId)
   }
@@ -66,9 +66,11 @@ export default function ScreenBrightnessForm() {
       </Text>
       <Divider />
       <Text fontSize={['xs', 'sm', 'md']}>Monitor</Text>
-      <Select placeholder="Select Monitor">
-        {monitors.map((monitor, index) => (
-          <option value={index} key={monitor.name}>{monitor.name}</option>
+      <Select placeholder="Select Monitor" onChange={(event) => setSelectedMonitor(event.target.value)}>
+        {monitors.map((monitor) => (
+          <option value={monitor.name} key={monitor.name}>
+            {monitor.name}
+          </option>
         ))}
       </Select>
       <Text fontSize={['xs', 'sm', 'md']}>Brightness value</Text>

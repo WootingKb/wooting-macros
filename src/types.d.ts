@@ -35,6 +35,7 @@ export type MacroState = {
   updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
   onElementAdd: (newElement: ActionEventType) => void
+  onElementsAdd: (elements: ActionEventType[]) => void
   updateElement: (newElement: ActionEventType, index: number) => void
   onElementDelete: (index: number) => void
   overwriteSequence: (newSequence: ActionEventType[]) => void
@@ -43,6 +44,17 @@ export type MacroState = {
   overwriteIds: (newArray: number[]) => void
   updateSelectedElementId: (newIndex: number | undefined) => void
   updateMacro: () => void
+}
+
+export type SettingsState = {
+  config: ApplicationConfig
+  updateLaunchOnStartup: (value: boolean) => void
+  updateMinimizeOnStartup: (value: boolean) => void
+  updateMinimizeOnClose: (value: boolean) => void
+  updateAutoAddDelay: (value: boolean) => void
+  updateDefaultDelayVal: (value: string) => void
+  updateAutoSelectElement: (value: boolean) => void
+  updateTheme: (value: string) => void
 }
 
 // Action Event Structs
@@ -87,7 +99,8 @@ export type VolumeAction =
 
 export type MonitorBrightnessAction =
   | { type: 'Get' }
-  | { type: 'Set'; level: number }
+  | { type: 'Set'; level: number; name: string }
+  | { type: 'SetAll'; level: number }
   | { type: 'Increase' }
   | { type: 'Decrease' }
 
@@ -110,6 +123,16 @@ export type ActionEventType =
 // Main Data Structures
 export interface MacroData {
   data: Collection[]
+}
+
+export interface ApplicationConfig {
+  AutoStart: boolean
+  DefaultDelayValue: number
+  AutoAddDelay: boolean
+  AutoSelectElement: boolean
+  MinimizeAtLaunch: boolean
+  Theme: string
+  MinimizeToTray: boolean
 }
 
 export interface Macro {

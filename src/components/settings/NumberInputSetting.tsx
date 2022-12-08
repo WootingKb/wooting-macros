@@ -1,11 +1,40 @@
-import { HStack, VStack, Text, Input } from '@chakra-ui/react'
+import {
+  HStack,
+  VStack,
+  Text,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
+} from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 
 type Props = {
   title: string
   description: string
+  defaultValue: number
+  onChange: (value: string) => void
 }
 
-export default function NumberInputSetting({ title, description }: Props) {
+export default function NumberInputSetting({
+  title,
+  description,
+  defaultValue,
+  onChange
+}: Props) {
+  const [value, setValue] = useState('')
+
+  useEffect(() => {
+    setValue(defaultValue.toString())
+  }, [defaultValue])
+
+  useEffect(() => {
+    if (value !== '') {
+      onChange(value)
+    }
+  }, [value, onChange])
+
   return (
     <HStack w="100%" justifyContent="space-between" spacing={16}>
       <VStack spacing={0} textAlign="left">
@@ -16,7 +45,21 @@ export default function NumberInputSetting({ title, description }: Props) {
           {description}
         </Text>
       </VStack>
-      <Input type="number" w="25%" size="sm" rounded="md" placeholder={'50'}/>
+      <NumberInput
+        w="25%"
+        size="sm"
+        rounded="md"
+        step={5}
+        value={value}
+        onChange={(valueAsString) => setValue(valueAsString)}
+        min={1}
+      >
+        <NumberInputField />
+        <NumberInputStepper>
+          <NumberIncrementStepper />
+          <NumberDecrementStepper />
+        </NumberInputStepper>
+      </NumberInput>
     </HStack>
   )
 }
