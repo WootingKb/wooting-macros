@@ -65,10 +65,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 768,
         "resizable": true,
-        "title": "wooting-macros",
-        "width": 800
+        "title": "Wooting Macros (THE WOOTCROS™)",
+        "width": 1024
       }
     ]
   }

@@ -8,10 +8,11 @@ extern crate core;
 use std::env::current_exe;
 
 use auto_launch;
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowEvent};
 
 use wooting_macro_backend::*;
 use wooting_macro_backend::config::ApplicationConfig;
+use wooting_macro_backend::config::ConfigFile;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -161,6 +162,15 @@ async fn main() {
             if set_launch_minimized {
                 window.hide().unwrap();
             }
+        })
+        .on_window_event(move |event| match event.event() {
+            WindowEvent::CloseRequested { api, .. } => {
+                if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
+                    event.window().hide().unwrap();
+                    api.prevent_close();
+                }
+            }
+            _ => {}
         })
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())

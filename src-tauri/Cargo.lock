@@ -1361,7 +1361,7 @@ dependencies = [
     "bitflags",
     "evdev-sys",
     "libc",
- "log",
+    "log",
 ]
 
 [[package]]
@@ -1974,9 +1974,9 @@ dependencies = [
     "android_system_properties",
     "core-foundation-sys 0.8.3",
     "iana-time-zone-haiku",
- "js-sys",
- "wasm-bindgen",
- "winapi",
+    "js-sys",
+    "wasm-bindgen",
+    "winapi",
 ]
 
 [[package]]

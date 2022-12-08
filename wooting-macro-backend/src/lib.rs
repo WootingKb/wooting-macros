@@ -362,6 +362,11 @@ impl MacroBackend {
 
     pub async fn init(&self) {
         env_logger::init();
+
+
+        //let config = ApplicationConfig::read_data().minimize_to_tray;
+
+
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
 
