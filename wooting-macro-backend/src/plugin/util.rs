@@ -1,6 +1,6 @@
 use rdev;
 use tokio::sync::mpsc::Sender;
-use crate::plugin::key_press;
+
 
 
 /// Sends an event to the library to Execute on an OS level.
@@ -13,7 +13,7 @@ pub fn send(event_type: &rdev::EventType) {
     }
 }
 /// Sends a vector of keys to get processed
-pub async fn send_key(send_channel: Sender<rdev::EventType>, key: Vec<rdev::Key>) {
+pub async fn send_key(send_channel: &Sender<rdev::EventType>, key: Vec<rdev::Key>) {
     for press in key {
         send_channel
             .send(rdev::EventType::KeyPress(press))

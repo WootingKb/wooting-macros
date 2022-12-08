@@ -10,7 +10,7 @@ use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
 use crate::hid_table::SCANCODE_TO_RDEV;
-use crate::plugin::key_press;
+
 
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -38,13 +38,13 @@ impl SystemAction {
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    util::send_key(send_channel.clone(),vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()]).await;
+                    util::send_key(&send_channel,vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()]).await;
                 }
                 VolumeAction::LowerVolume => {
-                    util::send_key(send_channel.clone(),vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()]).await;
+                    util::send_key(&send_channel,vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()]).await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::send_key(send_channel.clone(),vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()]).await;
+                    util::send_key(&send_channel,vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()]).await;
                 }
             },
             SystemAction::Brightness { action } => match action {
@@ -72,29 +72,20 @@ impl SystemAction {
             },
             SystemAction::Clipboard { action } => match action {
                 ClipboardAction::SetClipboard { data } => {
-                    let mut ctx = ClipboardContext::new().unwrap();
-
-                    ctx.set_contents(data.to_owned()).unwrap();
+                    ClipboardContext::new().unwrap().set_contents(data.to_owned()).unwrap();
                 }
                 ClipboardAction::Copy => {
-                    // TODO: Make a nice helper function that accepts a vec of keys and inputs them like a hotkey
-                    // send_hotkey(send_channel, COPY_HOTKEY).await;
                     util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyC]).await;
-
                 }
                 ClipboardAction::GetClipboard => {
-                    let mut ctx = ClipboardContext::new().unwrap();
-
-                    ctx.get_contents().unwrap();
+                    ClipboardContext::new().unwrap().get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
                     util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
-                    let mut ctx = ClipboardContext::new().unwrap();
-
-                    ctx.set_contents(data.to_owned()).unwrap();
+                    ClipboardContext::new().unwrap().set_contents(data.to_owned()).unwrap();
 
                     util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
                 }
@@ -105,10 +96,8 @@ impl SystemAction {
                     util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyC]).await;
 
                     //Transform the text
-                    let content = ctx.get_contents().unwrap();
-                    let content_new = transform_text(content);
-
-                    ctx.set_contents(content_new).unwrap();
+                    let content = transform_text(ctx.get_contents().unwrap());
+                    ctx.set_contents(content).unwrap();
 
                     //Paste the text again
                     util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
@@ -117,21 +106,6 @@ impl SystemAction {
         }
     }
 }
-
-// trait Helpers {
-//     async fn send_key(&self, key: rdev::Key);
-// }
-//
-// impl Helpers for Sender<rdev::EventType> {
-//     async fn send_key(&self, key: rdev::Key) {
-//         self.send(rdev::EventType::KeyPress(key)).await
-//             .unwrap();
-//         self.send(rdev::EventType::KeyRelease(key)).await
-//             .unwrap();
-//     }
-// }
-
-
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Monitor information.

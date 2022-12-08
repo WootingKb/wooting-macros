@@ -14,6 +14,7 @@ use tauri::{
 };
 
 use wooting_macro_backend::*;
+use wooting_macro_backend::config::ApplicationConfig;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
