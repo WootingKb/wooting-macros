@@ -46,6 +46,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     // ask about this useeffect and it's dependencies, need to fix?
     if (macro.trigger.type === 'KeyPressEvent') {
       initItems(macro.trigger.data)
+      setIsAllowed(macro.trigger.allow_while_other_keys)
       setIsTriggerMousepress(false)
     } else {
       initItems([macro.trigger.data])

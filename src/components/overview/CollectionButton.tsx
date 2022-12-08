@@ -1,12 +1,12 @@
 import { StarIcon } from '@chakra-ui/icons'
 import {
   Box,
-  Circle,
   Image,
   HStack,
   Switch,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  Circle
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 
@@ -49,7 +49,7 @@ export default function CollectionButton({
         ) : (
           <Circle position="relative" role="group">
             <Image
-              borderRadius="full"
+              borderRadius="lg"
               border="1px"
               borderColor={borderColour}
               src={collection.icon}
@@ -60,7 +60,7 @@ export default function CollectionButton({
             />
           </Circle>
         )}
-        <Text>{collection.name}</Text>
+        <Text noOfLines={1}>{collection.name}</Text>
         <Switch
           size="sm"
           colorScheme="yellow"

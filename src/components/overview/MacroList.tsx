@@ -1,5 +1,6 @@
 import { AddIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Grid, GridItem } from '@chakra-ui/react'
+import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
@@ -11,13 +12,13 @@ export default function MacroList() {
     useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
 
-  const onMacroDelete = (macroIndex: number) => {
+  const onMacroDelete = useCallback((macroIndex: number) => {
     const newCollection = { ...currentCollection }
     newCollection.macros = newCollection.macros.filter(
       (_, i) => i !== macroIndex
     )
     onCollectionUpdate(newCollection, selection.collectionIndex)
-  }
+  }, [currentCollection, onCollectionUpdate, selection.collectionIndex])
 
   return (
     <Box
@@ -43,28 +44,44 @@ export default function MacroList() {
         }
       }}
     >
-      <Grid
-        w="100%"
-        templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        gap="2"
-      >
-        <Flex h="163px" justifyContent="center" alignItems="center">
+      {currentCollection.macros.length === 0 ? (
+        <Flex h="100%" justifyContent="center" alignItems="center">
           <Button
             colorScheme="yellow"
             leftIcon={<AddIcon />}
             size={['sm', 'md', 'lg']}
             maxW="50%"
             onClick={() => changeViewState(ViewState.Addview)}
+            _hover={{ transform: 'scale(120%)' }}
           >
             Add Macro
           </Button>
         </Flex>
-        {currentCollection.macros.map((macro: Macro, index: number) => (
-          <GridItem w="100%" h="163px" key={`${index}:${macro.name}`}>
-            <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
-          </GridItem>
-        ))}
-      </Grid>
+      ) : (
+        <Grid
+          w="100%"
+          templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
+          gap="2"
+        >
+          <Flex h="163px" justifyContent="center" alignItems="center">
+            <Button
+              colorScheme="yellow"
+              leftIcon={<AddIcon />}
+              size={['sm', 'md', 'lg']}
+              maxW="50%"
+              onClick={() => changeViewState(ViewState.Addview)}
+              _hover={{ transform: 'scale(120%)' }}
+            >
+              Add Macro
+            </Button>
+          </Flex>
+          {currentCollection.macros.map((macro: Macro, index: number) => (
+            <GridItem w="100%" h="163px" key={`${index}:${macro.name}`}>
+              <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
+            </GridItem>
+          ))}
+        </Grid>
+      )}
     </Box>
   )
 }

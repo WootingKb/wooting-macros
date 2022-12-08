@@ -12,11 +12,11 @@ import {
   ModalHeader,
   ModalOverlay,
   VStack,
-  Circle,
   Box,
-  useColorModeValue
+  useColorModeValue,
+  Center
 } from '@chakra-ui/react'
-import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
@@ -31,7 +31,7 @@ type Props = {
 export default function CollectionModal({ isOpen, onClose }: Props) {
   const [collectionName, setCollectionName] = useState('')
   const [iconString, setIconString] = useState('')
-  const [isNameUsable, setIsNameUsable] = useState(true)
+  const [isNameUsable, setIsNameUsable] = useState(false)
   const {
     selection,
     collections,
@@ -45,10 +45,14 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
   useEffect(() => {
     if (isUpdatingCollection) {
       setIconString(collection.icon)
+      setCollectionName(collection.name)
+      setIsNameUsable(true)
+    } else {
+      setIconString('')
+      setCollectionName('')
+      setIsNameUsable(false)
     }
-    setCollectionName('')
-    setIsNameUsable(false)
-  }, [collection.icon, isOpen, isUpdatingCollection])
+  }, [collection.icon, collection.name, isOpen, isUpdatingCollection])
 
   const onModalSuccessClose = useCallback(() => {
     if (isUpdatingCollection) {
@@ -77,17 +81,19 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
   ])
 
   const onCollectionNameChange = useCallback(
-    (event: BaseSyntheticEvent) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       let newName: string = event.target.value
       if (newName === '') {
+        setCollectionName(newName)
         setIsNameUsable(false)
         return
       }
-      newName = newName.trim()
 
+      newName = newName.trim()
       for (let i = 0; i < collections.length; i++) {
         const collection = collections[i]
         if (collection.name.toUpperCase() === newName.toUpperCase()) {
+          setCollectionName(newName)
           setIsNameUsable(false)
           return
         }
@@ -105,7 +111,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
       filters: [
         {
           name: 'Image',
-          extensions: ['png', 'jpeg']
+          extensions: ['png', 'jpg', 'jpeg']
         }
       ]
     })
@@ -130,13 +136,22 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <HStack>
-            {/** Icon */}
-            <VStack w="50%">
-              <Text w="100%" textStyle="settingsCategoryHeader">
+          <VStack w="100%">
+            <HStack w="100%">
+              <Text w="50%" textStyle="settingsCategoryHeader">
                 Icon
               </Text>
-              <Circle position="relative" role="group" onClick={onIconPress}>
+              <Text w="50%" textStyle="settingsCategoryHeader">
+                Name
+              </Text>
+            </HStack>
+            <HStack w="100%">
+              <Center
+                w="50%"
+                position="relative"
+                role="group"
+                onClick={onIconPress}
+              >
                 <Image
                   borderRadius="full"
                   border="1px"
@@ -144,7 +159,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                   src={iconString}
                   fallbackSrc="https://via.placeholder.com/125"
                   alt="Macro Icon"
-                  boxSize="50px"
+                  boxSize="100px"
                   objectFit="cover"
                 />
                 <Box
@@ -159,31 +174,25 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                 <Text
                   position="absolute"
                   fontWeight="bold"
-                  fontSize="3xs"
+                  fontSize="xs"
                   textColor="white"
                   opacity="0%"
                   _groupHover={{ opacity: '100%', cursor: 'pointer' }}
                 >
                   Change Icon
                 </Text>
-              </Circle>
-            </VStack>
-            {/** Name */}
-            <VStack w="50%">
-              <Text w="100%" textStyle="settingsCategoryHeader">
-                Name
-              </Text>
+              </Center>
               <Input
+                w="50%"
                 variant="flushed"
                 isRequired
                 isInvalid={!isNameUsable}
                 onChange={onCollectionNameChange}
-                placeholder={
-                  isUpdatingCollection ? collection.name : 'Collection Name'
-                }
+                value={collectionName}
+                placeholder={'Collection Name'}
               />
-            </VStack>
-          </HStack>
+            </HStack>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Button mr={3} onClick={onClose}>

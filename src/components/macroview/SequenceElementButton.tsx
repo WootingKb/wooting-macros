@@ -19,6 +19,7 @@ export default function SequenceElementButton({
   const handleAddElement = useCallback(() => {
     if (config.AutoAddDelay) {
       if (sequence.at(-1)?.type !== 'DelayEventAction' && sequence.length > 0) {
+        console.log("adding multiple")
         onElementsAdd([
           {
             type: 'DelayEventAction',

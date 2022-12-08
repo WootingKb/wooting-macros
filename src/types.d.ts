@@ -40,6 +40,7 @@ export type MacroState = {
   onElementDelete: (index: number) => void
   overwriteSequence: (newSequence: ActionEventType[]) => void
   onIdAdd: (newId: number) => void
+  onIdsAdd: (newIds: number[]) => void
   onIdDelete: (IdToRemove: number) => void
   overwriteIds: (newArray: number[]) => void
   updateSelectedElementId: (newIndex: number | undefined) => void
