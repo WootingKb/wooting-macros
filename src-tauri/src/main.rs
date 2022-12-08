@@ -6,10 +6,9 @@
 extern crate core;
 
 use std::env::current_exe;
-use std::sync::atomic::Ordering;
 
 use auto_launch;
-use tauri::{CustomMenuItem, Manager, State, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
 use wooting_macro_backend::*;
 use wooting_macro_backend::config::ApplicationConfig;

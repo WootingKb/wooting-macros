@@ -2,6 +2,8 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
+use log::{info, log_enabled, Level};
+
 use itertools::Itertools;
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -212,7 +214,7 @@ impl MacroData {
                                 );
                             }
                             TriggerEventType::MouseEvent { data } => {
-                                let data: u32 = data.into();
+                                let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
 
                                 match output_hashmap.get_mut(&data) {
                                     Some(value) => value.push(macros.clone()),
@@ -244,7 +246,8 @@ pub struct Collection {
 async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
-            println!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
+            if log_enabled!(Level::Info) {
+                info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);}
             let cloned_channel = channel;
 
             task::spawn(async move {
@@ -299,12 +302,13 @@ fn check_macro_execution_efficiently(
                 }
             }
             TriggerEventType::MouseEvent { data } => {
-                let event_to_check: Vec<u32> = vec![data.into()];
+                let event_to_check: Vec<u32> = vec![*<&mouse::MouseButton as Into<&u32>>::into(data)];
 
-                println!(
+                if log_enabled!(Level::Info) {
+                    info!(
                     "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
                     event_to_check
-                );
+                );}
 
                 if event_to_check == pressed_events {
                     let channel_clone = channel_sender.clone();
@@ -337,7 +341,7 @@ impl MacroBackend {
     pub fn generate_directories() {
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
-            Err(error) => eprintln!("Directory creation failed, OS error: {}", error),
+            Err(error) => error!("Directory creation failed, OS error: {}", error),
         };
     }
 
@@ -357,6 +361,7 @@ impl MacroBackend {
     }
 
     pub async fn init(&self) {
+        env_logger::init();
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
 
@@ -403,15 +408,17 @@ impl MacroBackend {
                                         .unique()
                                         .collect();
 
-                                    println!(
-                                        "Pressed Keys: {:?}",
-                                        pressed_keys_copy_converted
-                                            .iter()
-                                            .map(|x| *SCANCODE_TO_RDEV
-                                                .get(x)
-                                                .unwrap_or(&rdev::Key::Unknown(0)))
-                                            .collect::<Vec<rdev::Key>>()
-                                    );
+                                    if log_enabled!(Level::Info) {
+                                        info!(
+                                            "Pressed Keys: {:?}",
+                                            pressed_keys_copy_converted
+                                                .iter()
+                                                .map(|x| *SCANCODE_TO_RDEV
+                                                    .get(x)
+                                                    .unwrap_or(&rdev::Key::Unknown(0)))
+                                                .collect::<Vec<rdev::Key>>()
+                                        )
+                                    }
 
                                     let first_key: u32 = match pressed_keys_copy_converted.first() {
                                         None => 0,
@@ -444,21 +451,27 @@ impl MacroBackend {
 
                                 rdev::EventType::KeyRelease(key) => {
                                     keys_pressed.blocking_write().retain(|x| *x != key);
-                                    println!("Key state: {:?}", keys_pressed.blocking_read());
+                                    if log_enabled!(Level::Info) {
+                                        info!("Key state: {:?}", keys_pressed.blocking_read());
+                                    }
 
                                     Some(event)
                                 }
 
                                 rdev::EventType::ButtonPress(button) => {
-                                    println!("Button pressed: {:?}", button);
+                                    if log_enabled!(Level::Info) {
+                                        info!("Button pressed: {:?}", button);
+                                    }
 
                                     let converted_button_to_u32: u32 =
                                         BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                                    println!(
-                                        "Pressed button: {:?}",
-                                        buttons_pressed.blocking_read()
-                                    );
+                                    if log_enabled!(Level::Info) {
+                                        info!(
+                                            "Pressed button: {:?}",
+                                            buttons_pressed.blocking_read()
+                                        );
+                                    }
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
@@ -485,7 +498,9 @@ impl MacroBackend {
                                     }
                                 }
                                 rdev::EventType::ButtonRelease(button) => {
-                                    println!("Button released: {:?}", button);
+                                    if log_enabled!(Level::Info) {
+                                        info!("Button released: {:?}", button);
+                                    }
 
                                     buttons_pressed.blocking_write().retain(|x| *x != button);
 
@@ -493,13 +508,20 @@ impl MacroBackend {
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
                                 rdev::EventType::Wheel { delta_x, delta_y } => {
-                                    println!("Scrolled: {:?} {:?}", delta_x, delta_y);
+                                    if log_enabled!(Level::Info) {
+                                        info!("Scrolled: {:?} {:?}", delta_x, delta_y);
+                                    }
 
                                     Some(event)
                                 }
                             }
                         } else {
-                            println!("Event: {:?}", event);
+                            if log_enabled!(Level::Info) {
+                                info!(
+                                    "Passing event through... macro recording disabled: {:?}",
+                                    event
+                                );
+                            }
                             Some(event)
                         }
                     }

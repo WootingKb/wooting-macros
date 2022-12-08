@@ -1,4 +1,5 @@
 
+use log::{error, info};
 use super::util;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
@@ -31,7 +32,7 @@ impl SystemAction {
             SystemAction::Open { action: path } => {
                 match opener::open(std::path::Path::new(path)) {
                     Ok(x) => x,
-                    Err(e) => eprintln!("Error: {}", e),
+                    Err(e) => error!("Error: {}", e),
                 };
             }
             SystemAction::Volume { action } => match action {
@@ -53,25 +54,25 @@ impl SystemAction {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set_all_device(*level).await;
                     #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
+                    error!("Not supported on macOS");
                 }
                 MonitorBrightnessAction::SetSpecific { level, name } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set_specific_device(*level, name).await;
                     #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
+                    error!("Not supported on macOS");
                 }
                 MonitorBrightnessAction::ChangeSpecific { by_how_much, name } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_change_specific(*by_how_much, name).await;
                     #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
+                    error!("Not supported on macOS");
                 }
                 MonitorBrightnessAction::ChangeAll { by_how_much } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_change_all(*by_how_much).await;
                     #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
+                    error!("Not supported on macOS");
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -140,7 +141,6 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
         .0
         .unwrap()
     {
-        //println!("{:#?}", i);
         monitors.push(Monitor {
             device_id: i.device_name().into_future().await.unwrap(),
             brightness: i.get().into_future().await.unwrap(),
@@ -164,7 +164,7 @@ async fn brightness_set_all_device(percentage_level: u32) {
             .await
             .unwrap();
 
-        println!("{:#?}", devices);
+
     }
 }
 
@@ -182,7 +182,7 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
                 .await
                 .unwrap();
         }
-        println!("{:#?}", devices);
+
     }
 }
 
@@ -228,24 +228,11 @@ async fn set_brightness(
     dev: &mut BrightnessDevice,
     percentage_level: u32,
 ) -> Result<(), brightness::Error> {
-    println!("Display {}", dev.device_name().await?);
-    dev.set(percentage_level).await?;
-    show_platform_specific_info(dev).await?;
+    info!("Display {}", dev.device_name().await.unwrap());
+    dev.set(percentage_level).await.unwrap();
     Ok(())
 }
 
-#[cfg(windows)]
-/// Shows more information about displays connected
-async fn show_platform_specific_info(dev: &BrightnessDevice) -> Result<(), brightness::Error> {
-    println!("\tDevice description = {}", dev.device_description()?);
-    println!("\tDevice registry key = {}", dev.device_registry_key()?);
-    Ok(())
-}
-
-#[cfg(target_os = "linux")]
-async fn show_platform_specific_info(_: &BrightnessDevice) -> Result<(), brightness::Error> {
-    Ok(())
-}
 /// Transforms the text into a sarcastic version.
 fn transform_text(text: String) -> String {
     let mut transformed_text = String::new();

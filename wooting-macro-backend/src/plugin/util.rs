@@ -1,3 +1,4 @@
+use log::{error};
 use rdev;
 use tokio::sync::mpsc::Sender;
 
@@ -6,7 +7,7 @@ pub fn send(event_type: &rdev::EventType) {
     match rdev::simulate(event_type) {
         Ok(()) => (),
         Err(_) => {
-            println!("We could not send {:?}", event_type);
+            error!("We could not send {:?}", event_type);
         }
     }
 }

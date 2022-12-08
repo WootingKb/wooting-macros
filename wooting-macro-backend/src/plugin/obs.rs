@@ -1,3 +1,4 @@
+use log::{info};
 use obws::Client;
 
 /// Engage the OBS plugin. Not done.
@@ -9,9 +10,9 @@ pub async fn engage_obs() {
 
     // Get and print out version information of OBS and obs-websocket.
     let version = client.general().version().await.unwrap();
-    println!("{:#?}", version);
+    info!("{:#?}", version);
 
     // Get a list of available scenes and print them out.
     let scene_list = client.scenes().list().await.unwrap();
-    println!("{:#?}", scene_list);
+    info!("{:#?}", scene_list);
 }

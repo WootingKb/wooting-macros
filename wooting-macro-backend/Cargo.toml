@@ -24,6 +24,9 @@ serde_repr = "0.1"
 fastrand = "1.8"
 dirs = "4.0"
 itertools = "0.10"
+anyhow = "1.0.66"
+log = "0.4.17"
+env_logger = "0.10.0"
 
 
 [target.'cfg(target_os = "windows")'.dependencies]

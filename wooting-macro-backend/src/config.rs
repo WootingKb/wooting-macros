@@ -1,6 +1,8 @@
 use crate::MacroData;
+use log::{error, info};
 use std::fs::File;
 use std::path::PathBuf;
+
 
 /// Trait to get data or write out data from the state to file.
 pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {
@@ -16,7 +18,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                 let data: Self = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
-                        eprintln!("Error reading config.json, using default data. {}", error);
+                        error!("Error reading config.json, using default data. {}", error);
                         default.write_to_file();
                         default
                     }
@@ -25,7 +27,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
             }
 
             Err(err) => {
-                eprintln!("Error opening file, using default config {}", err);
+                error!("Error opening file, using default config {}", err);
                 default.write_to_file();
                 default
             }
@@ -39,10 +41,10 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
-                println!("Success writing a new file");
+                info!("Success writing a new file");
             }
             Err(err) => {
-                eprintln!(
+                error!(
                     "Error writing a new file, using only read only defaults. {}",
                     err
                 );
@@ -52,12 +54,12 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
 }
 
 impl ConfigFile for ApplicationConfig {
-
-
     fn file_name() -> PathBuf {
+        //Needs to be mutable for release compilation
+        #[allow(unused_mut)]
         let mut dir = {
             #[cfg(debug_assertions)]
-            let x = PathBuf::from("..");
+            let x = PathBuf::from(CONFIG_DIR);
 
             #[cfg(not(debug_assertions))]
             let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
@@ -71,9 +73,11 @@ impl ConfigFile for ApplicationConfig {
 
 impl ConfigFile for MacroData {
     fn file_name() -> PathBuf {
+        //Needs to be mutable for release compilation
+        #[allow(unused_mut)]
         let mut dir = {
             #[cfg(debug_assertions)]
-            let x = PathBuf::from("..");
+            let x = PathBuf::from(CONFIG_DIR);
 
             #[cfg(not(debug_assertions))]
             let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
@@ -103,9 +107,13 @@ impl Default for ApplicationConfig {
 #[cfg(not(debug_assertions))]
 const CONFIG_DIR: &str = "wooting-macro-app";
 
+#[cfg(debug_assertions)]
+const CONFIG_DIR: &str = "..";
+
 const CONFIG_FILE: &str = "config.json";
 
 const DATA_FILE: &str = "data_json.json";
+
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -119,3 +127,4 @@ pub struct ApplicationConfig {
     pub theme: String,
     pub minimize_to_tray: bool,
 }
+
