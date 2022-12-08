@@ -1,5 +1,6 @@
 mod hid_table;
 pub mod plugin;
+mod config;
 
 use itertools::Itertools;
 
@@ -572,7 +573,7 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-        send(&rchan_execute.blocking_recv().unwrap());
+        plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
         //Windows requires a delay between each macro execution.
         #[cfg(any(target_os = "windows", target_os = "linux"))]
@@ -628,15 +629,6 @@ fn check_macro_execution_efficiently(
     output
 }
 
-///Sends an event to the library to Execute on an OS level.
-fn send(event_type: &rdev::EventType) {
-    match rdev::simulate(event_type) {
-        Ok(()) => (),
-        Err(_) => {
-            println!("We could not send {:?}", event_type);
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {

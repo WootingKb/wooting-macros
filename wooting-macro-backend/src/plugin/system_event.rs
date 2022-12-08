@@ -1,12 +1,17 @@
+use std::vec;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
 use rdev;
 use tokio::sync::mpsc::Sender;
+use super::util;
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt, TryStreamExt};
+use crate::hid_table::SCANCODE_TO_RDEV;
+use crate::plugin::key_press;
+
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -33,50 +38,16 @@ impl SystemAction {
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(173)))
-                        .await
-                        .unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(173)))
-                        .await
-                        .unwrap();
+                    util::send_key(send_channel.clone(),vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()]).await;
                 }
                 VolumeAction::LowerVolume => {
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(174)))
-                        .await
-                        .unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(174)))
-                        .await
-                        .unwrap();
+                    util::send_key(send_channel.clone(),vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()]).await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    // TODO: Make some nice helper func that can do a simple keypress
-                    // send_key(send_channel, rdev::Key::Unknown(175)).await;
-
-                    
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::Unknown(175)))
-                        .await
-                        .unwrap();
-
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::Unknown(175)))
-                        .await
-                        .unwrap();
+                    util::send_key(send_channel.clone(),vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()]).await;
                 }
             },
             SystemAction::Brightness { action } => match action {
-                MonitorBrightnessAction::Get => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    // brightness_get_info().await;
-                    #[cfg(target_os = "macos")]
-                    println!("Not supported on macOS");
-                }
                 MonitorBrightnessAction::SetAll { level } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set_all_device(*level).await;
@@ -108,23 +79,8 @@ impl SystemAction {
                 ClipboardAction::Copy => {
                     // TODO: Make a nice helper function that accepts a vec of keys and inputs them like a hotkey
                     // send_hotkey(send_channel, COPY_HOTKEY).await;
+                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyC]).await;
 
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
                 }
                 ClipboardAction::GetClipboard => {
                     let mut ctx = ClipboardContext::new().unwrap();
@@ -132,22 +88,7 @@ impl SystemAction {
                     ctx.get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
@@ -155,69 +96,22 @@ impl SystemAction {
 
                     ctx.set_contents(data.to_owned()).unwrap();
 
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
                 }
 
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-                    //Get the text into clipboard
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyC))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyC]).await;
 
                     //Transform the text
                     let content = ctx.get_contents().unwrap();
-
                     let content_new = transform_text(content);
 
                     ctx.set_contents(content_new).unwrap();
 
                     //Paste the text again
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyPress(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::KeyV))
-                        .await
-                        .unwrap();
-                    send_channel
-                        .send(rdev::EventType::KeyRelease(rdev::Key::ControlLeft))
-                        .await
-                        .unwrap();
+                    util::send_hotkey(&send_channel,vec![rdev::Key::ControlLeft, rdev::Key::KeyV]).await;
                 }
             },
         }
@@ -227,7 +121,7 @@ impl SystemAction {
 // trait Helpers {
 //     async fn send_key(&self, key: rdev::Key);
 // }
-
+//
 // impl Helpers for Sender<rdev::EventType> {
 //     async fn send_key(&self, key: rdev::Key) {
 //         self.send(rdev::EventType::KeyPress(key)).await
@@ -237,12 +131,7 @@ impl SystemAction {
 //     }
 // }
 
-// async fn send_key(sender: Sender<rdev::EventType>, key: rdev::Key) {
-//     sender.send(rdev::EventType::KeyPress(key)).await
-//         .unwrap();
-//     sender.send(rdev::EventType::KeyRelease(key)).await
-//         .unwrap();
-// }
+
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Monitor information.
@@ -251,6 +140,7 @@ pub struct Monitor {
     pub brightness: u32,
     pub display_name: String,
 }
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Loads the monitors and sends them to the frontend
 pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
@@ -391,7 +281,6 @@ pub enum ClipboardAction {
 #[serde(tag = "type")]
 /// Monitor get, set brightness (currently Get is unused).
 pub enum MonitorBrightnessAction {
-    Get,
     SetAll { level: u32 },
     Set { level: u32, name: String },
     Decrease,
