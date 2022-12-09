@@ -298,6 +298,8 @@ fn check_macro_execution_efficiently(
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
 
+
+                    //TODO: Maybe discard the keys here?
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
                     });
@@ -438,6 +440,7 @@ impl MacroBackend {
 
                                     let channel_copy_send = schan_execute.clone();
 
+                                    //TODO: up the pressed keys here immidiately?
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
