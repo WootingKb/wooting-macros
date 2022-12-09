@@ -16,6 +16,7 @@ export class SystemEvent {
       defaultData: { type: 'Open', action : '' }
     }
   }
+
   static get Clipboard(): SystemEventInfo {
     return {
       type: 'Clipboard',

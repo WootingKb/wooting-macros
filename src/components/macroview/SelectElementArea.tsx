@@ -244,7 +244,7 @@ export default function SelectElementArea() {
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         Elements
       </Text>
-      <Stack direction={['column', 'row']} justifyContent="space-between" alignItems="center">
+      <Stack direction={['column', 'column', 'row']} justifyContent="space-between" alignItems="center">
         <HStack>
           <IconButton
             variant={tabIndex === 0 ? 'solid' : 'ghost'}

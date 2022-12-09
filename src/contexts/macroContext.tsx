@@ -56,39 +56,32 @@ function MacroProvider({ children }: MacroProviderProps) {
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      setMacro((macro) => {
-        return { ...macro, name: newName }
-      })
+      if (newName.length > 25) {
+        return
+      }
+      setMacro({ ...macro, name: newName })
     },
-    [setMacro]
+    [macro, setMacro]
   )
   const updateMacroIcon = useCallback(
     (newIcon: string) => {
-      setMacro((macro) => {
-        return { ...macro, icon: newIcon }
-      })
+      setMacro({ ...macro, icon: newIcon })
     },
-    [setMacro]
+    [macro, setMacro]
   )
 
   const updateMacroType = useCallback(
     (newType: MacroType) => {
-      setMacro((macro) => {
-        return { ...macro, macro_type: MacroType[newType] }
-      })
+      setMacro({ ...macro, macro_type: MacroType[newType] })
     },
-    [setMacro]
+    [macro, setMacro]
   )
 
   const updateTrigger = useCallback(
     (newElement: TriggerEventType) => {
-      setMacro((macro) => {
-        const temp = { ...macro }
-        temp.trigger = newElement
-        return temp
-      })
+      setMacro({ ...macro, trigger: newElement })
     },
-    [setMacro]
+    [macro, setMacro]
   )
 
   const updateAllowWhileOtherKeys = useCallback(
@@ -114,7 +107,6 @@ function MacroProvider({ children }: MacroProviderProps) {
   }, [ids, setIds])
 
   const onIdDelete = useCallback(
-    // ask about how to clean this up, and prevent flickering (due to rerender)
     (IdToRemove: number) => {
       setIds((ids) => {
         const temp = [...ids]

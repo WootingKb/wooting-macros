@@ -12,7 +12,7 @@ import {
   IconButton,
   Tooltip,
   Box,
-  Circle,
+  Circle
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import EditArea from '../components/macroview/EditArea'
@@ -68,7 +68,7 @@ export default function Macroview() {
       base64string = Buffer.from(res).toString('base64')
     })
     if (base64string !== '') {
-      updateMacroIcon("data:image/png;base64," + base64string)
+      updateMacroIcon('data:image/png;base64,' + base64string)
     }
   }, [updateMacroIcon])
 
@@ -84,7 +84,6 @@ export default function Macroview() {
       >
         <Flex
           w="33%"
-          justifyContent="space-between"
           alignItems="center"
           gap="4"
         >
@@ -127,17 +126,24 @@ export default function Macroview() {
               Change Icon
             </Text>
           </Circle>
-          <Input
-            variant="flushed"
-            w="full"
-            placeholder="Macro Name"
-            isInvalid={macro.name === ''}
-            isRequired
-            onChange={(event) => {
-              updateMacroName(event.target.value)
-            }}
-            value={macro.name}
-          />
+          <VStack spacing={0}>
+            <Input
+              variant="flushed"
+              w="full"
+              placeholder="Macro Name"
+              isInvalid={macro.name === ''}
+              isRequired
+              onChange={(event) => {
+                updateMacroName(event.target.value)
+              }}
+              value={macro.name}
+            />
+            {macro.name.length === 25 && (
+              <Text w="100%" fontSize="2xs" fontWeight="semibold">
+                Max length is 25 characters
+              </Text>
+            )}
+          </VStack>
         </Flex>
         {/* <MacroTypeArea /> */}
         <TriggerArea onOpen={onOpen} />

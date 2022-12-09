@@ -74,8 +74,8 @@ export default function SettingsLeftPanel({
       <VStack w="100%" spacing="2" px="1">
         <HStack w="100%">
           <svg
-            width="15"
-            height="15"
+            width="24"
+            height="24"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -88,8 +88,8 @@ export default function SettingsLeftPanel({
             ></path>
           </svg>
           <svg
-            width="15"
-            height="15"
+            width="24"
+            height="24"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -102,8 +102,8 @@ export default function SettingsLeftPanel({
             ></path>
           </svg>
           <svg
-            width="15"
-            height="15"
+            width="24"
+            height="24"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -120,10 +120,10 @@ export default function SettingsLeftPanel({
           Got Feedback? Let us know through these channels!
         </Text>
         <VStack w="100%" spacing={0}>
-          <Text w="100%" fontSize={['xs', 'sm']}>
+          <Text w="100%" fontSize={['2xs', 'xs']}>
             Version 1.0
           </Text>
-          <Text w="100%" fontSize={['xs', 'sm']}>
+          <Text w="100%" fontSize={['2xs', 'xs']}>
             Windows 64-Bit
           </Text>
         </VStack>
