@@ -83,7 +83,7 @@ export default function OpenAppForm() {
         {'Open Application'}
       </Text>
       <Divider />
-      <Text w="100%" fontSize={['xs', 'sm', 'md']}>
+      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
         Path to application
       </Text>
       <Textarea value={path} onChange={onPathChange} placeholder="path" />

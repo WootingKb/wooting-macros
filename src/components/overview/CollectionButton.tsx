@@ -35,6 +35,7 @@ export default function CollectionButton({
       bg={isFocused ? buttonBg : ''}
       p="4px"
       rounded="md"
+      _hover={{ bg: buttonBg }}
     >
       <HStack justifyContent="space-between">
         <Box
@@ -45,7 +46,9 @@ export default function CollectionButton({
           onClick={() => setFocus(index)}
         ></Box>
         {index === 0 ? (
-          <StarIcon />
+          <Box pl="1" h="full" justifyContent="center" alignItems="center">
+            <StarIcon />
+          </Box>
         ) : (
           <Circle position="relative" role="group">
             <Image

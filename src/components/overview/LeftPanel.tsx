@@ -46,12 +46,6 @@ export default function LeftPanel({
       p="2"
       w={['30%', '25%', '15%']}
       justifyContent="space-between"
-      overflowY="auto"
-      css={{
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
-      }}
     >
       <VStack w="100%">
         <HStack w="100%" justifyContent="space-between">
@@ -61,37 +55,49 @@ export default function LeftPanel({
           <ToggleGrabbingButton />
         </HStack>
         <Divider borderColor={dividerBg} />
-        <VStack w="100%" ref={parent}>
-          {collections.map((collection: Collection, index: number) => (
-            <CollectionButton
-              collection={collection}
-              index={index}
-              key={collection.name}
-              isFocused={index == selection.collectionIndex}
-              setFocus={onCollectionButtonPress}
-              toggleCollection={() =>
-                onCollectionUpdate(
-                  {
-                    ...collections[index],
-                    active: !collections[index].active
-                  },
-                  index
-                )
-              }
-            />
-          ))}
-        </VStack>
-        <Button
-          colorScheme="yellow"
-          size={['sm']}
-          leftIcon={<AddIcon />}
-          onClick={() => {
-            updateIsRenamingCollection(false)
-            onOpenCollectionModal()
+        <VStack
+          w="100%"
+          overflowX="hidden"
+          overflowY="auto"
+          css={{
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            }
           }}
         >
-          New Collection
-        </Button>
+          <VStack w="100%" ref={parent} spacing="1">
+            {collections.map((collection: Collection, index: number) => (
+              <CollectionButton
+                collection={collection}
+                index={index}
+                key={collection.name}
+                isFocused={index == selection.collectionIndex}
+                setFocus={onCollectionButtonPress}
+                toggleCollection={() =>
+                  onCollectionUpdate(
+                    {
+                      ...collections[index],
+                      active: !collections[index].active
+                    },
+                    index
+                  )
+                }
+              />
+            ))}
+          </VStack>
+          <Button
+            colorScheme="yellow"
+            size={['sm']}
+            p="2"
+            leftIcon={<AddIcon />}
+            onClick={() => {
+              updateIsRenamingCollection(false)
+              onOpenCollectionModal()
+            }}
+          >
+            New Collection
+          </Button>
+        </VStack>
       </VStack>
       <HStack w="100%">
         <Button

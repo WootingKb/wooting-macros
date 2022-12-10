@@ -124,6 +124,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     if (path === null || Array.isArray(path)) {
       return
     }
+
+    
+
     let base64string = ''
     await readBinaryFile(path).then((res) => {
       base64string = Buffer.from(res).toString('base64')

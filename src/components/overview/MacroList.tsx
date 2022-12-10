@@ -52,7 +52,7 @@ export default function MacroList() {
             size={['sm', 'md', 'lg']}
             maxW="50%"
             onClick={() => changeViewState(ViewState.Addview)}
-            _hover={{ transform: 'scale(120%)' }}
+            _hover={{ transform: 'scale(110%)' }}
           >
             Add Macro
           </Button>
@@ -70,7 +70,7 @@ export default function MacroList() {
               size={['sm', 'md', 'lg']}
               maxW="50%"
               onClick={() => changeViewState(ViewState.Addview)}
-              _hover={{ transform: 'scale(120%)' }}
+              _hover={{ transform: 'scale(110%)' }}
             >
               Add Macro
             </Button>

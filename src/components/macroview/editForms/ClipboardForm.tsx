@@ -48,7 +48,7 @@ export default function ClipboardForm() {
         {'Paste Text'}
       </Text>
       <Divider />
-      <Text fontSize={['xs', 'sm', 'md']}>Text to paste</Text>
+      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">Text to paste</Text>
       <Textarea value={text} onChange={onTextChange} placeholder="e.g. glhf" />
     </>
   )
