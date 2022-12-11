@@ -47,7 +47,7 @@ export default function LeftPanel({
       w={['30%', '25%', '15%']}
       justifyContent="space-between"
     >
-      <VStack w="100%">
+      <VStack w="100%" h="calc(100%) - 100px" pt="1" overflow="hidden">
         <HStack w="100%" justifyContent="space-between">
           <Text w="100%" fontWeight="bold">
             Collections
@@ -57,7 +57,6 @@ export default function LeftPanel({
         <Divider borderColor={dividerBg} />
         <VStack
           w="100%"
-          overflowX="hidden"
           overflowY="auto"
           css={{
             '&::-webkit-scrollbar': {

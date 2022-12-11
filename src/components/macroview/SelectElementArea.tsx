@@ -251,7 +251,7 @@ export default function SelectElementArea() {
         alignItems="center"
       >
         <HStack>
-          <Tooltip label="All Elements" aria-label="All elements category button">
+          <Tooltip label="All Elements" aria-label="All elements category button" hasArrow>
             <IconButton
               variant={tabIndex === 0 ? 'solid' : 'ghost'}
               colorScheme={tabIndex === 0 ? 'yellow' : 'gray'}
@@ -271,7 +271,7 @@ export default function SelectElementArea() {
               onClick={() => setTabIndex(0)}
             />
           </Tooltip>
-          <Tooltip label="Keyboard Keys" aria-label="Keyboard Keys category button">
+          <Tooltip label="Keyboard Keys" aria-label="Keyboard Keys category button" hasArrow>
             <IconButton
               variant={tabIndex === 1 ? 'solid' : 'ghost'}
               colorScheme={tabIndex === 1 ? 'yellow' : 'gray'}
@@ -291,7 +291,7 @@ export default function SelectElementArea() {
               onClick={() => setTabIndex(1)}
             />
           </Tooltip>
-          <Tooltip label="Mouse Buttons" aria-label="Mouse buttons category button">
+          <Tooltip label="Mouse Buttons" aria-label="Mouse buttons category button" hasArrow>
             <IconButton
               variant={tabIndex === 2 ? 'solid' : 'ghost'}
               colorScheme={tabIndex === 2 ? 'yellow' : 'gray'}
@@ -311,7 +311,7 @@ export default function SelectElementArea() {
               onClick={() => setTabIndex(2)}
             />
           </Tooltip>
-          <Tooltip label="System Events" aria-label="System events category button">
+          <Tooltip label="System Events" aria-label="System events category button" hasArrow>
             <IconButton
               variant={tabIndex === 3 ? 'solid' : 'ghost'}
               colorScheme={tabIndex === 3 ? 'yellow' : 'gray'}
@@ -331,7 +331,7 @@ export default function SelectElementArea() {
               onClick={() => setTabIndex(3)}
             />
           </Tooltip>
-          <Tooltip label="Integrations" aria-label="Integrations category button">
+          <Tooltip label="Integrations" aria-label="Integrations category button" hasArrow>
             <IconButton
               variant={tabIndex === 4 ? 'solid' : 'ghost'}
               colorScheme={tabIndex === 4 ? 'yellow' : 'gray'}

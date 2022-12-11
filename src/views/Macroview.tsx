@@ -82,11 +82,7 @@ export default function Macroview() {
         spacing="16px"
         justifyContent="space-between"
       >
-        <Flex
-          w="33%"
-          alignItems="center"
-          gap="4"
-        >
+        <Flex w="30%" alignItems="center" gap="4">
           <IconButton
             aria-label="Back Button"
             icon={<ArrowBackIcon />}
@@ -129,7 +125,6 @@ export default function Macroview() {
           <VStack spacing={0}>
             <Input
               variant="flushed"
-              w="full"
               placeholder="Macro Name"
               isInvalid={macro.name === ''}
               isRequired

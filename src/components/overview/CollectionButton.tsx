@@ -63,7 +63,7 @@ export default function CollectionButton({
             />
           </Circle>
         )}
-        <Text noOfLines={1}>{collection.name}</Text>
+        <Text noOfLines={1} fontWeight={isFocused ? 'semibold' : 'normal'}>{collection.name}</Text>
         <Switch
           size="sm"
           colorScheme="yellow"
