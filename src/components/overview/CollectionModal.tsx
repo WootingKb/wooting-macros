@@ -156,10 +156,10 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
         <ModalBody mt="4">
           <VStack w="100%">
             <HStack w="100%">
-              <Text w="50%" textStyle="settingsCategoryHeader">
+              <Text w="50%" textStyle="miniHeader">
                 Icon
               </Text>
-              <Text w="50%" textStyle="settingsCategoryHeader">
+              <Text w="50%" textStyle="miniHeader">
                 Name
               </Text>
             </HStack>

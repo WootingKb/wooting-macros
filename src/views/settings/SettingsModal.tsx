@@ -78,14 +78,22 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
               pageIndex={pageIndex}
               onSettingsButtonPress={setPageIndex}
             />
-              <ModalBody h="100vh" bg={rightPanelBg}>
-                <VStack w="95%" justifyContent="left" py="8" spacing={4}>
-                  <Text w="100%" fontWeight="bold" fontSize="large">
-                    {settingInfoLookup.get(pageIndex)?.displayString}
-                  </Text>
-                  {SelectedPageComponent}
-                </VStack>
-              </ModalBody>
+            <ModalBody
+              h="100vh"
+              bg={rightPanelBg}
+              css={{
+                '&::-webkit-scrollbar': {
+                  display: 'none'
+                }
+              }}
+            >
+              <VStack w="95%" justifyContent="left" py="8" spacing={4}>
+                <Text w="100%" fontWeight="bold" fontSize="large">
+                  {settingInfoLookup.get(pageIndex)?.displayString}
+                </Text>
+                {SelectedPageComponent}
+              </VStack>
+            </ModalBody>
             <ModalCloseButton />
           </HStack>
         </HStack>
