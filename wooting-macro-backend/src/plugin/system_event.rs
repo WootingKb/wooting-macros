@@ -18,6 +18,7 @@ use futures::{StreamExt, TryFutureExt};
 pub enum DirectoryAction {
     Directory{data: String},
     File{data: String},
+    Website{data: String}
 }
 
 
@@ -46,6 +47,12 @@ impl SystemAction {
                 }
                 DirectoryAction::File { data } => {
                     match opener::open(std::path::Path::new(data)) {
+                        Ok(x) => x,
+                        Err(e) => error!("Error: {}", e),
+                    };
+                }
+                DirectoryAction::Website { data } => {
+                    match opener::open_browser(std::path::Path::new(data)) {
                         Ok(x) => x,
                         Err(e) => error!("Error: {}", e),
                     };
