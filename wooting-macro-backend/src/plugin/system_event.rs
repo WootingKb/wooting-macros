@@ -16,7 +16,7 @@ use futures::{StreamExt, TryFutureExt};
 #[serde(tag = "type")]
 /// Types of actions related to the OS to perform.
 pub enum SystemAction {
-    Open { action: String },
+    Open { action: String, is_folder: bool },
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
@@ -28,7 +28,7 @@ impl SystemAction {
     /// Execute the keys themselves
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         match &self {
-            SystemAction::Open { action: path } => {
+            SystemAction::Open { action: path , ..} => {
                 match opener::open(std::path::Path::new(path)) {
                     Ok(x) => x,
                     Err(e) => error!("Error: {}", e),
