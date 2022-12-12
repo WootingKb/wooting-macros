@@ -12,11 +12,20 @@ use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt};
 
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
+pub enum DirectoryAction {
+    Directory{data: String},
+    File{data: String},
+}
+
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 /// Types of actions related to the OS to perform.
 pub enum SystemAction {
-    Open { action: String, is_folder: bool },
+    Open { action: DirectoryAction },
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
@@ -28,11 +37,19 @@ impl SystemAction {
     /// Execute the keys themselves
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         match &self {
-            SystemAction::Open { action: path , ..} => {
-                match opener::open(std::path::Path::new(path)) {
-                    Ok(x) => x,
-                    Err(e) => error!("Error: {}", e),
-                };
+            SystemAction::Open { action} => match action {
+                DirectoryAction::Directory { data } => {
+                    match opener::open(std::path::Path::new(data)) {
+                        Ok(x) => x,
+                        Err(e) => error!("Error: {}", e),
+                    };
+                }
+                DirectoryAction::File { data } => {
+                    match opener::open(std::path::Path::new(data)) {
+                        Ok(x) => x,
+                        Err(e) => error!("Error: {}", e),
+                    };
+                }
             }
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
