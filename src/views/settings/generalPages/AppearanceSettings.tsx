@@ -16,8 +16,8 @@ export default function AppearanceSettings() {
   const [value, setValue] = useState('')
   const { updateTheme } = useSettingsContext()
   const { colorMode } = useColorMode()
-  const radioBg = useColorModeValue('gray.100', 'gray.700')
-  const radioHoverBg = useColorModeValue('gray.200', 'gray.600')
+  const radioBg = useColorModeValue('stone.200', 'zinc.800')
+  const radioHoverBg = useColorModeValue('stone.300', 'zinc.700')
 
   useEffect(() => {
     if (colorMode === 'light') {
@@ -55,7 +55,7 @@ export default function AppearanceSettings() {
               rounded="md"
               onClick={() => onThemeChange('light')}
             >
-              <Radio colorScheme="yellow" value={'light'} />
+              <Radio colorScheme="yellow" value={'light'} variant="brand" />
               <SunIcon />
               <Text fontWeight="semibold">Light</Text>
             </HStack>
@@ -69,7 +69,7 @@ export default function AppearanceSettings() {
               rounded="md"
               onClick={() => onThemeChange('dark')}
             >
-              <Radio colorScheme="yellow" value={'dark'} />
+              <Radio colorScheme="yellow" value={'dark'} variant="brand" />
               <MoonIcon />
               <Text fontWeight="semibold">Dark</Text>
             </HStack>

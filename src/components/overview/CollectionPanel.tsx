@@ -25,7 +25,7 @@ export default function CollectionPanel({ onOpen }: Props) {
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const { isOpen, onOpen: onDeleteModalOpen, onClose } = useDisclosure()
-  const dividerBg = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   return (
     <VStack w="100%" h="100vh" spacing="0">
@@ -34,7 +34,7 @@ export default function CollectionPanel({ onOpen }: Props) {
         alignItems="center"
         p="2"
         borderBottom="1px"
-        borderColor={dividerBg}
+        borderColor={borderColour}
         w="100%"
       >
         <HStack w="100%" justifyContent="space-between">
@@ -45,7 +45,7 @@ export default function CollectionPanel({ onOpen }: Props) {
             <IconButton
               aria-label="Collection Edit Button"
               icon={<EditIcon />}
-              variant="ghost"
+              variant="brandGhost"
               isDisabled={selection.collectionIndex <= 0}
               onClick={() => {
                 changeIsUpdatingCollection(true)
@@ -62,6 +62,7 @@ export default function CollectionPanel({ onOpen }: Props) {
             </Button> */}
             <Button
               leftIcon={<DeleteIcon />}
+              variant="brand"
               size={['xs', 'sm', 'md']}
               isDisabled={selection.collectionIndex <= 0}
               onClick={onDeleteModalOpen}

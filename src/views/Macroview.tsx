@@ -30,7 +30,7 @@ export default function Macroview() {
   const { changeSelectedMacroIndex } = useApplicationContext()
   const { macro, sequence, updateMacroName, updateMacroIcon, updateMacro } =
     useMacroContext()
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const getSaveButtonTooltipText = useCallback((): string => {
@@ -85,6 +85,7 @@ export default function Macroview() {
         <Flex w="30%" alignItems="center" gap="4">
           <IconButton
             aria-label="Back Button"
+            variant="brand"
             icon={<ArrowBackIcon />}
             size="sm"
             onClick={() => {
@@ -124,8 +125,9 @@ export default function Macroview() {
           </Circle>
           <VStack spacing={0}>
             <Input
-              variant="flushed"
+              variant="brand"
               placeholder="Macro Name"
+              _placeholder={{ opacity: 1, color: borderColour }}
               isInvalid={macro.name === ''}
               isRequired
               onChange={(event) => {
@@ -143,6 +145,7 @@ export default function Macroview() {
         {/* <MacroTypeArea /> */}
         <TriggerArea onOpen={onOpen} />
         <Tooltip
+          variant="brand"
           label={getSaveButtonTooltipText()}
           aria-label="Save Button Tooltip"
           hasArrow

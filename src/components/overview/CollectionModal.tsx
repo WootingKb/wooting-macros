@@ -44,7 +44,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     onCollectionUpdate
   } = useApplicationContext()
   const collection = useSelectedCollection()
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   useEffect(() => {
     if (isUpdatingCollection) {
@@ -145,7 +145,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
   }, [collectionName])
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal variant="brand" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -203,12 +203,13 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
               <VStack w="50%" spacing={0}>
                 <Input
                   w="100%"
-                  variant="flushed"
+                  variant="brand"
                   isRequired
                   isInvalid={!isNameUsable}
                   onChange={onCollectionNameChange}
                   value={collectionName}
                   placeholder={'Collection Name'}
+                  _placeholder={{ opacity: 1, color: borderColour }}
                 />
                 {collectionName.length === 25 && (
                   <Text w="100%" fontSize="2xs" fontWeight="semibold">
@@ -220,7 +221,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>
+          <Button variant="brand" mr={3} onClick={onClose}>
             Close
           </Button>
           <Tooltip

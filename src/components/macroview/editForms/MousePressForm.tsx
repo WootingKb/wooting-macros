@@ -113,6 +113,7 @@ export default function MousePressForm() {
             justifyContent="space-around"
           >
             <Button
+              variant="brand"
               leftIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -137,6 +138,7 @@ export default function MousePressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
+              variant="brand"
               leftIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -161,6 +163,7 @@ export default function MousePressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Mouse Down</Text>
             </Button>
             <Button
+              variant="brand"
               leftIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -197,8 +200,7 @@ export default function MousePressForm() {
           <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
             <Input
               type="number"
-              variant="outline"
-              borderColor="gray.400"
+              variant="brand"
               isDisabled={mousepressType === KeyType.DownUp ? false : true}
               value={mousepressDuration}
               onChange={onMousepressDurationChange}

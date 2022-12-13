@@ -18,7 +18,7 @@ export default function ToggleSetting({ title, description, value, onChange }: P
           {description}
         </Text>
       </VStack>
-      <Switch colorScheme="yellow" defaultChecked={value} isChecked={value} onChange={() => onChange(!value)} />
+      <Switch variant="brand" defaultChecked={value} isChecked={value} onChange={() => onChange(!value)} />
     </HStack>
   )
 }

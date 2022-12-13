@@ -2,7 +2,8 @@ export const textStyles = {
   miniHeader: {
     fontWeight: 'black',
     fontSize: 'xs',
-    textColor: 'gray.500', // how to make this colour mode dependant, mode() doesnt seem to work
+    textColor: 'stone.500',
+    '.chakra-ui-dark &': { textColor: 'zinc.500' },
     textTransform: 'uppercase'
   }
 }

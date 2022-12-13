@@ -20,15 +20,16 @@ export default function SettingsLeftPanel({
   pageIndex,
   onSettingsButtonPress
 }: Props) {
-  const panelBg = useColorModeValue('gray.100', 'gray.900')
-  const dividerBg = useColorModeValue('gray.400', 'gray.600')
-  const strokeColour = useColorModeValue('yellow.500', 'yellow.200')
+  const panelBg = useColorModeValue('stone.200', 'zinc.900')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const strokeColour = useColorModeValue('black', 'white')
+  const strokeHoverColour = useColorModeValue('yellow.500', 'yellow.300')
 
   return (
     <VStack
       bg={panelBg}
       borderRight="1px"
-      borderColor={dividerBg}
+      borderColor={borderColour}
       h="100vh"
       p="2"
       pt="4"
@@ -56,7 +57,7 @@ export default function SettingsLeftPanel({
             />
           ))}
       </VStack>
-      <Divider borderColor={dividerBg} />
+      <Divider borderColor={borderColour} />
       <VStack w="100%" spacing="1">
         <Text w="100%" textStyle="miniHeader" ml="4">
           Other
@@ -73,16 +74,16 @@ export default function SettingsLeftPanel({
             />
           ))}
       </VStack>
-      <Divider borderColor={dividerBg} />
+      <Divider borderColor={borderColour} />
       <VStack w="100%" spacing="2" px="1">
         <HStack w="100%">
           <Icon
             boxSize={6}
             viewBox="0 0 15 15"
-            color="black"
+            color={strokeColour}
             onClick={openDiscordLink}
             _hover={{
-              color: strokeColour,
+              color: strokeHoverColour,
               cursor: 'pointer',
               transform: 'scale(110%)'
             }}
@@ -97,10 +98,10 @@ export default function SettingsLeftPanel({
           <Icon
             boxSize={6}
             viewBox="0 0 15 15"
-            color="black"
+            color={strokeColour}
             onClick={openTwitterLink}
             _hover={{
-              color: strokeColour,
+              color: strokeHoverColour,
               cursor: 'pointer',
               transform: 'scale(110%)'
             }}

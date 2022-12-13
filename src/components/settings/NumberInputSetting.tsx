@@ -49,6 +49,7 @@ export default function NumberInputSetting({
         w="25%"
         size="sm"
         rounded="md"
+        variant="brand"
         step={5}
         value={value}
         onChange={(valueAsString) => setValue(valueAsString)}

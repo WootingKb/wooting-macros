@@ -55,8 +55,11 @@ export default function OpenEventForm() {
       }
       setPath(event.target.value)
       const temp = {
-        ...selectedElement,
-        data: { ...selectedElement.data, data: event.target.value }
+        ...selectedElement
+      }
+      temp.data = {
+        type: 'Open',
+        action: { type: 'Website', data: event.target.value }
       }
       updateElement(temp, selectedElementId)
     },
@@ -82,8 +85,11 @@ export default function OpenEventForm() {
         }
         setPath(dir)
         const temp = {
-          ...selectedElement,
-          data: { ...selectedElement.data, data: dir }
+          ...selectedElement
+        }
+        temp.data = {
+          type: 'Open',
+          action: { type: 'Directory', data: dir }
         }
         updateElement(temp, selectedElementId)
       } else {
@@ -96,9 +102,9 @@ export default function OpenEventForm() {
         }
         setPath(file)
         const temp = {
-          ...selectedElement,
-          data: { ...selectedElement.data, data: file }
+          ...selectedElement
         }
+        temp.data = { type: 'Open', action: { type: 'File', data: file } }
         updateElement(temp, selectedElementId)
       }
     },
@@ -115,18 +121,27 @@ export default function OpenEventForm() {
         {subHeaderText}
       </Text>
       <Textarea
+        variant="brand"
         value={path}
         onChange={onPathChange}
         placeholder="path"
         isDisabled={subtype === 'File' || subtype === 'Directory'}
       />
       {subtype === 'File' && (
-        <Button w={['100%', '75%', '50%']} onClick={() => onButtonPress(false)}>
+        <Button
+          variant="brand"
+          w={['100%', '75%', '50%']}
+          onClick={() => onButtonPress(false)}
+        >
           Browse For Files
         </Button>
       )}
       {subtype === 'Directory' && (
-        <Button w={['100%', '75%', '50%']} onClick={() => onButtonPress(true)}>
+        <Button
+          variant="brand"
+          w={['100%', '75%', '50%']}
+          onClick={() => onButtonPress(true)}
+        >
           Browse For Folders
         </Button>
       )}

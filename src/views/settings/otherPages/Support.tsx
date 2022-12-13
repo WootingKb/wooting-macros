@@ -6,6 +6,7 @@ import {
   IconButton,
   Icon,
   Divider,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import {
   openDiscordLink,
@@ -13,6 +14,8 @@ import {
 } from '../../../constants/externalLinks'
 
 export default function Support() {
+  const iconColour = useColorModeValue('black', 'white')
+
   return (
     <VStack w="100%" spacing={4}>
       <HStack w="100%" justifyContent="space-between">
@@ -27,14 +30,16 @@ export default function Support() {
         <HStack>
           <IconButton
             onClick={openSupportEmail}
+            variant="brand"
             aria-label="Email link button"
             icon={<EmailIcon />}
           />
           <IconButton
             onClick={openDiscordLink}
+            variant="brand"
             aria-label="Discord link button"
             icon={
-              <Icon boxSize={5} viewBox="0 0 15 15" color="black">
+              <Icon boxSize={5} viewBox="0 0 15 15" color={iconColour}>
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"

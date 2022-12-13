@@ -25,15 +25,15 @@ export default function CollectionButton({
   setFocus,
   toggleCollection
 }: Props) {
-  const buttonBg = useColorModeValue('gray.300', 'gray.700')
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const buttonBg = useColorModeValue('stone.300', 'zinc.800')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   return (
     <Box
       pos="relative"
       w="100%"
       bg={isFocused ? buttonBg : ''}
-      p="4px"
+      p="2"
       rounded="md"
       _hover={{ bg: buttonBg }}
     >
@@ -43,12 +43,13 @@ export default function CollectionButton({
           pos="absolute"
           w="full"
           h="full"
+          zIndex={10}
           onClick={() => setFocus(index)}
         ></Box>
         {index === 0 ? (
-          <Box pl="1" h="full" justifyContent="center" alignItems="center">
+          <Circle position="relative" role="group" pl="1">
             <StarIcon />
-          </Box>
+          </Circle>
         ) : (
           <Circle position="relative" role="group">
             <Image
@@ -63,10 +64,13 @@ export default function CollectionButton({
             />
           </Circle>
         )}
-        <Text noOfLines={1} fontWeight={isFocused ? 'semibold' : 'normal'}>{collection.name}</Text>
+        <Text noOfLines={1} fontWeight={isFocused ? 'semibold' : 'normal'}>
+          {collection.name}
+        </Text>
         <Switch
           size="sm"
-          colorScheme="yellow"
+          variant="brand"
+          zIndex={10}
           defaultChecked={collection.active}
           isChecked={collection.active}
           onChange={() => toggleCollection(index)}

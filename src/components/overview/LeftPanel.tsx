@@ -30,8 +30,8 @@ export default function LeftPanel({
     changeIsUpdatingCollection: updateIsRenamingCollection
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
-  const panelBg = useColorModeValue('gray.100', 'gray.900')
-  const dividerBg = useColorModeValue('gray.400', 'gray.600')
+  const panelBg = useColorModeValue('stone.200', 'zinc.900')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   const onCollectionButtonPress = (newActiveIndex: number) => {
     changeSelectedCollectionIndex(newActiveIndex)
@@ -41,7 +41,7 @@ export default function LeftPanel({
     <VStack
       bg={panelBg}
       borderRight="1px"
-      borderColor={dividerBg}
+      borderColor={borderColour}
       h="100vh"
       p="2"
       w={['30%', '25%', '15%']}
@@ -54,7 +54,7 @@ export default function LeftPanel({
           </Text>
           <ToggleGrabbingButton />
         </HStack>
-        <Divider borderColor={dividerBg} />
+        <Divider />
         <VStack
           w="100%"
           overflowY="auto"
@@ -101,11 +101,9 @@ export default function LeftPanel({
       <HStack w="100%">
         <Button
           w="100%"
+          variant={'brand'}
           size={'sm'}
-          variant="outline"
-          borderColor={dividerBg}
           leftIcon={<SettingsIcon />}
-          _hover={{ bg: 'yellow.400' }}
           onClick={onOpenSettingsModal}
         >
           <Text fontSize={['sm', 'md']}>Settings</Text>

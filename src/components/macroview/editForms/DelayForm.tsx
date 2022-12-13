@@ -71,7 +71,7 @@ export default function DelayForm() {
           <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
             <Input
               type="number"
-              variant="outline"
+              variant="brand"
               borderColor="gray.400"
               value={delayDuration}
               onChange={onDelayDurationChange}
@@ -80,9 +80,8 @@ export default function DelayForm() {
         </GridItem>
       </Grid>
       <Button
-        variant="outline"
+        variant="brand"
         w="fit-content"
-        colorScheme="yellow"
         onClick={resetDuration}
       >
         Set to Default

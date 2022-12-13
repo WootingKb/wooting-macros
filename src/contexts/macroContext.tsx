@@ -157,7 +157,6 @@ function MacroProvider({ children }: MacroProviderProps) {
   const onElementsAdd = useCallback(
     (newElements: ActionEventType[]) => {
       const newSequence = [...sequence, ...newElements]
-      console.log(newSequence)
       const newIds = [...Array(newSequence.length).keys()].filter(
         (i) => i >= sequence.length
       )

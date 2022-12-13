@@ -1,8 +1,4 @@
-import {
-  RepeatClockIcon,
-  DeleteIcon,
-  EditIcon
-} from '@chakra-ui/icons'
+import { RepeatClockIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -19,8 +15,8 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
-  const highlightedColour = useColorModeValue('yellow.500', 'yellow.200')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const highlightedColour = useColorModeValue('yellow.500', 'yellow.400')
   const { selectedElementId, onElementDelete, updateSelectedElementId } =
     useMacroContext()
 
@@ -43,7 +39,9 @@ export default function SortableItem({ id, element }: Props) {
       case 'SystemEventAction':
         switch (element.data.type) {
           case 'Open':
-            setDisplayText(sysEventLookup.get(element.data.action.type)?.displayString)
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
             setIsEditable(true)
             break
           case 'Volume':
@@ -241,6 +239,7 @@ export default function SortableItem({ id, element }: Props) {
         }
       >
         <IconButton
+          variant="brand"
           aria-label="delete-button"
           icon={<DeleteIcon />}
           size={['xs', 'sm']}
@@ -248,6 +247,7 @@ export default function SortableItem({ id, element }: Props) {
         />
         {isEditable && (
           <IconButton
+            variant="brand"
             aria-label="edit-button"
             icon={<EditIcon />}
             size={['xs', 'sm']}

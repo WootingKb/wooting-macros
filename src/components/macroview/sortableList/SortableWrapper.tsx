@@ -21,9 +21,9 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
     isDragging
   } = useSortable({ id: id })
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('white', 'gray.800')
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
-  const highlightedColour = useColorModeValue('yellow.500', 'yellow.200')
+  const bg = useColorModeValue('stone.100', 'zinc.900')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const highlightedColour = useColorModeValue('yellow.500', 'yellow.400')
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -41,7 +41,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
       borderColor={
         selectedElementId !== undefined && id === selectedElementId + 1
           ? highlightedColour
-          : dividerColour
+          : borderColour
       }
       rounded="md"
       spacing="0px"
@@ -54,7 +54,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
         borderColor={
           selectedElementId !== undefined && id === selectedElementId + 1
             ? highlightedColour
-            : dividerColour
+            : borderColour
         }
         p="4px"
         h="full"

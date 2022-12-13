@@ -27,8 +27,8 @@ type Props = {
 
 export default function SettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
-  const rightPanelBg = useColorModeValue('white', 'gray.800')
-  const leftPanelBg = useColorModeValue('gray.100', 'gray.900')
+  const rightPanelBg = useColorModeValue('offWhite', 'darkGray')
+  const leftPanelBg = useColorModeValue('stone.200', 'zinc.900')
 
   useEffect(() => {
     setPageIndex(0)
@@ -59,6 +59,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
     <Modal
       isOpen={isOpen}
       size={'full'}
+      variant="brand"
       onClose={onClose}
       scrollBehavior="inside"
     >

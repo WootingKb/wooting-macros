@@ -17,7 +17,7 @@ type Props = {
 
 export default function TriggerArea({ onOpen }: Props) {
   const { macro } = useMacroContext()
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   return (
     <HStack
@@ -36,7 +36,7 @@ export default function TriggerArea({ onOpen }: Props) {
       <HStack spacing="4px" w="full" h="full" justifyContent="center">
         {macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.map((HIDcode) => (
-            <Kbd key={HIDcode}>
+            <Kbd variant="brand" key={HIDcode}>
               {HIDLookup.get(HIDcode)?.displayString}
             </Kbd>
           ))}
@@ -44,7 +44,7 @@ export default function TriggerArea({ onOpen }: Props) {
           <Kbd>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Kbd>
         )}
       </HStack>
-      <Button size="xs" px="5" leftIcon={<EditIcon />} onClick={onOpen}>
+      <Button variant="brand" size="xs" px="5" leftIcon={<EditIcon />} onClick={onOpen}>
         Edit
       </Button>
     </HStack>

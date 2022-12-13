@@ -104,6 +104,7 @@ export default function KeyPressForm() {
             justifyContent="space-around"
           >
             <Button
+              variant="brand"
               leftIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -128,6 +129,7 @@ export default function KeyPressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
+              variant="brand"
               leftIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +154,7 @@ export default function KeyPressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Key Down</Text>
             </Button>
             <Button
+              variant="brand"
               leftIcon={
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -188,8 +191,7 @@ export default function KeyPressForm() {
           <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
             <Input
               type="number"
-              variant="outline"
-              borderColor="gray.400"
+              variant="brand"
               isDisabled={keypressType === KeyType.DownUp ? false : true}
               value={keypressDuration}
               onChange={onKeypressDurationChange}

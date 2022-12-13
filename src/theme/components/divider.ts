@@ -3,7 +3,7 @@ import { defineStyleConfig } from '@chakra-ui/react'
 import { mode } from '@chakra-ui/theme-tools'
 
 export const Divider = defineStyleConfig({
-    baseStyle: (props: StyleFunctionProps) => ({
-        borderColor: mode('gray.400', 'gray.600')(props)
-    })
+  baseStyle: (props: StyleFunctionProps) => ({
+    borderColor: mode('stone.500', 'zinc.500')(props)
+  })
 })
