@@ -1,4 +1,4 @@
-import { AddIcon, MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import {
   HStack,
   VStack,
@@ -13,10 +13,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSettingsContext } from '../../../contexts/settingsContext'
 
 export default function AppearanceSettings() {
+  const [value, setValue] = useState('')
   const { updateTheme } = useSettingsContext()
   const { colorMode } = useColorMode()
-  const radioBg = useColorModeValue('gray.100', 'gray.700')
-  const [value, setValue] = useState('')
+  const radioBg = useColorModeValue('stone.200', 'zinc.800')
+  const radioHoverBg = useColorModeValue('stone.300', 'zinc.700')
 
   useEffect(() => {
     if (colorMode === 'light') {
@@ -26,12 +27,15 @@ export default function AppearanceSettings() {
     }
   }, [colorMode, setValue])
 
-  const onThemeChange = useCallback((newValue: string) => {
-    if (newValue === colorMode) {
-      return
-    }
-    updateTheme(newValue)
-  }, [colorMode, updateTheme])
+  const onThemeChange = useCallback(
+    (newValue: string) => {
+      if (newValue === colorMode) {
+        return
+      }
+      updateTheme(newValue)
+    },
+    [colorMode, updateTheme]
+  )
 
   return (
     <VStack w="100%" spacing={4}>
@@ -39,40 +43,40 @@ export default function AppearanceSettings() {
         <Text w="100%" fontSize="md" fontWeight="semibold">
           Theme
         </Text>
-        <RadioGroup w="100%" onChange={onThemeChange} value={value}>
+        <RadioGroup w="100%" value={value}>
           <VStack>
-            <HStack w="100%" bg={radioBg} p="4" gap={2} rounded="md">
-              <Radio colorScheme="yellow" value={'light'} />
-              <SunIcon />
-              <Text>Light</Text>
-            </HStack>
-            <HStack w="100%" bg={radioBg} p="4" gap={2} rounded="md">
-              <Radio colorScheme="yellow" value={'dark'} />
-              <MoonIcon />
-              <Text>Dark</Text>
-            </HStack>
             <HStack
+              as="button"
               w="100%"
               bg={radioBg}
+              _hover={{ bg: radioHoverBg }}
               p="4"
               gap={2}
               rounded="md"
-              opacity="50%"
+              onClick={() => onThemeChange('light')}
             >
-              <Radio colorScheme="yellow" value={'system'} isDisabled />
-              {/** change icon later */}
-              <AddIcon />
-              <Text>System Theme</Text>
+              <Radio colorScheme="yellow" value={'light'} variant="brand" />
+              <SunIcon />
+              <Text fontWeight="semibold">Light</Text>
+            </HStack>
+            <HStack
+              as="button"
+              w="100%"
+              bg={radioBg}
+              _hover={{ bg: radioHoverBg }}
+              p="4"
+              gap={2}
+              rounded="md"
+              onClick={() => onThemeChange('dark')}
+            >
+              <Radio colorScheme="yellow" value={'dark'} variant="brand" />
+              <MoonIcon />
+              <Text fontWeight="semibold">Dark</Text>
             </HStack>
           </VStack>
         </RadioGroup>
       </VStack>
       <Divider />
-      {/* <VStack w="100%" spacing={4} textAlign="left">
-        <Text w="100%" fontSize="md" fontWeight="semibold">
-          Accent Colour
-        </Text>
-      </VStack> */}
     </VStack>
   )
 }

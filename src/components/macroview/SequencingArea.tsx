@@ -178,6 +178,7 @@ export default function SequencingArea() {
       </VStack>
       <HStack justifyContent="right" w="100%" alignItems="center">
         <Button
+          variant="brand"
           leftIcon={<EditIcon />}
           size={['xs', 'sm', 'md']}
           colorScheme={recording ? 'red' : 'gray'}
@@ -186,6 +187,7 @@ export default function SequencingArea() {
           {recording ? 'Stop' : 'Record'}
         </Button>
         <Button
+          variant="brand"
           leftIcon={<DeleteIcon />}
           size={['xs', 'sm', 'md']}
           onClick={() => overwriteSequence([])}
@@ -193,6 +195,7 @@ export default function SequencingArea() {
           Clear
         </Button>
         <Button
+          variant="brand"
           leftIcon={<AddIcon />}
           size={['xs', 'sm', 'md']}
           onClick={() => {

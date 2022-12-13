@@ -80,10 +80,15 @@ export type MousePressAction =
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
-  | { type: 'Open'; action: string }
+  | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
   | { type: 'Brightness'; action: MonitorBrightnessAction }
+
+export type DirectoryAction =
+  | { type: 'Directory'; data: string }
+  | { type: 'File'; data: string }
+  | { type: 'Website'; data: string }
 
 export type ClipboardAction =
   | { type: 'SetClipboard'; data: string }
@@ -99,11 +104,10 @@ export type VolumeAction =
   | { type: 'ToggleMute' }
 
 export type MonitorBrightnessAction =
-  | { type: 'Get' }
-  | { type: 'Set'; level: number; name: string }
   | { type: 'SetAll'; level: number }
-  | { type: 'Increase' }
-  | { type: 'Decrease' }
+  | { type: 'SetSpecific'; level: number; name: string }
+  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
+  | { type: 'ChangeAll'; by_how_much: number }
 
 // Input Event Types
 export type TriggerEventType =

@@ -120,6 +120,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     <Modal
       isOpen={isOpen}
       size={['md', 'xl', '3xl', '3xl']}
+      variant="brand"
       onClose={onClose}
       isCentered
     >
@@ -142,13 +143,14 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             <Flex justifyContent="end">
               <HStack>
                 {items.map((element) => (
-                  <Kbd key={element}>
+                  <Kbd variant="brand" key={element}>
                     {getDisplayString(element, isMouseButtonArray(items))}
                   </Kbd>
                 ))}
               </HStack>
               <Spacer />
               <Button
+                variant="brand"
                 leftIcon={<EditIcon />}
                 onClick={recording ? stopRecording : startRecording}
                 colorScheme={recording ? 'red' : 'gray'}
@@ -172,7 +174,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             </VStack>
             <Switch
               size="sm"
-              colorScheme="yellow"
+              variant="brand"
               defaultChecked={isAllowed}
               isChecked={isAllowed}
               isDisabled={isTriggerMousepress}

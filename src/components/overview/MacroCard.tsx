@@ -14,7 +14,9 @@ import {
   MenuItem,
   useColorModeValue,
   Box,
-  Circle
+  Circle,
+  HStack,
+  Icon
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
@@ -34,8 +36,9 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
-  const subtextColour = useColorModeValue('gray.500', 'gray.400')
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const bg = useColorModeValue('stone.100', 'zinc.900')
+  const subtextColour = useColorModeValue('stone.600', 'zinc.400')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
   const kebabColour = useColorModeValue('black', 'white')
 
   const onToggle = useCallback(
@@ -56,15 +59,17 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   return (
     <VStack
       w="100%"
+      bg={bg}
       border="1px"
       borderColor={borderColour}
       rounded="md"
       p="3"
       m="auto"
       spacing="8px"
+      overflow="hidden"
     >
       {/** Top Row */}
-      <Flex w="100%" justifyContent="space-between">
+      <HStack w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
           <Circle position="relative" role="group">
             <Image
@@ -80,30 +85,30 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           </Circle>
           <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
-        <Menu>
+        <Menu variant="brand">
           <MenuButton
             as={IconButton}
             aria-label="Kebab Menu Button"
+            m="0"
             icon={
-              <svg
+              <Icon
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
+                boxSize={6}
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke={kebabColour}
-                width={24}
-                height={24}
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
                 />
-              </svg>
+              </Icon>
             }
             variant="link"
-          ></MenuButton>
-          <MenuList p="2">
+          />
+          <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
@@ -113,7 +118,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             </MenuItem>
           </MenuList>
         </Menu>
-      </Flex>
+      </HStack>
       {/** Trigger Keys Display */}
       <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
         Trigger Keys:
@@ -121,7 +126,9 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       <Flex w="100%" gap="4px">
         {macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.map((HIDcode) => (
-            <Kbd key={HIDcode}>{HIDLookup.get(HIDcode)?.displayString}</Kbd>
+            <Kbd variant="brand" key={HIDcode}>
+              {HIDLookup.get(HIDcode)?.displayString}
+            </Kbd>
           ))}
         {macro.trigger.type === 'MouseEvent' && (
           <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
@@ -132,6 +139,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       <Flex w="100%" alignItems="center" justifyContent="space-between">
         <Button
           size="sm"
+          variant="brand"
           leftIcon={<EditIcon />}
           onClick={() => {
             changeSelectedMacroIndex(index)
@@ -139,7 +147,11 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         >
           Edit
         </Button>
-        <Switch defaultChecked={macro.active} onChange={onToggle} />
+        <Switch
+          variant="brand"
+          defaultChecked={macro.active}
+          onChange={onToggle}
+        />
       </Flex>
     </VStack>
   )

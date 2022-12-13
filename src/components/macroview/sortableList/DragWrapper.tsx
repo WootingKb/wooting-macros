@@ -12,9 +12,9 @@ type Props = {
 
 export default function DragWrapper({ id, element, children }: Props) {
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('white', 'gray.800')
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
-  const highlightedColour = useColorModeValue('yellow.500', 'yellow.200')
+  const bg = useColorModeValue('stone.100', 'zinc.900')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const highlightedColour = useColorModeValue('yellow.500', 'yellow.400')
 
   return (
     <HStack
@@ -23,7 +23,7 @@ export default function DragWrapper({ id, element, children }: Props) {
       borderColor={
         selectedElementId !== undefined && id === selectedElementId + 1
           ? highlightedColour
-          : dividerColour
+          : borderColour
       }
       rounded="md"
       spacing="0px"
@@ -35,7 +35,7 @@ export default function DragWrapper({ id, element, children }: Props) {
         borderColor={
           selectedElementId !== undefined && id === selectedElementId + 1
             ? highlightedColour
-            : dividerColour
+            : borderColour
         }
         p="4px"
         h="full"

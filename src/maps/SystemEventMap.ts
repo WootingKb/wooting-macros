@@ -8,14 +8,31 @@ export interface SystemEventInfo {
 }
 
 export class SystemEvent {
-  static get OpenApplication(): SystemEventInfo {
+  static get OpenFile(): SystemEventInfo {
     return {
       type: 'Open',
-      subtype: 'Open',
-      displayString: 'Open Application',
-      defaultData: { type: 'Open', action : '' }
+      subtype: 'File',
+      displayString: 'Open File',
+      defaultData: { type: 'Open', action: { type: 'File', data: '' } }
     }
   }
+  static get OpenFolder(): SystemEventInfo {
+    return {
+      type: 'Open',
+      subtype: 'Directory',
+      displayString: 'Open Folder',
+      defaultData: { type: 'Open', action: { type: 'Directory', data: '' } }
+    }
+  }
+  static get OpenWebsite(): SystemEventInfo {
+    return {
+      type: 'Open',
+      subtype: 'Website',
+      displayString: 'Open Website',
+      defaultData: { type: 'Open', action: { type: 'Website', data: '' } }
+    }
+  }
+
   static get Clipboard(): SystemEventInfo {
     return {
       type: 'Clipboard',
@@ -62,33 +79,38 @@ export class SystemEvent {
       defaultData: { type: 'Volume', action: { type: 'ToggleMute' } }
     }
   }
-  static get SetBrightness(): SystemEventInfo {
-    return {
-      type: 'Brightness',
-      subtype: 'Set',
-      displayString: 'Set Brightness',
-      defaultData: { type: 'Brightness', action: { type: 'Set', level: 75, name: '' } }
-    }
-  }
-  static get IncreaseBrightness(): SystemEventInfo {
-    return {
-      type: 'Brightness',
-      subtype: 'Increase',
-      displayString: 'Increase Brightness',
-      defaultData: { type: 'Brightness', action: { type: 'Increase' } }
-    }
-  }
-  static get DecreaseBrightness(): SystemEventInfo {
-    return {
-      type: 'Brightness',
-      subtype: 'Decrease',
-      displayString: 'Decrease Brightness',
-      defaultData: { type: 'Brightness', action: { type: 'Decrease' } }
-    }
-  }
+  // static get SetBrightness(): SystemEventInfo {
+  //   return {
+  //     type: 'Brightness',
+  //     subtype: 'Set',
+  //     displayString: 'Set Brightness',
+  //     defaultData: {
+  //       type: 'Brightness',
+  //       action: { type: 'Set', level: 75, name: '' }
+  //     }
+  //   }
+  // }
+  // static get IncreaseBrightness(): SystemEventInfo {
+  //   return {
+  //     type: 'Brightness',
+  //     subtype: 'Increase',
+  //     displayString: 'Increase Brightness',
+  //     defaultData: { type: 'Brightness', action: { type: 'Increase' } }
+  //   }
+  // }
+  // static get DecreaseBrightness(): SystemEventInfo {
+  //   return {
+  //     type: 'Brightness',
+  //     subtype: 'Decrease',
+  //     displayString: 'Decrease Brightness',
+  //     defaultData: { type: 'Brightness', action: { type: 'Decrease' } }
+  //   }
+  // }
 
   static readonly all: SystemEventInfo[] = [
-    SystemEvent.OpenApplication,
+    SystemEvent.OpenFile,
+    SystemEvent.OpenFolder,
+    SystemEvent.OpenWebsite,
     SystemEvent.Clipboard,
     SystemEvent.Sarcasm,
     SystemEvent.IncreaseVolume,

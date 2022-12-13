@@ -64,15 +64,22 @@ export default function ScreenBrightnessForm() {
         {'Set Screen Brightness'}
       </Text>
       <Divider />
-      <Text fontSize={['xs', 'sm', 'md']}>Monitor</Text>
-      <Select placeholder="Select Monitor" onChange={(event) => setSelectedMonitor(event.target.value)}>
+      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+        Monitor
+      </Text>
+      <Select
+        placeholder="Select Monitor"
+        onChange={(event) => setSelectedMonitor(event.target.value)}
+      >
         {monitors.map((monitor) => (
           <option value={monitor.name} key={monitor.name}>
             {monitor.name}
           </option>
         ))}
       </Select>
-      <Text fontSize={['xs', 'sm', 'md']}>Brightness value</Text>
+      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+        Brightness value
+      </Text>
       <Input
         type="number"
         value={brightnessVal}

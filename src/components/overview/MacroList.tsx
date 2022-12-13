@@ -25,24 +25,30 @@ export default function MacroList() {
       w="100%"
       h="100%"
       p="2"
+      overflow="hidden"
       overflowY="auto"
       css={{
         '&::-webkit-scrollbar': {
-          width: '10px'
-        },
-        '&::-webkit-scrollbar-track': {
-          background: '#f1f1f1',
-          borderRadius: '10px'
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: '#888',
-          borderRadius: '10px'
-        },
-        '&::-webkit-scrollbar-thumb:hover': {
-          background: '#555',
-          borderRadius: '10px'
+          display: 'none'
         }
       }}
+      // css={{
+      //   '&::-webkit-scrollbar': {
+      //     width: '10px'
+      //   },
+      //   '&::-webkit-scrollbar-track': {
+      //     background: '#f1f1f1',
+      //     borderRadius: '10px'
+      //   },
+      //   '&::-webkit-scrollbar-thumb': {
+      //     background: '#888',
+      //     borderRadius: '10px'
+      //   },
+      //   '&::-webkit-scrollbar-thumb:hover': {
+      //     background: '#555',
+      //     borderRadius: '10px'
+      //   }
+      // }}
     >
       {currentCollection.macros.length === 0 ? (
         <Flex h="100%" justifyContent="center" alignItems="center">
@@ -52,7 +58,7 @@ export default function MacroList() {
             size={['sm', 'md', 'lg']}
             maxW="50%"
             onClick={() => changeViewState(ViewState.Addview)}
-            _hover={{ transform: 'scale(120%)' }}
+            _hover={{ transform: 'scale(110%)' }}
           >
             Add Macro
           </Button>
@@ -70,7 +76,7 @@ export default function MacroList() {
               size={['sm', 'md', 'lg']}
               maxW="50%"
               onClick={() => changeViewState(ViewState.Addview)}
-              _hover={{ transform: 'scale(120%)' }}
+              _hover={{ transform: 'scale(110%)' }}
             >
               Add Macro
             </Button>

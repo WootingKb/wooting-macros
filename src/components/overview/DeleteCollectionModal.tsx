@@ -6,7 +6,8 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Button
+  Button,
+  Divider
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
@@ -22,11 +23,12 @@ export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
   }, [onClose, onSelectedCollectionDelete])
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal variant="brand" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Delete this collection?</ModalHeader>
         <ModalCloseButton />
+        <Divider w="90%" alignSelf="center" />
         <ModalBody>
           This action is irreversible! Any macros within this collection will be
           lost.

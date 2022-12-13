@@ -15,9 +15,9 @@ export default function ApplicationSettings() {
   } = useSettingsContext()
 
   return (
-    <VStack spacing="4">
+    <VStack spacing="4" >
       <VStack w="100%">
-        <Text w="100%" textStyle="settingsCategoryHeader">
+        <Text w="100%" textStyle="miniHeader">
           Window Settings
         </Text>
       </VStack>
@@ -51,7 +51,7 @@ export default function ApplicationSettings() {
         <Divider />
       </VStack>
       <VStack w="100%">
-        <Text w="100%" textStyle="settingsCategoryHeader">
+        <Text w="100%" textStyle="miniHeader">
           Delay Settings
         </Text>
       </VStack>
@@ -76,7 +76,7 @@ export default function ApplicationSettings() {
         <Divider />
       </VStack>
       <VStack w="100%">
-        <Text w="100%" textStyle="settingsCategoryHeader">
+        <Text w="100%" textStyle="miniHeader">
           Macro Creation Settings
         </Text>
       </VStack>

@@ -1,11 +1,6 @@
-import {
-  RepeatClockIcon,
-  StarIcon,
-  DeleteIcon,
-  EditIcon
-} from '@chakra-ui/icons'
+import { RepeatClockIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
 import { mouseEnumLookup } from '../../../maps/MouseMap'
@@ -20,8 +15,8 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
-  const highlightedColour = useColorModeValue('yellow.500', 'yellow.200')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const highlightedColour = useColorModeValue('yellow.500', 'yellow.400')
   const { selectedElementId, onElementDelete, updateSelectedElementId } =
     useMacroContext()
 
@@ -44,7 +39,9 @@ export default function SortableItem({ id, element }: Props) {
       case 'SystemEventAction':
         switch (element.data.type) {
           case 'Open':
-            setDisplayText(sysEventLookup.get(element.data.type)?.displayString)
+            setDisplayText(
+              sysEventLookup.get(element.data.action.type)?.displayString
+            )
             setIsEditable(true)
             break
           case 'Volume':
@@ -86,6 +83,123 @@ export default function SortableItem({ id, element }: Props) {
     }
   }, [element.data, element.type, id])
 
+  const iconToDisplay = useMemo(() => {
+    switch (element.type) {
+      case 'DelayEventAction':
+        return <RepeatClockIcon />
+      case 'KeyPressEventAction':
+        if (element.data.keytype === 'DownUp') {
+          return (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+              />
+            </svg>
+          )
+        } else if (element.data.keytype === 'Down') {
+          return (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
+              />
+            </svg>
+          )
+        } else {
+          return (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
+              />
+            </svg>
+          )
+        }
+      case 'MouseEventAction':
+        if (element.data.data.type === 'DownUp') {
+          return (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+              />
+            </svg>
+          )
+        } else if (element.data.data.type === 'Down') {
+          return (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
+              />
+            </svg>
+          )
+        } else {
+          return (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
+              />
+            </svg>
+          )
+        }
+      case 'SystemEventAction':
+        return <></>
+      default:
+        return <></>
+    }
+  }, [element])
+
   const onEditButtonPress = () => {
     if (selectedElementId === id - 1) {
       return
@@ -103,19 +217,29 @@ export default function SortableItem({ id, element }: Props) {
   return (
     <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
       <HStack p="4px" px="8px" w="100%">
-        {element.type === 'DelayEventAction' && <RepeatClockIcon />}
-        {element.type === 'KeyPressEventAction' && <StarIcon />}
-        <Text>{displayText}</Text>
+        {iconToDisplay}
+        <Text
+          fontWeight={
+            selectedElementId !== undefined && id === selectedElementId + 1
+              ? 'semibold'
+              : 'normal'
+          }
+        >
+          {displayText}
+        </Text>
       </HStack>
       <HStack
         p="4px"
         h="100%"
         borderLeft="1px"
         borderColor={
-          ((selectedElementId !== undefined) && (id === selectedElementId + 1)) ? highlightedColour : dividerColour
+          selectedElementId !== undefined && id === selectedElementId + 1
+            ? highlightedColour
+            : borderColour
         }
       >
         <IconButton
+          variant="brand"
           aria-label="delete-button"
           icon={<DeleteIcon />}
           size={['xs', 'sm']}
@@ -123,6 +247,7 @@ export default function SortableItem({ id, element }: Props) {
         />
         {isEditable && (
           <IconButton
+            variant="brand"
             aria-label="edit-button"
             icon={<EditIcon />}
             size={['xs', 'sm']}

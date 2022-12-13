@@ -60,9 +60,9 @@ export class SettingsGroup {
   static readonly all: SettingInfo[] = [
     SettingsGroup.Application,
     SettingsGroup.Appearance,
-    SettingsGroup.Accessibility,
-    SettingsGroup.Language,
-    SettingsGroup.Integration,
+    // SettingsGroup.Accessibility,
+    // SettingsGroup.Language,
+    // SettingsGroup.Integration,
     SettingsGroup.Updates,
     SettingsGroup.Support
   ]

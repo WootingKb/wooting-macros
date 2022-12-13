@@ -14,9 +14,11 @@ import {
   VStack,
   Box,
   useColorModeValue,
-  Center
+  Center,
+  Tooltip,
+  Divider
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
@@ -27,6 +29,8 @@ type Props = {
   isOpen: boolean
   onClose: () => void
 }
+
+const maxNameLength = 25
 
 export default function CollectionModal({ isOpen, onClose }: Props) {
   const [collectionName, setCollectionName] = useState('')
@@ -40,7 +44,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     onCollectionUpdate
   } = useApplicationContext()
   const collection = useSelectedCollection()
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   useEffect(() => {
     if (isUpdatingCollection) {
@@ -82,17 +86,19 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
 
   const onCollectionNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      let newName: string = event.target.value
+      const newName: string = event.target.value
       if (newName === '') {
         setCollectionName(newName)
         setIsNameUsable(false)
         return
+      } else if (newName.length > maxNameLength) {
+        setIsNameUsable(false)
+        return
       }
 
-      newName = newName.trim()
       for (let i = 0; i < collections.length; i++) {
         const collection = collections[i]
-        if (collection.name.toUpperCase() === newName.toUpperCase()) {
+        if (collection.name.toUpperCase() === newName.trim().toUpperCase()) {
           setCollectionName(newName)
           setIsNameUsable(false)
           return
@@ -118,6 +124,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     if (path === null || Array.isArray(path)) {
       return
     }
+
+    
+
     let base64string = ''
     await readBinaryFile(path).then((res) => {
       base64string = Buffer.from(res).toString('base64')
@@ -127,21 +136,30 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     }
   }, [])
 
+  const tooltipText = useMemo(():string => {
+    if (collectionName === '') {
+      return "Please enter a name"
+    } else {
+      return ''
+    }
+  }, [collectionName])
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal variant="brand" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
           {isUpdatingCollection ? 'Changed your mind?' : 'Make it unique!'}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <Divider w="90%" alignSelf="center" />
+        <ModalBody mt="4">
           <VStack w="100%">
             <HStack w="100%">
-              <Text w="50%" textStyle="settingsCategoryHeader">
+              <Text w="50%" textStyle="miniHeader">
                 Icon
               </Text>
-              <Text w="50%" textStyle="settingsCategoryHeader">
+              <Text w="50%" textStyle="miniHeader">
                 Name
               </Text>
             </HStack>
@@ -167,7 +185,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                   bg="gray.700"
                   opacity="0%"
                   rounded="full"
-                  w="100%"
+                  w="50%"
                   h="100%"
                   _groupHover={{ opacity: '50%', cursor: 'pointer' }}
                 ></Box>
@@ -182,29 +200,42 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                   Change Icon
                 </Text>
               </Center>
-              <Input
-                w="50%"
-                variant="flushed"
-                isRequired
-                isInvalid={!isNameUsable}
-                onChange={onCollectionNameChange}
-                value={collectionName}
-                placeholder={'Collection Name'}
-              />
+              <VStack w="50%" spacing={0}>
+                <Input
+                  w="100%"
+                  variant="brand"
+                  isRequired
+                  isInvalid={!isNameUsable}
+                  onChange={onCollectionNameChange}
+                  value={collectionName}
+                  placeholder={'Collection Name'}
+                  _placeholder={{ opacity: 1, color: borderColour }}
+                />
+                {collectionName.length === 25 && (
+                  <Text w="100%" fontSize="2xs" fontWeight="semibold">
+                    Max length is 25 characters
+                  </Text>
+                )}
+              </VStack>
             </HStack>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>
+          <Button variant="brand" mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button
-            colorScheme="yellow"
-            onClick={onModalSuccessClose}
-            isDisabled={!isNameUsable}
+          <Tooltip
+            label={tooltipText}
+            aria-label="A tooltip letting the user know what they need to do to be able to create a collection."
           >
-            {isUpdatingCollection ? 'Update' : 'Create'}
-          </Button>
+            <Button
+              colorScheme="yellow"
+              onClick={onModalSuccessClose}
+              isDisabled={!isNameUsable}
+            >
+              {isUpdatingCollection ? 'Update' : 'Create'}
+            </Button>
+          </Tooltip>
         </ModalFooter>
       </ModalContent>
     </Modal>
