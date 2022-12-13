@@ -3,8 +3,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
+import { sysEventLookup } from '../../../maps/SystemEventMap'
 
-export default function OpenAppForm() {
+export default function OpenEventForm() {
+  const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()
+  const [headerText, setHeaderText] = useState('')
+  const [subHeaderText, setSubHeaderText] = useState('')
   const [path, setPath] = useState('')
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
@@ -19,8 +23,26 @@ export default function OpenAppForm() {
     if (selectedElement.data.type !== 'Open') {
       return
     }
-
-    setPath(selectedElement.data.action)
+    switch (selectedElement.data.action.type) {
+      case 'File':
+        setSubtype('File')
+        setSubHeaderText('File path')
+        break
+      case 'Directory':
+        setSubtype('Directory')
+        setSubHeaderText('Directory path')
+        break
+      case 'Website':
+        setSubtype('Website')
+        setSubHeaderText('Website URL')
+        break
+      default:
+        break
+    }
+    setHeaderText(
+      sysEventLookup.get(selectedElement.data.action.type)?.displayString || ''
+    )
+    setPath(selectedElement.data.action.data)
   }, [selectedElement])
 
   const onPathChange = useCallback(
@@ -32,8 +54,10 @@ export default function OpenAppForm() {
         return
       }
       setPath(event.target.value)
-      const temp = { ...selectedElement }
-      temp.data = { type: 'Open', action: event.target.value }
+      const temp = {
+        ...selectedElement,
+        data: { ...selectedElement.data, data: event.target.value }
+      }
       updateElement(temp, selectedElementId)
     },
     [selectedElement, selectedElementId, updateElement]
@@ -57,20 +81,24 @@ export default function OpenAppForm() {
           return
         }
         setPath(dir)
-        const temp = { ...selectedElement }
-        temp.data = { type: 'Open', action: dir }
+        const temp = {
+          ...selectedElement,
+          data: { ...selectedElement.data, data: dir }
+        }
         updateElement(temp, selectedElementId)
       } else {
         const file = await open({
           multiple: false,
-          title: 'Select an application to open'
+          title: 'Select a file to open'
         })
         if (file === null || Array.isArray(file)) {
           return
         }
         setPath(file)
-        const temp = { ...selectedElement }
-        temp.data = { type: 'Open', action: file }
+        const temp = {
+          ...selectedElement,
+          data: { ...selectedElement.data, data: file }
+        }
         updateElement(temp, selectedElementId)
       }
     },
@@ -80,19 +108,28 @@ export default function OpenAppForm() {
   return (
     <VStack textAlign="left" w="100%">
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-        {'Open Application'}
+        {headerText}
       </Text>
       <Divider />
       <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
-        Path to application
+        {subHeaderText}
       </Text>
-      <Textarea value={path} onChange={onPathChange} placeholder="path" />
-      <Button w={['100%', '75%', '50%']} onClick={() => onButtonPress(false)}>
-        Browse For Files
-      </Button>
-      <Button w={['100%', '75%', '50%']} onClick={() => onButtonPress(true)}>
-        Browse For Folders
-      </Button>
+      <Textarea
+        value={path}
+        onChange={onPathChange}
+        placeholder="path"
+        isDisabled={subtype === 'File' || subtype === 'Directory'}
+      />
+      {subtype === 'File' && (
+        <Button w={['100%', '75%', '50%']} onClick={() => onButtonPress(false)}>
+          Browse For Files
+        </Button>
+      )}
+      {subtype === 'Directory' && (
+        <Button w={['100%', '75%', '50%']} onClick={() => onButtonPress(true)}>
+          Browse For Folders
+        </Button>
+      )}
     </VStack>
   )
 }

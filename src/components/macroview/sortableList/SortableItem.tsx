@@ -1,6 +1,5 @@
 import {
   RepeatClockIcon,
-  StarIcon,
   DeleteIcon,
   EditIcon
 } from '@chakra-ui/icons'
@@ -20,7 +19,7 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const dividerColour = useColorModeValue('gray.400', 'gray.600')
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
   const highlightedColour = useColorModeValue('yellow.500', 'yellow.200')
   const { selectedElementId, onElementDelete, updateSelectedElementId } =
     useMacroContext()
@@ -44,7 +43,7 @@ export default function SortableItem({ id, element }: Props) {
       case 'SystemEventAction':
         switch (element.data.type) {
           case 'Open':
-            setDisplayText(sysEventLookup.get(element.data.type)?.displayString)
+            setDisplayText(sysEventLookup.get(element.data.action.type)?.displayString)
             setIsEditable(true)
             break
           case 'Volume':
@@ -221,7 +220,15 @@ export default function SortableItem({ id, element }: Props) {
     <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
       <HStack p="4px" px="8px" w="100%">
         {iconToDisplay}
-        <Text>{displayText}</Text>
+        <Text
+          fontWeight={
+            selectedElementId !== undefined && id === selectedElementId + 1
+              ? 'semibold'
+              : 'normal'
+          }
+        >
+          {displayText}
+        </Text>
       </HStack>
       <HStack
         p="4px"
@@ -230,7 +237,7 @@ export default function SortableItem({ id, element }: Props) {
         borderColor={
           selectedElementId !== undefined && id === selectedElementId + 1
             ? highlightedColour
-            : dividerColour
+            : borderColour
         }
       >
         <IconButton

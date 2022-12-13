@@ -2,17 +2,17 @@ import { extendTheme } from '@chakra-ui/react'
 import { config } from './config'
 import { breakpoints } from './breakpoints'
 import { Divider } from './components/divider'
-import { miniHeader } from './typography/miniHeader'
+import { textStyles } from './textStyles'
+import { colors } from './colors'
 
 const overrides = {
   config,
   breakpoints,
+  colors,
   components: {
     Divider
   },
-  textStyles: {
-    miniHeader,
-  }
+  textStyles
 }
 
 export const theme = extendTheme(overrides)

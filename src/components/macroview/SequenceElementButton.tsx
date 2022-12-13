@@ -43,7 +43,7 @@ export default function SequenceElementButton({
   ])
 
   return (
-    <Button colorScheme="yellow" size={['sm']} onClick={handleAddElement}>
+    <Button size={['sm']} onClick={handleAddElement}>
       <Text fontSize={['xs', 'sm', 'md']}>{displayText}</Text>
     </Button>
   )
