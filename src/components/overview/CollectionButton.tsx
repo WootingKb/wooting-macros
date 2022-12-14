@@ -27,6 +27,7 @@ export default function CollectionButton({
 }: Props) {
   const buttonBg = useColorModeValue('stone.300', 'zinc.800')
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const selectedTextColour = useColorModeValue('yellow.700', 'yellow.300')
 
   return (
     <Box
@@ -64,7 +65,11 @@ export default function CollectionButton({
             />
           </Circle>
         )}
-        <Text noOfLines={1} fontWeight={isFocused ? 'semibold' : 'normal'}>
+        <Text
+          noOfLines={1}
+          fontWeight="semibold"
+          textColor={isFocused ? selectedTextColour : ''}
+        >
           {collection.name}
         </Text>
         <Switch

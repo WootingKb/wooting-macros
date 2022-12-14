@@ -31,7 +31,7 @@ export default function TriggerArea({ onOpen }: Props) {
       justifyContent="space-between"
     >
       <Text fontWeight="semibold" fontSize={['xs', 'sm']}>
-        Trigger
+        TRIGGER
       </Text>
       <HStack spacing="4px" w="full" h="full" justifyContent="center">
         {macro.trigger.type === 'KeyPressEvent' &&

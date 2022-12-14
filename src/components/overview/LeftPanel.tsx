@@ -55,6 +55,19 @@ export default function LeftPanel({
           <ToggleGrabbingButton />
         </HStack>
         <Divider />
+        <Button
+          size={['sm']}
+          w="full"
+          variant="yellowGradient"
+          p="2"
+          leftIcon={<AddIcon />}
+          onClick={() => {
+            updateIsRenamingCollection(false)
+            onOpenCollectionModal()
+          }}
+        >
+          New Collection
+        </Button>
         <VStack
           w="100%"
           overflowY="auto"
@@ -84,18 +97,6 @@ export default function LeftPanel({
               />
             ))}
           </VStack>
-          <Button
-            colorScheme="yellow"
-            size={['sm']}
-            p="2"
-            leftIcon={<AddIcon />}
-            onClick={() => {
-              updateIsRenamingCollection(false)
-              onOpenCollectionModal()
-            }}
-          >
-            New Collection
-          </Button>
         </VStack>
       </VStack>
       <HStack w="100%">

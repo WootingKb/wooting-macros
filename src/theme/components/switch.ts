@@ -12,7 +12,7 @@ export const Switch = helpers.defineMultiStyleConfig({
       container: {},
       thumb: {},
       track: {
-        bg: mode('stone.300', 'zinc.500')(props),
+        bg: mode('stone.500', 'zinc.500')(props),
         _checked: {
           bg: mode('yellow.500', 'yellow.400')(props)
         }

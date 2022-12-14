@@ -6,5 +6,5 @@ export const styles = {
     body: {
       bg: mode('offWhite', 'darkGray')(props)
     }
-  })
+  }),
 }

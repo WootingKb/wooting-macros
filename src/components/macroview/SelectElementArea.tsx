@@ -245,7 +245,7 @@ export default function SelectElementArea() {
       borderColor={borderColour}
     >
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-        Elements
+        ELEMENTS
       </Text>
       <Stack
         direction={['column', 'column', 'row']}

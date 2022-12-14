@@ -147,9 +147,9 @@ export default function SequencingArea() {
   }, [collections, sequence, setShowAlert])
 
   return (
-    <VStack w="41%" h="full" p="3">
+    <VStack w="41%" h="full">
       {/** Header */}
-      <VStack w="100%">
+      <VStack w="100%" px="3" pt="3">
         <Stack
           direction={['column', 'row']}
           w="100%"
@@ -158,7 +158,7 @@ export default function SequencingArea() {
           alignItems={['start', 'center']}
         >
           <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-            Sequence
+            SEQUENCE
           </Text>
           {showAlert && (
             <Alert
@@ -176,7 +176,7 @@ export default function SequencingArea() {
           )}
         </Stack>
       </VStack>
-      <HStack justifyContent="right" w="100%" alignItems="center">
+      <HStack justifyContent="right" w="100%" alignItems="center" px="3">
         <Button
           variant="brand"
           leftIcon={<EditIcon />}
@@ -208,7 +208,7 @@ export default function SequencingArea() {
           Add Delay
         </Button>
       </HStack>
-      <Divider />
+      <Divider w="95%" alignSelf="center"/>
       {/** Timeline */}
       <DndContext
         sensors={sensors}
@@ -218,7 +218,7 @@ export default function SequencingArea() {
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-          <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
+          <VStack w="100%" h="100%" px="3" overflowY="auto" overflowX="hidden">
             {ids.map((id) => (
               <SortableWrapper
                 id={id}

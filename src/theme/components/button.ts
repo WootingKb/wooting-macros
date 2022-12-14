@@ -20,6 +20,19 @@ export const Button = defineStyleConfig({
       _hover: { bg: mode('yellow.500', 'yellow.300')(props) },
       _disabled: { bg: mode('yellow.400', 'yellow.400')(props), opacity: 0.5 }
     }),
+    yellowGradient: (props: StyleFunctionProps) => ({
+      bgGradient: mode(
+        'linear(to-b, #FFD45C, #FFBC00)',
+        'linear(to-b, yellow.400, yellow.500)'
+      )(props),
+      color: 'darkGray',
+      _hover: {
+        bgGradient: mode(
+          'linear(to-b, yellow.400, yellow.500)',
+          'linear(to-b, #FFD45C, #FFBC00)'
+        )(props)
+      },
+    }),
     brandGhost: (props: StyleFunctionProps) => ({
       color: mode('darkGray', 'offWhite')(props),
       _hover: { bg: mode('stone.200', 'zinc.800')(props) }

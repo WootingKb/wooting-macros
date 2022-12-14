@@ -154,7 +154,7 @@ export default function Macroview() {
         >
           <Button
             size="sm"
-            colorScheme="yellow"
+            variant="yellowGradient"
             isDisabled={
               (macro.trigger.type === 'KeyPressEvent' &&
                 macro.trigger.data.length === 0) ||

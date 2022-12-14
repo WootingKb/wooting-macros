@@ -2,7 +2,6 @@ import { ReactNode } from 'react'
 import { DragHandleIcon } from '@chakra-ui/icons'
 import { Box, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../types'
-import { useMacroContext } from '../../../contexts/macroContext'
 
 type Props = {
   id: number
@@ -11,37 +10,28 @@ type Props = {
 }
 
 export default function DragWrapper({ id, element, children }: Props) {
-  const { selectedElementId } = useMacroContext()
   const bg = useColorModeValue('stone.100', 'zinc.900')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
-  const highlightedColour = useColorModeValue('yellow.500', 'yellow.400')
+  const handleBg = useColorModeValue('yellow.400', 'yellow.400')
+  const handleIconColour = useColorModeValue('yellow.500', 'yellow.600')
+  const shadowColour = useColorModeValue('md', 'white-md')
 
   return (
     <HStack
       w={element.type === 'DelayEventAction' ? 'fit-content' : '100%'}
-      border="1px"
-      borderColor={
-        selectedElementId !== undefined && id === selectedElementId + 1
-          ? highlightedColour
-          : borderColour
-      }
       rounded="md"
       spacing="0px"
       bg={bg}
+      shadow={shadowColour}
       sx={{ cursor: 'auto' }}
     >
       <Box
-        borderRight="1px"
-        borderColor={
-          selectedElementId !== undefined && id === selectedElementId + 1
-            ? highlightedColour
-            : borderColour
-        }
         p="4px"
         h="full"
+        bg={handleBg}
+        roundedLeft="md"
         sx={{ cursor: 'grabbing' }}
       >
-        <DragHandleIcon w={4} h={8} />
+        <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Box>
       {children}
     </HStack>
