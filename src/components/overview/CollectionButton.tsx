@@ -27,7 +27,7 @@ export default function CollectionButton({
 }: Props) {
   const buttonBg = useColorModeValue('stone.300', 'zinc.800')
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
-  const selectedTextColour = useColorModeValue('yellow.700', 'yellow.300')
+  const selectedTextColour = useColorModeValue('yellow.700', 'yellow.400')
 
   return (
     <Box

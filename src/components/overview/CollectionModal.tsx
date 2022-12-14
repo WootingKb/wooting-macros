@@ -125,8 +125,6 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
       return
     }
 
-    
-
     let base64string = ''
     await readBinaryFile(path).then((res) => {
       base64string = Buffer.from(res).toString('base64')
@@ -136,9 +134,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     }
   }, [])
 
-  const tooltipText = useMemo(():string => {
+  const tooltipText = useMemo((): string => {
     if (collectionName === '') {
-      return "Please enter a name"
+      return 'Please enter a name'
     } else {
       return ''
     }
@@ -225,11 +223,13 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
             Close
           </Button>
           <Tooltip
+            hasArrow
+            variant="brand"
             label={tooltipText}
             aria-label="A tooltip letting the user know what they need to do to be able to create a collection."
           >
             <Button
-              colorScheme="yellow"
+              variant="yellowGradient"
               onClick={onModalSuccessClose}
               isDisabled={!isNameUsable}
             >

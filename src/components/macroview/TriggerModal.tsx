@@ -194,7 +194,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             Close
           </Button>
           <Button
-            colorScheme="yellow"
+            variant="yellowGradient"
             onClick={onModalSuccessClose}
             isDisabled={!getTriggerCanSave}
           >

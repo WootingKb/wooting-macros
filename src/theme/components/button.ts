@@ -30,8 +30,22 @@ export const Button = defineStyleConfig({
         bgGradient: mode(
           'linear(to-b, yellow.400, yellow.500)',
           'linear(to-b, #FFD45C, #FFBC00)'
-        )(props)
+        )(props),
+        _disabled: {
+          opacity: 0.5,
+          bgGradient: mode(
+            'linear(to-b, #FFD45C, #FFBC00)',
+            'linear(to-b, yellow.400, yellow.500)'
+          )(props)
+        }
       },
+      _disabled: {
+        opacity: 0.5,
+        bgGradient: mode(
+          'linear(to-b, #FFD45C, #FFBC00)',
+          'linear(to-b, yellow.400, yellow.500)'
+        )(props)
+      }
     }),
     brandGhost: (props: StyleFunctionProps) => ({
       color: mode('darkGray', 'offWhite')(props),
