@@ -39,7 +39,6 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
       style={style}
       {...attributes}
       w={isSmall ? 'fit-content' : '100%'}
-      border="1px"
       rounded="md"
       spacing="0px"
       bg={
