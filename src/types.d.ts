@@ -66,10 +66,9 @@ export interface Keypress {
 }
 
 export interface Monitor {
-  name: string
-  current_brightness: number
-  description: string
-  registery_key: string
+  device_id: string
+  brightness: number
+  display_name: string
 }
 
 export type MousePressAction =
@@ -154,16 +153,4 @@ export interface Collection {
   active: boolean
   macros: Macro[]
   icon: string
-}
-
-// Misc
-export interface ApplicationSetting {
-  name: string
-  desc: string
-  type: 'numberInput' | 'toggle'
-}
-
-export interface ApplicationSettingsSubCategory {
-  name: string
-  settings: ApplicationSetting[]
 }

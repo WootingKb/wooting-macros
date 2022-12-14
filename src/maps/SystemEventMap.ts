@@ -82,11 +82,11 @@ export class SystemEvent {
   // static get SetBrightness(): SystemEventInfo {
   //   return {
   //     type: 'Brightness',
-  //     subtype: 'Set',
+  //     subtype: 'SetAll',
   //     displayString: 'Set Brightness',
   //     defaultData: {
   //       type: 'Brightness',
-  //       action: { type: 'Set', level: 75, name: '' }
+  //       action: { type: 'SetAll', level: 75, }
   //     }
   //   }
   // }
