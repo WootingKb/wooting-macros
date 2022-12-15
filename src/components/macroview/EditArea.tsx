@@ -32,7 +32,7 @@ export default function EditArea() {
   }, [selectedElement])
 
   return (
-    <VStack w="25%" h="full" p="3" borderLeft="1px" borderColor={borderColour}>
+    <VStack w="26%" h="full" p="3" borderLeft="1px" borderColor={borderColour}>
       {SelectedElementFormComponent}
     </VStack>
   )

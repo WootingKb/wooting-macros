@@ -1,4 +1,4 @@
-import { Divider, Textarea, Text } from '@chakra-ui/react'
+import { Divider, Textarea, Text, HStack } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -48,8 +48,17 @@ export default function ClipboardForm() {
         {'Paste Text'}
       </Text>
       <Divider />
-      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">Text to paste</Text>
-      <Textarea variant="brand" value={text} onChange={onTextChange} placeholder="e.g. glhf" />
+      <HStack w="100%" justifyContent="space-between">
+        <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+          Text to paste
+        </Text>
+      </HStack>
+      <Textarea
+        variant="brand"
+        value={text}
+        onChange={onTextChange}
+        placeholder="e.g. glhf"
+      />
     </>
   )
 }
