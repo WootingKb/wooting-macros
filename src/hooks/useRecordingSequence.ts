@@ -16,6 +16,7 @@ export default function useRecordingSequence() {
   const [eventType, setEventType] = useState<'Down' | 'Up'>('Down')
   const [prevEventType, setPrevEventType] = useState<'Down' | 'Up'>('Down')
   const [timeDiff, setTimeDiff] = useState(0)
+  const [prevTimestamp, setPrevTimestamp] = useState(0)
 
   const startRecording = useCallback(() => {
     setTimeDiff(0)
@@ -42,7 +43,8 @@ export default function useRecordingSequence() {
         return
       }
 
-      setTimeDiff(event.timeStamp - timeDiff)
+      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
+      setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
       setPrevItem(item)
 
@@ -65,7 +67,7 @@ export default function useRecordingSequence() {
       }
       setItem(keydown)
     },
-    [eventType, item]
+    [eventType, item, prevTimestamp]
   )
 
   const addMousepress = useCallback(
@@ -86,7 +88,8 @@ export default function useRecordingSequence() {
         return
       }
 
-      setTimeDiff(event.timeStamp - timeDiff)
+      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
+      setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
       setPrevItem(item)
 
@@ -103,12 +106,12 @@ export default function useRecordingSequence() {
       setEventType('Down')
       const mousedown: MousePressAction = {
         type: 'Down',
-        button: enumVal,
+        button: enumVal
       }
 
       setItem(mousedown)
     },
-    [eventType, item]
+    [eventType, item, prevTimestamp]
   )
 
   useEffect(() => {
