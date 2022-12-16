@@ -46,6 +46,12 @@ export default function Updates() {
           </ListItem>
           <ListItem textColor={textColour}>
             <span style={{ fontWeight: '700' }}>
+              Appearance: Blind your eyes, or don't.&nbsp;
+            </span>
+            You can select between one of two colour modes, light and dark.
+          </ListItem>
+          <ListItem textColor={textColour}>
+            <span style={{ fontWeight: '700' }}>
               Toggle on/off: Enable and disable individual macros, collections,
               or the entire app without closing it.&nbsp;
             </span>
