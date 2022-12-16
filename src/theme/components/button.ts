@@ -7,7 +7,8 @@ export const Button = defineStyleConfig({
     brand: (props: StyleFunctionProps) => ({
       bg: mode('stone.300', 'zinc.800')(props),
       color: mode('darkGray', 'offWhite')(props),
-      _hover: { bg: mode('stone.400', 'zinc.700')(props) }
+      _hover: { bg: mode('stone.400', 'zinc.700')(props) },
+      _active: { bg: mode('stone.400', 'zinc.700')(props) },
     }),
     brand2: (props: StyleFunctionProps) => ({
       bg: mode('stone.400', 'zinc.700')(props),

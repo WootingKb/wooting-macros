@@ -102,9 +102,12 @@ function MacroProvider({ children }: MacroProviderProps) {
     [ids, setIds]
   )
 
-  const onIdsAdd = useCallback((newIds: number[]) => {
-    setIds([...ids, ...newIds])
-  }, [ids, setIds])
+  const onIdsAdd = useCallback(
+    (newIds: number[]) => {
+      setIds([...ids, ...newIds])
+    },
+    [ids, setIds]
+  )
 
   const onIdDelete = useCallback(
     (IdToRemove: number) => {
@@ -142,10 +145,13 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdAdd(newSequence.length)
       setSequence(newSequence)
       if (config.AutoSelectElement) {
-        if (newElement.type === "SystemEventAction") {
-          if (newElement.data.type === "Volume") {
+        if (newElement.type === 'SystemEventAction') {
+          if (newElement.data.type === 'Volume') {
             return
-          } else if (newElement.data.type === "Clipboard" && newElement.data.action.type === "Sarcasm") {
+          } else if (
+            newElement.data.type === 'Clipboard' &&
+            newElement.data.action.type === 'Sarcasm'
+          ) {
             return
           }
         }
@@ -160,7 +166,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       const newIds = [...Array(newSequence.length).keys()].filter(
         (i) => i >= sequence.length
       )
-      onIdsAdd(newIds.map(i => i + 1))
+      onIdsAdd(newIds.map((i) => i + 1))
       setSequence(newSequence)
       if (config.AutoSelectElement) {
         if (newElements[1].type === 'SystemEventAction') {
@@ -207,8 +213,6 @@ function MacroProvider({ children }: MacroProviderProps) {
   )
 
   const updateMacro = useCallback(() => {
-    // activated when the user presses the "Save Macro" button
-    // Updates the collection data with new macro / edited macro data
     const itemToAdd = {
       ...macro,
       sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
