@@ -149,7 +149,6 @@ export default function Macroview() {
           label={getSaveButtonTooltipText()}
           aria-label="Save Button Tooltip"
           hasArrow
-          placement="auto-end"
           rounded="sm"
         >
           <Button

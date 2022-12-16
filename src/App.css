@@ -1,0 +1,25 @@
+em-emoji {
+  display: inline-block;
+  padding: 0;
+  height: 32px;
+  margin: 0;
+  margin-inline-start: 0 !important;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+em-emoji-picker {
+    width: 100%;
+}
+
+em-emoji span {
+  font-size: 24px !important;
+  cursor: pointer;
+}
+
+.emoji-mart-emoji {
+  min-height: 0px !important;
+  height: 2px !important;
+  max-height: 2px !important;
+}
+

@@ -7,6 +7,9 @@ import Macroview from './views/Macroview'
 import { useEffect } from 'react'
 import { MacroProvider } from './contexts/macroContext'
 import SettingsModal from './views/settings/SettingsModal'
+import data from '@emoji-mart/data'
+import { init } from 'emoji-mart'
+import "./App.css"
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()
@@ -15,6 +18,7 @@ function App() {
   useEffect(() => {
     appWindow.setMinSize(new PhysicalSize(800, 600))
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
+    init({ data })
   }, [])
 
   if (!initComplete) {
