@@ -28,7 +28,7 @@ function useMacroContext() {
 function MacroProvider({ children }: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>({
     name: '',
-    icon: '',
+    icon: ':smile:',
     active: true,
     macro_type: 'Single',
     trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },

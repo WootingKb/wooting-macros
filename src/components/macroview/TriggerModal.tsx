@@ -150,10 +150,10 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </HStack>
               <Spacer />
               <Button
-                variant="brand"
+                variant="brandRecord"
                 leftIcon={<EditIcon />}
                 onClick={recording ? stopRecording : startRecording}
-                colorScheme={recording ? 'red' : 'gray'}
+                isActive={recording}
               >
                 {recording ? 'Stop' : 'Record'}
               </Button>
@@ -184,6 +184,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
         </ModalBody>
         <ModalFooter>
           <Button
+            variant="brand"
             mr={3}
             onClick={() => {
               resetItems()

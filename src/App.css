@@ -1,25 +1,30 @@
 em-emoji {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 0;
   height: 32px;
   margin: 0;
   margin-inline-start: 0 !important;
-  vertical-align: middle;
-  overflow: hidden;
 }
 
 em-emoji-picker {
-    width: 100%;
+  width: 100%;
+  height: 300px;
 }
 
 em-emoji span {
   font-size: 24px !important;
   cursor: pointer;
+  margin: 0;
+  padding: 0;
 }
 
 .emoji-mart-emoji {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 0px !important;
-  height: 2px !important;
-  max-height: 2px !important;
+  height: 32px !important;
+  max-height: 32px !important;
 }
-

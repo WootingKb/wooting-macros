@@ -7,16 +7,15 @@ import {
   Divider,
   VStack,
   Kbd,
-  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   useColorModeValue,
   Box,
-  Circle,
   HStack,
-  Icon
+  Icon,
+  Tooltip
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
@@ -73,18 +72,14 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       {/** Top Row */}
       <HStack w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
-          <Circle position="relative" role="group">
-            <Image
-              borderRadius="full"
-              border="1px"
-              borderColor={borderColour}
-              src={macro.icon}
-              fallbackSrc="https://via.placeholder.com/125"
-              alt="Macro Icon"
-              boxSize="25px"
-              objectFit="cover"
+          <Box
+            maxHeight="32px"
+          >
+            <em-emoji
+              shortcodes={macro.icon}
+              size="32px"
             />
-          </Circle>
+          </Box>
           <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
         <Menu variant="brand">
@@ -149,11 +144,21 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         >
           Edit
         </Button>
-        <Switch
+        <Tooltip
           variant="brand"
-          defaultChecked={macro.active}
-          onChange={onToggle}
-        />
+          placement="bottom"
+          hasArrow
+          aria-label="Toggle Macro Switch"
+          label={macro.active ? 'Disable Macro' : 'Enable Macro'}
+        >
+          <Box>
+            <Switch
+              variant="brand"
+              defaultChecked={macro.active}
+              onChange={onToggle}
+            />
+          </Box>
+        </Tooltip>
       </Flex>
     </VStack>
   )

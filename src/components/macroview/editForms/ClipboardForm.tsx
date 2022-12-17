@@ -39,7 +39,6 @@ export default function ClipboardForm() {
         pickerRef.current &&
         !pickerRef.current.contains(event.target as Node)
       ) {
-        console.log(event.target)
         if (
           (event.target as HTMLElement).id === 'emoji-button' ||
           (event.target as HTMLElement).localName === 'span'
@@ -136,6 +135,7 @@ export default function ClipboardForm() {
             navPosition="bottom"
             previewPosition="none"
             dynamicWidth={true}
+            maxFrequentRows={1}
           />
         </Box>
       )}

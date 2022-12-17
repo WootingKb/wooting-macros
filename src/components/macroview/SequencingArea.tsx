@@ -248,10 +248,10 @@ export default function SequencingArea() {
       </VStack>
       <HStack justifyContent="right" w="100%" alignItems="center" px="3">
         <Button
-          variant="brand"
+          variant="brandRecord"
           leftIcon={<EditIcon />}
           size={['xs', 'sm', 'md']}
-          colorScheme={recording ? 'red' : ''}
+          isActive={recording}
           onClick={recording ? stopRecording : startRecording}
         >
           {recording ? 'Stop' : 'Record'}
