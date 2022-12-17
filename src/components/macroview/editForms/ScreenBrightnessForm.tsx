@@ -23,17 +23,15 @@ export default function ScreenBrightnessForm() {
     if (selectedElement.data.type !== 'Brightness') {
       return
     }
-    if (selectedElement.data.action.type !== 'Set') {
-      return
-    }
     invoke<Monitor[]>('get_monitor_data')
       .then((res) => {
+        console.log(res)
         setMonitors(res)
       })
       .catch((e) => {
         console.error(e)
       })
-    setBrightnessVal(selectedElement.data.action.level)
+    // setBrightnessVal(selectedElement.data.action.level)
   }, [selectedElement])
 
   const onValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +51,7 @@ export default function ScreenBrightnessForm() {
     const temp = { ...selectedElement }
     temp.data = {
       type: 'Brightness',
-      action: { type: 'Set', level: newValue, name: selectedMonitor }
+      action: { type: 'SetAll', level: newValue }
     }
     updateElement(temp, selectedElementId)
   }
@@ -72,8 +70,8 @@ export default function ScreenBrightnessForm() {
         onChange={(event) => setSelectedMonitor(event.target.value)}
       >
         {monitors.map((monitor) => (
-          <option value={monitor.name} key={monitor.name}>
-            {monitor.name}
+          <option value={monitor.display_name} key={monitor.display_name}>
+            {monitor.display_name}
           </option>
         ))}
       </Select>

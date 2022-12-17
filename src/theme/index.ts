@@ -15,6 +15,7 @@ import { NumberInput } from './components/numberInput'
 import { Input } from './components/input'
 import { Switch } from './components/switch'
 import { Textarea } from './components/textArea'
+import { shadows } from './shadows'
 
 const overrides = {
   config,
@@ -34,7 +35,8 @@ const overrides = {
     Switch,
     Textarea
   },
-  textStyles
+  textStyles,
+  shadows,
 }
 
 export const theme = extendTheme(overrides)

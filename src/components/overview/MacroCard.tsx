@@ -7,16 +7,15 @@ import {
   Divider,
   VStack,
   Kbd,
-  Image,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   useColorModeValue,
   Box,
-  Circle,
   HStack,
-  Icon
+  Icon,
+  Tooltip
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
@@ -36,10 +35,12 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
-  const bg = useColorModeValue('stone.100', 'zinc.900')
+  const bg = useColorModeValue('stone.200', 'zinc.900')
+  const secondBg = useColorModeValue('stone.300', 'zinc.800')
+  const shadowColour = useColorModeValue('md', 'white-md')
   const subtextColour = useColorModeValue('stone.600', 'zinc.400')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
-  const kebabColour = useColorModeValue('black', 'white')
+  const borderColour = useColorModeValue('stone.300', 'zinc.700')
+  const kebabColour = useColorModeValue('yellow.600', 'yellow.400')
 
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,30 +60,26 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   return (
     <VStack
       w="100%"
+      h="full"
       bg={bg}
-      border="1px"
-      borderColor={borderColour}
+      boxShadow={shadowColour}
       rounded="md"
       p="3"
       m="auto"
+      justifyContent="space-between"
       spacing="8px"
-      overflow="hidden"
     >
       {/** Top Row */}
       <HStack w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
-          <Circle position="relative" role="group">
-            <Image
-              borderRadius="full"
-              border="1px"
-              borderColor={borderColour}
-              src={macro.icon}
-              fallbackSrc="https://via.placeholder.com/125"
-              alt="Macro Icon"
-              boxSize="25px"
-              objectFit="cover"
+          <Box
+            maxHeight="32px"
+          >
+            <em-emoji
+              shortcodes={macro.icon}
+              size="32px"
             />
-          </Circle>
+          </Box>
           <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
         <Menu variant="brand">
@@ -92,10 +89,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             m="0"
             icon={
               <Icon
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
                 boxSize={6}
-                viewBox="0 0 24 24"
+                viewBox="0 0 20 20"
                 strokeWidth="1.5"
                 stroke={kebabColour}
               >
@@ -120,20 +115,22 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
-        Trigger Keys:
-      </Text>
-      <Flex w="100%" gap="4px">
-        {macro.trigger.type === 'KeyPressEvent' &&
-          macro.trigger.data.map((HIDcode) => (
-            <Kbd variant="brand" key={HIDcode}>
-              {HIDLookup.get(HIDcode)?.displayString}
-            </Kbd>
-          ))}
-        {macro.trigger.type === 'MouseEvent' && (
-          <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
-        )}
-      </Flex>
+      <VStack w="100%" spacing={1}>
+        <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
+          Trigger Keys:
+        </Text>
+        <Flex w="100%" gap="4px" bg={secondBg} rounded="md" py="1" px="2">
+          {macro.trigger.type === 'KeyPressEvent' &&
+            macro.trigger.data.map((HIDcode) => (
+              <Kbd variant="brand" key={HIDcode}>
+                {HIDLookup.get(HIDcode)?.displayString}
+              </Kbd>
+            ))}
+          {macro.trigger.type === 'MouseEvent' && (
+            <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
+          )}
+        </Flex>
+      </VStack>
       <Divider borderColor={borderColour} />
       {/** Buttons */}
       <Flex w="100%" alignItems="center" justifyContent="space-between">
@@ -147,11 +144,21 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         >
           Edit
         </Button>
-        <Switch
+        <Tooltip
           variant="brand"
-          defaultChecked={macro.active}
-          onChange={onToggle}
-        />
+          placement="bottom"
+          hasArrow
+          aria-label="Toggle Macro Switch"
+          label={macro.active ? 'Disable Macro' : 'Enable Macro'}
+        >
+          <Box>
+            <Switch
+              variant="brand"
+              defaultChecked={macro.active}
+              onChange={onToggle}
+            />
+          </Box>
+        </Tooltip>
       </Flex>
     </VStack>
   )

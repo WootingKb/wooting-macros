@@ -3,7 +3,6 @@ import {
   HStack,
   Input,
   Text,
-  Image,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,16 +13,14 @@ import {
   VStack,
   Box,
   useColorModeValue,
-  Center,
   Tooltip,
   Divider
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { open } from '@tauri-apps/api/dialog'
-import { readBinaryFile } from '@tauri-apps/api/fs'
-import { Buffer } from 'buffer'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 type Props = {
   isOpen: boolean
@@ -34,7 +31,7 @@ const maxNameLength = 25
 
 export default function CollectionModal({ isOpen, onClose }: Props) {
   const [collectionName, setCollectionName] = useState('')
-  const [iconString, setIconString] = useState('')
+  const [iconString, setIconString] = useState(':smile:')
   const [isNameUsable, setIsNameUsable] = useState(false)
   const {
     selection,
@@ -44,6 +41,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     onCollectionUpdate
   } = useApplicationContext()
   const collection = useSelectedCollection()
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   useEffect(() => {
@@ -52,7 +50,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
       setCollectionName(collection.name)
       setIsNameUsable(true)
     } else {
-      setIconString('')
+      setIconString(':smile:')
       setCollectionName('')
       setIsNameUsable(false)
     }
@@ -110,42 +108,29 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     [collections]
   )
 
-  const onIconPress = useCallback(async () => {
-    const path = await open({
-      multiple: false,
-      title: 'Select an image to use as an icon',
-      filters: [
-        {
-          name: 'Image',
-          extensions: ['png', 'jpg', 'jpeg']
-        }
-      ]
-    })
-    if (path === null || Array.isArray(path)) {
-      return
-    }
+  const onEmojiSelect = useCallback(
+    (emoji: { shortcodes: string }) => {
+      setIconString(emoji.shortcodes)
+    },
+    [setIconString]
+  )
 
-    
-
-    let base64string = ''
-    await readBinaryFile(path).then((res) => {
-      base64string = Buffer.from(res).toString('base64')
-    })
-    if (base64string !== '') {
-      setIconString('data:image/png;base64,' + base64string)
-    }
-  }, [])
-
-  const tooltipText = useMemo(():string => {
+  const tooltipText = useMemo((): string => {
     if (collectionName === '') {
-      return "Please enter a name"
+      return 'Please enter a name'
     } else {
       return ''
     }
   }, [collectionName])
 
   return (
-    <Modal variant="brand" isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal
+      variant="brand"
+      blockScrollOnMount={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -153,7 +138,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
         </ModalHeader>
         <ModalCloseButton />
         <Divider w="90%" alignSelf="center" />
-        <ModalBody mt="4">
+        <ModalBody>
           <VStack w="100%">
             <HStack w="100%">
               <Text w="50%" textStyle="miniHeader">
@@ -164,42 +149,16 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
               </Text>
             </HStack>
             <HStack w="100%">
-              <Center
-                w="50%"
-                position="relative"
-                role="group"
-                onClick={onIconPress}
-              >
-                <Image
-                  borderRadius="full"
-                  border="1px"
-                  borderColor={borderColour}
-                  src={iconString}
-                  fallbackSrc="https://via.placeholder.com/125"
-                  alt="Macro Icon"
-                  boxSize="100px"
-                  objectFit="cover"
-                />
+              <Box w="50%">
                 <Box
-                  position="absolute"
-                  bg="gray.700"
-                  opacity="0%"
-                  rounded="full"
-                  w="50%"
-                  h="100%"
-                  _groupHover={{ opacity: '50%', cursor: 'pointer' }}
-                ></Box>
-                <Text
-                  position="absolute"
-                  fontWeight="bold"
-                  fontSize="xs"
-                  textColor="white"
-                  opacity="0%"
-                  _groupHover={{ opacity: '100%', cursor: 'pointer' }}
+                  _hover={{ transform: 'scale(110%)' }}
+                  maxHeight="32px"
+                  transition="ease-out 150ms"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 >
-                  Change Icon
-                </Text>
-              </Center>
+                  <em-emoji shortcodes={iconString} size="32px" />
+                </Box>
+              </Box>
               <VStack w="50%" spacing={0}>
                 <Input
                   w="100%"
@@ -218,6 +177,19 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                 )}
               </VStack>
             </HStack>
+            {showEmojiPicker && (
+              <Box id="picker-box" w="100%" py="4">
+                <Picker
+                  data={data}
+                  theme="auto"
+                  onEmojiSelect={onEmojiSelect}
+                  navPosition="bottom"
+                  previewPosition="none"
+                  dynamicWidth={true}
+                  maxFrequentRows={1}
+                />
+              </Box>
+            )}
           </VStack>
         </ModalBody>
         <ModalFooter>
@@ -225,11 +197,13 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
             Close
           </Button>
           <Tooltip
+            hasArrow
+            variant="brand"
             label={tooltipText}
             aria-label="A tooltip letting the user know what they need to do to be able to create a collection."
           >
             <Button
-              colorScheme="yellow"
+              variant="yellowGradient"
               onClick={onModalSuccessClose}
               isDisabled={!isNameUsable}
             >

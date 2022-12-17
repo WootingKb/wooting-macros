@@ -7,32 +7,38 @@ import KeyPressForm from './editForms/KeyPressForm'
 import MousePressForm from './editForms/MousePressForm'
 import SystemEventActionForm from './editForms/SystemEventActionForm'
 
-
 export default function EditArea() {
   const selectedElement = useSelectedElement()
   const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   const SelectedElementFormComponent = useMemo(() => {
     if (!selectedElement) {
-      return <EmptyForm/>
+      return <EmptyForm />
     }
 
     switch (selectedElement.type) {
       case 'SystemEventAction':
         return <SystemEventActionForm item={selectedElement.data} />
       case 'DelayEventAction':
-        return <DelayForm/>
+        return <DelayForm />
       case 'KeyPressEventAction':
-        return <KeyPressForm/>
+        return <KeyPressForm />
       case 'MouseEventAction':
-        return <MousePressForm/>
+        return <MousePressForm />
       default:
-        return <EmptyForm/>
+        return <EmptyForm />
     }
   }, [selectedElement])
 
   return (
-    <VStack w="25%" h="full" p="3" borderLeft="1px" borderColor={borderColour}>
+    <VStack
+      position="relative"
+      w="26%"
+      h="full"
+      p="3"
+      borderLeft="1px"
+      borderColor={borderColour}
+    >
       {SelectedElementFormComponent}
     </VStack>
   )

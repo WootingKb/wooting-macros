@@ -1,5 +1,5 @@
 import { RepeatClockIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
-import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
+import { HStack, Icon, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
@@ -15,8 +15,7 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
-  const highlightedColour = useColorModeValue('yellow.500', 'yellow.400')
+  const highlightedColour = useColorModeValue('yellow.600', 'yellow.400')
   const { selectedElementId, onElementDelete, updateSelectedElementId } =
     useMacroContext()
 
@@ -90,10 +89,8 @@ export default function SortableItem({ id, element }: Props) {
       case 'KeyPressEventAction':
         if (element.data.keytype === 'DownUp') {
           return (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              fill="none"
+            <Icon
+              boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -103,14 +100,12 @@ export default function SortableItem({ id, element }: Props) {
                 strokeLinejoin="round"
                 d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
               />
-            </svg>
+            </Icon>
           )
         } else if (element.data.keytype === 'Down') {
           return (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              fill="none"
+            <Icon
+              boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -120,14 +115,12 @@ export default function SortableItem({ id, element }: Props) {
                 strokeLinejoin="round"
                 d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
               />
-            </svg>
+            </Icon>
           )
         } else {
           return (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              fill="none"
+            <Icon
+              boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -137,16 +130,14 @@ export default function SortableItem({ id, element }: Props) {
                 strokeLinejoin="round"
                 d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
               />
-            </svg>
+            </Icon>
           )
         }
       case 'MouseEventAction':
         if (element.data.data.type === 'DownUp') {
           return (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              fill="none"
+            <Icon
+              boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -156,14 +147,12 @@ export default function SortableItem({ id, element }: Props) {
                 strokeLinejoin="round"
                 d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
               />
-            </svg>
+            </Icon>
           )
         } else if (element.data.data.type === 'Down') {
           return (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              fill="none"
+            <Icon
+              boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -173,14 +162,12 @@ export default function SortableItem({ id, element }: Props) {
                 strokeLinejoin="round"
                 d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
               />
-            </svg>
+            </Icon>
           )
         } else {
           return (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              fill="none"
+            <Icon
+              boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
@@ -190,7 +177,7 @@ export default function SortableItem({ id, element }: Props) {
                 strokeLinejoin="round"
                 d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
               />
-            </svg>
+            </Icon>
           )
         }
       case 'SystemEventAction':
@@ -224,6 +211,11 @@ export default function SortableItem({ id, element }: Props) {
               ? 'semibold'
               : 'normal'
           }
+          textColor={
+            selectedElementId !== undefined && id === selectedElementId + 1
+              ? highlightedColour
+              : ''
+          }
         >
           {displayText}
         </Text>
@@ -231,15 +223,9 @@ export default function SortableItem({ id, element }: Props) {
       <HStack
         p="4px"
         h="100%"
-        borderLeft="1px"
-        borderColor={
-          selectedElementId !== undefined && id === selectedElementId + 1
-            ? highlightedColour
-            : borderColour
-        }
       >
         <IconButton
-          variant="brand"
+          variant="brand2"
           aria-label="delete-button"
           icon={<DeleteIcon />}
           size={['xs', 'sm']}
@@ -247,7 +233,7 @@ export default function SortableItem({ id, element }: Props) {
         />
         {isEditable && (
           <IconButton
-            variant="brand"
+            variant="brand2"
             aria-label="edit-button"
             icon={<EditIcon />}
             size={['xs', 'sm']}

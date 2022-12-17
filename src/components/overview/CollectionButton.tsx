@@ -1,12 +1,10 @@
-import { StarIcon } from '@chakra-ui/icons'
 import {
   Box,
-  Image,
   HStack,
   Switch,
   Text,
   useColorModeValue,
-  Circle
+  Tooltip
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 
@@ -26,7 +24,7 @@ export default function CollectionButton({
   toggleCollection
 }: Props) {
   const buttonBg = useColorModeValue('stone.300', 'zinc.800')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const selectedTextColour = useColorModeValue('yellow.700', 'yellow.400')
 
   return (
     <Box
@@ -47,34 +45,39 @@ export default function CollectionButton({
           onClick={() => setFocus(index)}
         ></Box>
         {index === 0 ? (
-          <Circle position="relative" role="group" pl="1">
-            <StarIcon />
-          </Circle>
+          <Box maxHeight="32px">
+            <em-emoji shortcodes=":smile:" size="32px" />
+          </Box>
         ) : (
-          <Circle position="relative" role="group">
-            <Image
-              borderRadius="lg"
-              border="1px"
-              borderColor={borderColour}
-              src={collection.icon}
-              fallbackSrc="https://via.placeholder.com/125"
-              alt="Collection Icon"
-              boxSize="25px"
-              objectFit="cover"
-            />
-          </Circle>
+          <Box maxHeight="32px">
+            <em-emoji shortcodes={collection.icon} size="32px" />
+          </Box>
         )}
-        <Text noOfLines={1} fontWeight={isFocused ? 'semibold' : 'normal'}>
+        <Text
+          noOfLines={1}
+          fontWeight="semibold"
+          textColor={isFocused ? selectedTextColour : ''}
+        >
           {collection.name}
         </Text>
-        <Switch
-          size="sm"
+        <Tooltip
           variant="brand"
-          zIndex={10}
-          defaultChecked={collection.active}
-          isChecked={collection.active}
-          onChange={() => toggleCollection(index)}
-        />
+          placement="bottom"
+          hasArrow
+          aria-label="Toggle Collection Switch"
+          label={collection.active ? 'Disable Collection' : 'Enable Collection'}
+        >
+          <Box>
+            <Switch
+              size="sm"
+              variant="brand"
+              zIndex={10}
+              defaultChecked={collection.active}
+              isChecked={collection.active}
+              onChange={() => toggleCollection(index)}
+            />
+          </Box>
+        </Tooltip>
       </HStack>
     </Box>
   )

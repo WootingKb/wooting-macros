@@ -19,17 +19,16 @@ type Props = {
 }
 
 export default function CollectionPanel({ onOpen }: Props) {
-  const {
-    selection,
-    changeIsUpdatingCollection
-  } = useApplicationContext()
+  const { selection, changeIsUpdatingCollection } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const { isOpen, onOpen: onDeleteModalOpen, onClose } = useDisclosure()
+  const panelBg = useColorModeValue('stone.200', 'zinc.900')
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   return (
     <VStack w="100%" h="100vh" spacing="0">
       <Flex
+        bg={panelBg}
         justifyContent="space-between"
         alignItems="center"
         p="2"

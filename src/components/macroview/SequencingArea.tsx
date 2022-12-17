@@ -37,6 +37,7 @@ import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingSequence from '../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../contexts/settingsContext'
 import { useApplicationContext } from '../../contexts/applicationContext'
+import { KeyType } from '../../enums'
 
 const isKeypress = (
   e: Keypress | MousePressAction | undefined
@@ -47,10 +48,25 @@ const isKeypress = (
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
   const [showAlert, setShowAlert] = useState(false)
-  const { recording, startRecording, stopRecording, item } =
-    useRecordingSequence()
-  const { sequence, ids, onElementAdd, overwriteIds, overwriteSequence } =
-    useMacroContext()
+  const {
+    recording,
+    startRecording,
+    stopRecording,
+    item,
+    eventType,
+    prevItem,
+    prevEventType,
+    timeDiff
+  } = useRecordingSequence()
+  const {
+    sequence,
+    ids,
+    onElementAdd,
+    onElementsAdd,
+    updateElement,
+    overwriteIds,
+    overwriteSequence
+  } = useMacroContext()
   const { collections } = useApplicationContext()
   const { config } = useSettingsContext()
 
@@ -85,33 +101,7 @@ export default function SequencingArea() {
   }, [])
 
   useEffect(() => {
-    if (item === undefined) {
-      return
-    }
-    // TODO: add a delay based on the difference in event timestamps
-    // if (timeSinceLast !== undefined && timeSinceLast > 0) {
-    //   onElementAdd({
-    //     type: 'DelayEventAction',
-    //     data: timeSinceLast
-    //   })
-    // }
-
-    if (isKeypress(item)) {
-      onElementAdd({
-        type: 'KeyPressEventAction',
-        data: item
-      })
-    } else {
-      onElementAdd({
-        type: 'MouseEventAction',
-        data: { type: 'Press', data: item }
-      })
-    }
-    // need to adjust this use effect / move functionality elsewhere, putting onElementAdd in the dependencies breaks it
-  }, [item])
-
-  useEffect(() => {
-    // Need to update this later, for some reason the useEffect doesn't end when returning, and the code outside the forEach loops is executed, thus having only 1 setState()
+    // Need to update this later, for some reason the useEffect doesn't end when returning, and the code outside the forEach loops is executed, thus to work around this we have only 1 setState()
     let matchFound = false
     collections.forEach((collection) => {
       collection.macros.forEach((macro) => {
@@ -146,10 +136,90 @@ export default function SequencingArea() {
     setShowAlert(matchFound)
   }, [collections, sequence, setShowAlert])
 
+  useEffect(() => {
+    if (item === undefined) {
+      return
+    }
+
+    if (prevItem !== undefined) {
+      // if there is a previous element with a down event, check if the new event was an up event
+      if (eventType === 'Up' && prevEventType === 'Down') {
+        // current element is up event
+        if ('keypress' in prevItem && 'keypress' in item) {
+          // 1. previous element was a keypress and current element is a keypress
+          if (prevItem.keypress === item.keypress) {
+            // 1.1 if the last event was a down event for the same key, then we update the duration of the DownUp event to be the diff in timestamps
+            updateElement(
+              {
+                type: 'KeyPressEventAction',
+                data: {
+                  ...prevItem,
+                  keytype: KeyType[KeyType.DownUp],
+                  press_duration: timeDiff
+                }
+              },
+              sequence.length - 1
+            )
+            return
+          }
+        } else if ('button' in prevItem && 'button' in item) {
+          // 2. previous element was a mouse event and current element is a mouse event
+          updateElement(
+            {
+              type: 'MouseEventAction',
+              data: {
+                type: 'Press',
+                data: { ...prevItem, type: 'DownUp', duration: timeDiff }
+              }
+            },
+            sequence.length - 1
+          )
+          return
+        }
+      }
+      if (isKeypress(item)) {
+        onElementsAdd([
+          {
+            type: 'DelayEventAction',
+            data: timeDiff
+          },
+          {
+            type: 'KeyPressEventAction',
+            data: item
+          }
+        ])
+      } else {
+        onElementsAdd([
+          {
+            type: 'DelayEventAction',
+            data: timeDiff
+          },
+          {
+            type: 'MouseEventAction',
+            data: { type: 'Press', data: item }
+          }
+        ])
+      }
+    } else {
+      // add current element to sequence
+      if (isKeypress(item)) {
+        onElementAdd({
+          type: 'KeyPressEventAction',
+          data: item
+        })
+      } else {
+        onElementAdd({
+          type: 'MouseEventAction',
+          data: { type: 'Press', data: item }
+        })
+      }
+    }
+  }, [item])
+
   return (
-    <VStack w="41%" h="full" p="3">
+    <VStack w="41%" h="full">
       {/** Header */}
-      <VStack w="100%">
+      <VStack w="100%" px="3" pt="3">
         <Stack
           direction={['column', 'row']}
           w="100%"
@@ -158,7 +228,7 @@ export default function SequencingArea() {
           alignItems={['start', 'center']}
         >
           <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-            Sequence
+            SEQUENCE
           </Text>
           {showAlert && (
             <Alert
@@ -176,12 +246,12 @@ export default function SequencingArea() {
           )}
         </Stack>
       </VStack>
-      <HStack justifyContent="right" w="100%" alignItems="center">
+      <HStack justifyContent="right" w="100%" alignItems="center" px="3">
         <Button
-          variant="brand"
+          variant="brandRecord"
           leftIcon={<EditIcon />}
           size={['xs', 'sm', 'md']}
-          colorScheme={recording ? 'red' : 'gray'}
+          isActive={recording}
           onClick={recording ? stopRecording : startRecording}
         >
           {recording ? 'Stop' : 'Record'}
@@ -208,7 +278,7 @@ export default function SequencingArea() {
           Add Delay
         </Button>
       </HStack>
-      <Divider />
+      <Divider w="95%" alignSelf="center" />
       {/** Timeline */}
       <DndContext
         sensors={sensors}
@@ -218,7 +288,7 @@ export default function SequencingArea() {
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-          <VStack w="100%" h="100%" overflowY="auto" overflowX="hidden">
+          <VStack w="100%" h="100%" px="3" overflowY="auto" overflowX="hidden">
             {ids.map((id) => (
               <SortableWrapper
                 id={id}

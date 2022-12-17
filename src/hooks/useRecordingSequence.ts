@@ -10,15 +10,20 @@ export default function useRecordingSequence() {
   const [item, setItem] = useState<Keypress | MousePressAction | undefined>(
     undefined
   )
-  const [timeSinceLast, setTimeSinceLast] = useState<number | undefined>(
-    undefined
-  )
+  const [prevItem, setPrevItem] = useState<
+    Keypress | MousePressAction | undefined
+  >(undefined)
+  const [eventType, setEventType] = useState<'Down' | 'Up'>('Down')
+  const [prevEventType, setPrevEventType] = useState<'Down' | 'Up'>('Down')
+  const [timeDiff, setTimeDiff] = useState(0)
+  const [prevTimestamp, setPrevTimestamp] = useState(0)
 
   const startRecording = useCallback(() => {
-    setTimeSinceLast(undefined)
+    setTimeDiff(0)
     setItem(undefined)
+    setPrevItem(undefined)
     setRecording(true)
-  }, [setTimeSinceLast, setItem, setRecording])
+  }, [setTimeDiff, setItem, setRecording])
 
   const stopRecording = useCallback(() => {
     setRecording(false)
@@ -29,30 +34,46 @@ export default function useRecordingSequence() {
       event.preventDefault()
       event.stopPropagation()
 
-      // TODO: Save timestamp of event for calculating time of delay to add
+      if (event.repeat) {
+        return
+      }
 
       const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
       if (HIDcode === undefined) {
         return
       }
 
-      const keypress: Keypress = {
-        keypress: HIDcode,
-        press_duration: 0,
-        keytype: KeyType[KeyType.DownUp]
+      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
+      setPrevTimestamp(event.timeStamp)
+      setPrevEventType(eventType)
+      setPrevItem(item)
+
+      if (event.type === 'keyup') {
+        setEventType('Up')
+        const keyup: Keypress = {
+          keypress: HIDcode,
+          press_duration: 0,
+          keytype: KeyType[KeyType.Up]
+        }
+        setItem(keyup)
+        return
       }
 
-      setItem(keypress)
+      setEventType('Down')
+      const keydown: Keypress = {
+        keypress: HIDcode,
+        press_duration: 0,
+        keytype: KeyType[KeyType.Down]
+      }
+      setItem(keydown)
     },
-    [setItem]
+    [eventType, item, prevTimestamp]
   )
 
   const addMousepress = useCallback(
     (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-
-      // TODO: Save timestamp of event for calculating time of delay to add
 
       if (
         (event.target as HTMLElement).localName === 'button' ||
@@ -67,15 +88,30 @@ export default function useRecordingSequence() {
         return
       }
 
-      const mousepress: MousePressAction = {
-        type: event.type === 'mousedown' ? 'Down' : 'Up',
-        button: enumVal,
-        duration: 0
+      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
+      setPrevTimestamp(event.timeStamp)
+      setPrevEventType(eventType)
+      setPrevItem(item)
+
+      if (event.type === 'mouseup') {
+        setEventType('Up')
+        const mouseup: MousePressAction = {
+          type: 'Up',
+          button: enumVal
+        }
+        setItem(mouseup)
+        return
       }
 
-      setItem(mousepress)
+      setEventType('Down')
+      const mousedown: MousePressAction = {
+        type: 'Down',
+        button: enumVal
+      }
+
+      setItem(mousedown)
     },
-    [setItem]
+    [eventType, item, prevTimestamp]
   )
 
   useEffect(() => {
@@ -83,19 +119,19 @@ export default function useRecordingSequence() {
       return
     }
 
-    window.addEventListener('keydown', addKeypress, true)
-    window.addEventListener('mousedown', addMousepress, true)
-    // window.addEventListener('keyup', addKeypress, true)
-    // window.addEventListener('mouseup', addMousepress, true)
+    window.addEventListener('keydown', addKeypress, false)
+    window.addEventListener('mousedown', addMousepress, false)
+    window.addEventListener('keyup', addKeypress, false)
+    window.addEventListener('mouseup', addMousepress, false)
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
     })
 
     return () => {
-      window.removeEventListener('keydown', addKeypress, true)
-      window.removeEventListener('mousedown', addMousepress, true)
-      // window.removeEventListener('keyup', addKeypress, true)
-      // window.removeEventListener('mouseup', addMousepress, true)
+      window.removeEventListener('keydown', addKeypress, false)
+      window.removeEventListener('mousedown', addMousepress, false)
+      window.removeEventListener('keyup', addKeypress, false)
+      window.removeEventListener('mouseup', addMousepress, false)
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
       })
@@ -107,6 +143,9 @@ export default function useRecordingSequence() {
     startRecording,
     stopRecording,
     item,
-    timeSinceLast
+    eventType,
+    timeDiff,
+    prevEventType,
+    prevItem
   }
 }
