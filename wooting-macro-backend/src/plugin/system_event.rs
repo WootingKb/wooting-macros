@@ -12,15 +12,13 @@ use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt};
 
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum DirectoryAction {
-    Directory{data: String},
-    File{data: String},
-    Website{data: String}
+    Directory { data: String },
+    File { data: String },
+    Website { data: String },
 }
-
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -38,7 +36,7 @@ impl SystemAction {
     /// Execute the keys themselves
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         match &self {
-            SystemAction::Open { action} => match action {
+            SystemAction::Open { action } => match action {
                 DirectoryAction::Directory { data } => {
                     match opener::open(std::path::Path::new(data)) {
                         Ok(x) => x,
@@ -57,7 +55,7 @@ impl SystemAction {
                         Err(e) => error!("Error: {}", e),
                     };
                 }
-            }
+            },
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
                     util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()])

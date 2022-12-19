@@ -52,8 +52,6 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
 }
 
 impl ConfigFile for ApplicationConfig {
-
-
     fn file_name() -> PathBuf {
         let mut dir = {
             #[cfg(debug_assertions)]
