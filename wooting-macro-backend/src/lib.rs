@@ -290,18 +290,25 @@ fn check_macro_execution_efficiently(
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
+
     let mut output = false;
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
                 if *data == pressed_events {
-                    let channel_clone = channel_sender.clone();
-                    let macro_clone = macros.clone();
-                    
-
-                    
+                    println!("MATCHED MACRO: {:#?}", pressed_events);
 
                     //TODO: Maybe discard the keys here?
+                    pressed_events.iter().for_each(|x| {
+                        channel_sender.blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x])).unwrap();
+                    });
+                    
+                    
+                    let channel_clone = channel_sender.clone();
+                    let macro_clone = macros.clone();
+
+
+                    
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
                     });
@@ -401,6 +408,7 @@ impl MacroBackend {
                         if inner_is_listening.load(Ordering::Relaxed) {
                             match event.event_type {
                                 rdev::EventType::KeyPress(key) => {
+                                    println!("Key Pressed: {:?}", key);
                                     let key_to_push = key;
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
@@ -427,6 +435,7 @@ impl MacroBackend {
                                         )
                                     }
 
+
                                     let first_key: u32 = match pressed_keys_copy_converted.first() {
                                         None => 0,
                                         Some(data_first) => *data_first,
@@ -444,6 +453,7 @@ impl MacroBackend {
                                     let channel_copy_send = schan_execute.clone();
 
                                     //TODO: up the pressed keys here immidiately?
+                                    
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
