@@ -64,6 +64,8 @@ pub enum ActionEventType {
     },
     //IDEA: Phillips hue notification
     OBSEventAction {},
+    
+    
     DiscordEventAction {},
     //IDEA: IKEADesk
     MouseEventAction {
@@ -297,7 +299,7 @@ fn check_macro_execution_efficiently(
                 if *data == pressed_events {
                     println!("MATCHED MACRO: {:#?}", pressed_events);
 
-                    //TODO: Maybe discard the keys here?
+                    //? Kinda works for now but needs to be improved.
                     pressed_events.iter().for_each(|x| {
                         channel_sender
                             .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
@@ -396,6 +398,7 @@ impl MacroBackend {
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
+                
                 match Ok::<&rdev::Event, rdev::GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
