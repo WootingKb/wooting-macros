@@ -297,7 +297,9 @@ fn check_macro_execution_efficiently(
                 if *data == pressed_events {
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
+                    
 
+                    
 
                     //TODO: Maybe discard the keys here?
                     task::spawn(async move {
@@ -375,6 +377,7 @@ impl MacroBackend {
         });
 
         //==============TESTING GROUND======================
+
 
         //==============TESTING GROUND======================
         //==================================================
