@@ -2,6 +2,8 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { MouseButton } from './enums'
 import { ApplicationConfig, Collection, MacroData } from './types'
 
+export const maxNameLength = 25
+
 export const updateBackendConfig = (collections: Collection[]) => {
   const macroData: MacroData = { data: collections }
   invoke<void>('set_macros', { frontendData: macroData }).catch((e) => {

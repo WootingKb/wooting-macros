@@ -61,6 +61,7 @@ export default function SequencingArea() {
   const {
     sequence,
     ids,
+    macro: currentMacro,
     onElementAdd,
     onElementsAdd,
     updateElement,
@@ -101,10 +102,14 @@ export default function SequencingArea() {
   }, [])
 
   useEffect(() => {
+    // Have this be looked at for code review 4
     // Need to update this later, for some reason the useEffect doesn't end when returning, and the code outside the forEach loops is executed, thus to work around this we have only 1 setState()
     let matchFound = false
     collections.forEach((collection) => {
       collection.macros.forEach((macro) => {
+        if (macro.name === currentMacro.name) {
+          return
+        }
         if (macro.trigger.type === 'KeyPressEvent') {
           macro.trigger.data.forEach((triggerKey) => {
             if (
@@ -133,8 +138,39 @@ export default function SequencingArea() {
         }
       })
     })
+
+    if (currentMacro.trigger.type === 'KeyPressEvent') {
+      if (currentMacro.trigger.data.length > 0) {
+        currentMacro.trigger.data.forEach((triggerKey) => {
+          if (
+            sequence.filter(
+              (element) =>
+                element.type === 'KeyPressEventAction' &&
+                element.data.keypress === triggerKey
+            ).length > 0
+          ) {
+            matchFound = true
+            return
+          }
+        })
+      }
+    } else {
+      if (currentMacro.trigger.data !== undefined) {
+        if (
+          sequence.filter(
+            (element) =>
+              element.type === 'MouseEventAction' &&
+              currentMacro.trigger.type === 'MouseEvent' &&
+              element.data.data.button === currentMacro.trigger.data
+          ).length > 0
+        ) {
+          matchFound = true
+          return
+        }
+      }
+    }
     setShowAlert(matchFound)
-  }, [collections, sequence, setShowAlert])
+  }, [collections, currentMacro, sequence, setShowAlert])
 
   useEffect(() => {
     if (item === undefined) {
@@ -240,7 +276,7 @@ export default function SequencingArea() {
             >
               <AlertIcon boxSize={['16px', '20px']} />
               <AlertDescription fontSize={['xs', 'sm']} fontWeight="bold">
-                1+ elements may trigger another macro!
+                1+ elements may trigger this macro again or another macro!
               </AlertDescription>
             </Alert>
           )}

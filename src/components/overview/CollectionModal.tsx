@@ -21,13 +21,12 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
+import { maxNameLength } from '../../utils'
 
 type Props = {
   isOpen: boolean
   onClose: () => void
 }
-
-const maxNameLength = 25
 
 export default function CollectionModal({ isOpen, onClose }: Props) {
   const [collectionName, setCollectionName] = useState('')

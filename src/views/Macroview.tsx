@@ -10,9 +10,9 @@ import {
   Input,
   IconButton,
   Tooltip,
-  Box,
+  Box
 } from '@chakra-ui/react'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import EditArea from '../components/macroview/EditArea'
 import SelectElementArea from '../components/macroview/SelectElementArea'
 import SequencingArea from '../components/macroview/SequencingArea'
@@ -21,11 +21,11 @@ import TriggerModal from '../components/macroview/TriggerModal'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useMacroContext } from '../contexts/macroContext'
 import EmojiModal from '../components/macroview/EmojiModal'
+import { maxNameLength } from '../utils'
 
 export default function Macroview() {
-  const { changeSelectedMacroIndex } = useApplicationContext()
-  const { macro, sequence, updateMacroName, updateMacro } =
-    useMacroContext()
+  const { collections, changeSelectedMacroIndex } = useApplicationContext()
+  const { macro, sequence, updateMacroName, updateMacro } = useMacroContext()
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
@@ -33,6 +33,7 @@ export default function Macroview() {
     onOpen: onOpenEmoji,
     onClose: onCloseEmoji
   } = useDisclosure()
+  const [isNameUsable, setIsNameUsable] = useState(false)
 
   const getSaveButtonTooltipText = useCallback((): string => {
     if (
@@ -45,10 +46,51 @@ export default function Macroview() {
       return 'Please add something to the sequence!'
     } else if (macro.name === '') {
       return 'Please name your macro!'
+    } else if (!isNameUsable) {
+      return 'Please give your macro a unique name!'
     } else {
       return ''
     }
-  }, [macro.name, macro.trigger.data, macro.trigger.type, sequence.length])
+  }, [isNameUsable, macro.name, macro.trigger.data, macro.trigger.type, sequence.length])
+
+  const onMacroNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newName: string = event.target.value
+      if (newName === '') {
+        updateMacroName(newName)
+        setIsNameUsable(false)
+        return
+      } else if (newName.length > maxNameLength) {
+        setIsNameUsable(false)
+        return
+      }
+
+      let matchFound = false
+
+      collections.forEach((collection) => {
+        for (let i = 0; i < collection.macros.length; i++) {
+          const macro = collection.macros[i]
+          if (macro.name.toUpperCase() === newName.trim().toUpperCase()) {
+            console.log("Can't use this name")
+            updateMacroName(newName)
+            matchFound = true
+            setIsNameUsable(false)
+            return
+          }
+        }
+      })
+
+      if (!matchFound) {
+        updateMacroName(newName)
+        setIsNameUsable(true)
+      }
+    },
+    [collections, updateMacroName]
+  )
+
+  useEffect(() => {
+    console.log(isNameUsable)
+  }, [isNameUsable])
 
   return (
     <VStack h="100%" spacing="0px" overflow="hidden">
@@ -77,10 +119,7 @@ export default function Macroview() {
             onClick={onOpenEmoji}
             id="emoji-button-2"
           >
-            <em-emoji
-              shortcodes={macro.icon}
-              size="32px"
-            />
+            <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
           <EmojiModal isOpen={isOpenEmoji} onClose={onCloseEmoji} />
           <VStack spacing={0}>
@@ -88,12 +127,10 @@ export default function Macroview() {
               variant="brand"
               placeholder="Macro Name"
               _placeholder={{ opacity: 1, color: borderColour }}
-              isInvalid={macro.name === ''}
-              isRequired
-              onChange={(event) => {
-                updateMacroName(event.target.value)
-              }}
+              isInvalid={!isNameUsable}
+              onChange={onMacroNameChange}
               value={macro.name}
+              isRequired
             />
             {macro.name.length === 25 && (
               <Text w="100%" fontSize="2xs" fontWeight="semibold">
@@ -120,7 +157,7 @@ export default function Macroview() {
               (macro.trigger.type === 'MouseEvent' &&
                 macro.trigger.data === undefined) ||
               sequence.length === 0 ||
-              macro.name === ''
+              !isNameUsable
             }
             onClick={updateMacro}
           >
