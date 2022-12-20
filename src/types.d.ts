@@ -29,6 +29,7 @@ export type MacroState = {
   sequence: ActionEventType[]
   ids: number[]
   selectedElementId: number | undefined
+  isUpdatingMacro: boolean
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
   updateMacroType: (newType: MacroType) => void
@@ -45,6 +46,7 @@ export type MacroState = {
   overwriteIds: (newArray: number[]) => void
   updateSelectedElementId: (newIndex: number | undefined) => void
   updateMacro: () => void
+  changeIsUpdatingMacro: (newVal: boolean) => void
 }
 
 export type SettingsState = {

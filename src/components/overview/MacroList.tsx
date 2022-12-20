@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
+import { useMacroContext } from '../../contexts/macroContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
 import { Collection, Macro } from '../../types'
@@ -18,6 +19,7 @@ import MacroCard from './MacroCard'
 export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
+  const { changeIsUpdatingMacro } = useMacroContext()
   const currentCollection: Collection = useSelectedCollection()
   const bg = useColorModeValue('stone.200', 'zinc.900')
   const shadowColour = useColorModeValue('md', 'white-md')
@@ -73,7 +75,10 @@ export default function MacroList() {
             leftIcon={<AddIcon />}
             size={['sm', 'md', 'lg']}
             maxW="50%"
-            onClick={() => changeViewState(ViewState.Addview)}
+            onClick={() => {
+              changeIsUpdatingMacro(false)
+              changeViewState(ViewState.Addview)
+            }}
           >
             Add Macro
           </Button>
@@ -103,7 +108,10 @@ export default function MacroList() {
                 }}
                 leftIcon={<AddIcon />}
                 size={['sm', 'md', 'lg']}
-                onClick={() => changeViewState(ViewState.Addview)}
+                onClick={() => {
+                  changeIsUpdatingMacro(false)
+                  changeViewState(ViewState.Addview)
+                }}
               >
                 Add Macro
               </Button>

@@ -24,6 +24,7 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../maps/MouseMap'
 import { useCallback } from 'react'
+import { useMacroContext } from '../../contexts/macroContext'
 
 type Props = {
   macro: Macro
@@ -34,6 +35,7 @@ type Props = {
 export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
+  const { changeIsUpdatingMacro } = useMacroContext()
   const currentCollection = useSelectedCollection()
   const bg = useColorModeValue('stone.200', 'zinc.900')
   const secondBg = useColorModeValue('stone.300', 'zinc.800')
@@ -72,13 +74,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       {/** Top Row */}
       <HStack w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
-          <Box
-            maxHeight="32px"
-          >
-            <em-emoji
-              shortcodes={macro.icon}
-              size="32px"
-            />
+          <Box maxHeight="32px">
+            <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
           <Text fontWeight="semibold">{macro.name}</Text>
         </Flex>
@@ -139,6 +136,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           variant="brand"
           leftIcon={<EditIcon />}
           onClick={() => {
+            changeIsUpdatingMacro(true)
             changeSelectedMacroIndex(index)
           }}
         >
