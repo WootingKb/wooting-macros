@@ -5448,7 +5448,7 @@ checksum = "f40009d85759725a34da6d89a94e63d7bdc50a862acf0dbc7c8e488f1edcb6f5"
 
 [[package]]
 name = "wooting-macro-backend"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "anyhow",
  "brightness",
