@@ -9,28 +9,35 @@
 </p>
 
 ## Features
+
 - **Create Macros:** perform keystrokes, open applications, folders, and websites, paste text with emojis, and more.
 - **Organize your macros:** group macros into specific collections, allowing you to toggle the entire collection on/off.
 - **Any Keyboard, Any Mouse:** you can bind the macros to be activated by any keyboard key or mouse button.
 - **Open Source:** want to help out? See below on how to get started.
 
 ## Table of Contents
+
 - Installing the App
 - Documentation
 - Contributing
+- Building
 
 ## Installing the App
+
 For windows, download the latest release's msi and install the application.
 
 For linux, download the latest release's AppImage or deb and install the application.
 
 ## Documentation
+
 N/A
 
 ## Contributing
+
 The project runs with a Rust backend and React frontend (TS), with Tauri connecting the two.
 
 Dependencies
+
 - Rust
 - Node.js (^18)
 - Yarn
@@ -43,19 +50,25 @@ This entails adding to both the backend and frontend. In the backend, you would 
 You can always open an issue if you encounter any problems. Looking to add something you created? If it's a small change (i.e. text change or bug fix) feel free to open a PR anytime. If you want to add a feature, please open an issue to discuss with the community first.
 
 ## Building
-Firstly run yarn to install all the dependencies
+
+First, run yarn to install all the necessary dependencies.
+
 ```
 yarn
 ```
 
 ### Devving
-First start the dev server which watches for changes and recompiles
+
+To start the development server, run:
+
 ```
 yarn tauri dev
 ```
 
 ### Deploying
-Make a production build of all the code
+
+Make a production build, run:
+
 ```
 yarn tauri build
 ```
