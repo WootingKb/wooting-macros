@@ -36,7 +36,7 @@ N/A
 
 The project runs with a Rust backend and React frontend (TS), with Tauri connecting the two.
 
-Dependencies
+### Dependencies
 
 - Rust
 - Node.js (^18)
@@ -67,7 +67,7 @@ yarn tauri dev
 
 ### Deploying
 
-Make a production build, run:
+To make a production build, run:
 
 ```
 yarn tauri build
