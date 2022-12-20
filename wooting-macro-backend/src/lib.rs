@@ -278,7 +278,7 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
 
         //Windows requires a delay between each macro execution.
         #[cfg(any(target_os = "macos", target_os = "linux"))]
-        thread::sleep(time::Duration::from_millis(20));
+        thread::sleep(time::Duration::from_millis(10));
 
         //MacOS requires some strange delays so putting it here just in case.
         #[cfg(target_os = "windows")]
