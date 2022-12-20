@@ -277,12 +277,12 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
         //Windows requires a delay between each macro execution.
-        #[cfg(any(target_os = "windows", target_os = "linux"))]
-        thread::sleep(time::Duration::from_millis(1));
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
+        thread::sleep(time::Duration::from_millis(20));
 
         //MacOS requires some strange delays so putting it here just in case.
-        #[cfg(target_os = "macos")]
-        thread::sleep(time::Duration::from_millis(20));
+        #[cfg(target_os = "windows")]
+        thread::sleep(time::Duration::from_millis(1));
     }
 }
 
