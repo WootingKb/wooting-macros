@@ -39,26 +39,31 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     onCollectionAdd,
     onCollectionUpdate
   } = useApplicationContext()
-  const collection = useSelectedCollection()
+  const currentCollection = useSelectedCollection()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
 
   useEffect(() => {
     if (isUpdatingCollection) {
-      setIconString(collection.icon)
-      setCollectionName(collection.name)
+      setIconString(currentCollection.icon)
+      setCollectionName(currentCollection.name)
       setIsNameUsable(true)
     } else {
       setIconString(':smile:')
       setCollectionName('')
       setIsNameUsable(false)
     }
-  }, [collection.icon, collection.name, isOpen, isUpdatingCollection])
+  }, [
+    currentCollection.icon,
+    currentCollection.name,
+    isOpen,
+    isUpdatingCollection
+  ])
 
   const onModalSuccessClose = useCallback(() => {
     if (isUpdatingCollection) {
       onCollectionUpdate(
-        { ...collection, name: collectionName, icon: iconString },
+        { ...currentCollection, name: collectionName, icon: iconString },
         selection.collectionIndex
       )
     } else {
@@ -71,7 +76,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     }
     onClose()
   }, [
-    collection,
+    currentCollection,
     collectionName,
     iconString,
     isUpdatingCollection,
@@ -93,6 +98,16 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
         return
       }
 
+      if (isUpdatingCollection) {
+        if (
+          newName.trim().toUpperCase() === currentCollection.name.toUpperCase()
+        ) {
+          setCollectionName(newName)
+          setIsNameUsable(true)
+          return
+        }
+      }
+
       for (let i = 0; i < collections.length; i++) {
         const collection = collections[i]
         if (collection.name.toUpperCase() === newName.trim().toUpperCase()) {
@@ -104,7 +119,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
       setCollectionName(newName)
       setIsNameUsable(true)
     },
-    [collections]
+    [currentCollection.name, collections, isUpdatingCollection]
   )
 
   const onEmojiSelect = useCallback(

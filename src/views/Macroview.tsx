@@ -25,7 +25,9 @@ import { maxNameLength } from '../utils'
 
 export default function Macroview() {
   const { collections, changeSelectedMacroIndex } = useApplicationContext()
-  const { macro, sequence, updateMacroName, updateMacro } = useMacroContext()
+  const [oldMacroName, setOldMacroName] = useState('')
+  const { macro, sequence, isUpdatingMacro, updateMacroName, updateMacro } =
+    useMacroContext()
   const borderColour = useColorModeValue('stone.500', 'zinc.500')
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
@@ -34,6 +36,13 @@ export default function Macroview() {
     onClose: onCloseEmoji
   } = useDisclosure()
   const [isNameUsable, setIsNameUsable] = useState(false)
+
+  useEffect(() => {
+    if (isUpdatingMacro) {
+      setOldMacroName(macro.name)
+      setIsNameUsable(true)
+    }
+  }, [isUpdatingMacro, macro.name])
 
   const getSaveButtonTooltipText = useCallback((): string => {
     if (
@@ -51,7 +60,13 @@ export default function Macroview() {
     } else {
       return ''
     }
-  }, [isNameUsable, macro.name, macro.trigger.data, macro.trigger.type, sequence.length])
+  }, [
+    isNameUsable,
+    macro.name,
+    macro.trigger.data,
+    macro.trigger.type,
+    sequence.length
+  ])
 
   const onMacroNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,13 +80,22 @@ export default function Macroview() {
         return
       }
 
+      if (isUpdatingMacro) {
+        console.log("Can't change name of existing macro!")
+        if (newName.toUpperCase() === oldMacroName.toUpperCase()) {
+          updateMacroName(newName)
+          setIsNameUsable(true)
+        }
+        return
+      }
+
       let matchFound = false
 
       collections.forEach((collection) => {
         for (let i = 0; i < collection.macros.length; i++) {
           const macro = collection.macros[i]
           if (macro.name.toUpperCase() === newName.trim().toUpperCase()) {
-            console.log("Can't use this name")
+            console.log("Name already exists!")
             updateMacroName(newName)
             matchFound = true
             setIsNameUsable(false)
@@ -84,13 +108,11 @@ export default function Macroview() {
         updateMacroName(newName)
         setIsNameUsable(true)
       }
-    },
-    [collections, updateMacroName]
-  )
 
-  useEffect(() => {
-    console.log(isNameUsable)
-  }, [isNameUsable])
+      console.log(matchFound)
+    },
+    [collections, isUpdatingMacro, oldMacroName, updateMacroName]
+  )
 
   return (
     <VStack h="100%" spacing="0px" overflow="hidden">

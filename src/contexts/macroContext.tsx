@@ -39,6 +39,7 @@ function MacroProvider({ children }: MacroProviderProps) {
   const [selectedElementId, setSelectedElementId] = useState<
     number | undefined
   >(undefined)
+    const [isUpdatingMacro, setIsUpdatingMacro] = useState(false)
   const currentMacro = useSelectedMacro()
   const currentCollection = useSelectedCollection()
   const { viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
@@ -242,34 +243,20 @@ function MacroProvider({ children }: MacroProviderProps) {
     viewState
   ])
 
+    const changeIsUpdatingMacro = useCallback(
+      (newVal: boolean) => {
+        setIsUpdatingMacro(newVal)
+      },
+      [setIsUpdatingMacro]
+    )
+
   const value = useMemo<MacroState>(
     () => ({
       macro,
       sequence,
       ids,
       selectedElementId,
-      updateMacroName,
-      updateMacroIcon,
-      updateMacroType,
-      updateTrigger: updateTrigger,
-      updateAllowWhileOtherKeys,
-      onElementAdd,
-      onElementsAdd,
-      updateElement,
-      onElementDelete,
-      overwriteSequence,
-      onIdAdd,
-      onIdsAdd,
-      onIdDelete,
-      overwriteIds,
-      updateSelectedElementId,
-      updateMacro
-    }),
-    [
-      macro,
-      sequence,
-      ids,
-      selectedElementId,
+      isUpdatingMacro,
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
@@ -285,7 +272,32 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdDelete,
       overwriteIds,
       updateSelectedElementId,
-      updateMacro
+      updateMacro,
+      changeIsUpdatingMacro
+    }),
+    [
+      macro,
+      sequence,
+      ids,
+      selectedElementId,
+      isUpdatingMacro,
+      updateMacroName,
+      updateMacroIcon,
+      updateMacroType,
+      updateTrigger,
+      updateAllowWhileOtherKeys,
+      onElementAdd,
+      onElementsAdd,
+      updateElement,
+      onElementDelete,
+      overwriteSequence,
+      onIdAdd,
+      onIdsAdd,
+      onIdDelete,
+      overwriteIds,
+      updateSelectedElementId,
+      updateMacro,
+      changeIsUpdatingMacro
     ]
   )
 
