@@ -7,8 +7,12 @@ use std::vec;
 use tokio::sync::mpsc::Sender;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
-#[cfg(any(target_os = "windows", target_os = "linux"))]
+
+#[cfg(target_os = "windows")]
 use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
+#[cfg(target_os = "linux")]
+use brightness::{Brightness, BrightnessDevice};
+
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt};
 
@@ -165,7 +169,10 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
         monitors.push(Monitor {
             device_id: i.device_name().into_future().await.unwrap(),
             brightness: i.get().into_future().await.unwrap(),
+            #[cfg(target_os = "windows")]
             display_name: i.device_description().unwrap(),
+            #[cfg(target_os = "linux")]
+            display_name: "Not supported on Linux".to_string(),
         });
     }
 
