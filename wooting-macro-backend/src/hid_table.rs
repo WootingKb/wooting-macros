@@ -98,6 +98,13 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         scancode.insert(0x44, Key::F11); //F11
         scancode.insert(0x45, Key::F12); //F12
 
+
+        #[cfg(target_os = "windows")]
+        {
+        scancode.insert(0x7f, Key::Unknown(173)); //VOLUME_MUTE
+        scancode.insert(0x81, Key::Unknown(174)); //VOLUME_DOWN
+        scancode.insert(0x80, Key::Unknown(175)); //VOLUME_UP
+
         scancode.insert(0x68, Key::Unknown(124)); //F13
         scancode.insert(0x69, Key::Unknown(125)); //F14
         scancode.insert(0x6a, Key::Unknown(126)); //F15
@@ -112,6 +119,29 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         scancode.insert(0x71, Key::Unknown(133)); //F22
         scancode.insert(0x72, Key::Unknown(134)); //F23
         scancode.insert(0x73, Key::Unknown(135)); //F24
+        }
+
+        #[cfg(target_os = "linux")]
+        {
+        scancode.insert(0x7f, Key::Unknown(121)); //VOLUME_MUTE
+        scancode.insert(0x81, Key::Unknown(122)); //VOLUME_DOWN
+        scancode.insert(0x80, Key::Unknown(123)); //VOLUME_UP
+
+        scancode.insert(0x68, Key::Unknown(191)); //F13
+        scancode.insert(0x69, Key::Unknown(192)); //F14
+        scancode.insert(0x6a, Key::Unknown(193)); //F15
+        scancode.insert(0x6b, Key::Unknown(194)); //F16
+
+        scancode.insert(0x6c, Key::Unknown(195)); //F17
+        scancode.insert(0x6d, Key::Unknown(196)); //F18
+        scancode.insert(0x6e, Key::Unknown(197)); //F19
+        scancode.insert(0x6f, Key::Unknown(198)); //F20
+
+        scancode.insert(0x70, Key::Unknown(199)); //F21
+        scancode.insert(0x71, Key::Unknown(200)); //F22
+        scancode.insert(0x72, Key::Unknown(201)); //F23
+        scancode.insert(0x73, Key::Unknown(202)); //F24
+        }
 
         scancode.insert(0x46, Key::PrintScreen); //PRINT_SCREEN
         scancode.insert(0x47, Key::ScrollLock); //SCROLL_LOCK
@@ -166,9 +196,7 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         // scancode.insert(0x7d, Key::Key); //PASTE
         // scancode.insert(0x7e, Key::Key); //FIND
 
-        scancode.insert(0x7f, Key::Unknown(173)); //VOLUME_MUTE
-        scancode.insert(0x81, Key::Unknown(174)); //VOLUME_DOWN
-        scancode.insert(0x80, Key::Unknown(175)); //VOLUME_UP
+
 
         // scancode.insert(0x85, Key::Key); //NUMPAD_COMMA
         //

@@ -274,6 +274,7 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
+
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
         //Windows requires a delay between each macro execution.
@@ -404,7 +405,7 @@ impl MacroBackend {
                         if inner_is_listening.load(Ordering::Relaxed) {
                             match event.event_type {
                                 rdev::EventType::KeyPress(key) => {
-                                    println!("Key Pressed: {:?}", key);
+                                    println!("Key Pressed RAW: {:?}", key);
                                     let key_to_push = key;
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
@@ -418,6 +419,14 @@ impl MacroBackend {
                                         .into_iter()
                                         .unique()
                                         .collect();
+                                    println!("Pressed Keys CONVERTED TO HID:  {:?}", pressed_keys_copy_converted);
+                                    println!("Pressed Keys CONVERTED TO RDEV: {:?}",
+                                             pressed_keys_copy_converted
+                                                 .iter()
+                                                 .map(|x| *SCANCODE_TO_RDEV
+                                                     .get(x)
+                                                     .unwrap_or(&rdev::Key::Unknown(0)))
+                                                 .collect::<Vec<rdev::Key>>());
 
                                     if log_enabled!(Level::Info) {
                                         info!(
@@ -534,6 +543,7 @@ impl MacroBackend {
                                     "Passing event through... macro recording disabled: {:?}",
                                     event
                                 );
+
                             }
                             Some(event)
                         }
