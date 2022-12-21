@@ -14,6 +14,9 @@
 - **Organize your macros:** group macros into specific collections, allowing you to toggle the entire collection on/off.
 - **Any Keyboard, Any Mouse:** you can bind the macros to be activated by any keyboard key or mouse button.
 - **Open Source:** want to help out? See below on how to get started.
+- **Windows & Linux:** Support for Windows 10/11 and most Linux distros*. MacOS support is definitely on our radar.
+
+*May be unstable with Wayland.
 
 ## Table of Contents
 
@@ -23,10 +26,11 @@
 - Building
 
 ## Installing the App
+Download the [Latest Release here](https://github.com/WootingKb/wooting-macros/releases/latest)
 
-For windows, download the latest release's msi and install the application.
+For windows, download the MSI and then run it to install.
 
-For linux, download the latest release's AppImage or deb and install the application.
+For linux, download the AppImage or deb and install the application.
 
 ## Documentation
 
@@ -39,7 +43,7 @@ The project runs with a Rust backend and React frontend (TS), with Tauri connect
 ### Dependencies
 
 - Rust
-- Node.js (^18)
+- Node.js
 - Yarn
 - [Tauri's prequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
 
