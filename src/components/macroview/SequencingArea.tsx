@@ -338,7 +338,7 @@ export default function SequencingArea() {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
+            <DragWrapper element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}

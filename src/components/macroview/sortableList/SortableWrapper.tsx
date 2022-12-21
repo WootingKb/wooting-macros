@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { DragHandleIcon } from '@chakra-ui/icons'
-import { HStack, Box, useColorModeValue } from '@chakra-ui/react'
+import { HStack, useColorModeValue, Center } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -52,16 +52,16 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
       shadow={shadowColour}
       sx={{ cursor: 'auto' }}
     >
-      <Box
+      <Center
         {...listeners}
-        p="4px"
+        p={2}
         h="full"
         bg={handleBg}
         roundedLeft="md"
         sx={{ cursor: 'grab' }}
       >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />
-      </Box>
+      </Center>
       {children}
     </HStack>
   )

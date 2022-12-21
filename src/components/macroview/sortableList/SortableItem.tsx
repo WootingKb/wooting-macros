@@ -203,7 +203,7 @@ export default function SortableItem({ id, element }: Props) {
 
   return (
     <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
-      <HStack p="4px" px="8px" w="100%">
+      <HStack p={1} px={2} w="100%">
         {iconToDisplay}
         <Text
           fontWeight={
@@ -221,7 +221,7 @@ export default function SortableItem({ id, element }: Props) {
         </Text>
       </HStack>
       <HStack
-        p="4px"
+        p={2}
         h="100%"
       >
         <IconButton

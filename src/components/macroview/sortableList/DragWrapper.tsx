@@ -4,12 +4,11 @@ import { Box, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../types'
 
 type Props = {
-  id: number
   element: ActionEventType
   children: ReactNode
 }
 
-export default function DragWrapper({ id, element, children }: Props) {
+export default function DragWrapper({ element, children }: Props) {
   const bg = useColorModeValue('primary-light.100', 'primary-dark.900')
   const handleBg = useColorModeValue('primary-accent.300', 'primary-accent.400')
   const handleIconColour = useColorModeValue(
