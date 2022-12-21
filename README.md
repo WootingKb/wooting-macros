@@ -16,7 +16,11 @@
 - **Open Source:** want to help out? See below on how to get started.
 - **Windows & Linux:** Support for Windows 10/11 and most Linux distros*. MacOS support is definitely on our radar.
 
-*May be unstable with Wayland.
+*Linux is supported, but may be unstable with Wayland. Different DEs and distributions may result in various bugs - please report them. Some input latency may be introduced on Linux due to the scheduler. You can increase the niceness of the process manually to eliminate it.
+
+## Warnings
+
+**Please do be aware that this application does grab and analyze keystrokes. While you are able to disable this temporarily using an appropriate function, you should still not use this application with anti-cheat heavy games (use at your own risk!) such as: Dota 2, CS:GO, Rainbow Six: Siege, Valorant, League of Legends, Tower Unite. Please doublecheck if a game is using an anti-cheat software!**
 
 ## Table of Contents
 
@@ -28,17 +32,17 @@
 ## Installing the App
 Download the [Latest Release here](https://github.com/WootingKb/wooting-macros/releases/latest)
 
-For windows, download the MSI and then run it to install.
+For MS Windows, download the MSI and then run it to install the application.
 
-For linux, download the AppImage or deb and install the application.
+For Linux, download the AppImage or .deb and install the application.
 
 ## Documentation
 
-N/A
+Additional documentation for compiling and making your own plugins will be available soon.
 
 ## Contributing
 
-The project runs with a Rust backend and React frontend (TS), with Tauri connecting the two.
+The project runs with a Rust backend and React frontend (TS), with Tauri connecting the two. The backend is split into flexible modules. To make your own module, please follow the documentation to set up your environment.
 
 ### Dependencies
 
