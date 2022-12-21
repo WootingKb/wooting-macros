@@ -11,13 +11,13 @@ export const Input = helpers.defineMultiStyleConfig({
     brand: (props: StyleFunctionProps) => ({
       addon: {},
       field: {
-        bg: mode('stone.200', 'zinc.800')(props),
-        color: mode('darkGray', 'offWhite')(props),
+        bg: mode('primary-light.200', 'primary-dark.800')(props),
+        color: mode('bg-dark', 'bg-light')(props),
         _focus: {
           outline: '1px solid',
-          outlineColor: mode('stone.500', 'zinc.500')(props)
+          outlineColor: mode('primary-light.500', 'primary-dark.500')(props)
         },
-        _invalid: { outlineColor: "red.500" }
+        _invalid: { outlineColor: 'red.500' }
       },
       element: {}
     })

@@ -23,8 +23,8 @@ export default function CollectionButton({
   setFocus,
   toggleCollection
 }: Props) {
-  const buttonBg = useColorModeValue('stone.300', 'zinc.800')
-  const selectedTextColour = useColorModeValue('yellow.700', 'yellow.400')
+  const buttonBg = useColorModeValue('primary-light.300', 'primary-dark.800')
+  const selectedTextColour = useColorModeValue('primary-accent.700', 'primary-accent.400')
 
   return (
     <Box

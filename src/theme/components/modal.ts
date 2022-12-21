@@ -17,15 +17,15 @@ const helpers = createMultiStyleConfigHelpers([
 export const Modal = helpers.defineMultiStyleConfig({
   variants: {
     brand: (props: StyleFunctionProps) => ({
-      header: { color: mode('darkGray', 'offWhite')(props) },
+      header: { color: mode('bg-dark', 'bg-light')(props) },
       overlay: { bg: 'blackAlpha.900' },
       dialogContainer: {},
       dialog: {
-        bg: mode('offWhite', 'darkGray')(props),
-        color: mode('darkGray', 'offWhite')(props)
+        bg: mode('bg-light', 'bg-dark')(props),
+        color: mode('bg-dark', 'bg-light')(props)
       },
       closeButton: {},
-      body: { color: mode('darkGray', 'offWhite')(props) },
+      body: { color: mode('bg-dark', 'bg-light')(props) },
       footer: {}
     })
   }

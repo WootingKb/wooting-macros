@@ -4,6 +4,6 @@ import { mode } from '@chakra-ui/theme-tools'
 
 export const Divider = defineStyleConfig({
   baseStyle: (props: StyleFunctionProps) => ({
-    borderColor: mode('stone.500', 'zinc.500')(props)
+    borderColor: mode('primary-light.500', 'primary-dark.500')(props)
   })
 })

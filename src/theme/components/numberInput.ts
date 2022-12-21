@@ -16,13 +16,15 @@ export const NumberInput = helpers.defineMultiStyleConfig({
     brand: (props: StyleFunctionProps) => ({
       root: {},
       field: {
-        color: mode('darkGray', 'offWhite')(props),
+        color: mode('bg-dark', 'bg-light')(props),
         border: '1px solid',
-        borderColor: mode('stone.500', 'zinc.500')(props),
-        background: mode('stone.100', 'zinc.900')(props)
+        borderColor: mode('primary-light.500', 'primary-dark.500')(props),
+        background: mode('primary-light.100', 'primary-dark.900')(props)
       },
       stepperGroup: {},
-      stepper: { borderColor: mode('stone.500', 'zinc.500')(props) }
+      stepper: {
+        borderColor: mode('primary-light.500', 'primary-dark.500')(props)
+      }
     })
   }
 })

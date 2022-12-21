@@ -28,7 +28,10 @@ export default function Macroview() {
   const [oldMacroName, setOldMacroName] = useState('')
   const { macro, sequence, isUpdatingMacro, updateMacroName, updateMacro } =
     useMacroContext()
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenEmoji,
@@ -95,7 +98,7 @@ export default function Macroview() {
         for (let i = 0; i < collection.macros.length; i++) {
           const macro = collection.macros[i]
           if (macro.name.toUpperCase() === newName.trim().toUpperCase()) {
-            console.log("Name already exists!")
+            console.log('Name already exists!')
             updateMacroName(newName)
             matchFound = true
             setIsNameUsable(false)

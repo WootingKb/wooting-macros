@@ -30,8 +30,11 @@ export default function LeftPanel({
     changeIsUpdatingCollection: updateIsRenamingCollection
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
-  const panelBg = useColorModeValue('stone.200', 'zinc.900')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const panelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
 
   const onCollectionButtonPress = (newActiveIndex: number) => {
     changeSelectedCollectionIndex(newActiveIndex)

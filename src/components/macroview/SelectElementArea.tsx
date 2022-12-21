@@ -21,8 +21,11 @@ import { useMemo, useState } from 'react'
 export default function SelectElementArea() {
   const [tabIndex, setTabIndex] = useState(0)
   const [searchValue, setSearchValue] = useState('')
-  const iconColour = useColorModeValue('black', 'white')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const iconColour = useColorModeValue('bg-dark', 'bg-light')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
 
   const ElementsToShow = useMemo(() => {
     switch (tabIndex) {

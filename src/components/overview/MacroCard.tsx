@@ -37,11 +37,17 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
     useApplicationContext()
   const { changeIsUpdatingMacro } = useMacroContext()
   const currentCollection = useSelectedCollection()
-  const bg = useColorModeValue('stone.200', 'zinc.900')
-  const secondBg = useColorModeValue('stone.300', 'zinc.800')
+  const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const secondBg = useColorModeValue('primary-light.300', 'primary-dark.800')
   const shadowColour = useColorModeValue('md', 'white-md')
-  const subtextColour = useColorModeValue('stone.600', 'zinc.400')
-  const borderColour = useColorModeValue('stone.300', 'zinc.700')
+  const subtextColour = useColorModeValue(
+    'primary-light.600',
+    'primary-dark.400'
+  )
+  const borderColour = useColorModeValue(
+    'primary-light.300',
+    'primary-dark.700'
+  )
   const kebabColour = useColorModeValue('yellow.600', 'yellow.400')
 
   const onToggle = useCallback(

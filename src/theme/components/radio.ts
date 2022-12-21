@@ -15,16 +15,16 @@ export const Radio = helpers.defineMultiStyleConfig({
   variants: {
     brand: (props: StyleFunctionProps) => ({
       control: {
-        borderColor: mode('stone.400', 'zinc.500')(props),
-        color: mode('darkGray', 'offWhite')(props),
+        borderColor: mode('primary-light.400', 'primary-dark.500')(props),
+        color: mode('bg-dark', 'bg-light')(props),
         _checked: {
-          borderColor: mode('yellow.500', 'yellow.400')(props),
-          bg: mode('yellow.500', 'yellow.400')(props)
+          borderColor: mode('primary-accent.500', 'primary-accent.400')(props),
+          bg: mode('primary-accent.500', 'primary-accent.400')(props)
         }
       },
       icon: {},
       container: {},
-      label: { color: mode('darkGray', 'offWhite')(props) }
+      label: { color: mode('bg-dark', 'bg-light')(props) }
     })
   }
 })

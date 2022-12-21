@@ -1,7 +1,7 @@
 export const colors = {
-  offWhite: '#FAF9F6',
-  darkGray: '#121212',
-  zinc: {
+  'bg-light': '#FAF9F6',
+  'bg-dark': '#121212',
+  'primary-dark': {
     50: '#fafafa',
     100: '#f4f4f5',
     200: '#e4e4e7',
@@ -13,7 +13,7 @@ export const colors = {
     800: '#27272a',
     900: '#18181b'
   },
-  stone: {
+  'primary-light': {
     50: '#fafaf9',
     100: '#f5f5f4',
     200: '#e7e5e4',
@@ -24,5 +24,17 @@ export const colors = {
     700: '#44403c',
     800: '#292524',
     900: '#1c1917'
+  },
+  'primary-accent': {
+    50: '#FFEFC6',
+    100: '#FFE9B1',
+    200: '#FFDE88',
+    300: '#FFD360',
+    400: '#FFC737',
+    500: '#FFBC0E',
+    600: '#D59A00',
+    700: '#9D7100',
+    800: '#654900',
+    900: '#2D2000'
   }
 }

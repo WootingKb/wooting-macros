@@ -15,7 +15,10 @@ export default function SequenceElementButton({
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
 
   const handleAddElement = useCallback(() => {
     if (config.AutoAddDelay) {
@@ -43,7 +46,13 @@ export default function SequenceElementButton({
   ])
 
   return (
-    <Button variant="brand" size={['sm']} onClick={handleAddElement} border="1px" borderColor={borderColour}>
+    <Button
+      variant="brand"
+      size={['sm']}
+      onClick={handleAddElement}
+      border="1px"
+      borderColor={borderColour}
+    >
       <Text fontSize={['xs', 'sm', 'md']}>{displayText}</Text>
     </Button>
   )

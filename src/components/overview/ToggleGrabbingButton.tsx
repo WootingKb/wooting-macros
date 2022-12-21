@@ -4,8 +4,20 @@ import { useState } from 'react'
 
 export default function ToggleGrabbingButton() {
   const [isInputGrabbingEnabled, setIsInputGrabbingEnabled] = useState(true)
-  const strokeColour = useColorModeValue('stone.800', 'zinc.500')
-  const fillColour = useColorModeValue('yellow.400', 'yellow.300')
+  const strokeColour = useColorModeValue(
+    'primary-light.800',
+    'primary-dark.800'
+  )
+  const fillColour = useColorModeValue('primary-accent.400', 'primary-accent.300')
+  const disabledStrokeColour = useColorModeValue(
+    'primary-light.800',
+    'primary-dark.400'
+  )
+  const disabledFillColour = useColorModeValue(
+    'primary-light.800',
+    'primary-dark.800'
+  )
+
   return (
     <Tooltip
       hasArrow
@@ -40,10 +52,11 @@ export default function ToggleGrabbingButton() {
             </Icon>
           ) : (
             <Icon
+              fill={disabledFillColour}
               boxSize={6}
               viewBox="0 0 24 24"
               strokeWidth={1.5}
-              stroke={strokeColour}
+              stroke={disabledStrokeColour}
             >
               <path
                 strokeLinecap="round"

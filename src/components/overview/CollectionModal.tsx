@@ -41,7 +41,10 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
 
   useEffect(() => {
     if (isUpdatingCollection) {

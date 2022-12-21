@@ -21,7 +21,7 @@ export default function MacroList() {
     useApplicationContext()
   const { changeIsUpdatingMacro } = useMacroContext()
   const currentCollection: Collection = useSelectedCollection()
-  const bg = useColorModeValue('stone.200', 'zinc.900')
+  const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
   const shadowColour = useColorModeValue('md', 'white-md')
 
   const onMacroDelete = useCallback(

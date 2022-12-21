@@ -5,10 +5,10 @@ import { mode } from '@chakra-ui/theme-tools'
 export const Textarea = defineStyleConfig({
   variants: {
     brand: (props: StyleFunctionProps) => ({
-      bg: mode('stone.200', 'zinc.800')(props),
-      color: mode('darkGray', 'offWhite')(props),
+      bg: mode('primary-light.200', 'primary-dark.800')(props),
+      color: mode('bg-dark', 'bg-light')(props),
       border: '1px solid',
-      borderColor: mode('stone.500', 'zinc.500')(props),
+      borderColor: mode('primary-light.500', 'primary-dark.500')(props)
     })
   }
 })
