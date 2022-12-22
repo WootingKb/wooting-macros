@@ -118,7 +118,7 @@ export default function MacroList() {
             </VStack>
           </Flex>
           {currentCollection.macros.map((macro: Macro, index: number) => (
-            <GridItem w="100%" h="163px" key={`${index}:${macro.name}`}>
+            <GridItem w="100%" h="163px" key={macro.name}>
               <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
             </GridItem>
           ))}
