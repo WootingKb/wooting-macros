@@ -48,6 +48,7 @@ export default function SequenceElementButton({
   return (
     <Button
       variant="brand"
+      w="full"
       size={['sm']}
       onClick={handleAddElement}
       border="1px"
