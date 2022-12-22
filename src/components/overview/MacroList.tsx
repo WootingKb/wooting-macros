@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
-import { useMacroContext } from '../../contexts/macroContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
 import { Collection, Macro } from '../../types'
@@ -19,7 +18,6 @@ import MacroCard from './MacroCard'
 export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
-  const { changeIsUpdatingMacro } = useMacroContext()
   const currentCollection: Collection = useSelectedCollection()
   const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
   const shadowColour = useColorModeValue('md', 'white-md')
@@ -76,7 +74,6 @@ export default function MacroList() {
             size={['sm', 'md', 'lg']}
             maxW="50%"
             onClick={() => {
-              changeIsUpdatingMacro(false)
               changeViewState(ViewState.Addview)
             }}
           >
@@ -109,7 +106,6 @@ export default function MacroList() {
                 leftIcon={<AddIcon />}
                 size={['sm', 'md', 'lg']}
                 onClick={() => {
-                  changeIsUpdatingMacro(false)
                   changeViewState(ViewState.Addview)
                 }}
               >

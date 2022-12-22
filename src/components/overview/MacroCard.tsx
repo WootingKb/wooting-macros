@@ -24,7 +24,6 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../maps/MouseMap'
 import { useCallback } from 'react'
-import { useMacroContext } from '../../contexts/macroContext'
 
 type Props = {
   macro: Macro
@@ -35,7 +34,6 @@ type Props = {
 export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
-  const { changeIsUpdatingMacro } = useMacroContext()
   const currentCollection = useSelectedCollection()
   const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
   const secondBg = useColorModeValue('primary-light.300', 'primary-dark.800')
@@ -142,7 +140,6 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           variant="brand"
           leftIcon={<EditIcon />}
           onClick={() => {
-            changeIsUpdatingMacro(true)
             changeSelectedMacroIndex(index)
           }}
         >

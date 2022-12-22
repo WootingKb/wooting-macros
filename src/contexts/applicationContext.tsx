@@ -60,7 +60,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const changeSelectedCollectionIndex = useCallback(
     (index: number) => {
-      setSelection({ collectionIndex: index, macroIndex: -1 })
+      setSelection({ collectionIndex: index, macroIndex: undefined })
     },
     [setSelection]
   )
@@ -83,10 +83,14 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
-      setCollections((collections) => [...collections, newCollection])
-      changeSelectedCollectionIndex(collections.length)
+      let newIndex = 0
+      setCollections((collections) => {
+        newIndex = collections.length
+        return [...collections, newCollection]
+      })
+      changeSelectedCollectionIndex(newIndex)
     },
-    [changeSelectedCollectionIndex, collections.length]
+    [changeSelectedCollectionIndex]
   )
 
   const onSelectedCollectionDelete = useCallback(() => {

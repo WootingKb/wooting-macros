@@ -56,7 +56,7 @@ export default function SelectElementArea() {
             }}
           >
             <GridItem colSpan={[2, 2, 3]}>
-              <Accordion allowMultiple allowToggle p={0}>
+              <Accordion allowMultiple p={0}>
                 {/** System Events */}
                 <AccordionItem>
                   <h2>
@@ -113,7 +113,7 @@ export default function SelectElementArea() {
                 {Object.keys(HIDCategory)
                   .filter((key) => isNaN(Number(key)))
                   .map((categoryName: string) => (
-                    <AccordionItem>
+                    <AccordionItem key={categoryName}>
                       <h2>
                         <AccordionButton>
                           <Flex
@@ -257,11 +257,11 @@ export default function SelectElementArea() {
               }
             }}
           >
-            <Accordion allowMultiple allowToggle>
+            <Accordion allowMultiple>
               {Object.keys(HIDCategory)
                 .filter((key) => isNaN(Number(key)))
                 .map((categoryName: string) => (
-                  <AccordionItem>
+                  <AccordionItem key={categoryName}>
                     <h2>
                       <AccordionButton>
                         <Box

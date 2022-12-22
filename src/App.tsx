@@ -9,6 +9,7 @@ import SettingsModal from './views/settings/SettingsModal'
 import data from '@emoji-mart/data'
 import { init } from 'emoji-mart'
 import './App.css'
+import { MacroProvider } from './contexts/macroContext'
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()
@@ -31,10 +32,20 @@ function App() {
   return (
     <Flex h="100vh" direction="column">
       {viewState === ViewState.Overview && (
-        <Overview onOpenSettingsModal={onOpen} />
+        <MacroProvider>
+          <Overview onOpenSettingsModal={onOpen} />
+        </MacroProvider>
       )}
-      {viewState === ViewState.Addview && <Macroview key={0} />}
-      {viewState === ViewState.Editview && <Macroview key={1} />}
+      {viewState === ViewState.Addview && (
+        <MacroProvider>
+          <Macroview isEditing={false}/>
+        </MacroProvider>
+      )}
+      {viewState === ViewState.Editview && (
+        <MacroProvider>
+          <Macroview isEditing={true}/>
+        </MacroProvider>
+      )}
       <SettingsModal isOpen={isOpen} onClose={onClose} />
     </Flex>
   )
