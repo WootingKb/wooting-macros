@@ -14,7 +14,8 @@ import {
   Box,
   useColorModeValue,
   Tooltip,
-  Divider
+  Divider,
+  useColorMode
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
@@ -45,6 +46,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     'primary-light.500',
     'primary-dark.500'
   )
+  const { colorMode } = useColorMode()
 
   useEffect(() => {
     if (isUpdatingCollection) {
@@ -198,7 +200,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
               <Box id="picker-box" w="100%" py="4">
                 <Picker
                   data={data}
-                  theme="auto"
+                  theme={colorMode === 'light' ? 'light' : 'dark'}
                   onEmojiSelect={onEmojiSelect}
                   navPosition="bottom"
                   previewPosition="none"

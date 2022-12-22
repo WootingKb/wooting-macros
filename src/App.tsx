@@ -1,5 +1,5 @@
 import { appWindow, PhysicalSize } from '@tauri-apps/api/window'
-import { Flex, useDisclosure } from '@chakra-ui/react'
+import { Flex, useDisclosure, Text } from '@chakra-ui/react'
 import Overview from './views/Overview'
 import { ViewState } from './enums'
 import { useApplicationContext } from './contexts/applicationContext'
@@ -24,7 +24,7 @@ function App() {
   if (!initComplete) {
     return (
       <Flex h="100vh" justifyContent="center" alignItems="center">
-        Loading
+        <Text fontSize="2xl" fontWeight="bold">Loading</Text>
       </Flex>
     )
   }
