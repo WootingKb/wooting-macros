@@ -10,6 +10,8 @@ import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../enums'
 import { SettingsGroup } from '../../maps/SettingsMap'
 import SettingsButton from './SettingsButton'
+import { type, version } from '@tauri-apps/api/os'
+import { useEffect, useState } from 'react'
 
 type Props = {
   pageIndex: number
@@ -25,9 +27,39 @@ export default function SettingsLeftPanel({
     'primary-light.500',
     'primary-dark.500'
   )
-  const applicationTextColour = useColorModeValue('primary-light.500', 'primary-dark.400')
+  const [osText, setOsText] = useState<string | undefined>(undefined)
+  const applicationTextColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.400'
+  )
   const strokeColour = useColorModeValue('bg-dark', 'bg-light')
-  const strokeHoverColour = useColorModeValue('primary-accent.600', 'primary-accent.400')
+  const strokeHoverColour = useColorModeValue(
+    'primary-accent.600',
+    'primary-accent.400'
+  )
+
+  useEffect(() => {
+    const getOSType = async () => {
+      const os = await type()
+      const osVersion = await version()
+      switch (os) {
+        case 'Linux':
+          setOsText(`${os} (${osVersion})`)
+          break
+        case 'Darwin':
+          setOsText(`${os} (${osVersion})`)
+          break
+        case 'Windows_NT':
+          setOsText(`Windows (${osVersion})`)
+          break
+
+        default:
+          break
+      }
+    }
+
+    getOSType().catch((err) => console.error(err))
+  }, [])
 
   return (
     <VStack
@@ -126,7 +158,7 @@ export default function SettingsLeftPanel({
             Version 1.0
           </Text>
           <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
-            Windows 64-Bit
+            {osText}
           </Text>
         </VStack>
       </VStack>
