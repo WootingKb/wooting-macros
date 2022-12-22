@@ -187,9 +187,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                   placeholder={'Collection Name'}
                   _placeholder={{ opacity: 1, color: borderColour }}
                 />
-                {collectionName.length === 25 && (
+                {collectionName.length === maxNameLength && (
                   <Text w="100%" fontSize="2xs" fontWeight="semibold">
-                    Max length is 25 characters
+                    Max length is {maxNameLength} characters
                   </Text>
                 )}
               </VStack>

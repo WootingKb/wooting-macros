@@ -29,9 +29,9 @@ type Props = {
 
 export default function Macroview({ isEditing }: Props) {
   const { collections, changeSelectedMacroIndex } = useApplicationContext()
-  const [oldMacroName, setOldMacroName] = useState('')
   const {
     macro,
+    oldMacroName,
     sequence,
     changeIsUpdatingMacro,
     updateMacroName,
@@ -51,11 +51,10 @@ export default function Macroview({ isEditing }: Props) {
 
   useEffect(() => {
     if (isEditing) {
-      setOldMacroName(macro.name)
       setIsNameUsable(true)
     }
     changeIsUpdatingMacro(isEditing)
-  }, [macro.name, isEditing, changeIsUpdatingMacro])
+  }, [isEditing, changeIsUpdatingMacro])
 
   const getSaveButtonTooltipText = useCallback((): string => {
     if (
@@ -93,29 +92,25 @@ export default function Macroview({ isEditing }: Props) {
         return
       }
 
-      if (isEditing) {
-        if (newName.toUpperCase() === oldMacroName.toUpperCase()) {
-          updateMacroName(newName)
-          setIsNameUsable(true)
-        }
-        return
-      }
-
       let matchFound = false
 
       collections.forEach((collection) => {
         for (let i = 0; i < collection.macros.length; i++) {
-          const macro = collection.macros[i]
-          if (macro.name.toUpperCase() === newName.trim().toUpperCase()) {
+          const currentMacro = collection.macros[i]
+          if (currentMacro.name.toUpperCase() === newName.trim().toUpperCase()) {
+            if (isEditing && currentMacro.name === oldMacroName) {
+              return
+            }
             updateMacroName(newName)
-            matchFound = true
             setIsNameUsable(false)
+            matchFound = true
             return
           }
         }
       })
 
       if (!matchFound) {
+        console.log("hello")
         updateMacroName(newName)
         setIsNameUsable(true)
       }
@@ -163,9 +158,9 @@ export default function Macroview({ isEditing }: Props) {
               value={macro.name}
               isRequired
             />
-            {macro.name.length === 25 && (
+            {macro.name.length === maxNameLength && (
               <Text w="100%" fontSize="2xs" fontWeight="semibold">
-                Max length is 25 characters
+                Max length is {maxNameLength} characters
               </Text>
             )}
           </VStack>
