@@ -1,219 +1,544 @@
+import { HIDCategory } from '../enums'
+
 export interface HidInfo {
   HIDcode: number
+  category: HIDCategory
   displayString: string
   webKeyId: string
 }
 
 export class Hid {
   static get A(): HidInfo {
-    return { HIDcode: 4, displayString: 'A', webKeyId: 'KeyA' }
+    return {
+      HIDcode: 4,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'A',
+      webKeyId: 'KeyA'
+    }
   }
   static get B(): HidInfo {
-    return { HIDcode: 5, displayString: 'B', webKeyId: 'KeyB' }
+    return {
+      HIDcode: 5,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'B',
+      webKeyId: 'KeyB'
+    }
   }
   static get C(): HidInfo {
-    return { HIDcode: 6, displayString: 'C', webKeyId: 'KeyC' }
+    return {
+      HIDcode: 6,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'C',
+      webKeyId: 'KeyC'
+    }
   }
   static get D(): HidInfo {
-    return { HIDcode: 7, displayString: 'D', webKeyId: 'KeyD' }
+    return {
+      HIDcode: 7,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'D',
+      webKeyId: 'KeyD'
+    }
   }
   static get E(): HidInfo {
-    return { HIDcode: 8, displayString: 'E', webKeyId: 'KeyE' }
+    return {
+      HIDcode: 8,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'E',
+      webKeyId: 'KeyE'
+    }
   }
   static get F(): HidInfo {
-    return { HIDcode: 9, displayString: 'F', webKeyId: 'KeyF' }
+    return {
+      HIDcode: 9,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'F',
+      webKeyId: 'KeyF'
+    }
   }
 
   static get G(): HidInfo {
-    return { HIDcode: 10, displayString: 'G', webKeyId: 'KeyG' }
+    return {
+      HIDcode: 10,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'G',
+      webKeyId: 'KeyG'
+    }
   }
   static get H(): HidInfo {
-    return { HIDcode: 11, displayString: 'H', webKeyId: 'KeyH' }
+    return {
+      HIDcode: 11,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'H',
+      webKeyId: 'KeyH'
+    }
   }
   static get I(): HidInfo {
-    return { HIDcode: 12, displayString: 'I', webKeyId: 'KeyI' }
+    return {
+      HIDcode: 12,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'I',
+      webKeyId: 'KeyI'
+    }
   }
   static get J(): HidInfo {
-    return { HIDcode: 13, displayString: 'J', webKeyId: 'KeyJ' }
+    return {
+      HIDcode: 13,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'J',
+      webKeyId: 'KeyJ'
+    }
   }
   static get K(): HidInfo {
-    return { HIDcode: 14, displayString: 'K', webKeyId: 'KeyK' }
+    return {
+      HIDcode: 14,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'K',
+      webKeyId: 'KeyK'
+    }
   }
   static get L(): HidInfo {
-    return { HIDcode: 15, displayString: 'L', webKeyId: 'KeyL' }
+    return {
+      HIDcode: 15,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'L',
+      webKeyId: 'KeyL'
+    }
   }
   static get M(): HidInfo {
-    return { HIDcode: 16, displayString: 'M', webKeyId: 'KeyM' }
+    return {
+      HIDcode: 16,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'M',
+      webKeyId: 'KeyM'
+    }
   }
   static get N(): HidInfo {
-    return { HIDcode: 17, displayString: 'N', webKeyId: 'KeyN' }
+    return {
+      HIDcode: 17,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'N',
+      webKeyId: 'KeyN'
+    }
   }
   static get O(): HidInfo {
-    return { HIDcode: 18, displayString: 'O', webKeyId: 'KeyO' }
+    return {
+      HIDcode: 18,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'O',
+      webKeyId: 'KeyO'
+    }
   }
   static get P(): HidInfo {
-    return { HIDcode: 19, displayString: 'P', webKeyId: 'KeyP' }
+    return {
+      HIDcode: 19,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'P',
+      webKeyId: 'KeyP'
+    }
   }
 
   static get Q(): HidInfo {
-    return { HIDcode: 20, displayString: 'Q', webKeyId: 'KeyQ' }
+    return {
+      HIDcode: 20,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Q',
+      webKeyId: 'KeyQ'
+    }
   }
   static get R(): HidInfo {
-    return { HIDcode: 21, displayString: 'R', webKeyId: 'KeyR' }
+    return {
+      HIDcode: 21,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'R',
+      webKeyId: 'KeyR'
+    }
   }
   static get S(): HidInfo {
-    return { HIDcode: 22, displayString: 'S', webKeyId: 'KeyS' }
+    return {
+      HIDcode: 22,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'S',
+      webKeyId: 'KeyS'
+    }
   }
   static get T(): HidInfo {
-    return { HIDcode: 23, displayString: 'T', webKeyId: 'KeyT' }
+    return {
+      HIDcode: 23,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'T',
+      webKeyId: 'KeyT'
+    }
   }
   static get U(): HidInfo {
-    return { HIDcode: 24, displayString: 'U', webKeyId: 'KeyU' }
+    return {
+      HIDcode: 24,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'U',
+      webKeyId: 'KeyU'
+    }
   }
   static get V(): HidInfo {
-    return { HIDcode: 25, displayString: 'V', webKeyId: 'KeyV' }
+    return {
+      HIDcode: 25,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'V',
+      webKeyId: 'KeyV'
+    }
   }
   static get W(): HidInfo {
-    return { HIDcode: 26, displayString: 'W', webKeyId: 'KeyW' }
+    return {
+      HIDcode: 26,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'W',
+      webKeyId: 'KeyW'
+    }
   }
   static get X(): HidInfo {
-    return { HIDcode: 27, displayString: 'X', webKeyId: 'KeyX' }
+    return {
+      HIDcode: 27,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'X',
+      webKeyId: 'KeyX'
+    }
   }
   static get Y(): HidInfo {
-    return { HIDcode: 28, displayString: 'Y', webKeyId: 'KeyY' }
+    return {
+      HIDcode: 28,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Y',
+      webKeyId: 'KeyY'
+    }
   }
   static get Z(): HidInfo {
-    return { HIDcode: 29, displayString: 'Z', webKeyId: 'KeyZ' }
+    return {
+      HIDcode: 29,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Z',
+      webKeyId: 'KeyZ'
+    }
   }
 
   static get N1(): HidInfo {
-    return { HIDcode: 30, displayString: '1', webKeyId: 'Digit1' }
+    return {
+      HIDcode: 30,
+      category: HIDCategory.Alphanumeric,
+      displayString: '1',
+      webKeyId: 'Digit1'
+    }
   }
   static get N2(): HidInfo {
-    return { HIDcode: 31, displayString: '2', webKeyId: 'Digit2' }
+    return {
+      HIDcode: 31,
+      category: HIDCategory.Alphanumeric,
+      displayString: '2',
+      webKeyId: 'Digit2'
+    }
   }
   static get N3(): HidInfo {
-    return { HIDcode: 32, displayString: '3', webKeyId: 'Digit3' }
+    return {
+      HIDcode: 32,
+      category: HIDCategory.Alphanumeric,
+      displayString: '3',
+      webKeyId: 'Digit3'
+    }
   }
   static get N4(): HidInfo {
-    return { HIDcode: 33, displayString: '4', webKeyId: 'Digit4' }
+    return {
+      HIDcode: 33,
+      category: HIDCategory.Alphanumeric,
+      displayString: '4',
+      webKeyId: 'Digit4'
+    }
   }
   static get N5(): HidInfo {
-    return { HIDcode: 34, displayString: '5', webKeyId: 'Digit5' }
+    return {
+      HIDcode: 34,
+      category: HIDCategory.Alphanumeric,
+      displayString: '5',
+      webKeyId: 'Digit5'
+    }
   }
   static get N6(): HidInfo {
-    return { HIDcode: 35, displayString: '6', webKeyId: 'Digit6' }
+    return {
+      HIDcode: 35,
+      category: HIDCategory.Alphanumeric,
+      displayString: '6',
+      webKeyId: 'Digit6'
+    }
   }
   static get N7(): HidInfo {
-    return { HIDcode: 36, displayString: '7', webKeyId: 'Digit7' }
+    return {
+      HIDcode: 36,
+      category: HIDCategory.Alphanumeric,
+      displayString: '7',
+      webKeyId: 'Digit7'
+    }
   }
   static get N8(): HidInfo {
-    return { HIDcode: 37, displayString: '8', webKeyId: 'Digit8' }
+    return {
+      HIDcode: 37,
+      category: HIDCategory.Alphanumeric,
+      displayString: '8',
+      webKeyId: 'Digit8'
+    }
   }
   static get N9(): HidInfo {
-    return { HIDcode: 38, displayString: '9', webKeyId: 'Digit9' }
+    return {
+      HIDcode: 38,
+      category: HIDCategory.Alphanumeric,
+      displayString: '9',
+      webKeyId: 'Digit9'
+    }
   }
   static get N0(): HidInfo {
-    return { HIDcode: 39, displayString: '0', webKeyId: 'Digit0' }
+    return {
+      HIDcode: 39,
+      category: HIDCategory.Alphanumeric,
+      displayString: '0',
+      webKeyId: 'Digit0'
+    }
   }
 
   static get ENTER(): HidInfo {
-    return { HIDcode: 40, displayString: 'Enter', webKeyId: 'Enter' }
+    return {
+      HIDcode: 40,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Enter',
+      webKeyId: 'Enter'
+    }
   }
   static get ESCAPE(): HidInfo {
-    return { HIDcode: 41, displayString: 'Escape', webKeyId: 'Escape' }
+    return {
+      HIDcode: 41,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Escape',
+      webKeyId: 'Escape'
+    }
   }
   static get BACKSPACE(): HidInfo {
     return {
       HIDcode: 42,
+      category: HIDCategory.Alphanumeric,
       displayString: 'Backspace',
       webKeyId: 'Backspace'
     }
   }
   static get TAB(): HidInfo {
-    return { HIDcode: 43, displayString: 'Tab', webKeyId: 'Tab' }
+    return {
+      HIDcode: 43,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Tab',
+      webKeyId: 'Tab'
+    }
   }
   static get SPACE(): HidInfo {
-    return { HIDcode: 44, displayString: 'Space', webKeyId: 'Space' }
+    return {
+      HIDcode: 44,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Space',
+      webKeyId: 'Space'
+    }
   }
   static get MINUS(): HidInfo {
-    return { HIDcode: 45, displayString: '-', webKeyId: 'Minus' }
+    return {
+      HIDcode: 45,
+      category: HIDCategory.Alphanumeric,
+      displayString: '-',
+      webKeyId: 'Minus'
+    }
   }
   static get EQUAL(): HidInfo {
-    return { HIDcode: 46, displayString: '=', webKeyId: 'Equal' }
+    return {
+      HIDcode: 46,
+      category: HIDCategory.Alphanumeric,
+      displayString: '=',
+      webKeyId: 'Equal'
+    }
   }
   static get BRACKETL(): HidInfo {
-    return { HIDcode: 47, displayString: '[', webKeyId: 'BracketLeft' }
+    return {
+      HIDcode: 47,
+      category: HIDCategory.Alphanumeric,
+      displayString: '[',
+      webKeyId: 'BracketLeft'
+    }
   }
   static get BRACKETR(): HidInfo {
-    return { HIDcode: 48, displayString: ']', webKeyId: 'BracketRight' }
+    return {
+      HIDcode: 48,
+      category: HIDCategory.Alphanumeric,
+      displayString: ']',
+      webKeyId: 'BracketRight'
+    }
   }
   static get BACKSLASH(): HidInfo {
-    return { HIDcode: 49, displayString: '\\', webKeyId: 'Backslash' }
+    return {
+      HIDcode: 49,
+      category: HIDCategory.Alphanumeric,
+      displayString: '\\',
+      webKeyId: 'Backslash'
+    }
   }
 
   static get SEMICOLON(): HidInfo {
-    return { HIDcode: 51, displayString: ';', webKeyId: 'Semicolon' }
+    return {
+      HIDcode: 51,
+      category: HIDCategory.Alphanumeric,
+      displayString: ';',
+      webKeyId: 'Semicolon'
+    }
   }
   static get QUOTE(): HidInfo {
-    return { HIDcode: 52, displayString: '"', webKeyId: 'Quote' }
+    return {
+      HIDcode: 52,
+      category: HIDCategory.Alphanumeric,
+      displayString: '"',
+      webKeyId: 'Quote'
+    }
   }
   static get BACKQUOTE(): HidInfo {
-    return { HIDcode: 53, displayString: '`', webKeyId: 'Backquote' }
+    return {
+      HIDcode: 53,
+      category: HIDCategory.Alphanumeric,
+      displayString: '`',
+      webKeyId: 'Backquote'
+    }
   }
   static get COMMA(): HidInfo {
-    return { HIDcode: 54, displayString: ',', webKeyId: 'Comma' }
+    return {
+      HIDcode: 54,
+      category: HIDCategory.Alphanumeric,
+      displayString: ',',
+      webKeyId: 'Comma'
+    }
   }
   static get PERIOD(): HidInfo {
-    return { HIDcode: 55, displayString: '.', webKeyId: 'Period' }
+    return {
+      HIDcode: 55,
+      category: HIDCategory.Alphanumeric,
+      displayString: '.',
+      webKeyId: 'Period'
+    }
   }
   static get SLASH(): HidInfo {
-    return { HIDcode: 56, displayString: '/', webKeyId: 'Slash' }
+    return {
+      HIDcode: 56,
+      category: HIDCategory.Alphanumeric,
+      displayString: '/',
+      webKeyId: 'Slash'
+    }
   }
   static get CAPSLOCK(): HidInfo {
-    return { HIDcode: 57, displayString: 'Caps Lock', webKeyId: 'CapsLock' }
+    return {
+      HIDcode: 57,
+      category: HIDCategory.Alphanumeric,
+      displayString: 'Caps Lock',
+      webKeyId: 'CapsLock'
+    }
   }
   static get F1(): HidInfo {
-    return { HIDcode: 58, displayString: 'F1', webKeyId: 'F1' }
+    return {
+      HIDcode: 58,
+      category: HIDCategory.Function,
+      displayString: 'F1',
+      webKeyId: 'F1'
+    }
   }
   static get F2(): HidInfo {
-    return { HIDcode: 59, displayString: 'F2', webKeyId: 'F2' }
+    return {
+      HIDcode: 59,
+      category: HIDCategory.Function,
+      displayString: 'F2',
+      webKeyId: 'F2'
+    }
   }
 
   static get F3(): HidInfo {
-    return { HIDcode: 60, displayString: 'F3', webKeyId: 'F3' }
+    return {
+      HIDcode: 60,
+      category: HIDCategory.Function,
+      displayString: 'F3',
+      webKeyId: 'F3'
+    }
   }
   static get F4(): HidInfo {
-    return { HIDcode: 61, displayString: 'F4', webKeyId: 'F4' }
+    return {
+      HIDcode: 61,
+      category: HIDCategory.Function,
+      displayString: 'F4',
+      webKeyId: 'F4'
+    }
   }
   static get F5(): HidInfo {
-    return { HIDcode: 62, displayString: 'F5', webKeyId: 'F5' }
+    return {
+      HIDcode: 62,
+      category: HIDCategory.Function,
+      displayString: 'F5',
+      webKeyId: 'F5'
+    }
   }
   static get F6(): HidInfo {
-    return { HIDcode: 63, displayString: 'F6', webKeyId: 'F6' }
+    return {
+      HIDcode: 63,
+      category: HIDCategory.Function,
+      displayString: 'F6',
+      webKeyId: 'F6'
+    }
   }
   static get F7(): HidInfo {
-    return { HIDcode: 64, displayString: 'F7', webKeyId: 'F7' }
+    return {
+      HIDcode: 64,
+      category: HIDCategory.Function,
+      displayString: 'F7',
+      webKeyId: 'F7'
+    }
   }
   static get F8(): HidInfo {
-    return { HIDcode: 65, displayString: 'F8', webKeyId: 'F8' }
+    return {
+      HIDcode: 65,
+      category: HIDCategory.Function,
+      displayString: 'F8',
+      webKeyId: 'F8'
+    }
   }
   static get F9(): HidInfo {
-    return { HIDcode: 66, displayString: 'F9', webKeyId: 'F9' }
+    return {
+      HIDcode: 66,
+      category: HIDCategory.Function,
+      displayString: 'F9',
+      webKeyId: 'F9'
+    }
   }
   static get F10(): HidInfo {
-    return { HIDcode: 67, displayString: 'F10', webKeyId: 'F10' }
+    return {
+      HIDcode: 67,
+      category: HIDCategory.Function,
+      displayString: 'F10',
+      webKeyId: 'F10'
+    }
   }
   static get F11(): HidInfo {
-    return { HIDcode: 68, displayString: 'F11', webKeyId: 'F11' }
+    return {
+      HIDcode: 68,
+      category: HIDCategory.Function,
+      displayString: 'F11',
+      webKeyId: 'F11'
+    }
   }
   static get F12(): HidInfo {
-    return { HIDcode: 69, displayString: 'F12', webKeyId: 'F12' }
+    return {
+      HIDcode: 69,
+      category: HIDCategory.Function,
+      displayString: 'F12',
+      webKeyId: 'F12'
+    }
   }
 
   static get PRINTSCREEN(): HidInfo {
     return {
       HIDcode: 70,
+      category: HIDCategory.Modifier,
       displayString: 'Print Screen',
       webKeyId: 'PrintScreen'
     }
@@ -221,34 +546,71 @@ export class Hid {
   static get SCROLLLOCK(): HidInfo {
     return {
       HIDcode: 71,
+      category: HIDCategory.Modifier,
       displayString: 'Scroll Lock',
       webKeyId: 'ScrollLock'
     }
   }
   static get PAUSE(): HidInfo {
-    return { HIDcode: 72, displayString: 'Pause', webKeyId: 'Pause' }
+    return {
+      HIDcode: 72,
+      category: HIDCategory.Modifier,
+      displayString: 'Pause',
+      webKeyId: 'Pause'
+    }
   }
   static get INSERT(): HidInfo {
-    return { HIDcode: 73, displayString: 'Insert', webKeyId: 'Insert' }
+    return {
+      HIDcode: 73,
+      category: HIDCategory.Navigation,
+      displayString: 'Insert',
+      webKeyId: 'Insert'
+    }
   }
   static get HOME(): HidInfo {
-    return { HIDcode: 74, displayString: 'Home', webKeyId: 'Home' }
+    return {
+      HIDcode: 74,
+      category: HIDCategory.Navigation,
+      displayString: 'Home',
+      webKeyId: 'Home'
+    }
   }
   static get PAGEUP(): HidInfo {
-    return { HIDcode: 75, displayString: 'Page Up', webKeyId: 'PageUp' }
+    return {
+      HIDcode: 75,
+      category: HIDCategory.Navigation,
+      displayString: 'Page Up',
+      webKeyId: 'PageUp'
+    }
   }
   static get DELETE(): HidInfo {
-    return { HIDcode: 76, displayString: 'Delete', webKeyId: 'Delete' }
+    return {
+      HIDcode: 76,
+      category: HIDCategory.Navigation,
+      displayString: 'Delete',
+      webKeyId: 'Delete'
+    }
   }
   static get END(): HidInfo {
-    return { HIDcode: 77, displayString: 'End', webKeyId: 'End' }
+    return {
+      HIDcode: 77,
+      category: HIDCategory.Navigation,
+      displayString: 'End',
+      webKeyId: 'End'
+    }
   }
   static get PAGEDOWN(): HidInfo {
-    return { HIDcode: 78, displayString: 'Page Down', webKeyId: 'PageDown' }
+    return {
+      HIDcode: 78,
+      category: HIDCategory.Navigation,
+      displayString: 'Page Down',
+      webKeyId: 'PageDown'
+    }
   }
   static get ARROWR(): HidInfo {
     return {
       HIDcode: 79,
+      category: HIDCategory.Navigation,
       displayString: 'Right Arrow',
       webKeyId: 'ArrowRight'
     }
@@ -257,6 +619,7 @@ export class Hid {
   static get ARROWL(): HidInfo {
     return {
       HIDcode: 80,
+      category: HIDCategory.Navigation,
       displayString: 'Left Arrow',
       webKeyId: 'ArrowLeft'
     }
@@ -264,19 +627,31 @@ export class Hid {
   static get ARROWD(): HidInfo {
     return {
       HIDcode: 81,
+      category: HIDCategory.Navigation,
       displayString: 'Down Arrow',
       webKeyId: 'ArrowDown'
     }
   }
   static get ARROWU(): HidInfo {
-    return { HIDcode: 82, displayString: 'Up Arrow', webKeyId: 'ArrowUp' }
+    return {
+      HIDcode: 82,
+      category: HIDCategory.Navigation,
+      displayString: 'Up Arrow',
+      webKeyId: 'ArrowUp'
+    }
   }
   static get NUMLOCK(): HidInfo {
-    return { HIDcode: 83, displayString: 'Num Lock', webKeyId: 'NumLock' }
+    return {
+      HIDcode: 83,
+      category: HIDCategory.Numpad,
+      displayString: 'Num Lock',
+      webKeyId: 'NumLock'
+    }
   }
   static get NUMDIVIDE(): HidInfo {
     return {
       HIDcode: 84,
+      category: HIDCategory.Numpad,
       displayString: 'Numpad Divide',
       webKeyId: 'NumpadDivide'
     }
@@ -284,6 +659,7 @@ export class Hid {
   static get NUMMULTIPLY(): HidInfo {
     return {
       HIDcode: 85,
+      category: HIDCategory.Numpad,
       displayString: 'Numpad Multiply',
       webKeyId: 'NumpadMultiply'
     }
@@ -291,6 +667,7 @@ export class Hid {
   static get NUMSUBTRACT(): HidInfo {
     return {
       HIDcode: 86,
+      category: HIDCategory.Numpad,
       displayString: 'Numpad Subtract',
       webKeyId: 'NumpadSubtract'
     }
@@ -298,6 +675,7 @@ export class Hid {
   static get NUMADD(): HidInfo {
     return {
       HIDcode: 87,
+      category: HIDCategory.Numpad,
       displayString: 'Numpad Add',
       webKeyId: 'NumpadAdd'
     }
@@ -305,89 +683,202 @@ export class Hid {
   static get NUMENTER(): HidInfo {
     return {
       HIDcode: 88,
+      category: HIDCategory.Numpad,
       displayString: 'Numpad Enter',
       webKeyId: 'NumpadEnter'
     }
   }
   static get NP1(): HidInfo {
-    return { HIDcode: 89, displayString: 'NP1', webKeyId: 'Numpad1' }
+    return {
+      HIDcode: 89,
+      category: HIDCategory.Numpad,
+      displayString: 'NP1',
+      webKeyId: 'Numpad1'
+    }
   }
 
   static get NP2(): HidInfo {
-    return { HIDcode: 90, displayString: 'NP2', webKeyId: 'Numpad2' }
+    return {
+      HIDcode: 90,
+      category: HIDCategory.Numpad,
+      displayString: 'NP2',
+      webKeyId: 'Numpad2'
+    }
   }
   static get NP3(): HidInfo {
-    return { HIDcode: 91, displayString: 'NP3', webKeyId: 'Numpad3' }
+    return {
+      HIDcode: 91,
+      category: HIDCategory.Numpad,
+      displayString: 'NP3',
+      webKeyId: 'Numpad3'
+    }
   }
   static get NP4(): HidInfo {
-    return { HIDcode: 92, displayString: 'NP4', webKeyId: 'Numpad4' }
+    return {
+      HIDcode: 92,
+      category: HIDCategory.Numpad,
+      displayString: 'NP4',
+      webKeyId: 'Numpad4'
+    }
   }
   static get NP5(): HidInfo {
-    return { HIDcode: 93, displayString: 'NP5', webKeyId: 'Numpad5' }
+    return {
+      HIDcode: 93,
+      category: HIDCategory.Numpad,
+      displayString: 'NP5',
+      webKeyId: 'Numpad5'
+    }
   }
   static get NP6(): HidInfo {
-    return { HIDcode: 94, displayString: 'NP6', webKeyId: 'Numpad6' }
+    return {
+      HIDcode: 94,
+      category: HIDCategory.Numpad,
+      displayString: 'NP6',
+      webKeyId: 'Numpad6'
+    }
   }
   static get NP7(): HidInfo {
-    return { HIDcode: 95, displayString: 'NP7', webKeyId: 'Numpad7' }
+    return {
+      HIDcode: 95,
+      category: HIDCategory.Numpad,
+      displayString: 'NP7',
+      webKeyId: 'Numpad7'
+    }
   }
   static get NP8(): HidInfo {
-    return { HIDcode: 96, displayString: 'NP8', webKeyId: 'Numpad8' }
+    return {
+      HIDcode: 96,
+      category: HIDCategory.Numpad,
+      displayString: 'NP8',
+      webKeyId: 'Numpad8'
+    }
   }
   static get NP9(): HidInfo {
-    return { HIDcode: 97, displayString: 'NP9', webKeyId: 'Numpad9' }
+    return {
+      HIDcode: 97,
+      category: HIDCategory.Numpad,
+      displayString: 'NP9',
+      webKeyId: 'Numpad9'
+    }
   }
   static get NP0(): HidInfo {
-    return { HIDcode: 98, displayString: 'NP0', webKeyId: 'Numpad0' }
+    return {
+      HIDcode: 98,
+      category: HIDCategory.Numpad,
+      displayString: 'NP0',
+      webKeyId: 'Numpad0'
+    }
   }
   static get NUMDECIMAL(): HidInfo {
     return {
       HIDcode: 99,
+      category: HIDCategory.Numpad,
       displayString: 'Numpad Decimal',
       webKeyId: 'NumpadDecimal'
     }
   }
 
   static get F13(): HidInfo {
-    return { HIDcode: 104, displayString: 'F13', webKeyId: 'F13' }
+    return {
+      HIDcode: 104,
+      category: HIDCategory.Function,
+      displayString: 'F13',
+      webKeyId: 'F13'
+    }
   }
   static get F14(): HidInfo {
-    return { HIDcode: 105, displayString: 'F14', webKeyId: 'F14' }
+    return {
+      HIDcode: 105,
+      category: HIDCategory.Function,
+      displayString: 'F14',
+      webKeyId: 'F14'
+    }
   }
   static get F15(): HidInfo {
-    return { HIDcode: 106, displayString: 'F15', webKeyId: 'F15' }
+    return {
+      HIDcode: 106,
+      category: HIDCategory.Function,
+      displayString: 'F15',
+      webKeyId: 'F15'
+    }
   }
   static get F16(): HidInfo {
-    return { HIDcode: 107, displayString: 'F16', webKeyId: 'F16' }
+    return {
+      HIDcode: 107,
+      category: HIDCategory.Function,
+      displayString: 'F16',
+      webKeyId: 'F16'
+    }
   }
   static get F17(): HidInfo {
-    return { HIDcode: 108, displayString: 'F17', webKeyId: 'F17' }
+    return {
+      HIDcode: 108,
+      category: HIDCategory.Function,
+      displayString: 'F17',
+      webKeyId: 'F17'
+    }
   }
   static get F18(): HidInfo {
-    return { HIDcode: 109, displayString: 'F18', webKeyId: 'F18' }
+    return {
+      HIDcode: 109,
+      category: HIDCategory.Function,
+      displayString: 'F18',
+      webKeyId: 'F18'
+    }
   }
   static get F19(): HidInfo {
-    return { HIDcode: 110, displayString: 'F19', webKeyId: 'F19' }
+    return {
+      HIDcode: 110,
+      category: HIDCategory.Function,
+      displayString: 'F19',
+      webKeyId: 'F19'
+    }
   }
   static get F20(): HidInfo {
-    return { HIDcode: 111, displayString: 'F20', webKeyId: 'F20' }
+    return {
+      HIDcode: 111,
+      category: HIDCategory.Function,
+      displayString: 'F20',
+      webKeyId: 'F20'
+    }
   }
   static get F21(): HidInfo {
-    return { HIDcode: 112, displayString: 'F21', webKeyId: 'F21' }
+    return {
+      HIDcode: 112,
+      category: HIDCategory.Function,
+      displayString: 'F21',
+      webKeyId: 'F21'
+    }
   }
   static get F22(): HidInfo {
-    return { HIDcode: 113, displayString: 'F22', webKeyId: 'F22' }
+    return {
+      HIDcode: 113,
+      category: HIDCategory.Function,
+      displayString: 'F22',
+      webKeyId: 'F22'
+    }
   }
   static get F23(): HidInfo {
-    return { HIDcode: 114, displayString: 'F23', webKeyId: 'F23' }
+    return {
+      HIDcode: 114,
+      category: HIDCategory.Function,
+      displayString: 'F23',
+      webKeyId: 'F23'
+    }
   }
   static get F24(): HidInfo {
-    return { HIDcode: 115, displayString: 'F24', webKeyId: 'F24' }
+    return {
+      HIDcode: 115,
+      category: HIDCategory.Function,
+      displayString: 'F24',
+      webKeyId: 'F24'
+    }
   }
 
   static get CONTROLL(): HidInfo {
     return {
       HIDcode: 224,
+      category: HIDCategory.Modifier,
       displayString: 'L-CTRL',
       webKeyId: 'ControlLeft'
     }
@@ -395,16 +886,23 @@ export class Hid {
   static get SHIFTL(): HidInfo {
     return {
       HIDcode: 225,
+      category: HIDCategory.Modifier,
       displayString: 'L-SHIFT',
       webKeyId: 'ShiftLeft'
     }
   }
   static get ALTL(): HidInfo {
-    return { HIDcode: 226, displayString: 'L-ALT', webKeyId: 'AltLeft' }
+    return {
+      HIDcode: 226,
+      category: HIDCategory.Modifier,
+      displayString: 'L-ALT',
+      webKeyId: 'AltLeft'
+    }
   }
   static get METAL(): HidInfo {
     return {
       HIDcode: 227,
+      category: HIDCategory.Modifier,
       displayString: 'L-Meta',
       webKeyId: 'MetaLeft'
     }
@@ -412,6 +910,7 @@ export class Hid {
   static get CONTROLR(): HidInfo {
     return {
       HIDcode: 228,
+      category: HIDCategory.Modifier,
       displayString: 'R-CTRL',
       webKeyId: 'ControlRight'
     }
@@ -419,6 +918,7 @@ export class Hid {
   static get SHIFTR(): HidInfo {
     return {
       HIDcode: 229,
+      category: HIDCategory.Modifier,
       displayString: 'R-SHIFT',
       webKeyId: 'ShiftRight'
     }
@@ -426,6 +926,7 @@ export class Hid {
   static get ALTR(): HidInfo {
     return {
       HIDcode: 230,
+      category: HIDCategory.Modifier,
       displayString: 'R-ALT',
       webKeyId: 'AltRight'
     }
@@ -433,6 +934,7 @@ export class Hid {
   static get METAR(): HidInfo {
     return {
       HIDcode: 231,
+      category: HIDCategory.Modifier,
       displayString: 'R-Meta',
       webKeyId: 'MetaRight'
     }

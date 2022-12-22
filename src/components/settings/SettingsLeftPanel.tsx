@@ -25,8 +25,9 @@ export default function SettingsLeftPanel({
     'primary-light.500',
     'primary-dark.500'
   )
-  const strokeColour = useColorModeValue('black', 'white')
-  const strokeHoverColour = useColorModeValue('primary-accent.500', 'primary-accent.300')
+  const applicationTextColour = useColorModeValue('primary-light.500', 'primary-dark.400')
+  const strokeColour = useColorModeValue('bg-dark', 'bg-light')
+  const strokeHoverColour = useColorModeValue('primary-accent.600', 'primary-accent.400')
 
   return (
     <VStack
@@ -34,8 +35,8 @@ export default function SettingsLeftPanel({
       borderRight="1px"
       borderColor={borderColour}
       h="100vh"
-      p="2"
-      pt="4"
+      p={2}
+      pt={4}
       w={['25%']}
       overflowY="auto"
       css={{
@@ -44,8 +45,8 @@ export default function SettingsLeftPanel({
         }
       }}
     >
-      <VStack w="100%" spacing="1">
-        <Text w="100%" textStyle="miniHeader" ml="4">
+      <VStack w="100%" spacing={1}>
+        <Text w="100%" textStyle="miniHeader" ml={4}>
           General Settings
         </Text>
         {SettingsGroup.all
@@ -61,8 +62,8 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider borderColor={borderColour} />
-      <VStack w="100%" spacing="1">
-        <Text w="100%" textStyle="miniHeader" ml="4">
+      <VStack w="100%" spacing={1}>
+        <Text w="100%" textStyle="miniHeader" ml={4}>
           Other
         </Text>
         {SettingsGroup.all
@@ -78,7 +79,7 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider borderColor={borderColour} />
-      <VStack w="100%" spacing="2" px="1">
+      <VStack w="100%" spacing={2} px={1} pt={1}>
         <HStack w="100%">
           <Icon
             boxSize={6}
@@ -121,10 +122,10 @@ export default function SettingsLeftPanel({
           Got Feedback? Let us know through these channels!
         </Text>
         <VStack w="100%" spacing={0}>
-          <Text w="100%" fontSize={['2xs']}>
+          <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
             Version 1.0
           </Text>
-          <Text w="100%" fontSize={['2xs']}>
+          <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
             Windows 64-Bit
           </Text>
         </VStack>

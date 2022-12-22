@@ -4,12 +4,14 @@ export enum ViewState {
   Editview
 }
 
+/** Currently unused */
 export enum MacroType {
   Single,
   Toggle,
   OnHold // need to add space later when displaying the macro type name text
 }
 
+/** Currently unused */
 export const MacroTypeDefinitions: string[] = [
   'The macro will play once after the trigger key(s) is pressed.',
   'The macro will continuously repeat until the trigger key(s) is pressed again.',
@@ -33,4 +35,17 @@ export enum MouseButton {
 export enum SettingsCategory {
   General,
   Other
+}
+
+export enum HIDCategory {
+  Alphanumeric,
+  Numpad,
+  Function, // F1-24
+  Modifier,
+  Navigation, // arrow keys and pg up, pg down, etc
+}
+
+/** Currently unused */
+export enum PluginGroup {
+
 }
