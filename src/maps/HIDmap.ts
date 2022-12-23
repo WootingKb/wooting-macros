@@ -1,7 +1,4 @@
 import { HIDCategory } from '../enums'
-import { type } from '@tauri-apps/api/os'
-
-const os = await type()
 
 export interface HidInfo {
   HIDcode: number
@@ -903,40 +900,11 @@ export class Hid {
     }
   }
   static get METAL(): HidInfo {
-    switch (os) {
-      case 'Linux':
-        return {
-          HIDcode: 227,
-          category: HIDCategory.Modifier,
-          displayString: 'L-Super',
-          webKeyId: 'MetaLeft'
-        }
-        break
-      case 'Darwin':
-        return {
-          HIDcode: 227,
-          category: HIDCategory.Modifier,
-          displayString: 'L-Command',
-          webKeyId: 'MetaLeft'
-        }
-        break
-      case 'Windows_NT':
-        return {
-          HIDcode: 227,
-          category: HIDCategory.Modifier,
-          displayString: 'L-Windows',
-          webKeyId: 'MetaLeft'
-        }
-        break
-
-      default:
-        return {
-          HIDcode: 227,
-          category: HIDCategory.Modifier,
-          displayString: 'L-Meta',
-          webKeyId: 'MetaLeft'
-        }
-        break
+    return {
+      HIDcode: 227,
+      category: HIDCategory.Modifier,
+      displayString: 'L-Meta',
+      webKeyId: 'MetaLeft'
     }
   }
   static get CONTROLR(): HidInfo {
@@ -964,40 +932,11 @@ export class Hid {
     }
   }
   static get METAR(): HidInfo {
-    switch (os) {
-      case 'Linux':
-        return {
-          HIDcode: 231,
-          category: HIDCategory.Modifier,
-          displayString: 'R-Super',
-          webKeyId: 'MetaRight'
-        }
-        break
-      case 'Darwin':
-        return {
-          HIDcode: 231,
-          category: HIDCategory.Modifier,
-          displayString: 'R-Command',
-          webKeyId: 'MetaRight'
-        }
-        break
-      case 'Windows_NT':
-        return {
-          HIDcode: 231,
-          category: HIDCategory.Modifier,
-          displayString: 'R-Windows',
-          webKeyId: 'MetaRight'
-        }
-        break
-
-      default:
-        return {
-          HIDcode: 231,
-          category: HIDCategory.Modifier,
-          displayString: 'R-Meta',
-          webKeyId: 'MetaRight'
-        }
-        break
+    return {
+      HIDcode: 231,
+      category: HIDCategory.Modifier,
+      displayString: 'R-Meta',
+      webKeyId: 'MetaRight'
     }
   }
 
