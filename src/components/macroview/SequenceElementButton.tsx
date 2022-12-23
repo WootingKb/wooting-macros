@@ -49,7 +49,7 @@ export default function SequenceElementButton({
     <Button
       variant="brand"
       w="full"
-      size={['sm']}
+      size="sm"
       onClick={handleAddElement}
       border="1px"
       borderColor={borderColour}
