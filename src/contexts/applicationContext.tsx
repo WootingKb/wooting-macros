@@ -8,6 +8,7 @@ import {
   createContext,
   useCallback
 } from 'react'
+import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../utils'
@@ -35,6 +36,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     macroIndex: undefined
   })
   const [isUpdatingCollection, setIsUpdatingCollection] = useState(false)
+  const toast = useToast()
 
   useEffect(() => {
     invoke<MacroData>('get_macros')
@@ -44,8 +46,15 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       })
       .catch((e) => {
         console.error(e)
+        toast({
+          title: 'Error loading macros',
+          description: "Unable to load macros, please re-open the app.",
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
       })
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     updateBackendConfig(collections)
@@ -60,7 +69,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const changeSelectedCollectionIndex = useCallback(
     (index: number) => {
-      setSelection({ collectionIndex: index, macroIndex: -1 })
+      setSelection({ collectionIndex: index, macroIndex: undefined })
     },
     [setSelection]
   )
@@ -83,10 +92,14 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
-      setCollections((collections) => [...collections, newCollection])
-      changeSelectedCollectionIndex(collections.length)
+      let newIndex = 0
+      setCollections((collections) => {
+        newIndex = collections.length
+        return [...collections, newCollection]
+      })
+      changeSelectedCollectionIndex(newIndex)
     },
-    [changeSelectedCollectionIndex, collections.length]
+    [changeSelectedCollectionIndex]
   )
 
   const onSelectedCollectionDelete = useCallback(() => {

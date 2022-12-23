@@ -1,11 +1,11 @@
-import { StyleFunctionProps } from "@chakra-ui/styled-system";
+import { StyleFunctionProps } from '@chakra-ui/styled-system'
 import { mode } from '@chakra-ui/theme-tools'
 
 export const styles = {
   global: (props: StyleFunctionProps) => ({
     body: {
-      bg: mode('offWhite', 'darkGray')(props),
-      color: mode('darkGray', 'offWhite')(props)
+      bg: mode('bg-light', 'bg-dark')(props),
+      color: mode('bg-dark', 'bg-light')(props)
     }
   })
 }

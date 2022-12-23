@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { MacroType, ViewState } from '../enums'
 import { MacroState, ActionEventType, Macro, TriggerEventType } from '../types'
+import { maxNameLength } from '../utils'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
@@ -25,21 +26,24 @@ function useMacroContext() {
   return context
 }
 
+const macroDefault: Macro = {
+  name: '',
+  icon: ':smile:',
+  active: true,
+  macro_type: 'Single',
+  trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
+  sequence: []
+}
+
 function MacroProvider({ children }: MacroProviderProps) {
-  const [macro, setMacro] = useState<Macro>({
-    name: '',
-    icon: ':smile:',
-    active: true,
-    macro_type: 'Single',
-    trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
-    sequence: []
-  })
+  const [macro, setMacro] = useState<Macro>(macroDefault)
+  const [oldMacroName, setOldMacroName] = useState('')
   const [sequence, setSequence] = useState<ActionEventType[]>([]) // still needed because of how the sortable list works
   const [ids, setIds] = useState<number[]>([])
   const [selectedElementId, setSelectedElementId] = useState<
     number | undefined
   >(undefined)
-    const [isUpdatingMacro, setIsUpdatingMacro] = useState(false)
+  const [isUpdatingMacro, setIsUpdatingMacro] = useState(false)
   const currentMacro = useSelectedMacro()
   const currentCollection = useSelectedCollection()
   const { viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
@@ -53,11 +57,12 @@ function MacroProvider({ children }: MacroProviderProps) {
     setIds(currentMacro.sequence.map((_, i) => i + 1))
     setSequence(currentMacro.sequence)
     setMacro(currentMacro)
+    setOldMacroName(currentMacro.name)
   }, [currentMacro])
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      if (newName.length > 25) {
+      if (newName.length > maxNameLength) {
         return
       }
       setMacro({ ...macro, name: newName })
@@ -243,16 +248,17 @@ function MacroProvider({ children }: MacroProviderProps) {
     viewState
   ])
 
-    const changeIsUpdatingMacro = useCallback(
-      (newVal: boolean) => {
-        setIsUpdatingMacro(newVal)
-      },
-      [setIsUpdatingMacro]
-    )
+  const changeIsUpdatingMacro = useCallback(
+    (newVal: boolean) => {
+      setIsUpdatingMacro(newVal)
+    },
+    [setIsUpdatingMacro]
+  )
 
   const value = useMemo<MacroState>(
     () => ({
       macro,
+      oldMacroName,
       sequence,
       ids,
       selectedElementId,
@@ -277,6 +283,7 @@ function MacroProvider({ children }: MacroProviderProps) {
     }),
     [
       macro,
+      oldMacroName,
       sequence,
       ids,
       selectedElementId,

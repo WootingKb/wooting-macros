@@ -82,7 +82,7 @@ export default function MacroTypeArea() {
               icon={typeIcons[index]}
               aria-label="macro type button"
               size="sm"
-              colorScheme={macro.macro_type === value ? 'yellow' : 'gray'}
+              colorScheme={macro.macro_type === value ? 'primary-accent' : 'gray'}
               onClick={() => updateMacroType(index)}
               key={value}
             ></IconButton>

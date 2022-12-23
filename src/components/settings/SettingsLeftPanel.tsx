@@ -10,6 +10,8 @@ import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../enums'
 import { SettingsGroup } from '../../maps/SettingsMap'
 import SettingsButton from './SettingsButton'
+import { type, version } from '@tauri-apps/api/os'
+import { useEffect, useState } from 'react'
 
 type Props = {
   pageIndex: number
@@ -20,10 +22,44 @@ export default function SettingsLeftPanel({
   pageIndex,
   onSettingsButtonPress
 }: Props) {
-  const panelBg = useColorModeValue('stone.200', 'zinc.900')
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
-  const strokeColour = useColorModeValue('black', 'white')
-  const strokeHoverColour = useColorModeValue('yellow.500', 'yellow.300')
+  const panelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
+  const [osText, setOsText] = useState<string | undefined>(undefined)
+  const applicationTextColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.400'
+  )
+  const strokeColour = useColorModeValue('bg-dark', 'bg-light')
+  const strokeHoverColour = useColorModeValue(
+    'primary-accent.600',
+    'primary-accent.400'
+  )
+
+  useEffect(() => {
+    const getOSType = async () => {
+      const os = await type()
+      const osVersion = await version()
+      switch (os) {
+        case 'Linux':
+          setOsText(`${os} (${osVersion})`)
+          break
+        case 'Darwin':
+          setOsText(`${os} (${osVersion})`)
+          break
+        case 'Windows_NT':
+          setOsText(`Windows (${osVersion})`)
+          break
+
+        default:
+          break
+      }
+    }
+
+    getOSType().catch((err) => console.error(err))
+  }, [])
 
   return (
     <VStack
@@ -31,8 +67,8 @@ export default function SettingsLeftPanel({
       borderRight="1px"
       borderColor={borderColour}
       h="100vh"
-      p="2"
-      pt="4"
+      p={2}
+      pt={4}
       w={['25%']}
       overflowY="auto"
       css={{
@@ -41,8 +77,8 @@ export default function SettingsLeftPanel({
         }
       }}
     >
-      <VStack w="100%" spacing="1">
-        <Text w="100%" textStyle="miniHeader" ml="4">
+      <VStack w="100%" spacing={1}>
+        <Text w="100%" textStyle="miniHeader" ml={4}>
           General Settings
         </Text>
         {SettingsGroup.all
@@ -58,8 +94,8 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider borderColor={borderColour} />
-      <VStack w="100%" spacing="1">
-        <Text w="100%" textStyle="miniHeader" ml="4">
+      <VStack w="100%" spacing={1}>
+        <Text w="100%" textStyle="miniHeader" ml={4}>
           Other
         </Text>
         {SettingsGroup.all
@@ -75,7 +111,7 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider borderColor={borderColour} />
-      <VStack w="100%" spacing="2" px="1">
+      <VStack w="100%" spacing={2} px={1} pt={1}>
         <HStack w="100%">
           <Icon
             boxSize={6}
@@ -118,11 +154,11 @@ export default function SettingsLeftPanel({
           Got Feedback? Let us know through these channels!
         </Text>
         <VStack w="100%" spacing={0}>
-          <Text w="100%" fontSize={['2xs']}>
+          <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
             Version 1.0
           </Text>
-          <Text w="100%" fontSize={['2xs']}>
-            Windows 64-Bit
+          <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
+            {osText}
           </Text>
         </VStack>
       </VStack>

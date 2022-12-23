@@ -23,12 +23,24 @@ import { useMacroContext } from '../contexts/macroContext'
 import EmojiModal from '../components/macroview/EmojiModal'
 import { maxNameLength } from '../utils'
 
-export default function Macroview() {
+type Props = {
+  isEditing: boolean
+}
+
+export default function Macroview({ isEditing }: Props) {
   const { collections, changeSelectedMacroIndex } = useApplicationContext()
-  const [oldMacroName, setOldMacroName] = useState('')
-  const { macro, sequence, isUpdatingMacro, updateMacroName, updateMacro } =
-    useMacroContext()
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const {
+    macro,
+    oldMacroName,
+    sequence,
+    changeIsUpdatingMacro,
+    updateMacroName,
+    updateMacro
+  } = useMacroContext()
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenEmoji,
@@ -38,11 +50,11 @@ export default function Macroview() {
   const [isNameUsable, setIsNameUsable] = useState(false)
 
   useEffect(() => {
-    if (isUpdatingMacro) {
-      setOldMacroName(macro.name)
+    if (isEditing) {
       setIsNameUsable(true)
     }
-  }, [isUpdatingMacro, macro.name])
+    changeIsUpdatingMacro(isEditing)
+  }, [isEditing, changeIsUpdatingMacro])
 
   const getSaveButtonTooltipText = useCallback((): string => {
     if (
@@ -80,38 +92,30 @@ export default function Macroview() {
         return
       }
 
-      if (isUpdatingMacro) {
-        console.log("Can't change name of existing macro!")
-        if (newName.toUpperCase() === oldMacroName.toUpperCase()) {
-          updateMacroName(newName)
-          setIsNameUsable(true)
-        }
-        return
-      }
-
       let matchFound = false
 
       collections.forEach((collection) => {
         for (let i = 0; i < collection.macros.length; i++) {
-          const macro = collection.macros[i]
-          if (macro.name.toUpperCase() === newName.trim().toUpperCase()) {
-            console.log("Name already exists!")
+          const currentMacro = collection.macros[i]
+          if (currentMacro.name.toUpperCase() === newName.trim().toUpperCase()) {
+            if (isEditing && currentMacro.name === oldMacroName) {
+              return
+            }
             updateMacroName(newName)
-            matchFound = true
             setIsNameUsable(false)
+            matchFound = true
             return
           }
         }
       })
 
       if (!matchFound) {
+        console.log("hello")
         updateMacroName(newName)
         setIsNameUsable(true)
       }
-
-      console.log(matchFound)
     },
-    [collections, isUpdatingMacro, oldMacroName, updateMacroName]
+    [isEditing, collections, updateMacroName, oldMacroName]
   )
 
   return (
@@ -154,9 +158,9 @@ export default function Macroview() {
               value={macro.name}
               isRequired
             />
-            {macro.name.length === 25 && (
+            {macro.name.length === maxNameLength && (
               <Text w="100%" fontSize="2xs" fontWeight="semibold">
-                Max length is 25 characters
+                Max length is {maxNameLength} characters
               </Text>
             )}
           </VStack>

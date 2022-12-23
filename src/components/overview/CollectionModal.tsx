@@ -14,7 +14,8 @@ import {
   Box,
   useColorModeValue,
   Tooltip,
-  Divider
+  Divider,
+  useColorMode
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
@@ -41,7 +42,11 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
+  const { colorMode } = useColorMode()
 
   useEffect(() => {
     if (isUpdatingCollection) {
@@ -184,9 +189,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                   placeholder={'Collection Name'}
                   _placeholder={{ opacity: 1, color: borderColour }}
                 />
-                {collectionName.length === 25 && (
+                {collectionName.length === maxNameLength && (
                   <Text w="100%" fontSize="2xs" fontWeight="semibold">
-                    Max length is 25 characters
+                    Max length is {maxNameLength} characters
                   </Text>
                 )}
               </VStack>
@@ -195,7 +200,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
               <Box id="picker-box" w="100%" py="4">
                 <Picker
                   data={data}
-                  theme="auto"
+                  theme={colorMode === 'light' ? 'light' : 'dark'}
                   onEmojiSelect={onEmojiSelect}
                   navPosition="bottom"
                   previewPosition="none"

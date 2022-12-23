@@ -14,7 +14,7 @@ export default function SettingsButton({
   isFocused,
   setFocus
 }: Props) {
-  const buttonBg = useColorModeValue('stone.300', 'zinc.800')
+  const buttonBg = useColorModeValue('primary-light.300', 'primary-dark.800')
 
   return (
     <Box

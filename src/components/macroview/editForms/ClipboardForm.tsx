@@ -1,4 +1,4 @@
-import { Divider, Textarea, Text, HStack, Box } from '@chakra-ui/react'
+import { Divider, Textarea, Text, HStack, Box, useColorMode } from '@chakra-ui/react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -11,6 +11,7 @@ export default function ClipboardForm() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const selectedElement = useSelectedElement()
   const { selectedElementId, updateElement } = useMacroContext()
+  const { colorMode } = useColorMode()
 
   useEffect(() => {
     if (selectedElement === undefined) {
@@ -130,7 +131,7 @@ export default function ClipboardForm() {
         <Box ref={pickerRef} w="100%">
           <Picker
             data={data}
-            theme="auto"
+            theme={colorMode === 'light' ? 'light' : 'dark'}
             onEmojiSelect={onEmojiSelect}
             navPosition="bottom"
             previewPosition="none"

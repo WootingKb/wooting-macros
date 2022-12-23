@@ -12,9 +12,9 @@ export const Switch = helpers.defineMultiStyleConfig({
       container: {},
       thumb: {},
       track: {
-        bg: mode('stone.500', 'zinc.500')(props),
+        bg: mode('primary-light.500', 'primary-dark.500')(props),
         _checked: {
-          bg: mode('yellow.500', 'yellow.400')(props)
+          bg: mode('primary-accent.600', 'primary-accent.500')(props)
         }
       }
     })

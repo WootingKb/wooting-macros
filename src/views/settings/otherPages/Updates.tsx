@@ -9,7 +9,7 @@ import {
 
 export default function Updates() {
   const whatsNewTextColour = useColorModeValue('green.600', 'green.400')
-  const textColour = useColorModeValue('darkGray', 'offWhite')
+  const textColour = useColorModeValue('bg-dark', 'bg-light')
   return (
     <VStack w="100%" spacing={4}>
       <Text w="100%" fontWeight="bold" fontSize="sm">

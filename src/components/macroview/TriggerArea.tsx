@@ -5,7 +5,7 @@ import {
   Button,
   Text,
   useColorModeValue,
-  StackDivider,
+  StackDivider
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../contexts/macroContext'
 import { HIDLookup } from '../../maps/HIDmap'
@@ -17,7 +17,10 @@ type Props = {
 
 export default function TriggerArea({ onOpen }: Props) {
   const { macro } = useMacroContext()
-  const borderColour = useColorModeValue('stone.500', 'zinc.500')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
 
   return (
     <HStack
@@ -44,7 +47,13 @@ export default function TriggerArea({ onOpen }: Props) {
           <Kbd>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Kbd>
         )}
       </HStack>
-      <Button variant="brand" size="xs" px="5" leftIcon={<EditIcon />} onClick={onOpen}>
+      <Button
+        variant="brand"
+        size="xs"
+        px="5"
+        leftIcon={<EditIcon />}
+        onClick={onOpen}
+      >
         Edit
       </Button>
     </HStack>

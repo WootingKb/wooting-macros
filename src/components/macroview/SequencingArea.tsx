@@ -103,7 +103,13 @@ export default function SequencingArea() {
 
   useEffect(() => {
     // Have this be looked at for code review 4
-    // Need to update this later, for some reason the useEffect doesn't end when returning, and the code outside the forEach loops is executed, thus to work around this we have only 1 setState()
+    // This useEffect is meant to set whether or not to show the warning alert to the user
+    // the reason for the alert: if the user is recording a sequence, and the sequence contains an element,
+    // that is part of the trigger (key or mouse) of the current macro or another macro, then this will cause unintentional triggers (backend problem)
+    // is there any way to optimize this / do this better?
+
+    // Need to update this later, for some reason the useEffect doesn't end when returning,
+    // and the code outside the forEach loops is executed, thus to work around this we have only 1 setState()
     let matchFound = false
     collections.forEach((collection) => {
       collection.macros.forEach((macro) => {
@@ -173,6 +179,14 @@ export default function SequencingArea() {
   }, [collections, currentMacro, sequence, setShowAlert])
 
   useEffect(() => {
+    // Have this be looked at for code review 4
+    // This useEffect is adds the last recorded element to the sequence, thus I have items as a dependency
+    // when adding the recorded element, we may also have to modify the previous element,
+    // because I modified the sequence recording to take into account the real delays between the user's events
+
+    // the issue is, the useEffect breaks when more deps are added
+    // and you said that if that is the case, then there is a better way to do this, but I have no clue how
+
     if (item === undefined) {
       return
     }
@@ -338,7 +352,7 @@ export default function SequencingArea() {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
+            <DragWrapper element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}
