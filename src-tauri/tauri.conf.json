@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "wooting-macros",
-    "version": "0.8.0"
+    "version": "0.8.1"
   },
   "tauri": {
 
@@ -67,7 +67,7 @@
         "fullscreen": false,
         "height": 768,
         "resizable": true,
-        "title": "Wooting Macros (THE WOOTCROS™)",
+        "title": "Wooting Macros",
         "width": 1024,
         "fileDropEnabled": false,
         "focus": false
