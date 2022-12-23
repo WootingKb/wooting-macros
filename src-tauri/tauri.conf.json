@@ -19,7 +19,10 @@
       "category": "DeveloperTool",
       "copyright": "",
       "deb": {
-        "depends": []
+        "depends": [
+          "xserver-xorg-input-evdev",
+          "libevdev2"
+        ]
       },
       "externalBin": [],
       "icon": [
