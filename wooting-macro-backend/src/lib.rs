@@ -2,7 +2,7 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
-use log::{error, info, log_enabled, Level};
+use log::{info, log_enabled, Level};
 
 use itertools::Itertools;
 
@@ -18,7 +18,9 @@ use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
 //This has to be imported for release build
+#[allow(unused_imports)]
 use crate::config::CONFIG_DIR;
+
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
