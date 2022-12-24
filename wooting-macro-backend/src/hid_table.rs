@@ -307,46 +307,46 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
 
         #[cfg(target_os = "windows")]
         {
-        scancode.insert(0x7f, Key::Unknown(173)); //VOLUME_MUTE
-        scancode.insert(0x81, Key::Unknown(174)); //VOLUME_DOWN
-        scancode.insert(0x80, Key::Unknown(175)); //VOLUME_UP
+        scancode.insert(Key::Unknown(173), 0x7f); //VOLUME_MUTE
+        scancode.insert(Key::Unknown(174), 0x81); //VOLUME_DOWN
+        scancode.insert(Key::Unknown(175), 0x80); //VOLUME_UP
 
-        scancode.insert(0x68, Key::Unknown(124)); //F13
-        scancode.insert(0x69, Key::Unknown(125)); //F14
-        scancode.insert(0x6a, Key::Unknown(126)); //F15
-        scancode.insert(0x6b, Key::Unknown(127)); //F16
+        scancode.insert(Key::Unknown(124), 0x68); //F13
+        scancode.insert(Key::Unknown(125), 0x69); //F14
+        scancode.insert(Key::Unknown(126), 0x6a); //F15
+        scancode.insert(Key::Unknown(127), 0x6b); //F16
 
-        scancode.insert(0x6c, Key::Unknown(128)); //F17
-        scancode.insert(0x6d, Key::Unknown(129)); //F18
-        scancode.insert(0x6e, Key::Unknown(130)); //F19
-        scancode.insert(0x6f, Key::Unknown(131)); //F20
-
-        scancode.insert(0x70, Key::Unknown(132)); //F21
-        scancode.insert(0x71, Key::Unknown(133)); //F22
-        scancode.insert(0x72, Key::Unknown(134)); //F23
-        scancode.insert(0x73, Key::Unknown(135)); //F24
+        scancode.insert(Key::Unknown(128), 0x6c); //F17
+        scancode.insert(Key::Unknown(129), 0x6d); //F18
+        scancode.insert(Key::Unknown(130), 0x6e); //F19
+        scancode.insert(Key::Unknown(131), 0x6f); //F20
+        
+        scancode.insert(Key::Unknown(132), 0x70); //F21
+        scancode.insert(Key::Unknown(133), 0x71); //F22
+        scancode.insert(Key::Unknown(134), 0x72); //F23
+        scancode.insert(Key::Unknown(135), 0x73); //F24
         }
 
         #[cfg(target_os = "linux")]
         {
-        scancode.insert(0x7f, Key::Unknown(121)); //VOLUME_MUTE
-        scancode.insert(0x81, Key::Unknown(122)); //VOLUME_DOWN
-        scancode.insert(0x80, Key::Unknown(123)); //VOLUME_UP
+        scancode.insert(Key::Unknown(121), 0x7f); //VOLUME_MUTE
+        scancode.insert(Key::Unknown(122), 0x81); //VOLUME_DOWN
+        scancode.insert(Key::Unknown(123), 0x80); //VOLUME_UP
 
-        scancode.insert(0x68, Key::Unknown(191)); //F13
-        scancode.insert(0x69, Key::Unknown(192)); //F14
-        scancode.insert(0x6a, Key::Unknown(193)); //F15
-        scancode.insert(0x6b, Key::Unknown(194)); //F16
+        scancode.insert(Key::Unknown(191), 0x68); //F13
+        scancode.insert(Key::Unknown(192), 0x69); //F14
+        scancode.insert(Key::Unknown(193), 0x6a); //F15
+        scancode.insert(Key::Unknown(194), 0x6b); //F16
 
-        scancode.insert(0x6c, Key::Unknown(195)); //F17
-        scancode.insert(0x6d, Key::Unknown(196)); //F18
-        scancode.insert(0x6e, Key::Unknown(197)); //F19
-        scancode.insert(0x6f, Key::Unknown(198)); //F20
+        scancode.insert(Key::Unknown(195), 0x6c); //F17
+        scancode.insert(Key::Unknown(196), 0x6d); //F18
+        scancode.insert(Key::Unknown(197), 0x6e); //F19
+        scancode.insert(Key::Unknown(198), 0x6f); //F20
 
-        scancode.insert(0x70, Key::Unknown(199)); //F21
-        scancode.insert(0x71, Key::Unknown(200)); //F22
-        scancode.insert(0x72, Key::Unknown(201)); //F23
-        scancode.insert(0x73, Key::Unknown(202)); //F24
+        scancode.insert(Key::Unknown(199), 0x70); //F21
+        scancode.insert(Key::Unknown(200), 0x71); //F22
+        scancode.insert(Key::Unknown(201), 0x72); //F23
+        scancode.insert(Key::Unknown(202), 0x73); //F24
         }
 
         scancode.insert(Key::PrintScreen, 0x46); //PRINT_SCREEN
