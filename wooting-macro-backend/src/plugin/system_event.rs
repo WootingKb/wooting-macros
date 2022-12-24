@@ -171,12 +171,10 @@ pub struct Monitor {
 pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
 
-    for i in brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
+
+    if let Ok(i) = brightness::brightness_devices().into_future().await.0.unwrap()
     {
+
         monitors.push(Monitor {
             device_id: i.device_name().into_future().await.unwrap(),
             brightness: i.get().into_future().await.unwrap(),
@@ -193,11 +191,7 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Sets brightness of all monitors to the given level.
 async fn brightness_set_all_device(percentage_level: u32) {
-    for mut devices in brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
+    if let Ok(mut devices) = brightness::brightness_devices().into_future().await.0.unwrap()
     {
         set_brightness(&mut devices, percentage_level)
             .await
@@ -208,11 +202,7 @@ async fn brightness_set_all_device(percentage_level: u32) {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Sets brightness of a specific device (it's name) to the given level.
 async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
-    for mut devices in brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
+    if let Ok(mut devices) = brightness::brightness_devices().into_future().await.0.unwrap()
     {
         if devices.device_name().into_future().await.unwrap() == name {
             set_brightness(&mut devices, percentage_level)
@@ -225,11 +215,7 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Decreases brightness of specific devices by 2%
 async fn brightness_change_specific(by_how_much: i32, name: &str) {
-    for mut devices in brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
+    if let Ok(mut devices) = brightness::brightness_devices().into_future().await.0.unwrap()
     {
         if devices.device_name().into_future().await.unwrap() == name {
             let current_brightness: i32 = devices.get().await.unwrap() as i32;
@@ -247,11 +233,7 @@ async fn brightness_change_specific(by_how_much: i32, name: &str) {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Decrements brightness of all devices by 2%
 async fn brightness_change_all(by_how_much: i32) {
-    for mut devices in brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
+    if let Ok(mut devices) = brightness::brightness_devices().into_future().await.0.unwrap()
     {
         let current_brightness: i32 = devices.get().await.unwrap() as i32;
 
