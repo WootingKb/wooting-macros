@@ -16,6 +16,12 @@ use brightness::{Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt};
 
+
+
+// Frequently used constants
+const COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::C];
+const PASTE_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::V];
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum DirectoryAction {
@@ -34,7 +40,7 @@ pub enum SystemAction {
     Clipboard { action: ClipboardAction },
 }
 
-// const COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::C];
+
 
 impl SystemAction {
     /// Execute the keys themselves
@@ -108,14 +114,14 @@ impl SystemAction {
                         .unwrap();
                 }
                 ClipboardAction::Copy => {
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
+                    util::send_hotkey(&send_channel, COPY_HOTKEY)
                         .await;
                 }
                 ClipboardAction::GetClipboard => {
                     ClipboardContext::new().unwrap().get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                    util::send_hotkey(&send_channel, PASTE_HOTKEY)
                         .await;
                 }
 
@@ -125,14 +131,14 @@ impl SystemAction {
                         .set_contents(data.to_owned())
                         .unwrap();
 
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                    util::send_hotkey(&send_channel, PASTE_HOTKEY)
                         .await;
                 }
 
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
+                    util::send_hotkey(&send_channel, COPY_HOTKEY)
                         .await;
 
                     //Transform the text
@@ -140,7 +146,7 @@ impl SystemAction {
                     ctx.set_contents(content).unwrap();
 
                     //Paste the text again
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
+                    util::send_hotkey(&send_channel, PASTE_HOTKEY)
                         .await;
                 }
             },
