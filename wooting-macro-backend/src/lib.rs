@@ -134,7 +134,7 @@ impl Macro {
                             .await
                             .unwrap();
 
-                        tokio::time::sleep(time::Duration::from_millis(data.press_duration as u64))
+                        tokio::time::sleep(time::Duration::from_millis(data.press_duration))
                             .await;
 
                         send_channel

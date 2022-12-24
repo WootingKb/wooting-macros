@@ -7,7 +7,7 @@ extern crate core;
 
 use std::env::current_exe;
 
-use auto_launch;
+
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowEvent};
 
 use wooting_macro_backend::*;
@@ -45,7 +45,8 @@ async fn set_macros(
     state: tauri::State<'_, MacroBackend>,
     frontend_data: MacroData,
 ) -> Result<(), ()> {
-    Ok(state.set_macros(frontend_data).await)
+    state.set_macros(frontend_data).await;
+    Ok(())
 }
 
 #[tauri::command]
@@ -59,7 +60,8 @@ async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
     frontend_bool: bool,
 ) -> Result<(), ()> {
-    Ok(set_macro_listening(state, frontend_bool))
+    set_macro_listening(state, frontend_bool);
+    Ok(())
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
@@ -109,18 +111,15 @@ async fn main() {
             let current_exe = current_exe().unwrap();
 
             let auto_start = auto_launch::AutoLaunchBuilder::new()
-                .set_app_name(&app_name)
-                .set_app_path(&current_exe.as_path().to_str().unwrap())
+                .set_app_name(app_name)
+                .set_app_path(current_exe.as_path().to_str().unwrap())
                 .set_use_launch_agent(true)
                 .build()
                 .unwrap();
 
             match set_autolaunch {
                 true => auto_start.enable().unwrap(),
-                false => match auto_start.disable() {
-                    Ok(x) => x,
-                    Err(_) => (),
-                },
+                false => auto_start.disable().unwrap_or(())
             }
 
             Ok(())
@@ -163,15 +162,12 @@ async fn main() {
                 window.hide().unwrap();
             }
         })
-        .on_window_event(move |event| match event.event() {
-            WindowEvent::CloseRequested { api, .. } => {
-                if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
+        .on_window_event(move |event| if let WindowEvent::CloseRequested { api, .. } = event.event() {
+            if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
-            }
-            _ => {}
-        })
+            })
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
         .expect("error while running tauri application");
