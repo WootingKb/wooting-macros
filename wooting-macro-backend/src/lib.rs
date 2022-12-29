@@ -299,11 +299,12 @@ fn check_macro_execution_efficiently(
 
     for macros in &trigger_overview {
         match &macros.trigger {
-            TriggerEventType::KeyPressEvent { data, ordered_key_press , ..} => {
-                match (ordered_key_press, global_ordered_key_check) {
-                    // First variable is the local trigger macro setting, second is the global setting.
-                    // Both values have to be true in order to check the keys in any order.
-                    (true, true) => {
+            TriggerEventType::KeyPressEvent { data, ordered_key_press , allow_while_other_keys} => {
+                match (ordered_key_press, global_ordered_key_check, allow_while_other_keys) {
+                    // First variable is the local trigger macro setting, second is the global setting. Third is a local setting.
+                    // First two values have to be true in order to check the keys in any order.
+                    // Third value needs to be true to ignore length checking. False for specific key checking.
+                    (true, true, true) => {
                         if pressed_events.iter().all(|x| data.contains(&x)) {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
 
@@ -325,8 +326,29 @@ fn check_macro_execution_efficiently(
                     }
 
                     // In any other combination the keys have to be pressed in the exact order.
-                    _ => {
+                    (_,_, true) => {
                         if *data == pressed_events {
+                            println!("MATCHED MACRO: {:#?}", pressed_events);
+
+                            //? Kinda works for now but needs to be improved.
+                            pressed_events.iter().for_each(|x| {
+                                channel_sender
+                                    .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
+                                    .unwrap();
+                            });
+
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    // Only triggers when the specific keys are pressed.
+                    (_,_,false) => {
+                        if *data == pressed_events && pressed_events.len() == data.len() {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
 
                             //? Kinda works for now but needs to be improved.
