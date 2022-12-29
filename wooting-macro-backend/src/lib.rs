@@ -301,7 +301,8 @@ fn check_macro_execution_efficiently(
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, ordered_key_press , ..} => {
                 match (ordered_key_press, global_ordered_key_check) {
-                    
+                    // First variable is the local trigger macro setting, second is the global setting.
+                    // Both values have to be true in order to check the keys in any order.
                     (true, true) => {
                         if pressed_events.iter().all(|x| data.contains(&x)) {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
@@ -323,6 +324,7 @@ fn check_macro_execution_efficiently(
                         }
                     }
 
+                    // In any other combination the keys have to be pressed in the exact order.
                     _ => {
                         if *data == pressed_events {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
