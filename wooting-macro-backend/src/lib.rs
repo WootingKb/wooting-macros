@@ -482,7 +482,7 @@ impl MacroBackend {
                                     let channel_copy_send = schan_execute.clone();
 
                                     let ordered_key_check_clone =
-                                        inner_config.blocking_read().ordered_key_check;
+                                        inner_config.blocking_read().global_ordered_key_check;
 
                                     //TODO: up the pressed keys here immidiately?
 
@@ -528,8 +528,8 @@ impl MacroBackend {
 
                                     let channel_clone = schan_execute.clone();
                                     let ordered_key_check_clone =
-                                        inner_config.blocking_read().ordered_key_check;
-                                        
+                                        inner_config.blocking_read().global_ordered_key_check;
+
                                     let should_grab = check_macro_execution_efficiently(
                                         vec![converted_button_to_u32],
                                         check_these_macros,
