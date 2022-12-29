@@ -95,6 +95,7 @@ impl Default for ApplicationConfig {
             minimize_at_launch: false,
             theme: "light".to_string(),
             minimize_to_tray: true,
+            ordered_key_check: true,
         }
     }
 }
@@ -121,4 +122,5 @@ pub struct ApplicationConfig {
     pub minimize_at_launch: bool,
     pub theme: String,
     pub minimize_to_tray: bool,
+    pub ordered_key_check: bool,
 }

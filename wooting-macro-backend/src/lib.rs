@@ -292,14 +292,14 @@ fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::EventType>,
+    ordered_key_check: bool,
 ) -> bool {
     let mut output = false;
-    let order_checking = false;
 
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                match order_checking {
+                match ordered_key_check {
                     false => {
                         if *data == pressed_events {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
@@ -415,6 +415,7 @@ impl MacroBackend {
         //==================================================
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
+        let inner_config = self.config.clone();
 
         // Spawn the grabbing
         let _grabber = task::spawn_blocking(move || {
@@ -480,12 +481,16 @@ impl MacroBackend {
 
                                     let channel_copy_send = schan_execute.clone();
 
-                                    // ? up the pressed keys here immidiately?
+                                    let ordered_key_check_clone =
+                                        inner_config.blocking_read().ordered_key_check;
+
+                                    //TODO: up the pressed keys here immidiately?
 
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
                                         channel_copy_send,
+                                        ordered_key_check_clone,
                                     );
 
                                     if should_grab {
@@ -522,11 +527,14 @@ impl MacroBackend {
                                         };
 
                                     let channel_clone = schan_execute.clone();
-
+                                    let ordered_key_check_clone =
+                                        inner_config.blocking_read().ordered_key_check;
+                                        
                                     let should_grab = check_macro_execution_efficiently(
                                         vec![converted_button_to_u32],
                                         check_these_macros,
                                         channel_clone,
+                                        ordered_key_check_clone,
                                     );
 
                                     if should_grab {
