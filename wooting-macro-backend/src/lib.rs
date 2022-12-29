@@ -299,8 +299,16 @@ fn check_macro_execution_efficiently(
 
     for macros in &trigger_overview {
         match &macros.trigger {
-            TriggerEventType::KeyPressEvent { data, ordered_key_press , allow_while_other_keys} => {
-                match (ordered_key_press, global_ordered_key_check, allow_while_other_keys) {
+            TriggerEventType::KeyPressEvent {
+                data,
+                ordered_key_press,
+                allow_while_other_keys,
+            } => {
+                match (
+                    ordered_key_press,
+                    global_ordered_key_check,
+                    allow_while_other_keys,
+                ) {
                     // First variable is the local trigger macro setting, second is the global setting. Third is a local setting.
                     // First two values have to be true in order to check the keys in any order.
                     // Third value needs to be true to ignore length checking. False for specific key checking.
@@ -326,7 +334,7 @@ fn check_macro_execution_efficiently(
                     }
 
                     // In any other combination the keys have to be pressed in the exact order.
-                    (_,_, true) => {
+                    (_, _, true) => {
                         if *data == pressed_events {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
 
@@ -347,7 +355,7 @@ fn check_macro_execution_efficiently(
                         }
                     }
                     // Only triggers when the specific keys are pressed.
-                    (_,_,false) => {
+                    (_, _, false) => {
                         if *data == pressed_events && pressed_events.len() == data.len() {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
 
@@ -509,7 +517,6 @@ impl MacroBackend {
 
                                     let ordered_key_check_clone =
                                         inner_config.blocking_read().global_ordered_key_check;
-
 
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
