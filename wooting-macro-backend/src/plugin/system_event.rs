@@ -89,19 +89,28 @@ impl SystemAction {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_set_specific_device(*level, name).await;
                     #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS, would set level and name to {}, {}", level, name);
+                    error!(
+                        "Not supported on macOS, would set level and name to {}, {}",
+                        level, name
+                    );
                 }
                 MonitorBrightnessAction::ChangeSpecific { by_how_much, name } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_change_specific(*by_how_much, name).await;
                     #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS, would change level by and name to {}, {}", by_how_much, name);
+                    error!(
+                        "Not supported on macOS, would change level by and name to {}, {}",
+                        by_how_much, name
+                    );
                 }
                 MonitorBrightnessAction::ChangeAll { by_how_much } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]
                     brightness_change_all(*by_how_much).await;
                     #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS, would change level by: {}", by_how_much);
+                    error!(
+                        "Not supported on macOS, would change level by: {}",
+                        by_how_much
+                    );
                 }
             },
             SystemAction::Clipboard { action } => match action {

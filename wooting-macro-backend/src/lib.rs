@@ -294,11 +294,15 @@ fn check_macro_execution_efficiently(
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
     let mut output = false;
+    let order_checking = false;
+
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                if *data == pressed_events {
-                    info!("MATCHED MACRO: {:#?}", pressed_events);
+                match order_checking {
+                    false => {
+                        if *data == pressed_events {
+                            println!("MATCHED MACRO: {:#?}", pressed_events);
 
                     // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
                     // pressed_events.par_iter().for_each(|x| {
@@ -307,13 +311,36 @@ fn check_macro_execution_efficiently(
                     //         .unwrap();
                     // });
 
-                    let channel_clone = channel_sender.clone();
-                    let macro_clone = macros.clone();
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
 
-                    task::spawn(async move {
-                        execute_macro(macro_clone, channel_clone).await;
-                    });
-                    output = true;
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+
+                    true => {
+                        if pressed_events.iter().all(|x| data.contains(&x)) {
+                            println!("MATCHED MACRO: {:#?}", pressed_events);
+
+                            //? Kinda works for now but needs to be improved.
+                            pressed_events.iter().for_each(|x| {
+                                channel_sender
+                                    .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
+                                    .unwrap();
+                            });
+
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
                 }
             }
             TriggerEventType::MouseEvent { data } => {
