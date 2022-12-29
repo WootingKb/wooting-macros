@@ -92,13 +92,12 @@ async fn main() {
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let show = CustomMenuItem::new("show".to_string(), "Show");
 
     let tray_menu = SystemTrayMenu::new()
         .add_item(hide)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit)
-        .add_item(show);
+        .add_item(quit);
+        // .add_item(show);
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
@@ -157,7 +156,7 @@ async fn main() {
                         let window = app.get_window("main").unwrap();
                         window.hide().unwrap();
                         // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
-                        item_handle.set_title("Show").unwrap();
+                        item_handle.set_title("show").unwrap();
                     }
                     "quit" => {
                         app.exit(0);
@@ -165,6 +164,7 @@ async fn main() {
                     "show" => {
                         let window = app.get_window("main").unwrap();
                         window.show().unwrap();
+                        item_handle.set_title("hide").unwrap();
                         // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
                     }
                     _ => {}
