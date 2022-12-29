@@ -161,12 +161,6 @@ async fn main() {
                     "quit" => {
                         app.exit(0);
                     }
-                    "show" => {
-                        let window = app.get_window("main").unwrap();
-                        window.show().unwrap();
-                        item_handle.set_title("hide").unwrap();
-                        // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
-                    }
                     _ => {}
                 }
             }
