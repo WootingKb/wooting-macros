@@ -75,4 +75,29 @@ impl ObsStatus {
 
         Ok(())
     }
+    pub async fn list_inputs(&self) -> anyhow::Result<Vec<String>> {
+        let value = self
+            .client
+            .first()
+            .unwrap()
+            .inputs()
+            .list_kinds(true)
+            .await
+            .unwrap_or(vec![]);
+
+        Ok(value)
+    }
+
+    pub async fn mute_source(&self) -> anyhow::Result<()> {
+        self.client
+            .first()
+            .unwrap()
+            .replay_buffer()
+            .status()
+            .await?;
+
+        self.client.first().unwrap().replay_buffer().save().await?;
+
+        Ok(())
+    }
 }
