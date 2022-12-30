@@ -401,6 +401,10 @@ impl MacroBackend {
 
     #[inline(always)]
     pub async fn init(&self) {
+        let inner_triggers = self.triggers.clone();
+        let inner_is_listening = self.is_listening.clone();
+        let inner_config = self.config.clone();
+
         //let config = ApplicationConfig::read_data().minimize_to_tray;
 
         //? : io-uring async read files and write files

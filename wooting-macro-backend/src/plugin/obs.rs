@@ -8,9 +8,14 @@ pub struct ObsStatus {
 
 impl ObsStatus {
     /// Engage the OBS plugin. Not done.
-    pub async fn new() -> Result<Self, anyhow::Error> {
+    pub async fn new(password: String) -> Result<Self, anyhow::Error> {
+        let password_obs = match password.len(){
+            0 => {None}
+            _ => {Some(password)}
+        };
+
         // Connect to the OBS instance through obs-websocket.
-        match Client::connect("localhost", 4455, Some("123456"))
+        match Client::connect("localhost", 4455, password_obs)
         .await{
             Ok(x) => {
                 info!("Connected to OBS");

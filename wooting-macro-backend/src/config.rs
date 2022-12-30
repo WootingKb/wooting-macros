@@ -95,6 +95,7 @@ impl Default for ApplicationConfig {
             minimize_at_launch: false,
             theme: "light".to_string(),
             minimize_to_tray: true,
+            obs_local_password: "".to_string(),
         }
     }
 }
@@ -121,4 +122,6 @@ pub struct ApplicationConfig {
     pub minimize_at_launch: bool,
     pub theme: String,
     pub minimize_to_tray: bool,
+    //Not sure about security of this but it's not like it's a bank account.
+    pub obs_local_password: String
 }
