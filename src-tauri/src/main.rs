@@ -62,12 +62,20 @@ async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
 }
 
 // ------OBS part starts here-------
-
 #[tauri::command]
+/// Gets the names of all present scene names in OBS
 async fn get_obs_scene_names(state: tauri::State<'_, MacroBackend>) -> Result<Vec<String>, ()> {
     Ok(state.obs_state.read().await.get_scene_names().await)
 }
 
+#[tauri::command]
+/// Gets the names of all present input devices available on OBS
+async fn get_obs_input_device_names(
+    state: tauri::State<'_, MacroBackend>,
+) -> Result<Vec<String>, anyhow::Error> {
+    let result = state.obs_state.read().await.get_inputs().await?;
+    Ok(result)
+}
 
 #[tauri::command]
 /// Allows the frontend to disable the macro execution scanning completely.
@@ -107,8 +115,8 @@ async fn main() {
     let tray_menu = SystemTrayMenu::new()
         .add_item(hide)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit)
-        .add_item(show);
+        .add_item(quit);
+    // .add_item(show);
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
 

@@ -91,7 +91,7 @@ impl ObsStatus {
     }
 
     /// Lists all inputs present on the system
-    pub async fn list_inputs(&self) {
+    pub async fn get_inputs(&self) -> anyhow::Result<Vec<String>> {
         let value = self
             .client
             .first()
@@ -99,13 +99,16 @@ impl ObsStatus {
             .inputs()
             .list(None)
             .await
-            .unwrap();
+            .unwrap_or(vec![])
+            .iter()
+            .map(|x| x.name.clone())
+            .collect();
 
-        println!("{:?}", value);
+        Ok(value)
     }
 
     /// Toggles a mute on a specific device
-    pub async fn toggle_mute_input(&self, name: &str) -> anyhow::Result<()> {
+    pub async fn set_toggle_mute_input(&self, name: &str) -> anyhow::Result<()> {
         self.client
             .first()
             .unwrap()
