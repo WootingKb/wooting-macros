@@ -17,6 +17,8 @@ use tauri::{
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
+use anyhow;
+
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
@@ -61,9 +63,24 @@ async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
     return Ok(vec![]);
 }
 
+// ------OBS part starts here-------
+
 #[tauri::command]
 async fn get_obs_scene_names(state: tauri::State<'_, MacroBackend>) -> Result<Vec<String>, ()> {
     Ok(state.obs_state.read().await.get_scene_names().await)
+}
+
+#[tauri::command]
+async fn set_obs_preview_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), anyhow::Error> {
+    state.obs_state.read().await.set_preview_scene(scene_name).await?;
+
+    Ok(())
+}
+
+#[tauri::command]
+async fn set_obs_program_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), anyhow::Error>  {
+    state.obs_state.read().await.set_program_scene(scene_name).await?;
+    Ok(())
 }
 
 #[tauri::command]
@@ -120,7 +137,9 @@ async fn main() {
             set_config,
             control_grabbing,
             get_monitor_data,
-            get_obs_scene_names
+            get_obs_scene_names,
+            set_obs_preview_scene,
+            set_obs_program_scene
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;
