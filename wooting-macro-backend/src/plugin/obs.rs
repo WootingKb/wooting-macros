@@ -1,21 +1,32 @@
-use log::*;
+use anyhow::anyhow;
+use log::info;
 use obws::Client;
 
+pub struct ObsStatus {
+    pub scenes_list: obws::Client,
+}
 
-/// Engage the OBS plugin. Not done.
-pub async fn engage_obs() {
-    // Connect to the OBS instance through obs-websocket.
-    let client = Client::connect("localhost", 4455, Some("123456"))
-        .await
-        .unwrap();
+impl ObsStatus {
+    /// Engage the OBS plugin. Not done.
+    pub async fn new() -> Result<Self, anyhow::Error> {
+        // Connect to the OBS instance through obs-websocket.
+        match Client::connect("localhost", 4455, Some("123456"))
+        .await{
+            Ok(x) => {
+                info!("Connected to OBS");
+                Ok(Self {
+                    scenes_list: x,
+                })
+            }
+            Err(err) => {
+                Err(anyhow!("Error connecting to OBS: {}", err))
+            }
+        }
+    }
 
-    // Get and print out version information of OBS and obs-websocket.
-    let version = client.general().version().await.unwrap();
-    info!("{:#?}", version);
-    println!("{:#?}", version);
-
-    // Get a list of available scenes and print them out.
-    let scene_list = client.scenes().list().await.unwrap();
-    info!("{:#?}", scene_list);
-    println!("{:#?}", scene_list);
+    pub async fn get_scene_list(&self) {
+        let scenes = self.scenes_list.scenes().list().await.unwrap();
+        info!("Scenes: {:?}", scenes);
+        println!("Scenes: {:?}", scenes);
+    }
 }
