@@ -96,6 +96,8 @@ impl Default for ApplicationConfig {
             theme: "light".to_string(),
             minimize_to_tray: true,
             obs_local_password: "".to_string(),
+            obs_host_ip: "localhost".to_string(),
+            obs_port: 4455,
         }
     }
 }
@@ -124,4 +126,6 @@ pub struct ApplicationConfig {
     pub minimize_to_tray: bool,
     //Not sure about security of this but it's not like it's a bank account.
     pub obs_local_password: String,
+    pub obs_host_ip: String,
+    pub obs_port: u16,
 }
