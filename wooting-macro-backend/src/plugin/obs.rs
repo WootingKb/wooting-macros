@@ -75,7 +75,7 @@ impl ObsStatus {
 
         Ok(())
     }
-    pub async fn list_inputs(&self) -> anyhow::Result<Vec<String>> {
+    async fn list_input_kinds(&self) -> anyhow::Result<Vec<String>> {
         let value = self
             .client
             .first()
@@ -86,6 +86,20 @@ impl ObsStatus {
             .unwrap_or(vec![]);
 
         Ok(value)
+    }
+
+    pub async fn list_inputs(&self) {
+        let value = self
+            .client
+            .first()
+            .unwrap()
+            .inputs()
+            .list(None)
+            .await
+            .unwrap();
+
+            println!("{:?}", value);
+
     }
 
     pub async fn mute_source(&self) -> anyhow::Result<()> {
