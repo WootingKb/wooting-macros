@@ -313,7 +313,7 @@ fn check_macro_execution_efficiently(
                     // First two values have to be true in order to check the keys in any order.
                     // Third value needs to be true to ignore length checking. False for specific key checking.
                     (true, true, true) => {
-                        if pressed_events.iter().all(|x| data.contains(&x)) {
+                        if pressed_events.iter().all(|x| data.contains(x)) {
                             println!("MATCHED MACRO: {:#?}", pressed_events);
 
                     // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
