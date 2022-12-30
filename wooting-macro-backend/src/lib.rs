@@ -113,6 +113,8 @@ pub struct Macro {
 impl Macro {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
+    /// 
+    /// ! add the application state here? seems a bit too redundant
     async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         for action in &self.sequence {
             match action {
