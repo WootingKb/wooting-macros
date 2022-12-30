@@ -68,22 +68,6 @@ async fn get_obs_scene_names(state: tauri::State<'_, MacroBackend>) -> Result<Ve
     Ok(state.obs_state.read().await.get_scene_names().await)
 }
 
-#[tauri::command]
-async fn set_obs_preview_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), String> {
-    if (state.obs_state.read().await.set_preview_scene(scene_name).await).is_err(){
-        return Err("Error setting preview scene".to_string());
-    };
-
-    Ok(())
-}
-
-#[tauri::command]
-async fn set_obs_program_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), String>  {
-    if (state.obs_state.read().await.set_program_scene(scene_name).await).is_err(){
-        return Err("Error setting program scene".to_string());
-    };
-    Ok(())
-}
 
 #[tauri::command]
 /// Allows the frontend to disable the macro execution scanning completely.
@@ -139,9 +123,7 @@ async fn main() {
             set_config,
             control_grabbing,
             get_monitor_data,
-            get_obs_scene_names,
-            set_obs_preview_scene,
-            set_obs_program_scene
+            get_obs_scene_names
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;
