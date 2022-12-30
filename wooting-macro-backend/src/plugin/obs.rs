@@ -75,6 +75,8 @@ impl ObsStatus {
 
         Ok(())
     }
+
+    /// This might be useless
     async fn list_input_kinds(&self) -> anyhow::Result<Vec<String>> {
         let value = self
             .client
@@ -88,6 +90,7 @@ impl ObsStatus {
         Ok(value)
     }
 
+    /// Lists all inputs present on the system
     pub async fn list_inputs(&self) {
         let value = self
             .client
@@ -98,11 +101,21 @@ impl ObsStatus {
             .await
             .unwrap();
 
-            println!("{:?}", value);
-
+        println!("{:?}", value);
     }
 
-    pub async fn mute_source(&self) -> anyhow::Result<()> {
+    /// Toggles a mute on a specific device
+    pub async fn toggle_mute_input(&self, name: &str) -> anyhow::Result<()> {
+        self.client
+            .first()
+            .unwrap()
+            .inputs()
+            .toggle_mute(name)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn save_replay(&self) -> anyhow::Result<()> {
         self.client
             .first()
             .unwrap()
