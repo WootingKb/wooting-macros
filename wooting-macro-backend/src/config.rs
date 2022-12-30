@@ -123,5 +123,5 @@ pub struct ApplicationConfig {
     pub theme: String,
     pub minimize_to_tray: bool,
     //Not sure about security of this but it's not like it's a bank account.
-    pub obs_local_password: String
+    pub obs_local_password: String,
 }

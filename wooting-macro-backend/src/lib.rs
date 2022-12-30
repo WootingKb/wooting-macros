@@ -174,13 +174,14 @@ type Collections = Vec<Collection>;
 type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 
 /// State of the application in RAM (rwlock).
-#[derive(Debug)]
+
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
     pub display_list: Arc<RwLock<Vec<system_event::Monitor>>>,
+    pub obs_state: Arc<RwLock<plugin::obs::ObsStatus>>,
 }
 
 ///MacroData is the main data structure that contains all macro data.
@@ -593,6 +594,7 @@ impl Default for MacroBackend {
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
             display_list: Arc::new(RwLock::from(vec![])),
+            obs_state: Arc::new(RwLock::from(plugin::obs::ObsStatus::default())),
         }
     }
 }

@@ -1,37 +1,20 @@
-use anyhow::anyhow;
-use log::info;
-use obws::Client;
+use anyhow;
+use obws;
 
+#[derive(Default)]
 pub struct ObsStatus {
-    pub scenes_list: obws::Client,
+    pub client: Vec<obws::Client>,
 }
 
 impl ObsStatus {
-    /// Engage the OBS plugin. Not done.
-    pub async fn new(password: String) -> Result<Self, anyhow::Error> {
-        let password_obs = match password.len(){
-            0 => {None}
-            _ => {Some(password)}
+    pub async fn initialize(&mut self, pass: String) -> Result<(), anyhow::Error> {
+        let password = match pass.len() {
+            0 => None,
+            _ => Some(pass),
         };
 
-        // Connect to the OBS instance through obs-websocket.
-        match Client::connect("localhost", 4455, password_obs)
-        .await{
-            Ok(x) => {
-                info!("Connected to OBS");
-                Ok(Self {
-                    scenes_list: x,
-                })
-            }
-            Err(err) => {
-                Err(anyhow!("Error connecting to OBS: {}", err))
-            }
-        }
-    }
-
-    pub async fn get_scene_list(&self) {
-        let scenes = self.scenes_list.scenes().list().await.unwrap();
-        info!("Scenes: {:?}", scenes);
-        println!("Scenes: {:?}", scenes);
+        self.client
+            .push(obws::Client::connect("localhost", 7755, password).await?);
+        Ok(())
     }
 }
