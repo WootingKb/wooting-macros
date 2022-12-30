@@ -1,4 +1,5 @@
 use anyhow;
+use log::{error, info};
 use obws;
 
 #[derive(Default)]
@@ -76,20 +77,6 @@ impl ObsStatus {
         Ok(())
     }
 
-    /// This might be useless
-    async fn list_input_kinds(&self) -> anyhow::Result<Vec<String>> {
-        let value = self
-            .client
-            .first()
-            .unwrap()
-            .inputs()
-            .list_kinds(true)
-            .await
-            .unwrap_or(vec![]);
-
-        Ok(value)
-    }
-
     /// Lists all inputs present on the system
     pub async fn get_inputs(&self) -> anyhow::Result<Vec<String>> {
         let value = self
@@ -99,7 +86,7 @@ impl ObsStatus {
             .inputs()
             .list(None)
             .await
-            .unwrap_or(vec![])
+            .unwrap_or_default()
             .iter()
             .map(|x| x.name.clone())
             .collect();
@@ -129,5 +116,54 @@ impl ObsStatus {
         self.client.first().unwrap().replay_buffer().save().await?;
 
         Ok(())
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+pub enum OBSAction {
+    SaveReplay,
+    MuteInput { name: String },
+    SetScene { action: SceneType },
+}
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+pub enum SceneType {
+    ProgramScene { name: String },
+    PreviewScene { name: String },
+}
+
+impl OBSAction {
+    pub async fn execute(&self, obs_status: ObsStatus) {
+        match &self {
+            OBSAction::SaveReplay => {
+                if (obs_status.save_replay_buffer().await).is_ok() {
+                    info!("OK, saved replay")
+                } else {
+                    error!("Failed to save the replay")
+                }
+            }
+            OBSAction::MuteInput { name } => {
+                if (obs_status.set_toggle_mute_input(name).await).is_ok() {
+                    info!("OK, muted input {}", name)
+                } else {
+                    error!("Failed to mute the input {}", name)
+                }
+            }
+            OBSAction::SetScene { action } => match action {
+                SceneType::ProgramScene { name } => {
+                    if (obs_status.set_program_scene(name).await).is_ok() {
+                        info!("OK, saved replay")
+                    } else {
+                        error!("Failed to save the replay")
+                    }
+                }
+                SceneType::PreviewScene { name } => {
+                    if (obs_status.set_preview_scene(name).await).is_ok() {
+                        info!("OK, saved replay")
+                    } else {
+                        error!("Failed to save the replay")
+                    }
+                }
+            },
+        }
     }
 }

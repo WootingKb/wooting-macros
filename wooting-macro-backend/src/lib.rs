@@ -67,7 +67,9 @@ pub enum ActionEventType {
         data: phillips_hue::PhillipsHueStatus,
     },
     //IDEA: Phillips hue notification
-    OBSEventAction {},
+    OBSEventAction {
+        data: obs::OBSAction,
+    },
 
     DiscordEventAction {},
     //IDEA: IKEADesk
@@ -146,7 +148,11 @@ impl Macro {
                     }
                 },
                 ActionEventType::PhillipsHueEventAction { .. } => {}
-                ActionEventType::OBSEventAction { .. } => {}
+                ActionEventType::OBSEventAction { data } => {
+                    //TODO: FIX THIS ASAP
+                    //data.execute()
+
+                }
                 ActionEventType::DiscordEventAction { .. } => {}
                 ActionEventType::DelayEventAction { data } => {
                     tokio::time::sleep(time::Duration::from_millis(*data)).await;
