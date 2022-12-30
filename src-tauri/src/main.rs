@@ -17,8 +17,6 @@ use tauri::{
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
-use anyhow;
-
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
@@ -71,15 +69,19 @@ async fn get_obs_scene_names(state: tauri::State<'_, MacroBackend>) -> Result<Ve
 }
 
 #[tauri::command]
-async fn set_obs_preview_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), anyhow::Error> {
-    state.obs_state.read().await.set_preview_scene(scene_name).await?;
+async fn set_obs_preview_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), String> {
+    if (state.obs_state.read().await.set_preview_scene(scene_name).await).is_err(){
+        return Err("Error setting preview scene".to_string());
+    };
 
     Ok(())
 }
 
 #[tauri::command]
-async fn set_obs_program_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), anyhow::Error>  {
-    state.obs_state.read().await.set_program_scene(scene_name).await?;
+async fn set_obs_program_scene(state: tauri::State<'_, MacroBackend>, scene_name: &str) -> Result<(), String>  {
+    if (state.obs_state.read().await.set_program_scene(scene_name).await).is_err(){
+        return Err("Error setting program scene".to_string());
+    };
     Ok(())
 }
 
