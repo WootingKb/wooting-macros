@@ -62,6 +62,11 @@ async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
 }
 
 #[tauri::command]
+async fn get_obs_scene_names(state: tauri::State<'_, MacroBackend>) -> Result<Vec<String>, ()> {
+    Ok(state.obs_state.read().await.get_scene_names().await)
+}
+
+#[tauri::command]
 /// Allows the frontend to disable the macro execution scanning completely.
 async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
@@ -114,7 +119,8 @@ async fn main() {
             get_config,
             set_config,
             control_grabbing,
-            get_monitor_data
+            get_monitor_data,
+            get_obs_scene_names
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;
