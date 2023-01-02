@@ -13,7 +13,7 @@ export default function Updates() {
   return (
     <VStack w="100%" spacing={4}>
       <Text w="100%" fontWeight="bold" fontSize="sm">
-        January 1st, 2023
+        January 16th, 2023
       </Text>
       <VStack w="100%" spacing={0}>
         <Heading w="100%" size="lg" textColor={whatsNewTextColour}>

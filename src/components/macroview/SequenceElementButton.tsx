@@ -1,4 +1,7 @@
-import { Button, Text, useColorModeValue } from '@chakra-ui/react'
+import {
+  Button,
+  Text,
+} from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
 import { useSettingsContext } from '../../contexts/settingsContext'
@@ -15,10 +18,6 @@ export default function SequenceElementButton({
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
-  const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
-  )
 
   const handleAddElement = useCallback(() => {
     if (config.AutoAddDelay) {
@@ -46,15 +45,8 @@ export default function SequenceElementButton({
   ])
 
   return (
-    <Button
-      variant="brand"
-      w="full"
-      size="sm"
-      onClick={handleAddElement}
-      border="1px"
-      borderColor={borderColour}
-    >
-      <Text fontSize={['xs', 'sm', 'md']}>{displayText}</Text>
+    <Button variant="brand" w="full" size="sm" onClick={handleAddElement}>
+      <Text fontSize={['xs', 'sm', 'md']}>{displayText}</Text> {/** chakra doesn't allow for text wrapping??? */}
     </Button>
   )
 }

@@ -30,17 +30,11 @@ export default function LeftPanel({
     changeIsUpdatingCollection
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
-  const panelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
-  const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
-  )
+  const panelBg = useColorModeValue('primary-light.300', 'primary-dark.900')
 
   return (
     <VStack
       bg={panelBg}
-      borderRight="1px"
-      borderColor={borderColour}
       h="100vh"
       p="2"
       w={['30%', '25%', '15%']}

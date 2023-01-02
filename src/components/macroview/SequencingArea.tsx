@@ -260,7 +260,7 @@ export default function SequencingArea() {
   return (
     <VStack w="41%" h="full">
       {/** Header */}
-      <VStack w="100%" px="3" pt="3">
+      <VStack w="100%" px={[2, 4, 6]} pt={[2, 4, 6]}>
         <Stack
           direction={['column', 'row']}
           w="100%"
@@ -287,7 +287,12 @@ export default function SequencingArea() {
           )}
         </Stack>
       </VStack>
-      <HStack justifyContent="right" w="100%" alignItems="center" px="3">
+      <HStack
+        justifyContent="right"
+        w="100%"
+        alignItems="center"
+        px={[2, 4, 6]}
+      >
         <Button
           variant="brandRecord"
           leftIcon={<EditIcon />}
@@ -333,7 +338,7 @@ export default function SequencingArea() {
       >
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <VStack
-            w="100%"
+            w="90%"
             h="100%"
             px="3"
             overflowY="auto"

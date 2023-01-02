@@ -2,7 +2,6 @@ import {
   Text,
   VStack,
   Input,
-  SimpleGrid,
   Divider,
   useColorModeValue,
   HStack,
@@ -10,24 +9,15 @@ import {
   Stack,
   Tooltip,
   Icon,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Box,
-  Grid,
-  Flex,
-  GridItem
 } from '@chakra-ui/react'
 import { IntegrationIcon, KeyboardIcon, MouseIcon, SystemIcon } from '../icons'
 import { TfiLayoutGrid3Alt } from 'react-icons/Tfi'
-import SequenceElementButton from './SequenceElementButton'
-import { HIDCategory, KeyType } from '../../enums'
-import { Hid, HidInfo } from '../../maps/HIDmap'
-import { MouseInput, MouseInputInfo } from '../../maps/MouseMap'
-import { SystemEvent, SystemEventInfo } from '../../maps/SystemEventMap'
 import { useMemo, useState } from 'react'
+import AllElementsGrid from './elementGrids/AllElementsGrid'
+import KeyboardKeysGrid from './elementGrids/KeyboardKeysGrid'
+import MouseButtonsGrid from './elementGrids/MouseButtonsGrid'
+import SystemEventsGrid from './elementGrids/SystemEventsGrid'
+import PluginsGrid from './elementGrids/PluginsGrid'
 
 export default function SelectElementArea() {
   const [tabIndex, setTabIndex] = useState(0)
@@ -37,356 +27,29 @@ export default function SelectElementArea() {
     'primary-light.500',
     'primary-dark.500'
   )
+  const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
 
   const ElementsToShow = useMemo(() => {
     switch (tabIndex) {
       case 0:
         return (
-          <Grid
-            h="fit"
-            templateColumns={[
-              'repeat(2, 1fr)',
-              'repeat(2, 1fr)',
-              'repeat(3, 1fr)'
-            ]}
-            gap={1}
-            overflowY="auto"
-            css={{
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            <GridItem colSpan={[2, 2, 3]}>
-              <Accordion allowMultiple p={0}>
-                {/** System Events */}
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Flex
-                        flex="1"
-                        textAlign="left"
-                        fontWeight={'semibold'}
-                        alignItems="center"
-                        gap={2}
-                      >
-                        <SystemIcon />
-                        System Events
-                      </Flex>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4} px={0}>
-                    <SimpleGrid
-                      w="100%"
-                      h="fit"
-                      columns={[2, 2, 3]}
-                      spacing="1"
-                      overflowY="auto"
-                      css={{
-                        '&::-webkit-scrollbar': {
-                          display: 'none'
-                        }
-                      }}
-                    >
-                      {SystemEvent.all
-                        .filter((element) =>
-                          element.displayString
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase())
-                        )
-                        .map((info: SystemEventInfo) => (
-                          <SequenceElementButton
-                            key={info.displayString}
-                            displayText={info.displayString}
-                            properties={{
-                              type: 'SystemEventAction',
-                              data: info.defaultData
-                            }}
-                          />
-                        ))}
-                    </SimpleGrid>
-                  </AccordionPanel>
-                </AccordionItem>
-                {/** Keyboard Keys */}
-                {Object.keys(HIDCategory)
-                  .filter((key) => isNaN(Number(key)))
-                  .map((categoryName: string) => (
-                    <AccordionItem key={categoryName}>
-                      <h2>
-                        <AccordionButton>
-                          <Flex
-                            as="span"
-                            flex="1"
-                            textAlign="left"
-                            fontWeight={'semibold'}
-                            alignItems="center"
-                            gap={2}
-                          >
-                            <KeyboardIcon />
-                            {categoryName}
-                          </Flex>
-                          <AccordionIcon />
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel pb={4} px={0}>
-                        <SimpleGrid
-                          w="100%"
-                          h="fit"
-                          columns={[2, 2, 3]}
-                          spacing="1"
-                          overflowY="auto"
-                          css={{
-                            '&::-webkit-scrollbar': {
-                              display: 'none'
-                            }
-                          }}
-                        >
-                          {Hid.all
-                            .filter(
-                              (element) =>
-                                element.displayString
-                                  .toLowerCase()
-                                  .includes(searchValue.toLowerCase()) &&
-                                HIDCategory[element.category] === categoryName
-                            )
-                            .map((HIDinfo: HidInfo) => (
-                              <SequenceElementButton
-                                key={HIDinfo.HIDcode}
-                                displayText={HIDinfo.displayString}
-                                properties={{
-                                  type: 'KeyPressEventAction',
-                                  data: {
-                                    keypress: HIDinfo.HIDcode,
-                                    press_duration: 1,
-                                    keytype: KeyType[KeyType.DownUp]
-                                  }
-                                }}
-                              />
-                            ))}
-                        </SimpleGrid>
-                      </AccordionPanel>
-                    </AccordionItem>
-                  ))}
-                {/** Mouse Buttons */}
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Flex
-                        flex="1"
-                        textAlign="left"
-                        fontWeight={'semibold'}
-                        alignItems="center"
-                        gap={2}
-                      >
-                        <MouseIcon />
-                        Mouse Buttons
-                      </Flex>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4} px={0}>
-                    <SimpleGrid
-                      w="100%"
-                      h="fit"
-                      columns={[2, 2, 3]}
-                      spacing="1"
-                      overflowY="auto"
-                      css={{
-                        '&::-webkit-scrollbar': {
-                          display: 'none'
-                        }
-                      }}
-                    >
-                      {MouseInput.all
-                        .filter((element) =>
-                          element.displayString
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase())
-                        )
-                        .map((info: MouseInputInfo) => (
-                          <SequenceElementButton
-                            key={info.webButtonVal}
-                            displayText={info.displayString}
-                            properties={{
-                              type: 'MouseEventAction',
-                              data: {
-                                type: 'Press',
-                                data: {
-                                  type: 'DownUp',
-                                  button: info.enumVal,
-                                  duration: 20
-                                }
-                              }
-                            }}
-                          />
-                        ))}
-                    </SimpleGrid>
-                  </AccordionPanel>
-                </AccordionItem>
-                {/** Plugins */}
-                {/* <AccordionItem></AccordionItem> */}
-              </Accordion>
-            </GridItem>
-          </Grid>
+          <AllElementsGrid searchValue={searchValue}/>
         )
       case 1:
         return (
-          <Flex
-            direction={'column'}
-            h="fit"
-            gap={1}
-            overflowY="auto"
-            css={{
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            <Accordion allowMultiple>
-              {Object.keys(HIDCategory)
-                .filter((key) => isNaN(Number(key)))
-                .map((categoryName: string) => (
-                  <AccordionItem key={categoryName}>
-                    <h2>
-                      <AccordionButton>
-                        <Box
-                          as="span"
-                          flex="1"
-                          textAlign="left"
-                          fontWeight={'semibold'}
-                        >
-                          {categoryName}
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      <SimpleGrid
-                        w="100%"
-                        h="fit"
-                        columns={[2, 2, 3]}
-                        spacing="1"
-                        overflowY="auto"
-                        css={{
-                          '&::-webkit-scrollbar': {
-                            display: 'none'
-                          }
-                        }}
-                      >
-                        {Hid.all
-                          .filter(
-                            (element) =>
-                              element.displayString
-                                .toLowerCase()
-                                .includes(searchValue.toLowerCase()) &&
-                              HIDCategory[element.category] === categoryName
-                          )
-                          .map((HIDinfo: HidInfo) => (
-                            <SequenceElementButton
-                              key={HIDinfo.HIDcode}
-                              displayText={HIDinfo.displayString}
-                              properties={{
-                                type: 'KeyPressEventAction',
-                                data: {
-                                  keypress: HIDinfo.HIDcode,
-                                  press_duration: 1,
-                                  keytype: KeyType[KeyType.DownUp]
-                                }
-                              }}
-                            />
-                          ))}
-                      </SimpleGrid>
-                    </AccordionPanel>
-                  </AccordionItem>
-                ))}
-            </Accordion>
-          </Flex>
+          <KeyboardKeysGrid searchValue={searchValue}/>
         )
       case 2:
         return (
-          <SimpleGrid
-            h="fit"
-            columns={[2, 2, 3]}
-            spacing={1}
-            overflowY="auto"
-            css={{
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            {MouseInput.all
-              .filter((element) =>
-                element.displayString
-                  .toLowerCase()
-                  .includes(searchValue.toLowerCase())
-              )
-              .map((info: MouseInputInfo) => (
-                <SequenceElementButton
-                  key={info.webButtonVal}
-                  displayText={info.displayString}
-                  properties={{
-                    type: 'MouseEventAction',
-                    data: {
-                      type: 'Press',
-                      data: {
-                        type: 'DownUp',
-                        button: info.enumVal,
-                        duration: 20
-                      }
-                    }
-                  }}
-                />
-              ))}
-          </SimpleGrid>
+          <MouseButtonsGrid searchValue={searchValue}/>
         )
       case 3:
         return (
-          <SimpleGrid
-            h="fit"
-            columns={[2, 2, 3]}
-            spacing={1}
-            overflowY="auto"
-            css={{
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            {SystemEvent.all
-              .filter((element) =>
-                element.displayString
-                  .toLowerCase()
-                  .includes(searchValue.toLowerCase())
-              )
-              .map((info: SystemEventInfo) => (
-                <SequenceElementButton
-                  key={info.displayString}
-                  displayText={info.displayString}
-                  properties={{
-                    type: 'SystemEventAction',
-                    data: info.defaultData
-                  }}
-                />
-              ))}
-          </SimpleGrid>
+          <SystemEventsGrid searchValue={searchValue}/>
         )
       case 4:
         return (
-          <SimpleGrid
-            h="fit"
-            columns={[2, 2, 3]}
-            spacing={1}
-            overflowY="auto"
-            css={{
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            <Text fontWeight={'semibold'}>Coming Soon</Text>
-          </SimpleGrid>
+          <PluginsGrid searchValue={searchValue}/>
         )
       default:
         return <></>
@@ -397,7 +60,7 @@ export default function SelectElementArea() {
     <VStack
       w="33%"
       h="100%"
-      p="3"
+      p={[2, 4, 6]}
       alignItems="normal"
       borderRight="1px"
       borderColor={borderColour}
@@ -485,19 +148,32 @@ export default function SelectElementArea() {
               variant={tabIndex === 4 ? 'brandSelected' : 'brandGhost'}
               aria-label="Integration Elements"
               icon={
-                <IntegrationIcon color={tabIndex === 4 ? 'bg-dark' : iconColour} />
+                <IntegrationIcon
+                  color={tabIndex === 4 ? 'bg-dark' : iconColour}
+                />
               }
               onClick={() => setTabIndex(4)}
             />
           </Tooltip>
         </HStack>
         <Input
+          type="search"
           maxW={['100%', '100%', '55%']}
           maxH="32px"
           variant="brand"
           placeholder="Search"
           _placeholder={{ opacity: 1, color: borderColour }}
           onChange={(event) => setSearchValue(event.target.value)}
+          css={{
+            '&::-webkit-search-cancel-button': {
+              'WebkitAppearance': 'none',
+              display: 'inline-block',
+              width: '16px',
+              height: '16px',
+              background: `linear-gradient(45deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,${cancelSearchButtonColour} 45%,${cancelSearchButtonColour} 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%), linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,${cancelSearchButtonColour} 45%,${cancelSearchButtonColour} 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%)`,
+              cursor: 'pointer'
+            }
+          }}
         />
       </Stack>
       <Divider />

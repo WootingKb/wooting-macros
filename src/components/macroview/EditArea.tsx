@@ -35,7 +35,7 @@ export default function EditArea() {
       position="relative"
       w="26%"
       h="full"
-      p="3"
+      p={[2, 4, 6]}
       borderLeft="1px"
       borderColor={borderColour}
     >

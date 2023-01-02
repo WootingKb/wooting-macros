@@ -11,9 +11,9 @@ export const Button = defineStyleConfig({
       _active: { bg: mode('primary-light.400', 'primary-dark.700')(props) }
     }),
     brand2: (props: StyleFunctionProps) => ({
-      bg: mode('primary-light.400', 'primary-dark.700')(props),
+      bg: mode('primary-light.300', 'primary-dark.700')(props),
       color: mode('bg-dark', 'bg-light')(props),
-      _hover: { bg: mode('primary-light.500', 'primary-dark.600')(props) }
+      _hover: { bg: mode('primary-light.400', 'primary-dark.600')(props) }
     }),
     brandSelected: (props: StyleFunctionProps) => ({
       bg: mode('primary-accent.400', 'primary-accent.400')(props),

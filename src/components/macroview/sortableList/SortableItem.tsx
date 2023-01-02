@@ -1,12 +1,27 @@
-import { RepeatClockIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
-import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
-import { useState, useEffect, useMemo } from 'react'
+import { RepeatClockIcon, EditIcon } from '@chakra-ui/icons'
+import {
+  Divider,
+  HStack,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  useColorModeValue
+} from '@chakra-ui/react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
 import { mouseEnumLookup } from '../../../maps/MouseMap'
 import { sysEventLookup } from '../../../maps/SystemEventMap'
 import { ActionEventType } from '../../../types'
-import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../icons'
+import {
+  DownArrowIcon,
+  DownUpArrowsIcon,
+  KebabVertical,
+  UpArrowIcon
+} from '../../icons'
 
 type Props = {
   id: number
@@ -16,9 +31,17 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const highlightedColour = useColorModeValue('primary-accent.600', 'primary-accent.400')
-  const { selectedElementId, onElementDelete, updateSelectedElementId } =
+  const highlightedColour = useColorModeValue(
+    'primary-accent.600',
+    'primary-accent.400'
+  )
+  const { selectedElementId, onElementAdd, onElementDelete, updateSelectedElementId } =
     useMacroContext()
+
+  const onDuplicate = useCallback(() => {
+    const newElement = { ...element }
+    onElementAdd(newElement)
+  }, [element, onElementAdd])
 
   useEffect(() => {
     switch (element.type) {
@@ -143,17 +166,7 @@ export default function SortableItem({ id, element }: Props) {
           {displayText}
         </Text>
       </HStack>
-      <HStack
-        p={2}
-        h="100%"
-      >
-        <IconButton
-          variant="brand2"
-          aria-label="delete-button"
-          icon={<DeleteIcon />}
-          size={['xs', 'sm']}
-          onClick={onDeleteButtonPress}
-        />
+      <HStack p={2} h="100%">
         {isEditable && (
           <IconButton
             variant="brand2"
@@ -163,6 +176,21 @@ export default function SortableItem({ id, element }: Props) {
             onClick={onEditButtonPress}
           />
         )}
+        <Menu variant="brand">
+          <MenuButton
+            as={IconButton}
+            aria-label="Kebab Menu Button"
+            icon={<KebabVertical />}
+            variant="link"
+          />
+          <MenuList p="2" right={0}>
+            <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
+            <Divider />
+            <MenuItem onClick={onDeleteButtonPress} textColor="red.500">
+              Delete
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </HStack>
     </HStack>
   )

@@ -23,10 +23,6 @@ export default function CollectionPanel({ onOpen }: Props) {
   const currentCollection = useSelectedCollection()
   const { isOpen, onOpen: onDeleteModalOpen, onClose } = useDisclosure()
   const panelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
-  const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
-  )
 
   return (
     <VStack w="100%" h="100vh" spacing="0">
@@ -35,8 +31,6 @@ export default function CollectionPanel({ onOpen }: Props) {
         justifyContent="space-between"
         alignItems="center"
         p="2"
-        borderBottom="1px"
-        borderColor={borderColour}
         w="100%"
       >
         <HStack w="100%" justifyContent="space-between">
