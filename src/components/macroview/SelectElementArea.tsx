@@ -20,6 +20,8 @@ import {
   Flex,
   GridItem
 } from '@chakra-ui/react'
+import { IntegrationIcon, KeyboardIcon, MouseIcon, SystemIcon } from '../icons'
+import { TfiLayoutGrid3Alt } from 'react-icons/Tfi'
 import SequenceElementButton from './SequenceElementButton'
 import { HIDCategory, KeyType } from '../../enums'
 import { Hid, HidInfo } from '../../maps/HIDmap'
@@ -68,10 +70,7 @@ export default function SelectElementArea() {
                         alignItems="center"
                         gap={2}
                       >
-                        <Icon boxSize={6} viewBox="0 0 24 24" fill={iconColour}>
-                          <path d="M0 0h24v24H0V0z" fill="none" />
-                          <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
-                        </Icon>
+                        <SystemIcon />
                         System Events
                       </Flex>
                       <AccordionIcon />
@@ -124,17 +123,7 @@ export default function SelectElementArea() {
                             alignItems="center"
                             gap={2}
                           >
-                            <Icon
-                              boxSize={6}
-                              viewBox="0 0 24 24"
-                              fill={iconColour}
-                            >
-                              <path
-                                d="M0 0h24v24H0V0zm0 0h24v24H0V0z"
-                                fill="none"
-                              />
-                              <path d="M20 7v10H4V7h16m0-2H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2zm0 3h2v2h-2zM8 8h2v2H8zm0 3h2v2H8zm-3 0h2v2H5zm0-3h2v2H5zm3 6h8v2H8zm6-3h2v2h-2zm0-3h2v2h-2zm3 3h2v2h-2zm0-3h2v2h-2z" />
-                            </Icon>
+                            <KeyboardIcon />
                             {categoryName}
                           </Flex>
                           <AccordionIcon />
@@ -190,10 +179,7 @@ export default function SelectElementArea() {
                         alignItems="center"
                         gap={2}
                       >
-                        <Icon boxSize={6} viewBox="0 0 24 24" fill={iconColour}>
-                          <path d="M0 0h24v24H0V0z" fill="none" />
-                          <path d="M20 9c-.04-4.39-3.6-7.93-8-7.93S4.04 4.61 4 9v6c0 4.42 3.58 8 8 8s8-3.58 8-8V9zm-2 0h-5V3.16c2.81.47 4.96 2.9 5 5.84zm-7-5.84V9H6c.04-2.94 2.19-5.37 5-5.84zM18 15c0 3.31-2.69 6-6 6s-6-2.69-6-6v-4h12v4z" />
-                        </Icon>
+                        <MouseIcon />
                         Mouse Buttons
                       </Flex>
                       <AccordionIcon />
@@ -399,13 +385,13 @@ export default function SelectElementArea() {
               }
             }}
           >
-            <Text fontWeight={"semibold"}>Coming Soon</Text>
+            <Text fontWeight={'semibold'}>Coming Soon</Text>
           </SimpleGrid>
         )
       default:
         return <></>
     }
-  }, [tabIndex, iconColour, searchValue])
+  }, [tabIndex, searchValue])
 
   return (
     <VStack
@@ -436,13 +422,10 @@ export default function SelectElementArea() {
               aria-label="All Elements Tab"
               icon={
                 <Icon
-                  boxSize={6}
-                  viewBox="0 0 24 24"
-                  fill={tabIndex === 0 ? 'bg-dark' : iconColour}
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" />
-                </Icon>
+                  as={TfiLayoutGrid3Alt}
+                  boxSize={5}
+                  color={tabIndex === 0 ? 'bg-dark' : iconColour}
+                />
               }
               onClick={() => setTabIndex(0)}
             />
@@ -457,14 +440,7 @@ export default function SelectElementArea() {
               variant={tabIndex === 1 ? 'brandSelected' : 'brandGhost'}
               aria-label="Keyboard Key Elements"
               icon={
-                <Icon
-                  boxSize={6}
-                  viewBox="0 0 24 24"
-                  fill={tabIndex === 1 ? 'bg-dark' : iconColour}
-                >
-                  <path d="M0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" />
-                  <path d="M20 7v10H4V7h16m0-2H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2zm0 3h2v2h-2zM8 8h2v2H8zm0 3h2v2H8zm-3 0h2v2H5zm0-3h2v2H5zm3 6h8v2H8zm6-3h2v2h-2zm0-3h2v2h-2zm3 3h2v2h-2zm0-3h2v2h-2z" />
-                </Icon>
+                <KeyboardIcon color={tabIndex === 1 ? 'bg-dark' : iconColour} />
               }
               onClick={() => setTabIndex(1)}
             />
@@ -479,14 +455,7 @@ export default function SelectElementArea() {
               variant={tabIndex === 2 ? 'brandSelected' : 'brandGhost'}
               aria-label="Mouse Button Elements"
               icon={
-                <Icon
-                  boxSize={6}
-                  viewBox="0 0 24 24"
-                  fill={tabIndex === 2 ? 'bg-dark' : iconColour}
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M20 9c-.04-4.39-3.6-7.93-8-7.93S4.04 4.61 4 9v6c0 4.42 3.58 8 8 8s8-3.58 8-8V9zm-2 0h-5V3.16c2.81.47 4.96 2.9 5 5.84zm-7-5.84V9H6c.04-2.94 2.19-5.37 5-5.84zM18 15c0 3.31-2.69 6-6 6s-6-2.69-6-6v-4h12v4z" />
-                </Icon>
+                <MouseIcon color={tabIndex === 2 ? 'bg-dark' : iconColour} />
               }
               onClick={() => setTabIndex(2)}
             />
@@ -501,36 +470,22 @@ export default function SelectElementArea() {
               variant={tabIndex === 3 ? 'brandSelected' : 'brandGhost'}
               aria-label="System Event Elements"
               icon={
-                <Icon
-                  boxSize={6}
-                  viewBox="0 0 24 24"
-                  fill={tabIndex === 3 ? 'bg-dark' : iconColour}
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
-                </Icon>
+                <SystemIcon color={tabIndex === 3 ? 'bg-dark' : iconColour} />
               }
               onClick={() => setTabIndex(3)}
             />
           </Tooltip>
           <Tooltip
             variant="brand"
-            label="Plugins"
-            aria-label="Plugins category button"
+            label="Integrations"
+            aria-label="Integrations category button"
             hasArrow
           >
             <IconButton
               variant={tabIndex === 4 ? 'brandSelected' : 'brandGhost'}
-              aria-label="Plugin Elements"
+              aria-label="Integration Elements"
               icon={
-                <Icon
-                  boxSize={6}
-                  viewBox="0 0 24 24"
-                  fill={tabIndex === 4 ? 'bg-dark' : iconColour}
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M10.5 4.5c.28 0 .5.22.5.5v2h6v6h2c.28 0 .5.22.5.5s-.22.5-.5.5h-2v6h-2.12c-.68-1.75-2.39-3-4.38-3s-3.7 1.25-4.38 3H4v-2.12c1.75-.68 3-2.39 3-4.38 0-1.99-1.24-3.7-2.99-4.38L4 7h6V5c0-.28.22-.5.5-.5m0-2C9.12 2.5 8 3.62 8 5H4c-1.1 0-1.99.9-1.99 2v3.8h.29c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-.3c0-1.49 1.21-2.7 2.7-2.7s2.7 1.21 2.7 2.7v.3H17c1.1 0 2-.9 2-2v-4c1.38 0 2.5-1.12 2.5-2.5S20.38 11 19 11V7c0-1.1-.9-2-2-2h-4c0-1.38-1.12-2.5-2.5-2.5z" />
-                </Icon>
+                <IntegrationIcon color={tabIndex === 4 ? 'bg-dark' : iconColour} />
               }
               onClick={() => setTabIndex(4)}
             />

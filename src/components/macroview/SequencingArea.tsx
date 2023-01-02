@@ -28,7 +28,7 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
@@ -47,17 +47,6 @@ const isKeypress = (
 
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
-  const [showAlert, setShowAlert] = useState(false)
-  const {
-    recording,
-    startRecording,
-    stopRecording,
-    item,
-    eventType,
-    prevItem,
-    prevEventType,
-    timeDiff
-  } = useRecordingSequence()
   const {
     sequence,
     ids,
@@ -68,8 +57,175 @@ export default function SequencingArea() {
     overwriteIds,
     overwriteSequence
   } = useMacroContext()
-  const { collections } = useApplicationContext()
+  const { collections, selection } = useApplicationContext()
   const { config } = useSettingsContext()
+
+  const onItemChanged = useCallback(
+    (
+      item: Keypress | MousePressAction | undefined,
+      prevItem: Keypress | MousePressAction | undefined,
+      timeDiff: number,
+      isUpEvent: boolean
+    ) => {
+      if (item === undefined) {
+        return
+      }
+
+      if (isUpEvent && prevItem !== undefined) {
+        if ('keypress' in prevItem && 'keypress' in item) {
+          if (prevItem.keypress === item.keypress) {
+            updateElement(
+              {
+                type: 'KeyPressEventAction',
+                data: {
+                  ...prevItem,
+                  keytype: KeyType[KeyType.DownUp],
+                  press_duration: timeDiff
+                }
+              },
+              sequence.length - 1
+            )
+            return
+          }
+        } else if ('button' in prevItem && 'button' in item) {
+          if (prevItem.button === item.button) {
+            updateElement(
+              {
+                type: 'MouseEventAction',
+                data: {
+                  type: 'Press',
+                  data: { ...prevItem, type: 'DownUp', duration: timeDiff }
+                }
+              },
+              sequence.length - 1
+            )
+            return
+          }
+        }
+      }
+
+      if (prevItem === undefined) {
+        if (isKeypress(item)) {
+          onElementAdd({
+            type: 'KeyPressEventAction',
+            data: item
+          })
+        } else {
+          onElementAdd({
+            type: 'MouseEventAction',
+            data: { type: 'Press', data: item }
+          })
+        }
+      } else {
+        if (isKeypress(item)) {
+          onElementsAdd([
+            {
+              type: 'DelayEventAction',
+              data: timeDiff
+            },
+            {
+              type: 'KeyPressEventAction',
+              data: item
+            }
+          ])
+        } else {
+          onElementsAdd([
+            {
+              type: 'DelayEventAction',
+              data: timeDiff
+            },
+            {
+              type: 'MouseEventAction',
+              data: { type: 'Press', data: item }
+            }
+          ])
+        }
+      }
+    },
+    [onElementAdd, onElementsAdd, sequence.length, updateElement]
+  )
+
+  const { recording, startRecording, stopRecording } =
+    useRecordingSequence(onItemChanged)
+
+  const showAlert = useMemo(() => {
+    // The alert appears based on the current macro's trigger
+    // Need to adjust to properly check if the current macro will trigger another macro; currently it iterates over the trigger of the current macro one by one, but it should be checking for all of them as a group if there are multiple keys
+    // also this whole thing can easily be removed if the backend fixes this issue of macros triggering other macros.
+    // the one thing is, it seems like logitech's software also has this issue, and they don't communicate it to the user.
+    let willTriggerAnotherMacro = false
+
+    for (const collection of collections) {
+      for (let index = 0; index < collection.macros.length; index++) {
+        // skip the old info of the current macro
+        if (index === selection.macroIndex) {
+          continue
+        }
+
+        const macro = collection.macros[index]
+        if (macro.trigger.type === 'KeyPressEvent') {
+          macro.trigger.data.forEach((triggerKey) => {
+            if (
+              sequence.filter(
+                (element) =>
+                  element.type === 'KeyPressEventAction' &&
+                  element.data.keypress === triggerKey
+              ).length > 0
+            ) {
+              willTriggerAnotherMacro = true
+            }
+          })
+        } else {
+          if (
+            sequence.filter(
+              (element) =>
+                element.type === 'MouseEventAction' &&
+                macro.trigger.type === 'MouseEvent' &&
+                element.data.data.button === macro.trigger.data
+            ).length > 0
+          ) {
+            willTriggerAnotherMacro = true
+          }
+        }
+      }
+    }
+    // Has to check the current macro as well, since the current macro's information may not be the same as what is saved
+    if (currentMacro.trigger.type === 'KeyPressEvent') {
+      if (currentMacro.trigger.data.length > 0) {
+        currentMacro.trigger.data.forEach((triggerKey) => {
+          if (
+            sequence.filter(
+              (element) =>
+                element.type === 'KeyPressEventAction' &&
+                element.data.keypress === triggerKey
+            ).length > 0
+          ) {
+            willTriggerAnotherMacro = true
+          }
+        })
+      }
+    } else {
+      if (currentMacro.trigger.data !== undefined) {
+        if (
+          sequence.filter(
+            (element) =>
+              element.type === 'MouseEventAction' &&
+              currentMacro.trigger.type === 'MouseEvent' &&
+              element.data.data.button === currentMacro.trigger.data
+          ).length > 0
+        ) {
+          willTriggerAnotherMacro = true
+        }
+      }
+    }
+    return willTriggerAnotherMacro
+  }, [
+    collections,
+    currentMacro.trigger.data,
+    currentMacro.trigger.type,
+    selection.macroIndex,
+    sequence
+  ])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -100,171 +256,6 @@ export default function SequencingArea() {
     const { active } = event
     setActiveId(Number(active.id))
   }, [])
-
-  useEffect(() => {
-    // Have this be looked at for code review 4
-    // This useEffect is meant to set whether or not to show the warning alert to the user
-    // the reason for the alert: if the user is recording a sequence, and the sequence contains an element,
-    // that is part of the trigger (key or mouse) of the current macro or another macro, then this will cause unintentional triggers (backend problem)
-    // is there any way to optimize this / do this better?
-
-    // Need to update this later, for some reason the useEffect doesn't end when returning,
-    // and the code outside the forEach loops is executed, thus to work around this we have only 1 setState()
-    let matchFound = false
-    collections.forEach((collection) => {
-      collection.macros.forEach((macro) => {
-        if (macro.name === currentMacro.name) {
-          return
-        }
-        if (macro.trigger.type === 'KeyPressEvent') {
-          macro.trigger.data.forEach((triggerKey) => {
-            if (
-              sequence.filter(
-                (element) =>
-                  element.type === 'KeyPressEventAction' &&
-                  element.data.keypress === triggerKey
-              ).length > 0
-            ) {
-              matchFound = true
-              return
-            }
-          })
-        } else {
-          if (
-            sequence.filter(
-              (element) =>
-                element.type === 'MouseEventAction' &&
-                macro.trigger.type === 'MouseEvent' &&
-                element.data.data.button === macro.trigger.data
-            ).length > 0
-          ) {
-            matchFound = true
-            return
-          }
-        }
-      })
-    })
-
-    if (currentMacro.trigger.type === 'KeyPressEvent') {
-      if (currentMacro.trigger.data.length > 0) {
-        currentMacro.trigger.data.forEach((triggerKey) => {
-          if (
-            sequence.filter(
-              (element) =>
-                element.type === 'KeyPressEventAction' &&
-                element.data.keypress === triggerKey
-            ).length > 0
-          ) {
-            matchFound = true
-            return
-          }
-        })
-      }
-    } else {
-      if (currentMacro.trigger.data !== undefined) {
-        if (
-          sequence.filter(
-            (element) =>
-              element.type === 'MouseEventAction' &&
-              currentMacro.trigger.type === 'MouseEvent' &&
-              element.data.data.button === currentMacro.trigger.data
-          ).length > 0
-        ) {
-          matchFound = true
-          return
-        }
-      }
-    }
-    setShowAlert(matchFound)
-  }, [collections, currentMacro, sequence, setShowAlert])
-
-  useEffect(() => {
-    // Have this be looked at for code review 4
-    // This useEffect is adds the last recorded element to the sequence, thus I have items as a dependency
-    // when adding the recorded element, we may also have to modify the previous element,
-    // because I modified the sequence recording to take into account the real delays between the user's events
-
-    // the issue is, the useEffect breaks when more deps are added
-    // and you said that if that is the case, then there is a better way to do this, but I have no clue how
-
-    if (item === undefined) {
-      return
-    }
-
-    if (prevItem !== undefined) {
-      // if there is a previous element with a down event, check if the new event was an up event
-      if (eventType === 'Up' && prevEventType === 'Down') {
-        // current element is up event
-        if ('keypress' in prevItem && 'keypress' in item) {
-          // 1. previous element was a keypress and current element is a keypress
-          if (prevItem.keypress === item.keypress) {
-            // 1.1 if the last event was a down event for the same key, then we update the duration of the DownUp event to be the diff in timestamps
-            updateElement(
-              {
-                type: 'KeyPressEventAction',
-                data: {
-                  ...prevItem,
-                  keytype: KeyType[KeyType.DownUp],
-                  press_duration: timeDiff
-                }
-              },
-              sequence.length - 1
-            )
-            return
-          }
-        } else if ('button' in prevItem && 'button' in item) {
-          // 2. previous element was a mouse event and current element is a mouse event
-          updateElement(
-            {
-              type: 'MouseEventAction',
-              data: {
-                type: 'Press',
-                data: { ...prevItem, type: 'DownUp', duration: timeDiff }
-              }
-            },
-            sequence.length - 1
-          )
-          return
-        }
-      }
-      if (isKeypress(item)) {
-        onElementsAdd([
-          {
-            type: 'DelayEventAction',
-            data: timeDiff
-          },
-          {
-            type: 'KeyPressEventAction',
-            data: item
-          }
-        ])
-      } else {
-        onElementsAdd([
-          {
-            type: 'DelayEventAction',
-            data: timeDiff
-          },
-          {
-            type: 'MouseEventAction',
-            data: { type: 'Press', data: item }
-          }
-        ])
-      }
-    } else {
-      // add current element to sequence
-      if (isKeypress(item)) {
-        onElementAdd({
-          type: 'KeyPressEventAction',
-          data: item
-        })
-      } else {
-        onElementAdd({
-          type: 'MouseEventAction',
-          data: { type: 'Press', data: item }
-        })
-      }
-    }
-  }, [item])
 
   return (
     <VStack w="41%" h="full">
@@ -310,7 +301,10 @@ export default function SequencingArea() {
           variant="brand"
           leftIcon={<DeleteIcon />}
           size={['xs', 'sm', 'md']}
-          onClick={() => overwriteSequence([])}
+          onClick={() => {
+            overwriteSequence([])
+            stopRecording()
+          }}
         >
           Clear
         </Button>
@@ -338,7 +332,18 @@ export default function SequencingArea() {
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-          <VStack w="100%" h="100%" px="3" overflowY="auto" overflowX="hidden">
+          <VStack
+            w="100%"
+            h="100%"
+            px="3"
+            overflowY="auto"
+            overflowX="hidden"
+            css={{
+              '&::-webkit-scrollbar': {
+                display: 'none'
+              }
+            }}
+          >
             {ids.map((id) => (
               <SortableWrapper
                 id={id}

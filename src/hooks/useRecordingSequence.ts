@@ -5,7 +5,14 @@ import { webCodeHIDLookup } from '../maps/HIDmap'
 import { webButtonLookup } from '../maps/MouseMap'
 import { Keypress, MousePressAction } from '../types'
 
-export default function useRecordingSequence() {
+export default function useRecordingSequence(
+  onItemChanged: (
+    item: Keypress | MousePressAction | undefined,
+    prevItem: Keypress | MousePressAction | undefined,
+    timeDiff: number,
+    isUpEvent: boolean
+  ) => void
+) {
   const [recording, setRecording] = useState(false)
   const [item, setItem] = useState<Keypress | MousePressAction | undefined>(
     undefined
@@ -56,6 +63,7 @@ export default function useRecordingSequence() {
           keytype: KeyType[KeyType.Up]
         }
         setItem(keyup)
+        onItemChanged(keyup, item, timeDiff, true)
         return
       }
 
@@ -66,8 +74,9 @@ export default function useRecordingSequence() {
         keytype: KeyType[KeyType.Down]
       }
       setItem(keydown)
+      onItemChanged(keydown, item, timeDiff, false)
     },
-    [eventType, item, prevTimestamp]
+    [eventType, item, onItemChanged, prevTimestamp, timeDiff]
   )
 
   const addMousepress = useCallback(
@@ -100,6 +109,7 @@ export default function useRecordingSequence() {
           button: enumVal
         }
         setItem(mouseup)
+        onItemChanged(mouseup, item, timeDiff, true)
         return
       }
 
@@ -110,8 +120,9 @@ export default function useRecordingSequence() {
       }
 
       setItem(mousedown)
+      onItemChanged(mousedown, item, timeDiff, false)
     },
-    [eventType, item, prevTimestamp]
+    [eventType, item, onItemChanged, prevTimestamp, timeDiff]
   )
 
   useEffect(() => {

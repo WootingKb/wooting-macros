@@ -131,7 +131,7 @@ export default function ClipboardForm() {
         <Box ref={pickerRef} w="100%">
           <Picker
             data={data}
-            theme={colorMode === 'light' ? 'light' : 'dark'}
+            theme={colorMode}
             onEmojiSelect={onEmojiSelect}
             navPosition="bottom"
             previewPosition="none"

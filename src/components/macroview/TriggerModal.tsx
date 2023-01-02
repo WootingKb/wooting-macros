@@ -40,10 +40,12 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     initItems
   } = useRecordingTrigger()
   const [isAllowed, setIsAllowed] = useState(false)
-  const [isTriggerMousepress, setIsTriggerMousepress] = useState(false)
+  const [isTriggerMousepress, setIsTriggerMousepress] = useState(false) // useMemo
 
   useEffect(() => {
     // ask about this useeffect and it's dependencies, need to fix?
+    // instead of having initItems here, we can pass macro into useRecordingTrigger and have it do the init inside the hook
+    // then this useEffect can just be to set IsAllowed
     if (macro.trigger.type === 'KeyPressEvent') {
       initItems(macro.trigger.data)
       setIsAllowed(macro.trigger.allow_while_other_keys)

@@ -27,7 +27,7 @@ export default function LeftPanel({
     selection,
     onCollectionUpdate,
     changeSelectedCollectionIndex,
-    changeIsUpdatingCollection: updateIsRenamingCollection
+    changeIsUpdatingCollection
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const panelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
@@ -35,10 +35,6 @@ export default function LeftPanel({
     'primary-light.500',
     'primary-dark.500'
   )
-
-  const onCollectionButtonPress = (newActiveIndex: number) => {
-    changeSelectedCollectionIndex(newActiveIndex)
-  }
 
   return (
     <VStack
@@ -65,7 +61,7 @@ export default function LeftPanel({
           p="2"
           leftIcon={<AddIcon />}
           onClick={() => {
-            updateIsRenamingCollection(false)
+            changeIsUpdatingCollection(false)
             onOpenCollectionModal()
           }}
         >
@@ -87,7 +83,7 @@ export default function LeftPanel({
                 index={index}
                 key={collection.name}
                 isFocused={index == selection.collectionIndex}
-                setFocus={onCollectionButtonPress}
+                setFocus={(index) => changeSelectedCollectionIndex(index)}
                 toggleCollection={() =>
                   onCollectionUpdate(
                     {

@@ -93,9 +93,13 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       let newIndex = 0
+      let itemToAdd = newCollection
       setCollections((collections) => {
         newIndex = collections.length
-        return [...collections, newCollection]
+        if (itemToAdd.name === '') {
+          itemToAdd = { ...itemToAdd, name: `Collection ${newIndex + 1}` }
+        }
+        return [...collections, itemToAdd]
       })
       changeSelectedCollectionIndex(newIndex)
     },

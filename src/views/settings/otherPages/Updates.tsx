@@ -19,16 +19,16 @@ export default function Updates() {
         <Heading w="100%" size="lg" textColor={whatsNewTextColour}>
           What's New
         </Heading>
-        <UnorderedList w="100%" px="8" spacing={2}>
-          <ListItem textColor={textColour}>
+        <UnorderedList w="100%" px="8" spacing={2} textColor={textColour}>
+          <ListItem>
             <span style={{ fontWeight: '700' }}>
               Collections: Create groups of macros that can be easily toggled
               on/off as a group.&nbsp;
             </span>
-            You can set a unique name and an icon for the collection. And if you
-            end up not wanting it, you can delete later.
+            You can set a name and an icon for the collection. And if you end up
+            not wanting it, you can delete later.
           </ListItem>
-          <ListItem textColor={textColour}>
+          <ListItem>
             <span style={{ fontWeight: '700' }}>
               Macros: Create a sequence of events that can be triggered by
               specific keyboard keys or a single mouse button.&nbsp;
@@ -37,20 +37,20 @@ export default function Updates() {
             wanting it, you can delete later. You can add keystrokes and mouse
             presses to the sequence, alongside some system events.
           </ListItem>
-          <ListItem textColor={textColour}>
+          <ListItem>
             <span style={{ fontWeight: '700' }}>
               Settings: Adjust how the application behaves.&nbsp;
             </span>
             You can adjust some window settings, as well as some functionality
             settings that affect your experience creating a macro.
           </ListItem>
-          <ListItem textColor={textColour}>
+          <ListItem>
             <span style={{ fontWeight: '700' }}>
               Appearance: Blind your eyes, or don't.&nbsp;
             </span>
             You can select between one of two colour modes, light and dark.
           </ListItem>
-          <ListItem textColor={textColour}>
+          <ListItem>
             <span style={{ fontWeight: '700' }}>
               Toggle on/off: Enable and disable individual macros, collections,
               or the entire app without closing it.&nbsp;

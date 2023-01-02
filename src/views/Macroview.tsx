@@ -6,13 +6,12 @@ import {
   useDisclosure,
   Button,
   Flex,
-  Text,
   Input,
   IconButton,
   Tooltip,
   Box
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import EditArea from '../components/macroview/EditArea'
 import SelectElementArea from '../components/macroview/SelectElementArea'
 import SequencingArea from '../components/macroview/SequencingArea'
@@ -21,17 +20,15 @@ import TriggerModal from '../components/macroview/TriggerModal'
 import { useApplicationContext } from '../contexts/applicationContext'
 import { useMacroContext } from '../contexts/macroContext'
 import EmojiModal from '../components/macroview/EmojiModal'
-import { maxNameLength } from '../utils'
 
 type Props = {
   isEditing: boolean
 }
 
 export default function Macroview({ isEditing }: Props) {
-  const { collections, changeSelectedMacroIndex } = useApplicationContext()
+  const { changeSelectedMacroIndex } = useApplicationContext()
   const {
     macro,
-    oldMacroName,
     sequence,
     changeIsUpdatingMacro,
     updateMacroName,
@@ -47,16 +44,16 @@ export default function Macroview({ isEditing }: Props) {
     onOpen: onOpenEmoji,
     onClose: onCloseEmoji
   } = useDisclosure()
-  const [isNameUsable, setIsNameUsable] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
     if (isEditing) {
-      setIsNameUsable(true)
+      setInputValue(macro.name)
     }
     changeIsUpdatingMacro(isEditing)
-  }, [isEditing, changeIsUpdatingMacro])
+  }, [isEditing, changeIsUpdatingMacro, macro.name])
 
-  const getSaveButtonTooltipText = useCallback((): string => {
+  const saveButtonTooltipText = useMemo((): string => {
     if (
       (macro.trigger.type === 'KeyPressEvent' &&
         macro.trigger.data.length === 0) ||
@@ -65,58 +62,10 @@ export default function Macroview({ isEditing }: Props) {
       return 'Please set your trigger keys!'
     } else if (sequence.length === 0) {
       return 'Please add something to the sequence!'
-    } else if (macro.name === '') {
-      return 'Please name your macro!'
-    } else if (!isNameUsable) {
-      return 'Please give your macro a unique name!'
     } else {
       return ''
     }
-  }, [
-    isNameUsable,
-    macro.name,
-    macro.trigger.data,
-    macro.trigger.type,
-    sequence.length
-  ])
-
-  const onMacroNameChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newName: string = event.target.value
-      if (newName === '') {
-        updateMacroName(newName)
-        setIsNameUsable(false)
-        return
-      } else if (newName.length > maxNameLength) {
-        setIsNameUsable(false)
-        return
-      }
-
-      let matchFound = false
-
-      collections.forEach((collection) => {
-        for (let i = 0; i < collection.macros.length; i++) {
-          const currentMacro = collection.macros[i]
-          if (currentMacro.name.toUpperCase() === newName.trim().toUpperCase()) {
-            if (isEditing && currentMacro.name === oldMacroName) {
-              return
-            }
-            updateMacroName(newName)
-            setIsNameUsable(false)
-            matchFound = true
-            return
-          }
-        }
-      })
-
-      if (!matchFound) {
-        console.log("hello")
-        updateMacroName(newName)
-        setIsNameUsable(true)
-      }
-    },
-    [isEditing, collections, updateMacroName, oldMacroName]
-  )
+  }, [macro.trigger.data, macro.trigger.type, sequence.length])
 
   return (
     <VStack h="100%" spacing="0px" overflow="hidden">
@@ -148,28 +97,22 @@ export default function Macroview({ isEditing }: Props) {
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
           <EmojiModal isOpen={isOpenEmoji} onClose={onCloseEmoji} />
-          <VStack spacing={0}>
+          <VStack spacing={1}>
             <Input
               variant="brand"
               placeholder="Macro Name"
               _placeholder={{ opacity: 1, color: borderColour }}
-              isInvalid={!isNameUsable}
-              onChange={onMacroNameChange}
-              value={macro.name}
-              isRequired
+              onChange={(event) => setInputValue(event.target.value)}
+              onBlur={(event) => updateMacroName(event.target.value)}
+              value={inputValue}
             />
-            {macro.name.length === maxNameLength && (
-              <Text w="100%" fontSize="2xs" fontWeight="semibold">
-                Max length is {maxNameLength} characters
-              </Text>
-            )}
           </VStack>
         </Flex>
         {/* <MacroTypeArea /> */}
         <TriggerArea onOpen={onOpen} />
         <Tooltip
           variant="brand"
-          label={getSaveButtonTooltipText()}
+          label={saveButtonTooltipText}
           aria-label="Save Button Tooltip"
           hasArrow
           rounded="sm"
@@ -182,8 +125,7 @@ export default function Macroview({ isEditing }: Props) {
                 macro.trigger.data.length === 0) ||
               (macro.trigger.type === 'MouseEvent' &&
                 macro.trigger.data === undefined) ||
-              sequence.length === 0 ||
-              !isNameUsable
+              sequence.length === 0
             }
             onClick={updateMacro}
           >

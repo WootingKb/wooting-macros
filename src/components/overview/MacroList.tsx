@@ -63,63 +63,44 @@ export default function MacroList() {
       //   }
       // }}
     >
-      {currentCollection.macros.length === 0 ? (
-        <Flex h="100%" justifyContent="center" alignItems="center">
-          <Button
-            variant="yellowGradient"
-            _hover={{
-              transform: 'scale(110%)'
-            }}
-            leftIcon={<AddIcon />}
-            size={['sm', 'md', 'lg']}
-            maxW="50%"
-            onClick={() => {
-              changeViewState(ViewState.Addview)
-            }}
+      <Grid
+        w="100%"
+        templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
+        gap={['2', '3', '4']}
+      >
+        <Flex h="163px" justifyContent="center" alignItems="center">
+          <VStack
+            w="100%"
+            h="full"
+            bg={bg}
+            boxShadow={shadowColour}
+            rounded="md"
+            p="3"
+            m="auto"
+            justifyContent="center"
+            spacing="8px"
           >
-            Add Macro
-          </Button>
-        </Flex>
-      ) : (
-        <Grid
-          w="100%"
-          templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-          gap={['2', '3', '4']}
-        >
-          <Flex h="163px" justifyContent="center" alignItems="center">
-            <VStack
-              w="100%"
-              h="full"
-              bg={bg}
-              boxShadow={shadowColour}
-              rounded="md"
-              p="3"
-              m="auto"
-              justifyContent="center"
-              spacing="8px"
+            <Button
+              variant="yellowGradient"
+              _hover={{
+                transform: 'scale(110%)'
+              }}
+              leftIcon={<AddIcon />}
+              size={['sm', 'md', 'lg']}
+              onClick={() => {
+                changeViewState(ViewState.Addview)
+              }}
             >
-              <Button
-                variant="yellowGradient"
-                _hover={{
-                  transform: 'scale(110%)'
-                }}
-                leftIcon={<AddIcon />}
-                size={['sm', 'md', 'lg']}
-                onClick={() => {
-                  changeViewState(ViewState.Addview)
-                }}
-              >
-                Add Macro
-              </Button>
-            </VStack>
-          </Flex>
-          {currentCollection.macros.map((macro: Macro, index: number) => (
-            <GridItem w="100%" h="163px" key={macro.name}>
-              <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
-            </GridItem>
-          ))}
-        </Grid>
-      )}
+              Add Macro
+            </Button>
+          </VStack>
+        </Flex>
+        {currentCollection.macros.map((macro: Macro, index: number) => (
+          <GridItem w="100%" h="163px" key={`${macro.name} + ${index}`}>
+            <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
+          </GridItem>
+        ))}
+      </Grid>
     </Box>
   )
 }

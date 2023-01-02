@@ -1,11 +1,12 @@
 import { RepeatClockIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
-import { HStack, Icon, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
+import { HStack, IconButton, Text, useColorModeValue } from '@chakra-ui/react'
 import { useState, useEffect, useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../maps/HIDmap'
 import { mouseEnumLookup } from '../../../maps/MouseMap'
 import { sysEventLookup } from '../../../maps/SystemEventMap'
 import { ActionEventType } from '../../../types'
+import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../icons'
 
 type Props = {
   id: number
@@ -88,97 +89,19 @@ export default function SortableItem({ id, element }: Props) {
         return <RepeatClockIcon />
       case 'KeyPressEventAction':
         if (element.data.keytype === 'DownUp') {
-          return (
-            <Icon
-              boxSize={6}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-              />
-            </Icon>
-          )
+          return <DownUpArrowsIcon />
         } else if (element.data.keytype === 'Down') {
-          return (
-            <Icon
-              boxSize={6}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-              />
-            </Icon>
-          )
+          return <DownArrowIcon />
         } else {
-          return (
-            <Icon
-              boxSize={6}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
-              />
-            </Icon>
-          )
+          return <UpArrowIcon />
         }
       case 'MouseEventAction':
         if (element.data.data.type === 'DownUp') {
-          return (
-            <Icon
-              boxSize={6}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-              />
-            </Icon>
-          )
+          return <DownUpArrowsIcon />
         } else if (element.data.data.type === 'Down') {
-          return (
-            <Icon
-              boxSize={6}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-              />
-            </Icon>
-          )
+          return <DownArrowIcon />
         } else {
-          return (
-            <Icon
-              boxSize={6}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
-              />
-            </Icon>
-          )
+          return <UpArrowIcon />
         }
       case 'SystemEventAction':
         return <></>

@@ -12,6 +12,7 @@ import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { KeyType } from '../../../enums'
 import { mouseEnumLookup } from '../../../maps/MouseMap'
+import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../icons'
 
 export default function MousePressForm() {
   const [headingText, setHeadingText] = useState('')
@@ -114,22 +115,7 @@ export default function MousePressForm() {
           >
             <Button
               variant="brand"
-              leftIcon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-                  />
-                </svg>
-              }
+              leftIcon={<DownUpArrowsIcon />}
               w="100%"
               size={['sm', 'md']}
               onClick={() => onMousepressTypeChange(KeyType.DownUp)}
@@ -139,22 +125,7 @@ export default function MousePressForm() {
             </Button>
             <Button
               variant="brand"
-              leftIcon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3"
-                  />
-                </svg>
-              }
+              leftIcon={<DownArrowIcon />}
               w="100%"
               size={['sm', 'md']}
               onClick={() => onMousepressTypeChange(KeyType.Down)}
@@ -164,22 +135,7 @@ export default function MousePressForm() {
             </Button>
             <Button
               variant="brand"
-              leftIcon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
-                  />
-                </svg>
-              }
+              leftIcon={<UpArrowIcon />}
               w="100%"
               size={['sm', 'md']}
               onClick={() => onMousepressTypeChange(KeyType.Up)}

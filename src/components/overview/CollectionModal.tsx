@@ -13,16 +13,14 @@ import {
   VStack,
   Box,
   useColorModeValue,
-  Tooltip,
   Divider,
   useColorMode
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-import { maxNameLength } from '../../utils'
 
 type Props = {
   isOpen: boolean
@@ -32,10 +30,8 @@ type Props = {
 export default function CollectionModal({ isOpen, onClose }: Props) {
   const [collectionName, setCollectionName] = useState('')
   const [iconString, setIconString] = useState(':smile:')
-  const [isNameUsable, setIsNameUsable] = useState(false)
   const {
     selection,
-    collections,
     isUpdatingCollection,
     onCollectionAdd,
     onCollectionUpdate
@@ -52,11 +48,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     if (isUpdatingCollection) {
       setIconString(currentCollection.icon)
       setCollectionName(currentCollection.name)
-      setIsNameUsable(true)
     } else {
       setIconString(':smile:')
       setCollectionName('')
-      setIsNameUsable(false)
     }
   }, [
     currentCollection.icon,
@@ -91,56 +85,12 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
     selection.collectionIndex
   ])
 
-  const onCollectionNameChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newName: string = event.target.value
-      if (newName === '') {
-        setCollectionName(newName)
-        setIsNameUsable(false)
-        return
-      } else if (newName.length > maxNameLength) {
-        setIsNameUsable(false)
-        return
-      }
-
-      if (isUpdatingCollection) {
-        if (
-          newName.trim().toUpperCase() === currentCollection.name.toUpperCase()
-        ) {
-          setCollectionName(newName)
-          setIsNameUsable(true)
-          return
-        }
-      }
-
-      for (let i = 0; i < collections.length; i++) {
-        const collection = collections[i]
-        if (collection.name.toUpperCase() === newName.trim().toUpperCase()) {
-          setCollectionName(newName)
-          setIsNameUsable(false)
-          return
-        }
-      }
-      setCollectionName(newName)
-      setIsNameUsable(true)
-    },
-    [currentCollection.name, collections, isUpdatingCollection]
-  )
-
   const onEmojiSelect = useCallback(
     (emoji: { shortcodes: string }) => {
       setIconString(emoji.shortcodes)
     },
     [setIconString]
   )
-
-  const tooltipText = useMemo((): string => {
-    if (collectionName === '') {
-      return 'Please enter a name'
-    } else {
-      return ''
-    }
-  }, [collectionName])
 
   return (
     <Modal
@@ -170,7 +120,7 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
             <HStack w="100%">
               <Box w="50%">
                 <Box
-                  _hover={{ transform: 'scale(110%)' }}
+                  _hover={{ transform: 'scale(125%)' }}
                   maxHeight="32px"
                   transition="ease-out 150ms"
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -178,29 +128,22 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
                   <em-emoji shortcodes={iconString} size="32px" />
                 </Box>
               </Box>
-              <VStack w="50%" spacing={0}>
+              <VStack w="50%" spacing={2}>
                 <Input
                   w="100%"
                   variant="brand"
-                  isRequired
-                  isInvalid={!isNameUsable}
-                  onChange={onCollectionNameChange}
+                  onChange={(event) => setCollectionName(event.target.value)}
                   value={collectionName}
                   placeholder={'Collection Name'}
                   _placeholder={{ opacity: 1, color: borderColour }}
                 />
-                {collectionName.length === maxNameLength && (
-                  <Text w="100%" fontSize="2xs" fontWeight="semibold">
-                    Max length is {maxNameLength} characters
-                  </Text>
-                )}
               </VStack>
             </HStack>
             {showEmojiPicker && (
               <Box id="picker-box" w="100%" py="4">
                 <Picker
                   data={data}
-                  theme={colorMode === 'light' ? 'light' : 'dark'}
+                  theme={colorMode}
                   onEmojiSelect={onEmojiSelect}
                   navPosition="bottom"
                   previewPosition="none"
@@ -215,20 +158,9 @@ export default function CollectionModal({ isOpen, onClose }: Props) {
           <Button variant="brand" mr={3} onClick={onClose}>
             Close
           </Button>
-          <Tooltip
-            hasArrow
-            variant="brand"
-            label={tooltipText}
-            aria-label="A tooltip letting the user know what they need to do to be able to create a collection."
-          >
-            <Button
-              variant="yellowGradient"
-              onClick={onModalSuccessClose}
-              isDisabled={!isNameUsable}
-            >
-              {isUpdatingCollection ? 'Update' : 'Create'}
-            </Button>
-          </Tooltip>
+          <Button variant="yellowGradient" onClick={onModalSuccessClose}>
+            {isUpdatingCollection ? 'Update' : 'Create'}
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

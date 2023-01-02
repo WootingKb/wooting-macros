@@ -45,7 +45,7 @@ export default function useRecordingTrigger() {
         if (items.filter((item) => item === HIDcode).length > 0) {
           newItems = items
         } else if (
-          items.filter((item) => item >= MouseButton.Left).length > 0
+          items.filter((item) => item >= MouseButton.Left).length > 0  // .includes()
         ) {
           newItems = [HIDcode]
         } else {

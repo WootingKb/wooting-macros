@@ -33,7 +33,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
     MinimizeAtLaunch: false,
     Theme: 'light',
     MinimizeToTray: true
-  })
+  }) // get rid of init value
 
   const { setColorMode } = useColorMode()
 
@@ -41,6 +41,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
     invoke<ApplicationConfig>('get_config')
       .then((res) => {
         setConfig(res)
+        // use ref to avoid rerender
       })
       .catch((e) => {
         console.error(e)
@@ -48,6 +49,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   }, [])
 
   useEffect(() => {
+    // if is initialized
     updateSettings(config)
   }, [config])
 

@@ -14,7 +14,6 @@ import {
   useColorModeValue,
   Box,
   HStack,
-  Icon,
   Tooltip
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
@@ -24,6 +23,7 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../maps/MouseMap'
 import { useCallback } from 'react'
+import { KebabVertical } from '../icons'
 
 type Props = {
   macro: Macro
@@ -46,7 +46,6 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
     'primary-light.300',
     'primary-dark.700'
   )
-  const kebabColour = useColorModeValue('yellow.600', 'yellow.400')
 
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,21 +86,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <MenuButton
             as={IconButton}
             aria-label="Kebab Menu Button"
-            m="0"
-            icon={
-              <Icon
-                boxSize={6}
-                viewBox="0 0 20 20"
-                strokeWidth="1.5"
-                stroke={kebabColour}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                />
-              </Icon>
-            }
+            icon={<KebabVertical />}
             variant="link"
           />
           <MenuList p="2" right={0}>

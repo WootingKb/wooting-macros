@@ -1988,15 +1988,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-icons@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@radix-ui/react-icons@npm:1.1.1"
-  peerDependencies:
-    react: ^16.x || ^17.x || ^18.x
-  checksum: fc64cd763994e035fe7a4898c0710793aebc2689d56dcc8a2fd76c334a424c48a1aa2fbcccc2bd1c0990d731f27090fc0ddf6859af32c5aa217bd75a10cb3e34
-  languageName: node
-  linkType: hard
-
 "@tauri-apps/api@npm:^1.1.0":
   version: 1.2.0
   resolution: "@tauri-apps/api@npm:1.2.0"
@@ -4921,6 +4912,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-icons@npm:^4.7.1":
+  version: 4.7.1
+  resolution: "react-icons@npm:4.7.1"
+  peerDependencies:
+    react: "*"
+  checksum: ed3cbdc5fc0c4d7d2debf78fdc8c4c80aeacf85a506a9a3c11b1d5922de393ac0a6542012b7fb81761e9280c54d0f26827d50a92b54ec8f0c8e52364d89970b5
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -5726,7 +5726,6 @@ __metadata:
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@formkit/auto-animate": ^1.0.0-beta.5
-    "@radix-ui/react-icons": ^1.1.1
     "@tauri-apps/api": ^1.1.0
     "@tauri-apps/cli": ^1.2.2
     "@types/node": ^18.7.10
@@ -5745,6 +5744,7 @@ __metadata:
     prettier: ^2.7.1
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-icons: ^4.7.1
     typescript: ^4.8.4
     vite: ^3.0.2
     yarn: ^1.22.19

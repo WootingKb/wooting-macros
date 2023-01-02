@@ -26,7 +26,6 @@ export type AppState = {
 
 export type MacroState = {
   macro: Macro
-  oldMacroName: string
   sequence: ActionEventType[]
   ids: number[]
   selectedElementId: number | undefined

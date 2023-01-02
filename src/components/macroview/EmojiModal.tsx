@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Button,
   Divider,
+  useColorMode,
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
@@ -20,6 +21,7 @@ type Props = {
 
 export default function EmojiModal({ isOpen, onClose }: Props) {
   const { updateMacroIcon } = useMacroContext()
+  const { colorMode } = useColorMode()
 
   const onEmojiSelect = useCallback((emoji: { shortcodes: string }) => {
     updateMacroIcon(emoji.shortcodes)
@@ -42,7 +44,7 @@ export default function EmojiModal({ isOpen, onClose }: Props) {
         <ModalBody>
           <Picker
             data={data}
-            theme="auto"
+            theme={colorMode}
             onEmojiSelect={onEmojiSelect}
             navPosition="bottom"
             dynamicWidth={true}

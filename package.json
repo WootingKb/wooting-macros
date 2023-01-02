@@ -22,7 +22,6 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@formkit/auto-animate": "^1.0.0-beta.5",
-    "@radix-ui/react-icons": "^1.1.1",
     "@tauri-apps/api": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
@@ -35,6 +34,7 @@
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
     "yarn": "^1.22.19"
   },
   "devDependencies": {

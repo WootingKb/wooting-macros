@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { MacroType, ViewState } from '../enums'
 import { MacroState, ActionEventType, Macro, TriggerEventType } from '../types'
-import { maxNameLength } from '../utils'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
@@ -37,7 +36,6 @@ const macroDefault: Macro = {
 
 function MacroProvider({ children }: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>(macroDefault)
-  const [oldMacroName, setOldMacroName] = useState('')
   const [sequence, setSequence] = useState<ActionEventType[]>([]) // still needed because of how the sortable list works
   const [ids, setIds] = useState<number[]>([])
   const [selectedElementId, setSelectedElementId] = useState<
@@ -57,14 +55,10 @@ function MacroProvider({ children }: MacroProviderProps) {
     setIds(currentMacro.sequence.map((_, i) => i + 1))
     setSequence(currentMacro.sequence)
     setMacro(currentMacro)
-    setOldMacroName(currentMacro.name)
   }, [currentMacro])
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      if (newName.length > maxNameLength) {
-        return
-      }
       setMacro({ ...macro, name: newName })
     },
     [macro, setMacro]
@@ -219,9 +213,13 @@ function MacroProvider({ children }: MacroProviderProps) {
   )
 
   const updateMacro = useCallback(() => {
-    const itemToAdd = {
+    let itemToAdd = {
       ...macro,
       sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
+    }
+
+    if (macro.name === '') {
+      itemToAdd = { ...itemToAdd, name: `Macro ${currentCollection.macros.length}` }
     }
 
     const newCollection = { ...currentCollection }
@@ -258,7 +256,6 @@ function MacroProvider({ children }: MacroProviderProps) {
   const value = useMemo<MacroState>(
     () => ({
       macro,
-      oldMacroName,
       sequence,
       ids,
       selectedElementId,
@@ -283,7 +280,6 @@ function MacroProvider({ children }: MacroProviderProps) {
     }),
     [
       macro,
-      oldMacroName,
       sequence,
       ids,
       selectedElementId,
