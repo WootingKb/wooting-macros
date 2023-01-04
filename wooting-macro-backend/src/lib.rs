@@ -2,7 +2,7 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
-use log::{info, log_enabled, Level};
+use log::{error, info, log_enabled, Level};
 
 use itertools::Itertools;
 
@@ -387,7 +387,7 @@ impl MacroBackend {
         //IDEA: io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
-        //TODO: Make the modifier keys non-ordered?
+        //TODO: Make the modifier keys non-ordered? (done in a later commit)
         //==================================================
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
@@ -487,6 +487,7 @@ impl MacroBackend {
                                     if log_enabled!(Level::Info) {
                                         info!("Button pressed: {:?}", button);
                                     }
+                                    println!("Button pressed: {:?}", button);
 
                                     let converted_button_to_u32: u32 =
                                         BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
@@ -531,7 +532,9 @@ impl MacroBackend {
 
                                     Some(event)
                                 }
-                                rdev::EventType::MouseMove { .. } => Some(event),
+                                rdev::EventType::MouseMove { x, y } => {
+                                    println!("mouse coordinates: x {}, y {}", x, y);
+                                    Some(event)},
                                 rdev::EventType::Wheel { delta_x, delta_y } => {
                                     if log_enabled!(Level::Info) {
                                         info!("Scrolled: {:?} {:?}", delta_x, delta_y);
@@ -550,7 +553,11 @@ impl MacroBackend {
                             Some(event)
                         }
                     }
-                    Err(_) => None,
+                    Err(error) => {
+                        error!("Error grabbing: {:#?}", error);
+                        println!("Error grabbing {:#?}", error);
+                        None
+                    }
                 }
             })
         });

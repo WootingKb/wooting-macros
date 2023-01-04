@@ -4412,6 +4412,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tauri-plugin-single-instance"
+version = "0.0.0"
+source = "git+https://github.com/tauri-apps/tauri-plugin-single-instance?branch=dev#4d773636153d961d26e8cce77b653b5335eeca4e"
+dependencies = [
+ "tauri",
+ "windows-sys 0.42.0",
+ "zbus",
+]
+
+[[package]]
 name = "tauri-runtime"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5527,6 +5537,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "tauri-plugin-single-instance",
  "tokio",
  "tokio-serde",
  "wooting-macro-backend",
