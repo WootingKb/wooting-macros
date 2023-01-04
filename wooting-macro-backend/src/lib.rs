@@ -299,12 +299,12 @@ fn check_macro_execution_efficiently(
                 if *data == pressed_events {
                     println!("MATCHED MACRO: {:#?}", pressed_events);
 
-                    //? Kinda works for now but needs to be improved.
-                    pressed_events.iter().for_each(|x| {
-                        channel_sender
-                            .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
-                            .unwrap();
-                    });
+                    // ? Kinda works for now but needs to be improved.
+                    // pressed_events.iter().for_each(|x| {
+                    //     channel_sender
+                    //         .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
+                    //         .unwrap();
+                    // });
 
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
