@@ -2,6 +2,8 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
+use rayon::prelude::*;
+
 use log::{error, info, log_enabled, Level};
 
 use itertools::Itertools;
@@ -303,7 +305,7 @@ fn check_macro_execution_efficiently(
                     println!("MATCHED MACRO: {:#?}", pressed_events);
 
                     // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
-                    // pressed_events.iter().for_each(|x| {
+                    // pressed_events.par_iter().for_each(|x| {
                     //     channel_sender
                     //         .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
                     //         .unwrap();
@@ -426,7 +428,7 @@ impl MacroBackend {
                                     println!(
                                         "Pressed Keys CONVERTED TO RDEV: {:?}",
                                         pressed_keys_copy_converted
-                                            .iter()
+                                            .par_iter()
                                             .map(|x| *SCANCODE_TO_RDEV
                                                 .get(x)
                                                 .unwrap_or(&rdev::Key::Unknown(0)))
@@ -437,7 +439,7 @@ impl MacroBackend {
                                         info!(
                                             "Pressed Keys: {:?}",
                                             pressed_keys_copy_converted
-                                                .iter()
+                                                .par_iter()
                                                 .map(|x| *SCANCODE_TO_RDEV
                                                     .get(x)
                                                     .unwrap_or(&rdev::Key::Unknown(0)))

@@ -27,6 +27,7 @@ itertools = "0.10"
 anyhow = "1.0.66"
 log = "0.4.17"
 env_logger = "0.10.0"
+rayon = "1.6.1"
 
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
