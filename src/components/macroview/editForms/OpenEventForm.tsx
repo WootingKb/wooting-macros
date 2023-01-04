@@ -112,12 +112,12 @@ export default function OpenEventForm() {
   )
 
   return (
-    <VStack textAlign="left" w="100%">
+    <VStack textAlign="left" w="full">
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
         {headerText}
       </Text>
       <Divider />
-      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+      <Text w="full" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
         {subHeaderText}
       </Text>
       <Textarea
@@ -130,7 +130,7 @@ export default function OpenEventForm() {
       {subtype === 'File' && (
         <Button
           variant="brand"
-          w={['100%', '75%', '50%']}
+          w={['full', '75%', '50%']}
           onClick={() => onButtonPress(false)}
         >
           Browse For Files
@@ -139,7 +139,7 @@ export default function OpenEventForm() {
       {subtype === 'Directory' && (
         <Button
           variant="brand"
-          w={['100%', '75%', '50%']}
+          w={['full', '75%', '50%']}
           onClick={() => onButtonPress(true)}
         >
           Browse For Folders

@@ -14,7 +14,10 @@ import { type, version } from '@tauri-apps/api/os'
 import { getVersion } from '@tauri-apps/api/app'
 import { useEffect, useState } from 'react'
 import { DiscordIcon, TwitterIcon } from '../icons'
-import { scrollbarStylesLight, scrollbarsStylesDark } from '../../constants/utils'
+import {
+  scrollbarStylesLight,
+  scrollbarsStylesDark
+} from '../../constants/utils'
 
 type Props = {
   pageIndex: number
@@ -83,8 +86,8 @@ export default function SettingsLeftPanel({
       overflowY="auto"
       sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
-      <VStack w="100%" spacing={1}>
-        <Text w="100%" textStyle="miniHeader" ml={4}>
+      <VStack w="full" spacing={1}>
+        <Text w="full" textStyle="miniHeader" ml={4}>
           General Settings
         </Text>
         {SettingsGroup.all
@@ -100,8 +103,8 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider />
-      <VStack w="100%" spacing={1}>
-        <Text w="100%" textStyle="miniHeader" ml={4}>
+      <VStack w="full" spacing={1}>
+        <Text w="full" textStyle="miniHeader" ml={4}>
           Other
         </Text>
         {SettingsGroup.all
@@ -117,8 +120,8 @@ export default function SettingsLeftPanel({
           ))}
       </VStack>
       <Divider />
-      <VStack w="100%" spacing={2} px={1} pt={1}>
-        <HStack w="100%">
+      <VStack w="full" spacing={2} px={1} pt={1}>
+        <HStack w="full">
           <DiscordIcon
             color={strokeColour}
             onClick={openDiscordLink}
@@ -140,19 +143,19 @@ export default function SettingsLeftPanel({
             transition="ease-out 150ms"
           />
         </HStack>
-        <Text w="100%" fontSize={{ base: 'xs', md: 'sm' }}>
+        <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
           Got Feedback? Let us know through these channels!
         </Text>
-        <VStack w="100%" spacing={0}>
+        <VStack w="full" spacing={0}>
           <Text
-            w="100%"
+            w="full"
             fontSize={{ base: '2xs', md: 'xs' }}
             textColor={applicationTextColour}
           >
             Version {versionText}
           </Text>
           <Text
-            w="100%"
+            w="full"
             fontSize={{ base: '2xs', md: 'xs' }}
             textColor={applicationTextColour}
           >

@@ -19,7 +19,7 @@ export default function SettingsButton({
   return (
     <Box
       pos="relative"
-      w="100%"
+      w="full"
       bg={isFocused ? buttonBg : ''}
       _hover={{ bg: buttonBg }}
       px="2"

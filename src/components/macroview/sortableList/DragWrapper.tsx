@@ -27,7 +27,7 @@ export default function DragWrapper({ id, element, children }: Props) {
 
   return (
     <HStack
-      w={element.type === 'DelayEventAction' ? 'fit-content' : '100%'}
+      w={element.type === 'DelayEventAction' ? 'fit-content' : 'full'}
       rounded="md"
       spacing="0px"
       bg={

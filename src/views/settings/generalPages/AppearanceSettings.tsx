@@ -41,16 +41,16 @@ export default function AppearanceSettings() {
   )
 
   return (
-    <VStack w="100%" spacing={4}>
-      <VStack w="100%" spacing={4} textAlign="left">
-        <Text w="100%" fontSize="md" fontWeight="semibold">
+    <VStack w="full" spacing={4}>
+      <VStack w="full" spacing={4} textAlign="left">
+        <Text w="full" fontSize="md" fontWeight="semibold">
           Theme
         </Text>
-        <RadioGroup w="100%" value={value}>
+        <RadioGroup w="full" value={value}>
           <VStack>
             <HStack
               as="button"
-              w="100%"
+              w="full"
               bg={radioBg}
               _hover={{ bg: radioHoverBg }}
               p="4"
@@ -58,13 +58,17 @@ export default function AppearanceSettings() {
               rounded="md"
               onClick={() => onThemeChange('light')}
             >
-              <Radio colorScheme="primary-accent" value={'light'} variant="brand" />
+              <Radio
+                colorScheme="primary-accent"
+                value={'light'}
+                variant="brand"
+              />
               <SunIcon />
               <Text fontWeight="semibold">Light</Text>
             </HStack>
             <HStack
               as="button"
-              w="100%"
+              w="full"
               bg={radioBg}
               _hover={{ bg: radioHoverBg }}
               p="4"
@@ -72,7 +76,11 @@ export default function AppearanceSettings() {
               rounded="md"
               onClick={() => onThemeChange('dark')}
             >
-              <Radio colorScheme="primary-accent" value={'dark'} variant="brand" />
+              <Radio
+                colorScheme="primary-accent"
+                value={'dark'}
+                variant="brand"
+              />
               <MoonIcon />
               <Text fontWeight="semibold">Dark</Text>
             </HStack>

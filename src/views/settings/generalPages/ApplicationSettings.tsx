@@ -15,13 +15,13 @@ export default function ApplicationSettings() {
   } = useSettingsContext()
 
   return (
-    <VStack spacing="4" >
-      <VStack w="100%">
-        <Text w="100%" textStyle="miniHeader">
+    <VStack spacing="4">
+      <VStack w="full">
+        <Text w="full" textStyle="miniHeader">
           Window Settings
         </Text>
       </VStack>
-      <VStack w="100%" spacing={[4]}>
+      <VStack w="full" spacing={[4]}>
         <ToggleSetting
           title={'Launch on startup'}
           description={
@@ -50,12 +50,12 @@ export default function ApplicationSettings() {
         />
         <Divider />
       </VStack>
-      <VStack w="100%">
-        <Text w="100%" textStyle="miniHeader">
+      <VStack w="full">
+        <Text w="full" textStyle="miniHeader">
           Delay Settings
         </Text>
       </VStack>
-      <VStack w="100%" spacing={[4]}>
+      <VStack w="full" spacing={[4]}>
         <ToggleSetting
           title={'Auto-add Delay'}
           description={
@@ -75,12 +75,12 @@ export default function ApplicationSettings() {
         />
         <Divider />
       </VStack>
-      <VStack w="100%">
-        <Text w="100%" textStyle="miniHeader">
+      <VStack w="full">
+        <Text w="full" textStyle="miniHeader">
           Macro Creation Settings
         </Text>
       </VStack>
-      <VStack w="100%" spacing={[4]}>
+      <VStack w="full" spacing={[4]}>
         <ToggleSetting
           title={'Auto-select Element on Add'}
           description={

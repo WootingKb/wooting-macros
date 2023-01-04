@@ -17,13 +17,13 @@ export default function Support() {
   const iconColour = useColorModeValue('black', 'white')
 
   return (
-    <VStack w="100%" spacing={4}>
-      <HStack w="100%" justifyContent="space-between">
+    <VStack w="full" spacing={4}>
+      <HStack w="full" justifyContent="space-between">
         <VStack spacing="0">
-          <Text w="100%" fontWeight="semibold">
+          <Text w="full" fontWeight="semibold">
             Need some help?
           </Text>
-          <Text w="100%">
+          <Text w="full">
             Send us an email or ask us and the community on discord!
           </Text>
         </VStack>
@@ -43,10 +43,10 @@ export default function Support() {
         </HStack>
       </HStack>
       <Divider />
-      <Text w="100%" fontWeight="semibold">
+      <Text w="full" fontWeight="semibold">
         Guides
       </Text>
-      <Text w="100%">Coming soon</Text>
+      <Text w="full">Coming soon</Text>
     </VStack>
   )
 }

@@ -101,13 +101,13 @@ export default function MousePressForm() {
         {headingText}
       </Text>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Type of keystroke
           </Text>
         </GridItem>
-        <GridItem w="100%">
+        <GridItem w="full">
           <Flex
             flexDir={['column', 'column', 'column', 'row']}
             gap="4px"
@@ -116,7 +116,7 @@ export default function MousePressForm() {
             <Button
               variant="brandAccentLight"
               leftIcon={<DownUpArrowsIcon />}
-              w="100%"
+              w="full"
               size={['sm', 'md']}
               onClick={() => onMousepressTypeChange(KeyType.DownUp)}
               isActive={mousepressType === KeyType.DownUp}
@@ -126,7 +126,7 @@ export default function MousePressForm() {
             <Button
               variant="brandAccentLight"
               leftIcon={<DownArrowIcon />}
-              w="100%"
+              w="full"
               size={['sm', 'md']}
               onClick={() => onMousepressTypeChange(KeyType.Down)}
               isActive={mousepressType === KeyType.Down}
@@ -136,7 +136,7 @@ export default function MousePressForm() {
             <Button
               variant="brandAccentLight"
               leftIcon={<UpArrowIcon />}
-              w="100%"
+              w="full"
               size={['sm', 'md']}
               onClick={() => onMousepressTypeChange(KeyType.Up)}
               isActive={mousepressType === KeyType.Up}
@@ -146,13 +146,13 @@ export default function MousePressForm() {
           </Flex>
         </GridItem>
       </Grid>
-      <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Duration (ms)
           </Text>
         </GridItem>
-        <GridItem w="100%">
+        <GridItem w="full">
           <Input
             type="number"
             variant="brandAccent"

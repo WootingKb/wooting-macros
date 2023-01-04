@@ -10,7 +10,10 @@ import {
   VStack
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
-import { scrollbarStylesLight, scrollbarsStylesDark } from '../../constants/utils'
+import {
+  scrollbarStylesLight,
+  scrollbarsStylesDark
+} from '../../constants/utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
@@ -38,21 +41,21 @@ export default function MacroList() {
 
   return (
     <Box
-      w="100%"
-      h="100%"
+      w="full"
+      h="full"
       p={['2', '3', '4']}
       overflow="hidden"
       overflowY="auto"
       sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
       <Grid
-        w="100%"
+        w="full"
         templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
         gap={['2', '3', '4']}
       >
         <Flex h="163px" justifyContent="center" alignItems="center">
           <VStack
-            w="100%"
+            w="full"
             h="full"
             bg={bg}
             boxShadow={shadowColour}
@@ -78,7 +81,7 @@ export default function MacroList() {
           </VStack>
         </Flex>
         {currentCollection.macros.map((macro: Macro, index: number) => (
-          <GridItem w="100%" h="163px" key={`${macro.name} + ${index}`}>
+          <GridItem w="full" h="163px" key={`${macro.name} + ${index}`}>
             <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
           </GridItem>
         ))}

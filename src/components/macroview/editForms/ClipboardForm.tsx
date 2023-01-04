@@ -1,4 +1,11 @@
-import { Divider, Textarea, Text, HStack, Box, useColorMode } from '@chakra-ui/react'
+import {
+  Divider,
+  Textarea,
+  Text,
+  HStack,
+  Box,
+  useColorMode
+} from '@chakra-ui/react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -107,7 +114,7 @@ export default function ClipboardForm() {
         {'Paste Text'}
       </Text>
       <Divider />
-      <HStack w="100%" justifyContent="space-between">
+      <HStack w="full" justifyContent="space-between">
         <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
           Text to paste
         </Text>
@@ -128,7 +135,7 @@ export default function ClipboardForm() {
         placeholder="e.g. glhf"
       />
       {showEmojiPicker && (
-        <Box ref={pickerRef} w="100%">
+        <Box ref={pickerRef} w="full">
           <Picker
             data={data}
             theme={colorMode}

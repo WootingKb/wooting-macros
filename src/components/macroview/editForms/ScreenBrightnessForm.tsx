@@ -62,7 +62,7 @@ export default function ScreenBrightnessForm() {
         {'Set Screen Brightness'}
       </Text>
       <Divider />
-      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+      <Text w="full" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
         Monitor
       </Text>
       <Select
@@ -75,7 +75,7 @@ export default function ScreenBrightnessForm() {
           </option>
         ))}
       </Select>
-      <Text w="100%" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+      <Text w="full" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
         Brightness value
       </Text>
       <Input

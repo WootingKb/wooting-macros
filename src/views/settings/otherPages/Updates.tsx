@@ -11,15 +11,15 @@ export default function Updates() {
   const whatsNewTextColour = useColorModeValue('green.600', 'green.400')
   const textColour = useColorModeValue('bg-dark', 'bg-light')
   return (
-    <VStack w="100%" spacing={4}>
-      <Text w="100%" fontWeight="bold" fontSize="sm">
+    <VStack w="full" spacing={4}>
+      <Text w="full" fontWeight="bold" fontSize="sm">
         January 16th, 2023
       </Text>
-      <VStack w="100%" spacing={0}>
-        <Heading w="100%" size="lg" textColor={whatsNewTextColour}>
+      <VStack w="full" spacing={0}>
+        <Heading w="full" size="lg" textColor={whatsNewTextColour}>
           What's New
         </Heading>
-        <UnorderedList w="100%" px="8" spacing={2} textColor={textColour}>
+        <UnorderedList w="full" px="8" spacing={2} textColor={textColour}>
           <ListItem>
             <span style={{ fontWeight: '700' }}>
               Collections: Create groups of macros that can be easily toggled

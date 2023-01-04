@@ -93,19 +93,19 @@ export default function CollectionPanel() {
   ])
 
   return (
-    <VStack w="100%" h="100vh" spacing="0">
+    <VStack w="full" h="100vh" spacing="0">
       <Flex
         bg={panelBg}
         justifyContent="space-between"
         alignItems="center"
         py={2}
         px={4}
-        w="100%"
+        w="full"
         borderBottom="1px"
         borderColor={borderColour}
       >
-        <HStack w="100%" justifyContent="space-between">
-          <HStack w="100%" spacing={4}>
+        <HStack w="full" justifyContent="space-between">
+          <HStack w="full" spacing={4}>
             <Popover
               initialFocusRef={initialFocusRef}
               returnFocusOnClose={false}
@@ -126,7 +126,7 @@ export default function CollectionPanel() {
               </PopoverTrigger>
               <PopoverContent bg="transparent" border="0px" shadow="none">
                 <PopoverBody>
-                  <Box id="picker-box" w="100%" ref={initialFocusRef}>
+                  <Box id="picker-box" w="full" ref={initialFocusRef}>
                     <Picker
                       data={data}
                       theme={colorMode}
@@ -160,7 +160,9 @@ export default function CollectionPanel() {
             </Button> */}
             <Tooltip
               variant="brand"
-              label={collections.length <= 1 ? "Can't delete last collection!" : ""}
+              label={
+                collections.length <= 1 ? "Can't delete last collection!" : ''
+              }
               aria-label="Collection delete button tooltip"
               hasArrow
             >

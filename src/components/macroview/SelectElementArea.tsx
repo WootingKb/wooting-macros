@@ -12,7 +12,7 @@ export default function SelectElementArea() {
   const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
 
   return (
-    <VStack w="33%" h="100%" bg={bg}>
+    <VStack w="33%" h="full" bg={bg}>
       <VStack w="full" px={[2, 4, 6]} py={2}>
         <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
           Elements

@@ -36,12 +36,12 @@ export default function NumberInputSetting({
   }, [value, onChange])
 
   return (
-    <HStack w="100%" justifyContent="space-between" spacing={16}>
+    <HStack w="full" justifyContent="space-between" spacing={16}>
       <VStack spacing={0} textAlign="left">
-        <Text w="100%" fontSize="md" fontWeight="semibold">
+        <Text w="full" fontSize="md" fontWeight="semibold">
           {title}
         </Text>
-        <Text w="100%" fontSize="sm">
+        <Text w="full" fontSize="sm">
           {description}
         </Text>
       </VStack>

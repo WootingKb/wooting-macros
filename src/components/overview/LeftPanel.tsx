@@ -71,9 +71,9 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
       borderColor={borderColour}
       justifyContent="space-between"
     >
-      <VStack w="100%" h="full" pt={1} overflow="hidden">
-        <HStack w="100%" justifyContent="space-between" px={1}>
-          <Text w="100%" fontWeight="bold">
+      <VStack w="full" h="full" pt={1} overflow="hidden">
+        <HStack w="full" justifyContent="space-between" px={1}>
+          <Text w="full" fontWeight="bold">
             Collections
           </Text>
           <Tooltip
@@ -131,15 +131,15 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           New Collection
         </Button>
         <VStack
-          w="100%"
-          h="100%"
+          w="full"
+          h="full"
           overflowX="hidden"
           overflowY="auto"
           sx={
             colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark
           }
         >
-          <VStack w="100%" ref={parent} spacing={1} p={1}>
+          <VStack w="full" ref={parent} spacing={1} p={1}>
             {collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
@@ -162,9 +162,9 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           </VStack>
         </VStack>
       </VStack>
-      <HStack w="100%">
+      <HStack w="full">
         <Button
-          w="100%"
+          w="full"
           variant="brandAccent"
           size="sm"
           leftIcon={<SettingsIcon />}

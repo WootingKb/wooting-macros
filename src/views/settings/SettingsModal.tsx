@@ -20,7 +20,10 @@ import ApplicationSettings from './generalPages/ApplicationSettings'
 import Support from './otherPages/Support'
 import Updates from './otherPages/Updates'
 import SettingsLeftPanel from '../../components/settings/SettingsLeftPanel'
-import { scrollbarStylesLight, scrollbarsStylesDark } from '../../constants/utils'
+import {
+  scrollbarStylesLight,
+  scrollbarsStylesDark
+} from '../../constants/utils'
 
 type Props = {
   isOpen: boolean
@@ -73,7 +76,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
           bgGradient={`linear(to-r, ${leftPanelBg}, ${leftPanelBg}, ${rightPanelBg}, ${rightPanelBg})`}
         >
           <HStack
-            w={['100%', '95%', '75%', '65%', '50%']}
+            w={['full', '95%', '75%', '65%', '50%']}
             minH="100vh"
             spacing="0"
             overflow="hidden"
@@ -92,7 +95,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
               }
             >
               <VStack w="95%" justifyContent="left" py="8" spacing={4}>
-                <Text w="100%" fontWeight="bold" fontSize="large">
+                <Text w="full" fontWeight="bold" fontSize="large">
                   {settingInfoLookup.get(pageIndex)?.displayString}
                 </Text>
                 {SelectedPageComponent}

@@ -1,11 +1,4 @@
-import {
-  Divider,
-  Grid,
-  GridItem,
-  Input,
-  Button,
-  Text
-} from '@chakra-ui/react'
+import { Divider, Grid, GridItem, Input, Button, Text } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -69,11 +62,11 @@ export default function DelayForm() {
         {'Delay Element'}
       </Text>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
         </GridItem>
-        <GridItem w="100%">
+        <GridItem w="full">
           <Input
             type="number"
             variant="brandAccent"
