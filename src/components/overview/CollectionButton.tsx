@@ -12,6 +12,7 @@ type Props = {
   collection: Collection
   index: number
   isFocused: boolean
+  isMacroOutputEnabled: boolean
   setFocus: (index: number) => void
   toggleCollection: (index: number) => void
 }
@@ -20,10 +21,11 @@ export default function CollectionButton({
   collection,
   index,
   isFocused,
+  isMacroOutputEnabled,
   setFocus,
   toggleCollection
 }: Props) {
-  const buttonBg = useColorModeValue('primary-light.300', 'primary-dark.800')
+  const buttonBg = useColorModeValue('primary-accent.50', 'primary-accent.800')
   const selectedTextColour = useColorModeValue('primary-accent.700', 'primary-accent.400')
 
   return (
@@ -44,15 +46,9 @@ export default function CollectionButton({
           zIndex={10}
           onClick={() => setFocus(index)}
         ></Box>
-        {index === 0 ? (
-          <Box maxHeight="32px">
-            <em-emoji shortcodes=":smile:" size="32px" />
-          </Box>
-        ) : (
-          <Box maxHeight="32px">
-            <em-emoji shortcodes={collection.icon} size="32px" />
-          </Box>
-        )}
+        <Box maxHeight="32px">
+          <em-emoji shortcodes={collection.icon} size="32px" />
+        </Box>
         <Text
           noOfLines={1}
           fontWeight="semibold"
@@ -72,6 +68,7 @@ export default function CollectionButton({
               size="sm"
               variant="brand"
               zIndex={10}
+              opacity={isMacroOutputEnabled ? 1 : 0.5}
               defaultChecked={collection.active}
               isChecked={collection.active}
               onChange={() => toggleCollection(index)}

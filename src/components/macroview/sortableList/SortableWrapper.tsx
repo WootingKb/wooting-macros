@@ -21,8 +21,8 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
     isDragging
   } = useSortable({ id: id })
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('primary-light.100', 'primary-dark.900')
-  const selectedBg = useColorModeValue('primary-light.200', 'primary-dark.800')
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.900')
+  const selectedBg = useColorModeValue('primary-light.100', 'primary-dark.800')
   const handleBg = useColorModeValue('primary-accent.300', 'primary-accent.400')
   const handleIconColour = useColorModeValue(
     'primary-accent.600',

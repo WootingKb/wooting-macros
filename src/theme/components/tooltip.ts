@@ -7,11 +7,11 @@ const $arrowBg = cssVar('popper-arrow-bg')
 export const Tooltip = defineStyleConfig({
   variants: {
     brand: (props: StyleFunctionProps) => ({
-      bg: mode('primary-light.600', 'primary-dark.300')(props),
-      color: mode('bg-light', 'bg-dark')(props),
+      bg: mode('primary-light.800', 'primary-dark.700')(props),
+      color: mode('bg-light', 'bg-light')(props),
       [$arrowBg.variable]: mode(
-        'colors.primary-light.600',
-        'colors.primary-dark.300'
+        'colors.primary-light.800',
+        'colors.primary-dark.700'
       )(props)
     })
   }

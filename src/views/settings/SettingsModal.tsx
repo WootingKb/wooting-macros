@@ -27,8 +27,8 @@ type Props = {
 
 export default function SettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
-  const rightPanelBg = useColorModeValue('bg-light', 'bg-dark')
-  const leftPanelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const rightPanelBg = useColorModeValue('bg-light', 'primary-dark.900')
+  const leftPanelBg = useColorModeValue('primary-light.50', 'bg-dark')
 
   useEffect(() => {
     setPageIndex(0)

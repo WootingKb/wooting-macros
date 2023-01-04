@@ -19,7 +19,7 @@ export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
-  const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const shadowColour = useColorModeValue('md', 'white-md')
 
   const onMacroDelete = useCallback(
@@ -83,7 +83,7 @@ export default function MacroList() {
             <Button
               variant="yellowGradient"
               _hover={{
-                transform: 'scale(110%)'
+                transform: 'scale(105%)'
               }}
               leftIcon={<AddIcon />}
               size={['sm', 'md', 'lg']}

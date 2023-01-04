@@ -3,7 +3,7 @@ import {
   Divider,
   Text,
   useColorModeValue,
-  HStack,
+  HStack
 } from '@chakra-ui/react'
 import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../enums'
@@ -23,10 +23,10 @@ export default function SettingsLeftPanel({
   pageIndex,
   onSettingsButtonPress
 }: Props) {
-  const panelBg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const panelBg = useColorModeValue('primary-light.50', 'bg-dark')
   const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
+    'primary-light.100',
+    'primary-dark.700'
   )
   const [osText, setOsText] = useState<string | undefined>(undefined)
   const [versionText, setVersionText] = useState<string | undefined>(undefined)
@@ -100,7 +100,7 @@ export default function SettingsLeftPanel({
             />
           ))}
       </VStack>
-      <Divider borderColor={borderColour} />
+      <Divider />
       <VStack w="100%" spacing={1}>
         <Text w="100%" textStyle="miniHeader" ml={4}>
           Other
@@ -117,7 +117,7 @@ export default function SettingsLeftPanel({
             />
           ))}
       </VStack>
-      <Divider borderColor={borderColour} />
+      <Divider />
       <VStack w="100%" spacing={2} px={1} pt={1}>
         <HStack w="100%">
           <DiscordIcon
@@ -126,8 +126,9 @@ export default function SettingsLeftPanel({
             _hover={{
               color: strokeHoverColour,
               cursor: 'pointer',
-              transform: 'scale(110%)'
+              transform: 'scale(125%)'
             }}
+            transition="ease-out 150ms"
           />
           <TwitterIcon
             color={strokeColour}
@@ -135,18 +136,27 @@ export default function SettingsLeftPanel({
             _hover={{
               color: strokeHoverColour,
               cursor: 'pointer',
-              transform: 'scale(110%)'
+              transform: 'scale(125%)'
             }}
+            transition="ease-out 150ms"
           />
         </HStack>
-        <Text w="100%" fontSize={['xs']}>
+        <Text w="100%" fontSize={{ base: 'xs', md: 'sm' }}>
           Got Feedback? Let us know through these channels!
         </Text>
         <VStack w="100%" spacing={0}>
-          <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
+          <Text
+            w="100%"
+            fontSize={{ base: '2xs', md: 'xs' }}
+            textColor={applicationTextColour}
+          >
             Version {versionText}
           </Text>
-          <Text w="100%" fontSize={['2xs']} textColor={applicationTextColour}>
+          <Text
+            w="100%"
+            fontSize={{ base: '2xs', md: 'xs' }}
+            textColor={applicationTextColour}
+          >
             {osText}
           </Text>
         </VStack>

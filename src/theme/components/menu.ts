@@ -18,14 +18,14 @@ export const Menu = helpers.defineMultiStyleConfig({
     brand: (props: StyleFunctionProps) => ({
       button: {},
       list: {
-        bg: mode('primary-light.200', 'primary-dark.900')(props),
+        bg: mode('bg-light', 'primary-dark.900')(props),
         borderColor: mode('primary-light.300', 'primary-dark.800')(props)
       },
       item: {
-        bg: mode('primary-light.200', 'primary-dark.900')(props),
+        bg: mode('bg-light', 'primary-dark.900')(props),
         color: mode('bg-dark', 'bg-light')(props),
         fontWeight: 'semibold',
-        _hover: { bg: mode('primary-light.300', 'primary-dark.800')(props) }
+        _hover: { bg: mode('primary-light.100', 'primary-dark.800')(props) }
       },
       groupTitle: { color: mode('bg-dark', 'bg-light')(props) },
       command: {},

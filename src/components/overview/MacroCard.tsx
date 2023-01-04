@@ -35,8 +35,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
-  const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
-  const secondBg = useColorModeValue('primary-light.300', 'primary-dark.800')
+  const bg = useColorModeValue('bg-light', 'primary-dark.900')
+  const secondBg = useColorModeValue('blue.50', 'primary-dark.800')
   const shadowColour = useColorModeValue('md', 'white-md')
   const subtextColour = useColorModeValue(
     'primary-light.600',
@@ -77,7 +77,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       {/** Top Row */}
       <HStack w="100%" justifyContent="space-between">
         <Flex w="100%" gap="8px" alignItems="center">
-          <Box maxHeight="32px">
+          <Box maxHeight="32px" cursor="default">
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
           <Text fontWeight="semibold">{macro.name}</Text>
@@ -86,7 +86,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <MenuButton
             as={IconButton}
             aria-label="Kebab Menu Button"
-            icon={<KebabVertical />}
+            icon={<KebabVertical color="primary-accent.500" />}
             variant="link"
           />
           <MenuList p="2" right={0}>
@@ -122,7 +122,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       <Flex w="100%" alignItems="center" justifyContent="space-between">
         <Button
           size="sm"
-          variant="brand"
+          variant="yellowGradient"
           leftIcon={<EditIcon />}
           onClick={() => {
             changeSelectedMacroIndex(index)

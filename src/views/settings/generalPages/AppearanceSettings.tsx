@@ -16,9 +16,9 @@ export default function AppearanceSettings() {
   const [value, setValue] = useState('')
   const { updateTheme } = useSettingsContext()
   const { colorMode } = useColorMode()
-  const radioBg = useColorModeValue('primary-light.200', 'primary-dark.800')
+  const radioBg = useColorModeValue('primary-light.50', 'primary-dark.800')
   const radioHoverBg = useColorModeValue(
-    'primary-light.300',
+    'primary-light.100',
     'primary-dark.700'
   )
 

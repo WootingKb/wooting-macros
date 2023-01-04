@@ -55,7 +55,7 @@ export default function KeyboardKeysGrid({ searchValue }: Props) {
                   columns={
                     categoryName === 'Alphanumeric' ||
                     categoryName === 'Function'
-                      ? 5
+                      ? [4, 5]
                       : [4, 4, 5]
                   } // needs adjustment
                   spacing={2}

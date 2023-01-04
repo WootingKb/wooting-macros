@@ -1,7 +1,4 @@
-import {
-  Button,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Text, useColorModeValue } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
 import { useSettingsContext } from '../../contexts/settingsContext'
@@ -18,6 +15,9 @@ export default function SequenceElementButton({
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
+  const bg = useColorModeValue('primary-light.200', 'primary-dark.800')
+  const textColor = useColorModeValue('bg-dark', 'bg-light')
+  const hoverBg = useColorModeValue('primary-light.300', 'primary-dark.700')
 
   const handleAddElement = useCallback(() => {
     if (config.AutoAddDelay) {
@@ -45,8 +45,21 @@ export default function SequenceElementButton({
   ])
 
   return (
-    <Button variant="brand" w="full" size="sm" onClick={handleAddElement}>
-      <Text fontSize={['xs', 'sm', 'md']}>{displayText}</Text> {/** chakra doesn't allow for text wrapping??? */}
-    </Button>
+    <Box
+      w="full"
+      as="button"
+      bg={bg}
+      _hover={{ bg: hoverBg }}
+      _active={{ bg: hoverBg }}
+      color={textColor}
+      rounded="md"
+      onClick={handleAddElement}
+      textAlign="center"
+      css={{ 'word-break': 'break-all' }}
+    >
+      <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']} cursor="pointer">
+        {displayText}
+      </Text>
+    </Box>
   )
 }

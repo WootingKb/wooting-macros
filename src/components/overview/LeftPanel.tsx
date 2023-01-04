@@ -5,59 +5,124 @@ import {
   Button,
   HStack,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  Tooltip,
+  Switch,
+  useToast,
+  Box
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import ToggleGrabbingButton from './ToggleGrabbingButton'
+import { invoke } from '@tauri-apps/api'
+import { useCallback, useState } from 'react'
+import data from '@emoji-mart/data'
 
 type Props = {
-  onOpenCollectionModal: () => void
   onOpenSettingsModal: () => void
 }
 
 export default function LeftPanel({
-  onOpenCollectionModal,
   onOpenSettingsModal
 }: Props) {
   const {
     collections,
     selection,
+    onCollectionAdd,
     onCollectionUpdate,
     changeSelectedCollectionIndex,
-    changeIsUpdatingCollection
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
-  const panelBg = useColorModeValue('primary-light.300', 'primary-dark.900')
+  const toast = useToast()
+  const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
+  const panelBg = useColorModeValue('bg-light', 'primary-dark.900')
+  const borderColour = useColorModeValue(
+    'primary-light.100',
+    'primary-dark.700'
+  )
+
+  const onNewCollectionButtonPress = useCallback(() => {
+    const keys = Object.keys(data.emojis)
+    let randomEmoji = keys[Math.floor(Math.random() * keys.length)]
+    if (randomEmoji.includes('flag')) {
+      randomEmoji = 'smile'
+    }
+
+    onCollectionAdd({
+      active: true,
+      icon: `:${randomEmoji}:`,
+      macros: [],
+      name: `Collection ${collections.length + 1}`
+    })
+  }, [collections.length, onCollectionAdd])
 
   return (
     <VStack
       bg={panelBg}
       h="100vh"
-      p="2"
+      p={2}
       w={['30%', '25%', '15%']}
+      borderRight="1px"
+      borderColor={borderColour}
       justifyContent="space-between"
     >
-      <VStack w="100%" h="calc(100%) - 100px" pt="1" overflow="hidden">
-        <HStack w="100%" justifyContent="space-between">
+      <VStack w="100%" h="calc(100%) - 100px" pt={1} overflow="hidden">
+        <HStack w="100%" justifyContent="space-between" px={1}>
           <Text w="100%" fontWeight="bold">
             Collections
           </Text>
-          <ToggleGrabbingButton />
+          <Tooltip
+            hasArrow
+            label={
+              isMacroOutputEnabled
+                ? 'Disable Macro Output'
+                : 'Enable Macro Output'
+            }
+            closeOnClick={false}
+            aria-label="Toggle Macro Output button tooltip"
+            rounded="sm"
+            variant="brand"
+          >
+            <Box>
+              <Switch
+                size="sm"
+                variant="brand"
+                defaultChecked={isMacroOutputEnabled}
+                isChecked={isMacroOutputEnabled}
+                onChange={() => {
+                  setIsMacroOutputEnabled((value) => {
+                    invoke<void>('control_grabbing', {
+                      frontendBool: !value
+                    }).catch((e) => {
+                      console.error(e)
+                      toast({
+                        title: `Error ${
+                          !value ? 'disabling' : 'enabling'
+                        } macro output`,
+                        description: `Unable to ${
+                          !value ? 'disable' : 'enable'
+                        } macro output, please re-open the app.`,
+                        status: 'error',
+                        duration: 2000,
+                        isClosable: true
+                      })
+                    })
+                    return !value
+                  })
+                }}
+              />
+            </Box>
+          </Tooltip>
         </HStack>
         <Divider />
         <Button
-          size={['sm']}
+          size='sm'
           w="full"
           variant="yellowGradient"
           p="2"
           leftIcon={<AddIcon />}
-          onClick={() => {
-            changeIsUpdatingCollection(false)
-            onOpenCollectionModal()
-          }}
+          onClick={onNewCollectionButtonPress}
         >
           New Collection
         </Button>
@@ -70,13 +135,14 @@ export default function LeftPanel({
             }
           }}
         >
-          <VStack w="100%" ref={parent} spacing="1">
+          <VStack w="100%" ref={parent} spacing={1}>
             {collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
                 index={index}
-                key={collection.name}
+                key={`${collection.name} + ${index}`}
                 isFocused={index == selection.collectionIndex}
+                isMacroOutputEnabled={isMacroOutputEnabled}
                 setFocus={(index) => changeSelectedCollectionIndex(index)}
                 toggleCollection={() =>
                   onCollectionUpdate(
@@ -95,8 +161,8 @@ export default function LeftPanel({
       <HStack w="100%">
         <Button
           w="100%"
-          variant={'brand'}
-          size={'sm'}
+          variant="brandAccent"
+          size='sm'
           leftIcon={<SettingsIcon />}
           onClick={onOpenSettingsModal}
         >

@@ -9,8 +9,6 @@ import {
   HiArrowUp,
   HiArrowDown,
   HiArrowsUpDown,
-  HiOutlineBoltSlash,
-  HiOutlineBolt,
 } from 'react-icons/hi2'
 import { GoKebabVertical } from 'react-icons/go'
 
@@ -40,12 +38,6 @@ export const UpArrowIcon = (props: IconProps) => {
 }
 export const DownUpArrowsIcon = (props: IconProps) => {
   return <Icon as={HiArrowsUpDown} boxSize={6} {...props} />
-}
-export const LightningIcon = (props: IconProps) => {
-  return <Icon as={HiOutlineBolt} boxSize={6} {...props} />
-}
-export const LightningSlashedIcon = (props: IconProps) => {
-  return <Icon as={HiOutlineBoltSlash} boxSize={6} {...props} />
 }
 export const KebabVertical = (props: IconProps) => {
   return <Icon as={GoKebabVertical} boxSize={6} {...props} />

@@ -169,7 +169,7 @@ export default function SortableItem({ id, element }: Props) {
       <HStack p={2} h="100%">
         {isEditable && (
           <IconButton
-            variant="brand2"
+            variant="brand"
             aria-label="edit-button"
             icon={<EditIcon />}
             size={['xs', 'sm']}

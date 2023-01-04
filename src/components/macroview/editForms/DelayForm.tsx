@@ -10,10 +10,12 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
+import { useSettingsContext } from '../../../contexts/settingsContext'
 
 export default function DelayForm() {
   const [delayDuration, setDelayDuration] = useState(0)
   const { selectedElementId, updateElement } = useMacroContext()
+  const { config } = useSettingsContext()
   const selectedElement = useSelectedElement()
 
   useEffect(() => {
@@ -51,11 +53,11 @@ export default function DelayForm() {
     if (selectedElement === undefined || selectedElementId === undefined) {
       return
     }
-    setDelayDuration(50)
+    setDelayDuration(config.DefaultDelayValue)
     const temp = { ...selectedElement }
-    temp.data = 50
+    temp.data = config.DefaultDelayValue
     updateElement(temp, selectedElementId)
-  }, [selectedElement, selectedElementId, updateElement])
+  }, [config.DefaultDelayValue, selectedElement, selectedElementId, updateElement])
 
   return (
     <>
