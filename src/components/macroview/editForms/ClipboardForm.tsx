@@ -103,7 +103,7 @@ export default function ClipboardForm() {
 
   return (
     <>
-      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {'Paste Text'}
       </Text>
       <Divider />
@@ -122,7 +122,7 @@ export default function ClipboardForm() {
         </Box>
       </HStack>
       <Textarea
-        variant="brand"
+        variant="brandAccent"
         value={text}
         onChange={onTextChange}
         placeholder="e.g. glhf"

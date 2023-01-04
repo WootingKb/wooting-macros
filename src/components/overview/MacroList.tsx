@@ -5,10 +5,12 @@ import {
   Flex,
   Grid,
   GridItem,
+  useColorMode,
   useColorModeValue,
   VStack
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
+import { scrollbarStylesLight, scrollbarsStylesDark } from '../../constants/utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../enums'
@@ -19,6 +21,7 @@ export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
+  const { colorMode } = useColorMode()
   const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const shadowColour = useColorModeValue('md', 'white-md')
 
@@ -40,28 +43,7 @@ export default function MacroList() {
       p={['2', '3', '4']}
       overflow="hidden"
       overflowY="auto"
-      css={{
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
-      }}
-      // css={{
-      //   '&::-webkit-scrollbar': {
-      //     width: '10px'
-      //   },
-      //   '&::-webkit-scrollbar-track': {
-      //     background: '#f1f1f1',
-      //     borderRadius: '10px'
-      //   },
-      //   '&::-webkit-scrollbar-thumb': {
-      //     background: '#888',
-      //     borderRadius: '10px'
-      //   },
-      //   '&::-webkit-scrollbar-thumb:hover': {
-      //     background: '#555',
-      //     borderRadius: '10px'
-      //   }
-      // }}
+      sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
       <Grid
         w="100%"

@@ -97,7 +97,7 @@ export default function MousePressForm() {
 
   return (
     <>
-      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
       <Divider />
@@ -114,7 +114,7 @@ export default function MousePressForm() {
             justifyContent="space-around"
           >
             <Button
-              variant="brand"
+              variant="brandAccentLight"
               leftIcon={<DownUpArrowsIcon />}
               w="100%"
               size={['sm', 'md']}
@@ -124,7 +124,7 @@ export default function MousePressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
-              variant="brand"
+              variant="brandAccentLight"
               leftIcon={<DownArrowIcon />}
               w="100%"
               size={['sm', 'md']}
@@ -134,7 +134,7 @@ export default function MousePressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Mouse Down</Text>
             </Button>
             <Button
-              variant="brand"
+              variant="brandAccentLight"
               leftIcon={<UpArrowIcon />}
               w="100%"
               size={['sm', 'md']}
@@ -153,15 +153,13 @@ export default function MousePressForm() {
           </Text>
         </GridItem>
         <GridItem w="100%">
-          <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
-            <Input
-              type="number"
-              variant="brand"
-              isDisabled={mousepressType === KeyType.DownUp ? false : true}
-              value={mousepressDuration}
-              onChange={onMousepressDurationChange}
-            />
-          </Flex>
+          <Input
+            type="number"
+            variant="brandAccent"
+            isDisabled={mousepressType === KeyType.DownUp ? false : true}
+            value={mousepressDuration}
+            onChange={onMousepressDurationChange}
+          />
         </GridItem>
       </Grid>
     </>

@@ -10,7 +10,7 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { updateSettings } from '../utils'
+import { updateSettings } from '../constants/utils'
 
 type SettingsProviderProps = { children: ReactNode }
 

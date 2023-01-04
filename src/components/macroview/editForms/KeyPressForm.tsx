@@ -88,26 +88,26 @@ export default function KeyPressForm() {
 
   return (
     <>
-      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Type of keystroke
           </Text>
         </GridItem>
-        <GridItem w="100%">
+        <GridItem w="full">
           <Flex
             flexDir={['column', 'column', 'column', 'row']}
             gap="4px"
             justifyContent="space-around"
           >
             <Button
-              variant="brand"
+              variant="brandAccentLight"
               leftIcon={<DownUpArrowsIcon />}
-              w="100%"
+              w="full"
               size={['sm', 'md']}
               onClick={() => onKeypressTypeChange(KeyType.DownUp)}
               isActive={keypressType === KeyType.DownUp}
@@ -115,9 +115,9 @@ export default function KeyPressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
-              variant="brand"
+              variant="brandAccentLight"
               leftIcon={<DownArrowIcon />}
-              w="100%"
+              w="full"
               size={['sm', 'md']}
               onClick={() => onKeypressTypeChange(KeyType.Down)}
               isActive={keypressType === KeyType.Down}
@@ -125,9 +125,9 @@ export default function KeyPressForm() {
               <Text fontSize={['md', 'md', 'sm']}>Key Down</Text>
             </Button>
             <Button
-              variant="brand"
+              variant="brandAccentLight"
               leftIcon={<UpArrowIcon />}
-              w="100%"
+              w="full"
               size={['sm', 'md']}
               onClick={() => onKeypressTypeChange(KeyType.Up)}
               isActive={keypressType === KeyType.Up}
@@ -137,22 +137,20 @@ export default function KeyPressForm() {
           </Flex>
         </GridItem>
       </Grid>
-      <Grid templateRows={'20px 1fr'} gap="2" w="100%">
-        <GridItem w="100%" h="8px" alignItems="center" justifyContent="center">
+      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Duration (ms)
           </Text>
         </GridItem>
-        <GridItem w="100%">
-          <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
+        <GridItem w="full">
             <Input
               type="number"
-              variant="brand"
+              variant="brandAccent"
               isDisabled={keypressType === KeyType.DownUp ? false : true}
               value={keypressDuration}
               onChange={onKeypressDurationChange}
             />
-          </Flex>
         </GridItem>
       </Grid>
     </>

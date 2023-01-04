@@ -7,8 +7,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Text,
-  useColorModeValue
+  Text
 } from '@chakra-ui/react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -31,12 +30,12 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const highlightedColour = useColorModeValue(
-    'primary-accent.600',
-    'primary-accent.400'
-  )
-  const { selectedElementId, onElementAdd, onElementDelete, updateSelectedElementId } =
-    useMacroContext()
+  const {
+    selectedElementId,
+    onElementAdd,
+    onElementDelete,
+    updateSelectedElementId
+  } = useMacroContext()
 
   const onDuplicate = useCallback(() => {
     const newElement = { ...element }
@@ -148,28 +147,23 @@ export default function SortableItem({ id, element }: Props) {
   }
 
   return (
-    <HStack w="100%" h="100%" justifyContent="space-around" spacing="0px">
-      <HStack p={1} px={2} w="100%">
+    <HStack w="full" h="full" justifyContent="space-around" spacing="0px">
+      <HStack p={1} px={2} w="full">
         {iconToDisplay}
         <Text
           fontWeight={
             selectedElementId !== undefined && id === selectedElementId + 1
-              ? 'semibold'
+              ? 'bold'
               : 'normal'
-          }
-          textColor={
-            selectedElementId !== undefined && id === selectedElementId + 1
-              ? highlightedColour
-              : ''
           }
         >
           {displayText}
         </Text>
       </HStack>
-      <HStack p={2} h="100%">
+      <HStack p={2} h="full">
         {isEditable && (
           <IconButton
-            variant="brand"
+            variant="brandSecondary"
             aria-label="edit-button"
             icon={<EditIcon />}
             size={['xs', 'sm']}
@@ -180,7 +174,16 @@ export default function SortableItem({ id, element }: Props) {
           <MenuButton
             as={IconButton}
             aria-label="Kebab Menu Button"
-            icon={<KebabVertical />}
+            icon={
+              <KebabVertical
+                color={
+                  selectedElementId !== undefined &&
+                  id === selectedElementId + 1
+                    ? 'primary-accent.600'
+                    : ''
+                }
+              />
+            }
             variant="link"
           />
           <MenuList p="2" right={0}>

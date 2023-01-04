@@ -9,7 +9,7 @@ import SystemEventActionForm from './editForms/SystemEventActionForm'
 
 export default function EditArea() {
   const selectedElement = useSelectedElement()
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
+  const bg = useColorModeValue('bg-light', 'primary-dark.900')
 
   const SelectedElementFormComponent = useMemo(() => {
     if (!selectedElement) {
@@ -35,9 +35,8 @@ export default function EditArea() {
       position="relative"
       w="26%"
       h="full"
+      bg={bg}
       p={[2, 4, 6]}
-      borderLeft="1px"
-      borderColor={borderColour}
     >
       {SelectedElementFormComponent}
     </VStack>

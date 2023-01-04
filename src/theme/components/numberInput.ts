@@ -16,7 +16,6 @@ export const NumberInput = helpers.defineMultiStyleConfig({
     brand: (props: StyleFunctionProps) => ({
       root: {},
       field: {
-        color: mode('bg-dark', 'bg-light')(props),
         border: '1px solid',
         borderColor: mode('primary-light.500', 'primary-dark.500')(props),
         background: mode('primary-light.50', 'primary-dark.800')(props)

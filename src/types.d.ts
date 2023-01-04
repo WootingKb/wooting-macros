@@ -11,7 +11,6 @@ export type AppState = {
   collections: Collection[]
   initComplete: boolean
   selection: CurrentSelection
-  isUpdatingCollection: boolean
   changeViewState: (newState: ViewState) => void
   onCollectionAdd: (newCollection: Collection) => void
   onSelectedCollectionDelete: () => void
@@ -21,7 +20,6 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
-  changeIsUpdatingCollection: (newVal: boolean) => void
 }
 
 export type MacroState = {

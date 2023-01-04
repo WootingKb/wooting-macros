@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { MouseButton } from './enums'
-import { ApplicationConfig, Collection, MacroData } from './types'
+import { MouseButton } from '../enums'
+import { ApplicationConfig, Collection, MacroData } from '../types'
 
 export const updateBackendConfig = (collections: Collection[]) => {
   const macroData: MacroData = { data: collections }
@@ -30,4 +30,40 @@ export const checkIfStringIsNonNumeric: (text: string) => boolean = function (
   value: string
 ): boolean {
   return !(isNaN(Number(value)) === false)
+}
+
+export const scrollbarStylesLight = {
+  '&::-webkit-scrollbar': {
+    width: '10px'
+  },
+  '&::-webkit-scrollbar-track': {
+    background: '#D5DAE2',
+    borderRadius: '10px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: '#9EAABD',
+    borderRadius: '10px'
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    background: '#8392AA',
+    borderRadius: '10px'
+  }
+}
+
+export const scrollbarsStylesDark = {
+  '&::-webkit-scrollbar': {
+    width: '10px'
+  },
+  '&::-webkit-scrollbar-track': {
+    background: '#27272a',
+    borderRadius: '10px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: '#3f3f46',
+    borderRadius: '10px'
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    background: '#52525b',
+    borderRadius: '10px'
+  }
 }

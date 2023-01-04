@@ -1,24 +1,23 @@
+import { useToast } from '@chakra-ui/react'
 import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { webButtonLookup } from '../maps/MouseMap'
 
-export default function useRecordingTrigger() {
+export default function useRecordingTrigger(initialItems: number[]) {
   const [recording, setRecording] = useState(false)
   const [items, setItems] = useState<number[]>([])
   const [prevItems, setPrevItems] = useState<number[]>([])
+  const toast = useToast()
+
+  useEffect(() => {
+    setItems(initialItems)
+  }, [initialItems])
 
   const resetItems = useCallback(() => {
     setItems(prevItems)
   }, [setItems, prevItems])
-
-  const initItems = useCallback(
-    (newItems: number[]) => {
-      setItems(newItems)
-    },
-    [setItems]
-  )
 
   const startRecording = useCallback(() => {
     setPrevItems(items)
@@ -45,7 +44,9 @@ export default function useRecordingTrigger() {
         if (items.filter((item) => item === HIDcode).length > 0) {
           newItems = items
         } else if (
-          items.filter((item) => item >= MouseButton.Left).length > 0  // .includes()
+          items.filter(
+            (item) => item >= MouseButton.Left && item <= MouseButton.Mouse5
+          ).length > 0
         ) {
           newItems = [HIDcode]
         } else {
@@ -95,6 +96,13 @@ export default function useRecordingTrigger() {
     window.addEventListener('mousedown', addMousepress, true)
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
+      toast({
+        title: 'Error disabling macro output',
+        description: 'Unable to disable macro output, please re-open the app.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true
+      })
     })
 
     return () => {
@@ -102,16 +110,22 @@ export default function useRecordingTrigger() {
       window.removeEventListener('mousedown', addMousepress, true)
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
+        toast({
+          title: 'Error enabling macro output',
+          description: 'Unable to enable macro output, please re-open the app.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
       })
     }
-  }, [recording, addKeypress, addMousepress])
+  }, [recording, addKeypress, addMousepress, toast])
 
   return {
     recording,
     startRecording,
     stopRecording,
     items,
-    resetItems,
-    initItems
+    resetItems
   }
 }

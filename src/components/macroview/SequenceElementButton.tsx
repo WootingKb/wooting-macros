@@ -15,9 +15,13 @@ export default function SequenceElementButton({
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
-  const bg = useColorModeValue('primary-light.200', 'primary-dark.800')
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.800')
   const textColor = useColorModeValue('bg-dark', 'bg-light')
-  const hoverBg = useColorModeValue('primary-light.300', 'primary-dark.700')
+  const hoverBg = useColorModeValue('primary-light.100', 'primary-dark.700')
+  const borderColour = useColorModeValue(
+    'primary-light.300',
+    'primary-dark.700'
+  )
 
   const handleAddElement = useCallback(() => {
     if (config.AutoAddDelay) {
@@ -49,15 +53,24 @@ export default function SequenceElementButton({
       w="full"
       as="button"
       bg={bg}
+      p={2}
       _hover={{ bg: hoverBg }}
-      _active={{ bg: hoverBg }}
       color={textColor}
+      border="1px"
+      borderColor={borderColour}
       rounded="md"
       onClick={handleAddElement}
-      textAlign="center"
-      css={{ 'word-break': 'break-all' }}
+      transition="ease-out 150ms"
     >
-      <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']} cursor="pointer">
+      <Text
+        w="full"
+        fontWeight="semibold"
+        fontSize={['xs', 'sm', 'md']}
+        cursor="pointer"
+        textAlign="center"
+        overflowWrap="normal"
+        wordBreak="break-word"
+      >
         {displayText}
       </Text>
     </Box>

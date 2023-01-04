@@ -34,24 +34,32 @@ export default function Macroview({ isEditing }: Props) {
     updateMacroName,
     updateMacro
   } = useMacroContext()
-  const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
+  const bg = useColorModeValue('bg-light', 'primary-dark.900')
+  const placeholderTextColour = useColorModeValue(
+    'primary-light.300',
+    'primary-dark.600'
   )
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const shadowColour = useColorModeValue('xs', 'white-xs')
   const {
-    isOpen: isOpenEmoji,
-    onOpen: onOpenEmoji,
-    onClose: onCloseEmoji
+    isOpen: isTriggerModalOpen,
+    onOpen: onTriggerModalOpen,
+    onClose: onTriggerModalClose
+  } = useDisclosure()
+  const {
+    isOpen: isEmojiPickerOpen,
+    onOpen: onEmojiPickerOpen,
+    onClose: onEmojiPickerClose
   } = useDisclosure()
   const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
+    changeIsUpdatingMacro(isEditing)
     if (isEditing) {
       setInputValue(macro.name)
+      return
     }
-    changeIsUpdatingMacro(isEditing)
-  }, [isEditing, changeIsUpdatingMacro, macro.name])
+    onTriggerModalOpen()
+  }, [isEditing, changeIsUpdatingMacro, macro.name, onTriggerModalOpen])
 
   const saveButtonTooltipText = useMemo((): string => {
     if (
@@ -68,16 +76,19 @@ export default function Macroview({ isEditing }: Props) {
   }, [macro.trigger.data, macro.trigger.type, sequence.length])
 
   return (
-    <VStack h="100%" spacing="0px" overflow="hidden">
+    <VStack h="full" spacing="0px" overflow="hidden">
       {/** Top Header */}
       <HStack
-        w="100%"
+        zIndex={1}
+        bg={bg}
+        w="full"
         h="80px"
         p="2"
-        spacing="16px"
+        gap={4}
+        shadow={shadowColour}
         justifyContent="space-between"
       >
-        <Flex w="30%" alignItems="center" gap="4">
+        <Flex w="50%" alignItems="center" gap="4">
           <IconButton
             aria-label="Back Button"
             variant="brand"
@@ -91,25 +102,26 @@ export default function Macroview({ isEditing }: Props) {
             _hover={{ transform: 'scale(110%)' }}
             maxHeight="32px"
             transition="ease-out 150ms"
-            onClick={onOpenEmoji}
+            onClick={onEmojiPickerOpen}
             id="emoji-button-2"
           >
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
-          <EmojiModal isOpen={isOpenEmoji} onClose={onCloseEmoji} />
-          <VStack spacing={1}>
-            <Input
-              variant="brand"
-              placeholder="Macro Name"
-              _placeholder={{ opacity: 1, color: borderColour }}
-              onChange={(event) => setInputValue(event.target.value)}
-              onBlur={(event) => updateMacroName(event.target.value)}
-              value={inputValue}
-            />
-          </VStack>
+          <EmojiModal isOpen={isEmojiPickerOpen} onClose={onEmojiPickerClose} />
+          <Input
+            w="full"
+            variant="flushed"
+            placeholder="Macro Name"
+            fontWeight="bold"
+            _placeholder={{ opacity: 1, color: placeholderTextColour }}
+            onChange={(event) => setInputValue(event.target.value)}
+            onBlur={(event) => updateMacroName(event.target.value)}
+            value={inputValue}
+            _focusVisible={{ borderColor: 'primary-accent.500' }}
+          />
         </Flex>
         {/* <MacroTypeArea /> */}
-        <TriggerArea onOpen={onOpen} />
+        <TriggerArea onOpen={onTriggerModalOpen} />
         <Tooltip
           variant="brand"
           label={saveButtonTooltipText}
@@ -133,14 +145,8 @@ export default function Macroview({ isEditing }: Props) {
           </Button>
         </Tooltip>
       </HStack>
-      <TriggerModal isOpen={isOpen} onClose={onClose} />
-      <HStack
-        w="100%"
-        h="calc(100% - 80px)"
-        borderTop="1px"
-        borderColor={borderColour}
-        spacing="0"
-      >
+      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose} />
+      <HStack w="full" h="calc(100% - 80px)" spacing="0">
         {/** Bottom Panels */}
         <SelectElementArea />
         <SequencingArea />

@@ -11,7 +11,7 @@ import {
 import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
-import { updateBackendConfig } from '../utils'
+import { updateBackendConfig } from '../constants/utils'
 
 type ApplicationProviderProps = { children: ReactNode }
 
@@ -35,7 +35,6 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     collectionIndex: 0,
     macroIndex: undefined
   })
-  const [isUpdatingCollection, setIsUpdatingCollection] = useState(false)
   const toast = useToast()
 
   useEffect(() => {
@@ -48,7 +47,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         console.error(e)
         toast({
           title: 'Error loading macros',
-          description: "Unable to load macros, please re-open the app.",
+          description: 'Unable to load macros, please re-open the app.',
           status: 'error',
           duration: 2000,
           isClosable: true
@@ -124,41 +123,30 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [collections]
   )
 
-  const changeIsUpdatingCollection = useCallback(
-    (newVal: boolean) => {
-      setIsUpdatingCollection(newVal)
-    },
-    [setIsUpdatingCollection]
-  )
-
   const value = useMemo<AppState>(
     () => ({
       viewState,
       collections,
       initComplete,
       selection,
-      isUpdatingCollection: isUpdatingCollection,
       changeViewState,
       onSelectedCollectionDelete,
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex,
-      changeIsUpdatingCollection
+      changeSelectedMacroIndex
     }),
     [
       viewState,
       collections,
       initComplete,
       selection,
-      isUpdatingCollection,
       changeViewState,
       onSelectedCollectionDelete,
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex,
-      changeIsUpdatingCollection
+      changeSelectedMacroIndex
     ]
   )
 

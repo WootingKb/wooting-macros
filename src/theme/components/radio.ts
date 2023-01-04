@@ -16,7 +16,6 @@ export const Radio = helpers.defineMultiStyleConfig({
     brand: (props: StyleFunctionProps) => ({
       control: {
         borderColor: mode('primary-light.400', 'primary-dark.500')(props),
-        color: mode('bg-dark', 'bg-light')(props),
         _checked: {
           borderColor: mode('primary-accent.500', 'primary-accent.400')(props),
           bg: mode('primary-accent.500', 'primary-accent.400')(props)
@@ -24,7 +23,7 @@ export const Radio = helpers.defineMultiStyleConfig({
       },
       icon: {},
       container: {},
-      label: { color: mode('bg-dark', 'bg-light')(props) }
+      label: { }
     })
   }
 })

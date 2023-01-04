@@ -21,14 +21,17 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
     isDragging
   } = useSortable({ id: id })
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('primary-light.50', 'primary-dark.900')
-  const selectedBg = useColorModeValue('primary-light.100', 'primary-dark.800')
-  const handleBg = useColorModeValue('primary-accent.300', 'primary-accent.400')
-  const handleIconColour = useColorModeValue(
-    'primary-accent.600',
-    'primary-accent.700'
+  const bg = useColorModeValue('bg-light', 'primary-dark.900')
+  const selectedBg = useColorModeValue(
+    'primary-accent.200',
+    'primary-accent.800'
   )
-  const shadowColour = useColorModeValue('md', 'white-md')
+  const handleBg = useColorModeValue('primary-accent.100', 'primary-accent.300')
+  const handleIconColour = useColorModeValue(
+    'primary-accent.700',
+    'primary-accent.800'
+  )
+  const shadowColour = useColorModeValue('sm', 'white-sm')
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -41,7 +44,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      w={isSmall ? 'fit-content' : '100%'}
+      w={isSmall ? 'fit-content' : 'full'}
       rounded="md"
       spacing="0px"
       bg={
@@ -50,7 +53,6 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
           : bg
       }
       shadow={shadowColour}
-      sx={{ cursor: 'auto' }}
     >
       <Center
         {...listeners}
@@ -58,7 +60,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
         h="full"
         bg={handleBg}
         roundedLeft="md"
-        sx={{ cursor: 'grab' }}
+        cursor="grab"
       >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Center>

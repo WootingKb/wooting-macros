@@ -7,9 +7,11 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Stack
+  Stack,
+  useColorMode,
+  useDisclosure
 } from '@chakra-ui/react'
-import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
+import { DeleteIcon, EditIcon, TimeIcon } from '@chakra-ui/icons'
 import {
   closestCenter,
   DndContext,
@@ -38,6 +40,11 @@ import useRecordingSequence from '../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../contexts/settingsContext'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { KeyType } from '../../enums'
+import {
+  scrollbarsStylesDark,
+  scrollbarStylesLight
+} from '../../constants/utils'
+import ClearSequenceModal from './ClearSequenceModal'
 
 const isKeypress = (
   e: Keypress | MousePressAction | undefined
@@ -54,11 +61,12 @@ export default function SequencingArea() {
     onElementAdd,
     onElementsAdd,
     updateElement,
-    overwriteIds,
-    overwriteSequence
+    overwriteIds
   } = useMacroContext()
   const { collections, selection } = useApplicationContext()
   const { config } = useSettingsContext()
+  const { colorMode } = useColorMode()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const onItemChanged = useCallback(
     (
@@ -260,16 +268,16 @@ export default function SequencingArea() {
   return (
     <VStack w="41%" h="full">
       {/** Header */}
-      <VStack w="100%" px={[2, 4, 6]} pt={[2, 4, 6]}>
+      <VStack w="full" px={[2, 4, 6]} pt={[2, 4, 6]}>
         <Stack
           direction={['column', 'row']}
-          w="100%"
+          w="full"
           textAlign="left"
           justifyContent="space-between"
           alignItems={['start', 'center']}
         >
           <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-            SEQUENCE
+            Sequence
           </Text>
           {showAlert && (
             <Alert
@@ -289,10 +297,19 @@ export default function SequencingArea() {
       </VStack>
       <HStack
         justifyContent="right"
-        w="100%"
+        w="full"
         alignItems="center"
         px={[2, 4, 6]}
       >
+        <Button
+          variant="brandWarning"
+          leftIcon={<DeleteIcon />}
+          size={['xs', 'sm', 'md']}
+          onClick={onOpen}
+          isDisabled={sequence.length === 0}
+        >
+          Clear
+        </Button>
         <Button
           variant="brandRecord"
           leftIcon={<EditIcon />}
@@ -303,19 +320,8 @@ export default function SequencingArea() {
           {recording ? 'Stop' : 'Record'}
         </Button>
         <Button
-          variant="brand"
-          leftIcon={<DeleteIcon />}
-          size={['xs', 'sm', 'md']}
-          onClick={() => {
-            overwriteSequence([])
-            stopRecording()
-          }}
-        >
-          Clear
-        </Button>
-        <Button
-          variant="brand"
-          leftIcon={<AddIcon />}
+          variant="brandAccent"
+          leftIcon={<TimeIcon />}
           size={['xs', 'sm', 'md']}
           onClick={() => {
             onElementAdd({
@@ -327,7 +333,12 @@ export default function SequencingArea() {
           Add Delay
         </Button>
       </HStack>
-      <Divider w="95%" alignSelf="center" />
+      <ClearSequenceModal
+        isOpen={isOpen}
+        onClose={onClose}
+        stopRecording={stopRecording}
+      />
+      <Divider w="full" />
       {/** Timeline */}
       <DndContext
         sensors={sensors}
@@ -338,16 +349,17 @@ export default function SequencingArea() {
       >
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
           <VStack
-            w="90%"
-            h="100%"
-            px="3"
+            w="full"
+            h="full"
+            px={4}
+            pb={4}
             overflowY="auto"
             overflowX="hidden"
-            css={{
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
+            sx={
+              colorMode === 'light'
+                ? scrollbarStylesLight
+                : scrollbarsStylesDark
+            }
           >
             {ids.map((id) => (
               <SortableWrapper
@@ -362,7 +374,7 @@ export default function SequencingArea() {
         </SortableContext>
         <DragOverlay>
           {activeId ? (
-            <DragWrapper element={sequence[activeId - 1]}>
+            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
               <SortableItem id={activeId} element={sequence[activeId - 1]} />
             </DragWrapper>
           ) : undefined}

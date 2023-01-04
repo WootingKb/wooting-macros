@@ -27,6 +27,7 @@ export default function SettingsButton({
       rounded="md"
       onClick={() => setFocus(index)}
       cursor="pointer"
+      transition="ease-out 150ms"
     >
       <Text fontWeight="semibold">{setting.displayString}</Text>
     </Box>

@@ -64,7 +64,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
 
   return (
     <VStack
-      w="100%"
+      w="full"
       h="full"
       bg={bg}
       boxShadow={shadowColour}
@@ -75,8 +75,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       spacing="8px"
     >
       {/** Top Row */}
-      <HStack w="100%" justifyContent="space-between">
-        <Flex w="100%" gap="8px" alignItems="center">
+      <HStack w="full" justifyContent="space-between">
+        <Flex w="full" gap="8px" alignItems="center">
           <Box maxHeight="32px" cursor="default">
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
@@ -101,11 +101,19 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <VStack w="100%" spacing={1}>
+      <VStack w="full" spacing={1}>
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
           Trigger Keys:
         </Text>
-        <Flex w="100%" gap="4px" bg={secondBg} rounded="md" py="1" px="2">
+        <Flex
+          w="full"
+          gap="4px"
+          bg={secondBg}
+          rounded="md"
+          py="1"
+          px="2"
+          shadow="inner"
+        >
           {macro.trigger.type === 'KeyPressEvent' &&
             macro.trigger.data.map((HIDcode) => (
               <Kbd variant="brand" key={HIDcode}>
@@ -119,7 +127,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       </VStack>
       <Divider borderColor={borderColour} />
       {/** Buttons */}
-      <Flex w="100%" alignItems="center" justifyContent="space-between">
+      <Flex w="full" alignItems="center" justifyContent="space-between">
         <Button
           size="sm"
           variant="yellowGradient"

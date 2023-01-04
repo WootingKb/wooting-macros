@@ -1,7 +1,7 @@
-import { SimpleGrid, Text } from '@chakra-ui/react'
+import { SimpleGrid } from '@chakra-ui/react'
 
 type Props = {
-    searchValue: string
+  searchValue: string
 }
 
 export default function PluginsGrid({ searchValue }: Props) {
@@ -9,15 +9,8 @@ export default function PluginsGrid({ searchValue }: Props) {
     <SimpleGrid
       h="fit"
       columns={[2, 2, 3]}
+      px={4}
       spacing={2}
-      overflowY="auto"
-      css={{
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
-      }}
-    >
-      <Text fontWeight={'semibold'}>Coming Soon</Text>
-    </SimpleGrid>
+    ></SimpleGrid>
   )
 }

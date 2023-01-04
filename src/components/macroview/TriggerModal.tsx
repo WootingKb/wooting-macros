@@ -15,14 +15,15 @@ import {
   Switch,
   Stack,
   Flex,
-  Spacer
+  Spacer,
+  useColorModeValue
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingTrigger from '../../hooks/useRecordingTrigger'
 import { HIDLookup } from '../../maps/HIDmap'
 import { mouseEnumLookup } from '../../maps/MouseMap'
-import { isMouseButtonArray } from '../../utils'
+import { isMouseButtonArray } from '../../constants/utils'
 
 type Props = {
   isOpen: boolean
@@ -31,38 +32,20 @@ type Props = {
 
 export default function TriggerModal({ isOpen, onClose }: Props) {
   const { macro, updateTrigger, updateAllowWhileOtherKeys } = useMacroContext()
-  const {
-    recording,
-    startRecording,
-    stopRecording,
-    items,
-    resetItems,
-    initItems
-  } = useRecordingTrigger()
-  const [isAllowed, setIsAllowed] = useState(false)
-  const [isTriggerMousepress, setIsTriggerMousepress] = useState(false) // useMemo
-
-  useEffect(() => {
-    // ask about this useeffect and it's dependencies, need to fix?
-    // instead of having initItems here, we can pass macro into useRecordingTrigger and have it do the init inside the hook
-    // then this useEffect can just be to set IsAllowed
-    if (macro.trigger.type === 'KeyPressEvent') {
-      initItems(macro.trigger.data)
-      setIsAllowed(macro.trigger.allow_while_other_keys)
-      setIsTriggerMousepress(false)
-    } else {
-      initItems([macro.trigger.data])
-      setIsTriggerMousepress(true)
-    }
-  }, [initItems, macro])
-
-  useEffect(() => {
+  const { recording, startRecording, stopRecording, items, resetItems } =
+    useRecordingTrigger(
+      macro.trigger.type === 'KeyPressEvent'
+        ? macro.trigger.data
+        : [macro.trigger.data]
+    )
+  const isTriggerMousepress = useMemo(() => {
     if (items.length === 0) {
-      setIsTriggerMousepress(true)
-      return
+      return true
     }
-    setIsTriggerMousepress(isMouseButtonArray(items))
+    return isMouseButtonArray(items)
   }, [items])
+  const [isAllowed, setIsAllowed] = useState(false)
+  const secondBg = useColorModeValue('blue.50', 'primary-dark.800')
 
   const getTriggerCanSave = useMemo((): boolean => {
     if (items.length === 0) {
@@ -129,21 +112,33 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Trigger Keys</ModalHeader>
-        <Divider w="90%" alignSelf="center" />
         <ModalBody>
           <Stack
-            direction={['column']}
+            direction="column"
             justifyContent="space-between"
             mb={['4', '8']}
           >
+            <Text fontSize={['xs', 'sm', 'md']}>
+              You can skip this and set it later.
+            </Text>
+            <Divider w="full" alignSelf="center" />
             <VStack alignItems="start" spacing="0">
-              <Text fontSize={['2xs', 'xs', 'sm']}>
+              <Text fontSize={['xs', 'sm', 'md']}>
                 Set any up to 4 keys (1 non-modifer, up to 3 modifiers) or set a
                 single mouse button to use as the trigger.
               </Text>
             </VStack>
-            <Flex justifyContent="end">
-              <HStack>
+            <Flex justifyContent="center" alignItems="center" gap={4}>
+              <HStack
+                w="full"
+                h="40px"
+                justifyContent="center"
+                gap="4px"
+                bg={secondBg}
+                rounded="md"
+                p={2}
+                shadow="inner"
+              >
                 {items.map((element) => (
                   <Kbd variant="brand" key={element}>
                     {getDisplayString(element, isMouseButtonArray(items))}
@@ -153,6 +148,8 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               <Spacer />
               <Button
                 variant="brandRecord"
+                size="sm"
+                px={4}
                 leftIcon={<EditIcon />}
                 onClick={recording ? stopRecording : startRecording}
                 isActive={recording}
@@ -161,28 +158,27 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </Button>
             </Flex>
           </Stack>
-          <Divider w="100%" alignSelf="center" my={['4', '8']} />
-          <HStack justifyContent="space-between">
-            <VStack alignItems="start" maxWidth={['85%']}>
+          <Divider w="full" alignSelf="center" my={['4', '8']} />
+          <VStack alignItems="start">
+            <HStack w="full" justifyContent="space-between" gap={4}>
               <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']}>
                 Strict Mode
               </Text>
-              <Text fontSize={['2xs', 'xs', 'sm']}>
-                When enabled, the macro will activate when only the trigger keys
-                are being pressed. When disabled, the macro will activate even
-                if the trigger keys are pressed with other keys. (Only if
-                trigger is not a mouse button)
-              </Text>
-            </VStack>
-            <Switch
-              size="sm"
-              variant="brand"
-              defaultChecked={isAllowed}
-              isChecked={isAllowed}
-              isDisabled={isTriggerMousepress}
-              onChange={() => setIsAllowed(!isAllowed)}
-            />
-          </HStack>
+              <Switch
+                variant="brand"
+                defaultChecked={isAllowed}
+                isChecked={isAllowed}
+                isDisabled={isTriggerMousepress}
+                onChange={() => setIsAllowed(!isAllowed)}
+              />
+            </HStack>
+            <Text fontSize={['xs', 'sm', 'md']}>
+              When enabled, the macro will activate when only the trigger keys
+              are being pressed. When disabled, the macro will activate even if
+              the trigger keys are pressed with other keys. (Only matters if the
+              trigger is a keypress / keypresses)
+            </Text>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Button

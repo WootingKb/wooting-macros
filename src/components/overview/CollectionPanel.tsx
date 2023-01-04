@@ -148,16 +148,8 @@ export default function CollectionPanel() {
               fontWeight="bold"
               placeholder={'Collection Name'}
               _placeholder={{ opacity: 1, color: borderColour }}
+              _focusVisible={{ borderColor: 'primary-accent.500' }}
             />
-            {/* <IconButton
-              aria-label="Collection Edit Button"
-              icon={<EditIcon />}
-              variant="brandGhost"
-              onClick={() => {
-                changeIsUpdatingCollection(true)
-                onOpen()
-              }}
-            /> */}
           </HStack>
           <HStack w="fit">
             {/* <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>

@@ -6,8 +6,10 @@ import {
   AccordionIcon,
   AccordionPanel,
   SimpleGrid,
-  AspectRatio
+  AspectRatio,
+  useColorMode
 } from '@chakra-ui/react'
+import { scrollbarsStylesDark, scrollbarStylesLight } from '../../../constants/utils'
 import { HIDCategory, KeyType } from '../../../enums'
 import { Hid, HidInfo } from '../../../maps/HIDmap'
 import { SystemIcon, KeyboardIcon, MouseIcon } from '../../icons'
@@ -20,17 +22,19 @@ type Props = {
 }
 
 export default function AllElementsGrid({ searchValue }: Props) {
+  const { colorMode } = useColorMode()
   return (
     <Flex
       direction={'column'}
+      w="full"
       h="fit"
       gap={1}
       overflowY="auto"
-      css={{
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
-      }}
+      sx={
+        colorMode === 'light'
+          ? scrollbarStylesLight
+          : scrollbarsStylesDark
+      }
     >
       <Accordion allowMultiple p={0}>
         {/** System Events */}
@@ -77,8 +81,9 @@ export default function AllElementsGrid({ searchValue }: Props) {
               </h2>
               <AccordionPanel pb={4} px={0}>
                 <SimpleGrid
-                  w="100%"
+                  w="full"
                   h="fit"
+                  px={4}
                   columns={
                     categoryName === 'Alphanumeric' ||
                     categoryName === 'Function'
@@ -86,12 +91,6 @@ export default function AllElementsGrid({ searchValue }: Props) {
                       : [4, 4, 5]
                   }
                   spacing={2}
-                  overflowY="auto"
-                  css={{
-                    '&::-webkit-scrollbar': {
-                      display: 'none'
-                    }
-                  }}
                 >
                   {Hid.all
                     .filter(

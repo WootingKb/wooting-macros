@@ -3,7 +3,8 @@ import {
   Divider,
   Text,
   useColorModeValue,
-  HStack
+  HStack,
+  useColorMode
 } from '@chakra-ui/react'
 import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../enums'
@@ -13,6 +14,7 @@ import { type, version } from '@tauri-apps/api/os'
 import { getVersion } from '@tauri-apps/api/app'
 import { useEffect, useState } from 'react'
 import { DiscordIcon, TwitterIcon } from '../icons'
+import { scrollbarStylesLight, scrollbarsStylesDark } from '../../constants/utils'
 
 type Props = {
   pageIndex: number
@@ -23,6 +25,7 @@ export default function SettingsLeftPanel({
   pageIndex,
   onSettingsButtonPress
 }: Props) {
+  const { colorMode } = useColorMode()
   const panelBg = useColorModeValue('primary-light.50', 'bg-dark')
   const borderColour = useColorModeValue(
     'primary-light.100',
@@ -78,11 +81,7 @@ export default function SettingsLeftPanel({
       pt={4}
       w={['25%']}
       overflowY="auto"
-      css={{
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
-      }}
+      sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
       <VStack w="100%" spacing={1}>
         <Text w="100%" textStyle="miniHeader" ml={4}>

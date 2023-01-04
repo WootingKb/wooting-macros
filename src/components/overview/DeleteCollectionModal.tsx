@@ -3,7 +3,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
   Button,
@@ -27,7 +26,6 @@ export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Delete this collection?</ModalHeader>
-        <ModalCloseButton />
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           This action is irreversible! Any macros within this collection will be

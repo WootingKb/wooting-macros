@@ -6,7 +6,7 @@ export const Button = defineStyleConfig({
   variants: {
     brand: (props: StyleFunctionProps) => ({
       bg: mode('primary-light.100', 'primary-dark.800')(props),
-      color: mode('bg-dark', 'bg-light')(props),
+      transition: "ease-out 150ms",
       _hover: {
         bg: mode('primary-light.200', 'primary-dark.700')(props),
         _disabled: {
@@ -14,15 +14,32 @@ export const Button = defineStyleConfig({
           opacity: 0.5
         }
       },
-      _active: { bg: mode('primary-light.300', 'primary-dark.700')(props) },
+      _active: { bg: mode('primary-light.200', 'primary-dark.700')(props) },
       _disabled: {
         bg: mode('primary-light.200', 'primary-dark.800')(props),
+        opacity: 0.5
+      }
+    }),
+    brandSecondary: (props: StyleFunctionProps) => ({
+      bg: mode('primary-light.50', 'primary-dark.800')(props),
+      transition: "ease-out 150ms",
+      _hover: {
+        bg: mode('primary-light.100', 'primary-dark.700')(props),
+        _disabled: {
+          bg: mode('primary-light.50', 'primary-dark.800')(props),
+          opacity: 0.5
+        }
+      },
+      _active: { bg: mode('primary-light.100', 'primary-dark.700')(props) },
+      _disabled: {
+        bg: mode('primary-light.50', 'primary-dark.800')(props),
         opacity: 0.5
       }
     }),
     brandAccent: (props: StyleFunctionProps) => ({
       bg: mode('primary-accent.300', 'primary-accent.500')(props),
       color: 'bg-dark',
+      transition: "ease-out 150ms",
       _hover: {
         bg: mode('primary-accent.400', 'primary-accent.400')(props),
         _disabled: {
@@ -30,23 +47,26 @@ export const Button = defineStyleConfig({
           opacity: 0.5
         }
       },
+      _active: { bg: mode('primary-accent.400', 'primary-accent.400')(props) },
       _disabled: {
         bg: mode('primary-accent.300', 'primary-accent.500')(props),
         opacity: 0.5
       }
     }),
-    brandSelected: (props: StyleFunctionProps) => ({
-      bg: mode('primary-accent.400', 'primary-accent.400')(props),
-      color: mode('bg-dark', 'bg-light')(props),
+    brandAccentLight: (props: StyleFunctionProps) => ({
+      bg: mode('primary-accent.50', 'primary-accent.200')(props),
+      color: 'bg-dark',
+      transition: "ease-out 150ms",
       _hover: {
-        bg: mode('primary-accent.500', 'primary-accent.300')(props),
+        bg: mode('primary-accent.400', 'primary-accent.400')(props),
         _disabled: {
-          bg: mode('primary-accent.400', 'primary-accent.400')(props),
+          bg: mode('primary-accent.50', 'primary-accent.200')(props),
           opacity: 0.5
         }
       },
+      _active: { bg: mode('primary-accent.400', 'primary-accent.400')(props) },
       _disabled: {
-        bg: mode('primary-accent.400', 'primary-accent.400')(props),
+        bg: mode('primary-accent.50', 'primary-accent.200')(props),
         opacity: 0.5
       }
     }),
@@ -66,14 +86,12 @@ export const Button = defineStyleConfig({
       }
     }),
     brandGhost: (props: StyleFunctionProps) => ({
-      color: mode('bg-dark', 'bg-light')(props),
       _hover: { bg: mode('primary-light.200', 'primary-dark.800')(props) }
     }),
     brandRecord: (props: StyleFunctionProps) => ({
-      bg: mode('primary-light.300', 'primary-dark.800')(props),
-      color: mode('bg-dark', 'bg-light')(props),
-      _hover: { bg: mode('primary-light.400', 'primary-dark.700')(props) },
-      _active: { bg: mode('red.400', 'red.700')(props) }
+      bg: mode('primary-light.100', 'primary-dark.800')(props),
+      _hover: { bg: mode('primary-light.200', 'primary-dark.700')(props) },
+      _active: { bg: mode('red.300', 'red.700')(props) }
     }),
     brandWarning: (props: StyleFunctionProps) => ({
       bg: mode('red.300', 'red.400')(props),

@@ -9,10 +9,15 @@ import {
   Tooltip,
   Switch,
   useToast,
-  Box
+  Box,
+  useColorMode
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
+import {
+  scrollbarsStylesDark,
+  scrollbarStylesLight
+} from '../../constants/utils'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { invoke } from '@tauri-apps/api'
@@ -23,19 +28,18 @@ type Props = {
   onOpenSettingsModal: () => void
 }
 
-export default function LeftPanel({
-  onOpenSettingsModal
-}: Props) {
+export default function LeftPanel({ onOpenSettingsModal }: Props) {
   const {
     collections,
     selection,
     onCollectionAdd,
     onCollectionUpdate,
-    changeSelectedCollectionIndex,
+    changeSelectedCollectionIndex
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
+  const { colorMode } = useColorMode()
   const panelBg = useColorModeValue('bg-light', 'primary-dark.900')
   const borderColour = useColorModeValue(
     'primary-light.100',
@@ -67,7 +71,7 @@ export default function LeftPanel({
       borderColor={borderColour}
       justifyContent="space-between"
     >
-      <VStack w="100%" h="calc(100%) - 100px" pt={1} overflow="hidden">
+      <VStack w="100%" h="full" pt={1} overflow="hidden">
         <HStack w="100%" justifyContent="space-between" px={1}>
           <Text w="100%" fontWeight="bold">
             Collections
@@ -117,7 +121,7 @@ export default function LeftPanel({
         </HStack>
         <Divider />
         <Button
-          size='sm'
+          size="sm"
           w="full"
           variant="yellowGradient"
           p="2"
@@ -128,14 +132,14 @@ export default function LeftPanel({
         </Button>
         <VStack
           w="100%"
+          h="100%"
+          overflowX="hidden"
           overflowY="auto"
-          css={{
-            '&::-webkit-scrollbar': {
-              display: 'none'
-            }
-          }}
+          sx={
+            colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark
+          }
         >
-          <VStack w="100%" ref={parent} spacing={1}>
+          <VStack w="100%" ref={parent} spacing={1} p={1}>
             {collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
@@ -162,7 +166,7 @@ export default function LeftPanel({
         <Button
           w="100%"
           variant="brandAccent"
-          size='sm'
+          size="sm"
           leftIcon={<SettingsIcon />}
           onClick={onOpenSettingsModal}
         >

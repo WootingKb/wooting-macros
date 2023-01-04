@@ -17,26 +17,35 @@ type Props = {
 
 export default function TriggerArea({ onOpen }: Props) {
   const { macro } = useMacroContext()
-  const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
-  )
+  const secondBg = useColorModeValue('blue.50', 'primary-dark.800')
+  const shadowColour = useColorModeValue('sm', 'white-sm')
 
   return (
     <HStack
-      w="50%"
+      w="fit"
+      minW="40%"
       h="fit"
-      p="2"
+      py={2}
+      px={4}
       divider={<StackDivider />}
-      border="1px"
-      borderColor={borderColour}
+      shadow={shadowColour}
       rounded="md"
       justifyContent="space-between"
     >
-      <Text fontWeight="semibold" fontSize={['xs', 'sm']}>
-        TRIGGER
+      <Text fontWeight="semibold" fontSize={['xs', 'sm']} whiteSpace="nowrap">
+        Trigger Keys
       </Text>
-      <HStack spacing="4px" w="full" h="full" justifyContent="center">
+      <HStack
+        gap={2}
+        w="full"
+        h="27px"
+        justifyContent="center"
+        bg={secondBg}
+        rounded="md"
+        py="1"
+        px="2"
+        shadow="inner"
+      >
         {macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.map((HIDcode) => (
             <Kbd variant="brand" key={HIDcode}>
@@ -48,7 +57,7 @@ export default function TriggerArea({ onOpen }: Props) {
         )}
       </HStack>
       <Button
-        variant="brand"
+        variant="brandAccent"
         size="xs"
         px="5"
         leftIcon={<EditIcon />}

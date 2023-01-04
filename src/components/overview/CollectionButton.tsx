@@ -26,18 +26,27 @@ export default function CollectionButton({
   toggleCollection
 }: Props) {
   const buttonBg = useColorModeValue('primary-accent.50', 'primary-accent.800')
-  const selectedTextColour = useColorModeValue('primary-accent.700', 'primary-accent.400')
+  const selectedTextColour = useColorModeValue(
+    'primary-accent.700',
+    'primary-accent.200'
+  )
 
   return (
     <Box
       pos="relative"
-      w="100%"
+      w="full"
       bg={isFocused ? buttonBg : ''}
       p="2"
       rounded="md"
       _hover={{ bg: buttonBg }}
+      transition="ease-out 150ms"
     >
-      <HStack justifyContent="space-between">
+      <HStack
+        pos="relative"
+        w="full"
+        justifyContent="space-between"
+        spacing={0}
+      >
         <Box
           as="button"
           pos="absolute"
@@ -46,7 +55,7 @@ export default function CollectionButton({
           zIndex={10}
           onClick={() => setFocus(index)}
         ></Box>
-        <Box maxHeight="32px">
+        <Box maxHeight="32px" m={0}>
           <em-emoji shortcodes={collection.icon} size="32px" />
         </Box>
         <Text

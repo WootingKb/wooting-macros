@@ -2,7 +2,6 @@ import {
   Divider,
   Grid,
   GridItem,
-  Flex,
   Input,
   Button,
   Text
@@ -57,11 +56,16 @@ export default function DelayForm() {
     const temp = { ...selectedElement }
     temp.data = config.DefaultDelayValue
     updateElement(temp, selectedElementId)
-  }, [config.DefaultDelayValue, selectedElement, selectedElementId, updateElement])
+  }, [
+    config.DefaultDelayValue,
+    selectedElement,
+    selectedElementId,
+    updateElement
+  ])
 
   return (
     <>
-      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {'Delay Element'}
       </Text>
       <Divider />
@@ -70,22 +74,16 @@ export default function DelayForm() {
           <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
         </GridItem>
         <GridItem w="100%">
-          <Flex gap={['4px']} alignItems="center" justifyContent="space-around">
-            <Input
-              type="number"
-              variant="brand"
-              borderColor="gray.400"
-              value={delayDuration}
-              onChange={onDelayDurationChange}
-            />
-          </Flex>
+          <Input
+            type="number"
+            variant="brandAccent"
+            borderColor="gray.400"
+            value={delayDuration}
+            onChange={onDelayDurationChange}
+          />
         </GridItem>
       </Grid>
-      <Button
-        variant="brand"
-        w="fit-content"
-        onClick={resetDuration}
-      >
+      <Button variant="brand" w="fit-content" onClick={resetDuration}>
         Set to Default
       </Button>
     </>
