@@ -43,23 +43,23 @@ export default function MacroList() {
     <Box
       w="full"
       h="full"
-      p={['2', '3', '4']}
+      p={"25px"}
       overflow="hidden"
       overflowY="auto"
       sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
       <Grid
         w="full"
-        templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        gap={['2', '3', '4']}
+        templateColumns={['repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}
+        gap={"25px"}
       >
-        <Flex h="163px" justifyContent="center" alignItems="center">
+        <Flex h="full" justifyContent="center" alignItems="center">
           <VStack
             w="full"
-            h="full"
+            h="187px"
             bg={bg}
             boxShadow={shadowColour}
-            rounded="md"
+            rounded="2xl"
             p="3"
             m="auto"
             justifyContent="center"
@@ -81,7 +81,7 @@ export default function MacroList() {
           </VStack>
         </Flex>
         {currentCollection.macros.map((macro: Macro, index: number) => (
-          <GridItem w="full" h="163px" key={`${macro.name} + ${index}`}>
+          <GridItem w="full" h="fit-content" key={`${macro.name} + ${index}`}>
             <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
           </GridItem>
         ))}

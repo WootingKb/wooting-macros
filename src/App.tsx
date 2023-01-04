@@ -1,5 +1,5 @@
 import { appWindow, PhysicalSize } from '@tauri-apps/api/window'
-import { Flex, useDisclosure, Text } from '@chakra-ui/react'
+import { Flex, useDisclosure, Text, Box } from '@chakra-ui/react'
 import Overview from './views/Overview'
 import { ViewState } from './enums'
 import { useApplicationContext } from './contexts/applicationContext'
@@ -30,7 +30,8 @@ function App() {
   }
 
   return (
-    <Flex h="100vh" direction="column">
+    <Flex h="100vh" pos="relative" direction="column">
+      <Box zIndex={-10} pos="absolute" w="full" h="full" opacity={0.15} backgroundImage="url('/keycapPattern.png')" />
       {viewState === ViewState.Overview && (
         <Overview onOpenSettingsModal={onOpen} />
       )}

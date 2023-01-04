@@ -36,7 +36,8 @@ export default function EditArea() {
       w="26%"
       h="full"
       bg={bg}
-      p={[2, 4, 6]}
+      px={[2, 4, 6]}
+      pt={[2, 4]}
     >
       {SelectedElementFormComponent}
     </VStack>

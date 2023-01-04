@@ -45,6 +45,8 @@ export default function CollectionButton({
         pos="relative"
         w="full"
         justifyContent="space-between"
+        textAlign="left"
+        gap={2}
         spacing={0}
       >
         <Box
@@ -59,6 +61,7 @@ export default function CollectionButton({
           <em-emoji shortcodes={collection.icon} size="32px" />
         </Box>
         <Text
+          w="full"
           noOfLines={1}
           fontWeight="semibold"
           textColor={isFocused ? selectedTextColour : ''}
@@ -77,9 +80,8 @@ export default function CollectionButton({
               size="sm"
               variant="brand"
               zIndex={10}
-              opacity={isMacroOutputEnabled ? 1 : 0.5}
               defaultChecked={collection.active}
-              isChecked={collection.active}
+              isChecked={isMacroOutputEnabled ? collection.active : false}
               onChange={() => toggleCollection(index)}
             />
           </Box>

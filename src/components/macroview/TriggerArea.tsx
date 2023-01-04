@@ -27,6 +27,8 @@ export default function TriggerArea({ onOpen }: Props) {
       h="fit"
       py={2}
       px={4}
+      spacing={0}
+      gap={2}
       divider={<StackDivider />}
       shadow={shadowColour}
       rounded="md"
@@ -58,8 +60,8 @@ export default function TriggerArea({ onOpen }: Props) {
       </HStack>
       <Button
         variant="brandAccent"
-        size="xs"
-        px="5"
+        size="sm"
+        px={6}
         leftIcon={<EditIcon />}
         onClick={onOpen}
       >

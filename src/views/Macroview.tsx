@@ -82,13 +82,13 @@ export default function Macroview({ isEditing }: Props) {
         zIndex={1}
         bg={bg}
         w="full"
-        h="80px"
+        h={{ base: '80px', md: '100px', xl: '120px' }}
         p="2"
         gap={4}
         shadow={shadowColour}
         justifyContent="space-between"
       >
-        <Flex w="50%" alignItems="center" gap="4">
+        <Flex w="50%" h="full" alignItems="center" gap="4">
           <IconButton
             aria-label="Back Button"
             variant="brand"
@@ -112,7 +112,8 @@ export default function Macroview({ isEditing }: Props) {
             w="full"
             variant="flushed"
             placeholder="Macro Name"
-            fontWeight="bold"
+            size="xl"
+            textStyle="name"
             _placeholder={{ opacity: 1, color: placeholderTextColour }}
             onChange={(event) => setInputValue(event.target.value)}
             onBlur={(event) => updateMacroName(event.target.value)}
@@ -130,7 +131,7 @@ export default function Macroview({ isEditing }: Props) {
           rounded="sm"
         >
           <Button
-            size="sm"
+            size={{ base: 'md', lg: 'lg' }}
             variant="yellowGradient"
             isDisabled={
               (macro.trigger.type === 'KeyPressEvent' &&
@@ -146,7 +147,15 @@ export default function Macroview({ isEditing }: Props) {
         </Tooltip>
       </HStack>
       <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose} />
-      <HStack w="full" h="calc(100% - 80px)" spacing="0">
+      <HStack
+        w="full"
+        h={{
+          base: 'calc(100% - 80px)',
+          md: 'calc(100% - 100px)',
+          xl: 'calc(100% - 120px)'
+        }}
+        spacing="0"
+      >
         {/** Bottom Panels */}
         <SelectElementArea />
         <SequencingArea />

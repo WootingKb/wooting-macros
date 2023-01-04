@@ -68,8 +68,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       h="full"
       bg={bg}
       boxShadow={shadowColour}
-      rounded="md"
-      p="3"
+      rounded="2xl"
+      p={5}
       m="auto"
       justifyContent="space-between"
       spacing="8px"
@@ -110,8 +110,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           gap="4px"
           bg={secondBg}
           rounded="md"
-          py="1"
-          px="2"
+          p="9px"
           shadow="inner"
         >
           {macro.trigger.type === 'KeyPressEvent' &&
@@ -125,7 +124,6 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           )}
         </Flex>
       </VStack>
-      <Divider borderColor={borderColour} />
       {/** Buttons */}
       <Flex w="full" alignItems="center" justifyContent="space-between">
         <Button

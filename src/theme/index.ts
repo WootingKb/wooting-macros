@@ -16,10 +16,12 @@ import { Input } from './components/input'
 import { Switch } from './components/switch'
 import { Textarea } from './components/textArea'
 import { shadows } from './shadows'
+import { fonts } from './fonts'
 
 const overrides = {
   config,
   styles,
+  fonts,
   breakpoints,
   colors,
   components: {

@@ -28,7 +28,6 @@ export default function AllElementsGrid({ searchValue }: Props) {
       direction={'column'}
       w="full"
       h="fit"
-      gap={1}
       overflowY="auto"
       sx={
         colorMode === 'light'

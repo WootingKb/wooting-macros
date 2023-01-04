@@ -268,7 +268,7 @@ export default function SequencingArea() {
   return (
     <VStack w="41%" h="full">
       {/** Header */}
-      <VStack w="full" px={[2, 4, 6]} pt={[2, 4, 6]}>
+      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
         <Stack
           direction={['column', 'row']}
           w="full"

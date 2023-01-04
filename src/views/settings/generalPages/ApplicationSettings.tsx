@@ -15,7 +15,7 @@ export default function ApplicationSettings() {
   } = useSettingsContext()
 
   return (
-    <VStack spacing="4">
+    <VStack w="full" spacing="4">
       <VStack w="full">
         <Text w="full" textStyle="miniHeader">
           Window Settings

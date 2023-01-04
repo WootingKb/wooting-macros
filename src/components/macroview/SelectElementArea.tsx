@@ -1,4 +1,4 @@
-import { Text, VStack, Input, useColorModeValue } from '@chakra-ui/react'
+import { Text, VStack, Input, useColorModeValue, HStack } from '@chakra-ui/react'
 import { useState } from 'react'
 import AllElementsGrid from './elementGrids/AllElementsGrid'
 
@@ -12,14 +12,14 @@ export default function SelectElementArea() {
   const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
 
   return (
-    <VStack w="33%" h="full" bg={bg}>
-      <VStack w="full" px={[2, 4, 6]} py={2}>
+    <VStack w="33%" h="full" bg={bg} spacing={0}>
+      <HStack w="full" px={[2, 4, 6]} py={[2, 4]} alignItems="center">
         <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
           Elements
         </Text>
         <Input
           type="search"
-          maxW={['full', 'full', '55%']}
+          maxW={['full']}
           maxH="32px"
           variant="brand"
           placeholder="Search"
@@ -36,7 +36,7 @@ export default function SelectElementArea() {
             }
           }}
         />
-      </VStack>
+      </HStack>
       <AllElementsGrid searchValue={searchValue} />
     </VStack>
   )

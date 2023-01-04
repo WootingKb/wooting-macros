@@ -4,7 +4,8 @@ import {
   Text,
   useColorModeValue,
   HStack,
-  useColorMode
+  useColorMode,
+  Flex
 } from '@chakra-ui/react'
 import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../enums'
@@ -75,94 +76,99 @@ export default function SettingsLeftPanel({
   }, [])
 
   return (
-    <VStack
+    <Flex
       bg={panelBg}
       borderRight="1px"
       borderColor={borderColour}
       h="100vh"
-      p={2}
-      pt={4}
-      w={['25%']}
+      px={2}
+      py={16}
+      minWidth="200px"
+      flexGrow={1}
+      flexBasis="auto"
+      justifyContent="flex-end"
       overflowY="auto"
       sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
-      <VStack w="full" spacing={1}>
-        <Text w="full" textStyle="miniHeader" ml={4}>
-          General Settings
-        </Text>
-        {SettingsGroup.all
-          .filter((setting) => setting.category === SettingsCategory.General)
-          .map((setting) => (
-            <SettingsButton
-              setting={setting}
-              index={setting.pageIndex}
-              key={setting.displayString}
-              isFocused={pageIndex == setting.pageIndex}
-              setFocus={onSettingsButtonPress}
-            />
-          ))}
-      </VStack>
-      <Divider />
-      <VStack w="full" spacing={1}>
-        <Text w="full" textStyle="miniHeader" ml={4}>
-          Other
-        </Text>
-        {SettingsGroup.all
-          .filter((setting) => setting.category === SettingsCategory.Other)
-          .map((setting) => (
-            <SettingsButton
-              setting={setting}
-              index={setting.pageIndex}
-              key={setting.displayString}
-              isFocused={pageIndex == setting.pageIndex}
-              setFocus={onSettingsButtonPress}
-            />
-          ))}
-      </VStack>
-      <Divider />
-      <VStack w="full" spacing={2} px={1} pt={1}>
-        <HStack w="full">
-          <DiscordIcon
-            color={strokeColour}
-            onClick={openDiscordLink}
-            _hover={{
-              color: strokeHoverColour,
-              cursor: 'pointer',
-              transform: 'scale(125%)'
-            }}
-            transition="ease-out 150ms"
-          />
-          <TwitterIcon
-            color={strokeColour}
-            onClick={openTwitterLink}
-            _hover={{
-              color: strokeHoverColour,
-              cursor: 'pointer',
-              transform: 'scale(125%)'
-            }}
-            transition="ease-out 150ms"
-          />
-        </HStack>
-        <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
-          Got Feedback? Let us know through these channels!
-        </Text>
-        <VStack w="full" spacing={0}>
-          <Text
-            w="full"
-            fontSize={{ base: '2xs', md: 'xs' }}
-            textColor={applicationTextColour}
-          >
-            Version {versionText}
+      <VStack w="200px" spacing={1}>
+        <VStack w="full" spacing={1}>
+          <Text w="full" textStyle="miniHeader" ml={4}>
+            General Settings
           </Text>
-          <Text
-            w="full"
-            fontSize={{ base: '2xs', md: 'xs' }}
-            textColor={applicationTextColour}
-          >
-            {osText}
+          {SettingsGroup.all
+            .filter((setting) => setting.category === SettingsCategory.General)
+            .map((setting) => (
+              <SettingsButton
+                setting={setting}
+                index={setting.pageIndex}
+                key={setting.displayString}
+                isFocused={pageIndex == setting.pageIndex}
+                setFocus={onSettingsButtonPress}
+              />
+            ))}
+        </VStack>
+        <Divider />
+        <VStack w="full" spacing={1}>
+          <Text w="full" textStyle="miniHeader" ml={4}>
+            Other
           </Text>
+          {SettingsGroup.all
+            .filter((setting) => setting.category === SettingsCategory.Other)
+            .map((setting) => (
+              <SettingsButton
+                setting={setting}
+                index={setting.pageIndex}
+                key={setting.displayString}
+                isFocused={pageIndex == setting.pageIndex}
+                setFocus={onSettingsButtonPress}
+              />
+            ))}
+        </VStack>
+        <Divider />
+        <VStack w="full" spacing={2} px={1} pt={1}>
+          <HStack w="full">
+            <DiscordIcon
+              color={strokeColour}
+              onClick={openDiscordLink}
+              _hover={{
+                color: strokeHoverColour,
+                cursor: 'pointer',
+                transform: 'scale(125%)'
+              }}
+              transition="ease-out 150ms"
+            />
+            <TwitterIcon
+              color={strokeColour}
+              onClick={openTwitterLink}
+              _hover={{
+                color: strokeHoverColour,
+                cursor: 'pointer',
+                transform: 'scale(125%)'
+              }}
+              transition="ease-out 150ms"
+            />
+          </HStack>
+          <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
+            Got Feedback? Let us know through these channels!
+          </Text>
+          <VStack w="full" spacing={0}>
+            <Text
+              w="full"
+              fontSize={{ base: '2xs', md: 'xs' }}
+              textColor={applicationTextColour}
+            >
+              Version {versionText}
+            </Text>
+            <Text
+              w="full"
+              fontSize={{ base: '2xs', md: 'xs' }}
+              textColor={applicationTextColour}
+            >
+              {osText}
+            </Text>
+          </VStack>
         </VStack>
       </VStack>
-    </VStack>
+    </Flex>
   )
 }

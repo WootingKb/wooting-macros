@@ -13,7 +13,7 @@ import {
   PopoverBody,
   useColorMode,
   Input,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
@@ -101,6 +101,7 @@ export default function CollectionPanel() {
         py={2}
         px={4}
         w="full"
+        h="90px"
         borderBottom="1px"
         borderColor={borderColour}
       >
@@ -145,7 +146,8 @@ export default function CollectionPanel() {
               onChange={(event) => setCollectionName(event.target.value)}
               onBlur={onCollectionNameChange}
               value={collectionName}
-              fontWeight="bold"
+              size="xl"
+              textStyle="name"
               placeholder={'Collection Name'}
               _placeholder={{ opacity: 1, color: borderColour }}
               _focusVisible={{ borderColor: 'primary-accent.500' }}
@@ -161,7 +163,7 @@ export default function CollectionPanel() {
             <Tooltip
               variant="brand"
               label={
-                collections.length <= 1 ? "Can't delete last collection!" : ''
+                collections.length <= 1 ? "Can't delete your last collection!" : ''
               }
               aria-label="Collection delete button tooltip"
               hasArrow
@@ -169,7 +171,7 @@ export default function CollectionPanel() {
               <Button
                 leftIcon={<DeleteIcon />}
                 variant="brandWarning"
-                size={['xs', 'sm']}
+                size="md"
                 isDisabled={collections.length <= 1}
                 onClick={onDeleteModalOpen}
               >

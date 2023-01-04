@@ -2,7 +2,8 @@ import {
   Icon,
   IconProps,
 } from '@chakra-ui/react'
-import { RxKeyboard, RxDiscordLogo, RxTwitterLogo } from 'react-icons/Rx'
+import { FaDiscord, FaTwitter} from 'react-icons/fa'
+import { RxKeyboard } from 'react-icons/Rx'
 import { MdOutlineMouse, MdOutlineComputer } from 'react-icons/md'
 import {
   HiOutlinePuzzlePiece,
@@ -25,10 +26,10 @@ export const IntegrationIcon = (props: IconProps) => {
   return <Icon as={HiOutlinePuzzlePiece} boxSize={6} {...props} />
 }
 export const DiscordIcon = (props: IconProps) => {
-  return <Icon as={RxDiscordLogo} boxSize={6} {...props} />
+  return <Icon as={FaDiscord} boxSize={6} {...props} />
 }
 export const TwitterIcon = (props: IconProps) => {
-  return <Icon as={RxTwitterLogo} boxSize={6} {...props} />
+  return <Icon as={FaTwitter} boxSize={6} {...props} />
 }
 export const DownArrowIcon = (props: IconProps) => {
   return <Icon as={HiArrowDown} boxSize={6} {...props} />

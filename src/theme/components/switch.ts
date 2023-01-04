@@ -15,6 +15,13 @@ export const Switch = helpers.defineMultiStyleConfig({
         bg: mode('primary-light.600', 'primary-dark.700')(props),
         _checked: {
           bg: 'primary-accent.500'
+        },
+        _disabled: {
+          bg: mode('primary-light.600', 'primary-dark.700')(props),
+          opacity: 0.5,
+          _checked: {
+            bg: mode('primary-light.600', 'primary-dark.700')(props),
+          }
         }
       }
     })

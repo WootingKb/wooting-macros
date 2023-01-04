@@ -65,15 +65,15 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     <VStack
       bg={panelBg}
       h="100vh"
-      p={2}
-      w={['30%', '25%', '15%']}
+      p={4}
+      w={'300px'}
       borderRight="1px"
       borderColor={borderColour}
       justifyContent="space-between"
     >
-      <VStack w="full" h="full" pt={1} overflow="hidden">
+      <VStack w="full" h="full" pt={1} overflow="hidden" gap={2}>
         <HStack w="full" justifyContent="space-between" px={1}>
-          <Text w="full" fontWeight="bold">
+          <Text w="full" fontWeight="bold" fontSize={"28px"}>
             Collections
           </Text>
           <Tooltip
@@ -121,7 +121,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
         </HStack>
         <Divider />
         <Button
-          size="sm"
+          size="lg"
           w="full"
           variant="yellowGradient"
           p="2"

@@ -8,7 +8,8 @@ import {
   VStack,
   Text,
   useColorModeValue,
-  useColorMode
+  useColorMode,
+  Flex
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { settingInfoLookup } from '../../maps/SettingsMap'
@@ -72,37 +73,46 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
       <ModalOverlay />
       <ModalContent>
         <HStack
+          w="full"
+          minH="100vh"
+          spacing="0"
+          gap={0}
+          overflow="hidden"
           justifyContent="center"
           bgGradient={`linear(to-r, ${leftPanelBg}, ${leftPanelBg}, ${rightPanelBg}, ${rightPanelBg})`}
         >
-          <HStack
-            w={['full', '95%', '75%', '65%', '50%']}
-            minH="100vh"
-            spacing="0"
-            overflow="hidden"
+          <SettingsLeftPanel
+            pageIndex={pageIndex}
+            onSettingsButtonPress={setPageIndex}
+          />
+          <Flex
+            w="full"
+            h="100vh"
+            bg={rightPanelBg}
+            py={16}
+            pl={10}
+            gap={0}
+            flexGrow={1}
+            flexShrink={1}
+            flexBasis="800px"
+            alignItems="flex-start"
+            overflow="auto"
+            sx={
+              colorMode === 'light'
+                ? scrollbarStylesLight
+                : scrollbarsStylesDark
+            }
           >
-            <SettingsLeftPanel
-              pageIndex={pageIndex}
-              onSettingsButtonPress={setPageIndex}
-            />
-            <ModalBody
-              h="100vh"
-              bg={rightPanelBg}
-              sx={
-                colorMode === 'light'
-                  ? scrollbarStylesLight
-                  : scrollbarsStylesDark
-              }
-            >
-              <VStack w="95%" justifyContent="left" py="8" spacing={4}>
+            <ModalBody w="full" p={0}>
+              <VStack w="600px" justifyContent="left" spacing={4}>
                 <Text w="full" fontWeight="bold" fontSize="large">
                   {settingInfoLookup.get(pageIndex)?.displayString}
                 </Text>
                 {SelectedPageComponent}
               </VStack>
             </ModalBody>
-            <ModalCloseButton />
-          </HStack>
+          </Flex>
+          <ModalCloseButton />
         </HStack>
       </ModalContent>
     </Modal>
