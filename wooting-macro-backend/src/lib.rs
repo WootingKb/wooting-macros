@@ -387,7 +387,6 @@ impl MacroBackend {
         //IDEA: io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
-        //TODO: Make the modifier keys non-ordered? (done in a later commit)
         //==================================================
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
@@ -459,7 +458,7 @@ impl MacroBackend {
 
                                     let channel_copy_send = schan_execute.clone();
 
-                                    //TODO: up the pressed keys here immidiately?
+                                    // ? up the pressed keys here immidiately?
 
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
@@ -532,9 +531,7 @@ impl MacroBackend {
 
                                     Some(event)
                                 }
-                                rdev::EventType::MouseMove {.. } => 
-                                    
-                                    Some(event),
+                                rdev::EventType::MouseMove { .. } => Some(event),
                                 rdev::EventType::Wheel { delta_x, delta_y } => {
                                     if log_enabled!(Level::Info) {
                                         info!("Scrolled: {:?} {:?}", delta_x, delta_y);

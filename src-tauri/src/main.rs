@@ -16,8 +16,6 @@ use wooting_macro_backend::config::ApplicationConfig;
 use wooting_macro_backend::config::ConfigFile;
 use wooting_macro_backend::*;
 
-use tauri_plugin_single_instance;
-
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
