@@ -320,7 +320,7 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::Unknown(129), 0x6d); //F18
         scancode.insert(Key::Unknown(130), 0x6e); //F19
         scancode.insert(Key::Unknown(131), 0x6f); //F20
-        
+
         scancode.insert(Key::Unknown(132), 0x70); //F21
         scancode.insert(Key::Unknown(133), 0x71); //F22
         scancode.insert(Key::Unknown(134), 0x72); //F23

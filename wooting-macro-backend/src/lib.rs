@@ -66,8 +66,7 @@ pub enum ActionEventType {
     },
     //IDEA: Phillips hue notification
     OBSEventAction {},
-    
-    
+
     DiscordEventAction {},
     //IDEA: IKEADesk
     MouseEventAction {
@@ -134,8 +133,7 @@ impl Macro {
                             .await
                             .unwrap();
 
-                        tokio::time::sleep(time::Duration::from_millis(data.press_duration))
-                            .await;
+                        tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
 
                         send_channel
                             .send(rdev::EventType::KeyRelease(
@@ -193,8 +191,8 @@ impl Default for MacroData {
     fn default() -> Self {
         MacroData {
             data: vec![Collection {
-                name: "Default".to_string(),
-                icon: 'i'.to_string(),
+                name: "Collection 1".to_string(),
+                icon: ":smile:".to_string(),
                 macros: vec![],
                 active: true,
             }],
@@ -276,7 +274,6 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
         //Windows requires a delay between each macro execution.
@@ -401,7 +398,6 @@ impl MacroBackend {
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
-                
                 match Ok::<&rdev::Event, rdev::GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
@@ -421,14 +417,19 @@ impl MacroBackend {
                                         .into_iter()
                                         .unique()
                                         .collect();
-                                    println!("Pressed Keys CONVERTED TO HID:  {:?}", pressed_keys_copy_converted);
-                                    println!("Pressed Keys CONVERTED TO RDEV: {:?}",
-                                             pressed_keys_copy_converted
-                                                 .iter()
-                                                 .map(|x| *SCANCODE_TO_RDEV
-                                                     .get(x)
-                                                     .unwrap_or(&rdev::Key::Unknown(0)))
-                                                 .collect::<Vec<rdev::Key>>());
+                                    println!(
+                                        "Pressed Keys CONVERTED TO HID:  {:?}",
+                                        pressed_keys_copy_converted
+                                    );
+                                    println!(
+                                        "Pressed Keys CONVERTED TO RDEV: {:?}",
+                                        pressed_keys_copy_converted
+                                            .iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
                                     if log_enabled!(Level::Info) {
                                         info!(
@@ -545,7 +546,6 @@ impl MacroBackend {
                                     "Passing event through... macro recording disabled: {:?}",
                                     event
                                 );
-
                             }
                             Some(event)
                         }
