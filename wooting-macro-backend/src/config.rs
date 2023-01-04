@@ -88,7 +88,7 @@ impl Default for ApplicationConfig {
         ApplicationConfig {
             auto_start: false,
             default_delay_value: 20,
-            auto_add_delay: true,
+            auto_add_delay: false,
             auto_select_element: true,
             minimize_at_launch: false,
             theme: "light".to_string(),
