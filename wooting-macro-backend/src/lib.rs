@@ -532,9 +532,9 @@ impl MacroBackend {
 
                                     Some(event)
                                 }
-                                rdev::EventType::MouseMove { x, y } => {
-                                    println!("mouse coordinates: x {}, y {}", x, y);
-                                    Some(event)},
+                                rdev::EventType::MouseMove {.. } => 
+                                    
+                                    Some(event),
                                 rdev::EventType::Wheel { delta_x, delta_y } => {
                                     if log_enabled!(Level::Info) {
                                         info!("Scrolled: {:?} {:?}", delta_x, delta_y);

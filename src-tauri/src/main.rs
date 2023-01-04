@@ -7,12 +7,16 @@ extern crate core;
 
 use std::env::current_exe;
 
+use tauri::{
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
+    WindowEvent,
+};
 
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowEvent};
-
-use wooting_macro_backend::*;
 use wooting_macro_backend::config::ApplicationConfig;
 use wooting_macro_backend::config::ConfigFile;
+use wooting_macro_backend::*;
+
+use tauri_plugin_single_instance;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -119,7 +123,7 @@ async fn main() {
 
             match set_autolaunch {
                 true => auto_start.enable().unwrap(),
-                false => auto_start.disable().unwrap_or(())
+                false => auto_start.disable().unwrap_or(()),
             }
 
             Ok(())
@@ -162,12 +166,17 @@ async fn main() {
                 window.hide().unwrap();
             }
         })
-        .on_window_event(move |event| if let WindowEvent::CloseRequested { api, .. } = event.event() {
-            if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
+        .on_window_event(move |event| {
+            if let WindowEvent::CloseRequested { api, .. } = event.event() {
+                if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
-            })
+            }
+        })
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+            println!("{}, {argv:?}, {cwd}", app.package_info().name);
+        }))
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
         .expect("error while running tauri application");
