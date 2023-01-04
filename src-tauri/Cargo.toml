@@ -35,3 +35,5 @@ custom-protocol = [ "tauri/custom-protocol" ]
 git = "https://github.com/tauri-apps/tauri-plugin-single-instance"
 branch = "dev"
 
+[profile.release]
+lto = true

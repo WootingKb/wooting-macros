@@ -247,6 +247,7 @@ pub struct Collection {
 }
 
 ///Executes a given macro (according to its type).
+#[inline(always)]
 async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
@@ -272,6 +273,7 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
+#[inline(always)]
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
@@ -287,6 +289,7 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
 }
 
 /// A more efficient way using hashtable to check whether the trigger keys match the macro.
+#[inline(always)]
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
@@ -299,7 +302,7 @@ fn check_macro_execution_efficiently(
                 if *data == pressed_events {
                     println!("MATCHED MACRO: {:#?}", pressed_events);
 
-                    // ? Kinda works for now but needs to be improved.
+                    // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
                     // pressed_events.iter().for_each(|x| {
                     //     channel_sender
                     //         .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
@@ -366,6 +369,7 @@ impl MacroBackend {
         *self.config.write().await = config;
     }
 
+    #[inline(always)]
     pub async fn init(&self) {
         env_logger::init();
 
