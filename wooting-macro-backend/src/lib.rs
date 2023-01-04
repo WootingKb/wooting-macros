@@ -416,7 +416,6 @@ impl MacroBackend {
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
                                         .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .collect::<Vec<u32>>()
                                         .into_iter()
                                         .unique()
                                         .collect();
