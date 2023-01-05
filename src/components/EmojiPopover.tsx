@@ -33,7 +33,7 @@ export default function EmojiPopover({
       returnFocusOnClose={false}
       isOpen={isEmojiPopoverOpen}
       onClose={onEmojiPopoverClose}
-      closeOnBlur={false}
+      closeOnBlur={true}
       isLazy
     >
       <PopoverTrigger>
