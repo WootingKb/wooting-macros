@@ -38,10 +38,8 @@ use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-/// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
-///
-/// ! **UNIMPLEMENTED** - Only the `Single` macro type is implemented for now. Feel free to contribute ideas.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+///Type of a macro. Currently only Single is implemented. Others have been postponed for now.
 pub enum MacroType {
     Single,
     // Single macro fire
@@ -50,7 +48,7 @@ pub enum MacroType {
     OnHold, // while held Execute macro (repeats)
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 #[serde(tag = "type")]
 /// This enum is the registry for all actions that can be executed.
 pub enum ActionEventType {
@@ -80,7 +78,7 @@ pub enum ActionEventType {
     },
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 #[serde(tag = "type")]
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution.
 ///
@@ -97,8 +95,8 @@ pub enum TriggerEventType {
     //IDEA: computer temperature?
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-/// This is a macro struct. Includes all information a macro needs to run.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
+///This is a macro struct. Includes all information a macro needs to run
 pub struct Macro {
     pub name: String,
     pub icon: String,
@@ -181,7 +179,7 @@ pub struct MacroBackend {
 }
 
 ///MacroData is the main data structure that contains all macro data.
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 pub struct MacroData {
     pub data: Collections,
 }
@@ -243,7 +241,7 @@ impl MacroData {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 /// Collection struct that defines what a group of macros looks like and what properties it carries
 pub struct Collection {
     pub name: String,
@@ -593,5 +591,38 @@ mod tests {
     fn it_works() {
         let result = 2 + 2;
         assert_eq!(result, 4);
+    }
+
+    #[tokio::test]
+    async fn test_create_new_backend_state() {
+        use super::*;
+
+        let macro_data = MacroData::default();
+        let triggers = macro_data.extract_triggers();
+        let result = MacroBackend {
+            data: Arc::new(RwLock::from(macro_data)),
+            config: Arc::new(RwLock::from(ApplicationConfig::default())),
+            triggers: Arc::new(RwLock::from(triggers)),
+            is_listening: Arc::new(AtomicBool::new(true)),
+            display_list: Arc::new(RwLock::from(vec![])),
+        };
+
+        assert_eq!(
+            result.data.read().await.clone(),
+            MacroData {
+                data: vec![Collection {
+                    name: "Collection 1".to_string(),
+                    icon: ":smile:".to_string(),
+                    macros: vec![],
+                    active: true,
+                },],
+            }
+        );
+
+        println!("{:#?}", result.config.read().await);
+        //assert_eq!(result.config.read().await, true);
+        println!("{:#?}", result.triggers.read().await);
+        println!("{:#?}", result.is_listening.load(Ordering::Relaxed));
+        println!("{:#?}", result.display_list.read().await);
     }
 }
