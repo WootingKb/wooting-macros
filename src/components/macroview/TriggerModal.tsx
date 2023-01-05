@@ -19,8 +19,8 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingTrigger from '../../hooks/useRecordingTrigger'
-import { HIDLookup } from '../../maps/HIDmap'
-import { mouseEnumLookup } from '../../maps/MouseMap'
+import { HIDLookup } from '../../constants/HIDmap'
+import { mouseEnumLookup } from '../../constants/MouseMap'
 import { isMouseButtonArray } from '../../constants/utils'
 
 type Props = {

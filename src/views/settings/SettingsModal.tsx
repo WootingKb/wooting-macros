@@ -12,7 +12,7 @@ import {
   Flex
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
-import { settingInfoLookup } from '../../maps/SettingsMap'
+import { settingInfoLookup } from '../../constants/SettingsMap'
 import AccessibilitySettings from './generalPages/AccessibilitySettings'
 import AppearanceSettings from './generalPages/AppearanceSettings'
 import IntegrationSettings from './generalPages/IntegrationSettings'

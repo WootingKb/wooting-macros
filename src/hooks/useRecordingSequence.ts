@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
-import { KeyType } from '../enums'
-import { webCodeHIDLookup } from '../maps/HIDmap'
-import { webButtonLookup } from '../maps/MouseMap'
+import { KeyType } from '../constants/enums'
+import { webCodeHIDLookup } from '../constants/HIDmap'
+import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
 
 export default function useRecordingSequence(

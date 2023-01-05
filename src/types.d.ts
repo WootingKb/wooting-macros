@@ -1,4 +1,4 @@
-import { MacroType, ViewState, MouseButton } from './enums'
+import { MacroType, ViewState, MouseButton } from './constants/enums'
 
 // Contexts
 export interface CurrentSelection {
@@ -160,18 +160,18 @@ export interface Collection {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "em-emoji": React.DetailedHTMLProps<
+      'em-emoji': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > & {
-        id?: string;
-        shortcodes?: string;
-        native?: string;
-        size?: string | number;
-        fallback?: string;
-        set?: "native" | "apple" | "facebook" | "google" | "twitter";
-        skin?: string | number;
-      };
+        id?: string
+        shortcodes?: string
+        native?: string
+        size?: string | number
+        fallback?: string
+        set?: 'native' | 'apple' | 'facebook' | 'google' | 'twitter'
+        skin?: string | number
+      }
     }
   }
 }

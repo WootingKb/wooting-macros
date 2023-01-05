@@ -10,8 +10,8 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
-import { KeyType } from '../../../enums'
-import { mouseEnumLookup } from '../../../maps/MouseMap'
+import { KeyType } from '../../../constants/enums'
+import { mouseEnumLookup } from '../../../constants/MouseMap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../icons'
 
 export default function MousePressForm() {

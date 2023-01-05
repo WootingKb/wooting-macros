@@ -1,4 +1,4 @@
-import { MouseButton } from "../enums"
+import { MouseButton } from './enums'
 
 export interface MouseInputInfo {
   webButtonVal: number
@@ -8,19 +8,39 @@ export interface MouseInputInfo {
 
 export class MouseInput {
   static get Left(): MouseInputInfo {
-    return { webButtonVal: 0, enumVal: MouseButton.Left, displayString: 'Left Click' }
+    return {
+      webButtonVal: 0,
+      enumVal: MouseButton.Left,
+      displayString: 'Left Click'
+    }
   }
   static get Middle(): MouseInputInfo {
-    return { webButtonVal: 1, enumVal: MouseButton.Middle, displayString: 'Middle Click' }
+    return {
+      webButtonVal: 1,
+      enumVal: MouseButton.Middle,
+      displayString: 'Middle Click'
+    }
   }
   static get Right(): MouseInputInfo {
-    return { webButtonVal: 2, enumVal: MouseButton.Right, displayString: 'Right Click' }
+    return {
+      webButtonVal: 2,
+      enumVal: MouseButton.Right,
+      displayString: 'Right Click'
+    }
   }
   static get Mouse4(): MouseInputInfo {
-    return { webButtonVal: 3, enumVal: MouseButton.Mouse4, displayString: 'Mouse 4' }
+    return {
+      webButtonVal: 3,
+      enumVal: MouseButton.Mouse4,
+      displayString: 'Mouse 4'
+    }
   }
   static get Mouse5(): MouseInputInfo {
-    return { webButtonVal: 4, enumVal: MouseButton.Mouse5, displayString: 'Mouse 5' }
+    return {
+      webButtonVal: 4,
+      enumVal: MouseButton.Mouse5,
+      displayString: 'Mouse 5'
+    }
   }
 
   static readonly all: MouseInputInfo[] = [
@@ -28,7 +48,7 @@ export class MouseInput {
     MouseInput.Middle,
     MouseInput.Right,
     MouseInput.Mouse4,
-    MouseInput.Mouse5,
+    MouseInput.Mouse5
   ]
 }
 

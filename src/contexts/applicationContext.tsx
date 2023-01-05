@@ -9,7 +9,7 @@ import {
   useCallback
 } from 'react'
 import { useToast } from '@chakra-ui/react'
-import { ViewState } from '../enums'
+import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../constants/utils'
 

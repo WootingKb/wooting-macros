@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { MouseButton } from '../enums'
+import { MouseButton } from './enums'
 import { ApplicationConfig, Collection, MacroData } from '../types'
 
 export const updateBackendConfig = (collections: Collection[]) => {

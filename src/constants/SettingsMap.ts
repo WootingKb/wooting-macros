@@ -1,4 +1,4 @@
-import { SettingsCategory } from '../enums'
+import { SettingsCategory } from './enums'
 
 export interface SettingInfo {
   pageIndex: number
@@ -11,49 +11,49 @@ export class SettingsGroup {
     return {
       pageIndex: 0,
       category: SettingsCategory.General,
-      displayString: 'Application',
+      displayString: 'Application'
     }
   }
   static get Appearance(): SettingInfo {
     return {
       pageIndex: 1,
       category: SettingsCategory.General,
-      displayString: 'Appearance',
+      displayString: 'Appearance'
     }
   }
   static get Accessibility(): SettingInfo {
     return {
       pageIndex: 2,
       category: SettingsCategory.General,
-      displayString: 'Accessibility',
+      displayString: 'Accessibility'
     }
   }
   static get Language(): SettingInfo {
     return {
       pageIndex: 3,
       category: SettingsCategory.General,
-      displayString: 'Language',
+      displayString: 'Language'
     }
   }
   static get Integration(): SettingInfo {
     return {
       pageIndex: 4,
       category: SettingsCategory.General,
-      displayString: 'Integrations',
+      displayString: 'Integrations'
     }
   }
   static get Updates(): SettingInfo {
     return {
       pageIndex: 5,
       category: SettingsCategory.Other,
-      displayString: 'Patch Notes',
+      displayString: 'Patch Notes'
     }
   }
   static get Support(): SettingInfo {
     return {
       pageIndex: 6,
       category: SettingsCategory.Other,
-      displayString: 'Help & Guides',
+      displayString: 'Help & Guides'
     }
   }
 

@@ -1,4 +1,4 @@
-import { PluginGroup } from "../enums"
+import { PluginGroup } from './enums'
 
 export interface PluginEventInfo {
   pluginGroup: PluginGroup

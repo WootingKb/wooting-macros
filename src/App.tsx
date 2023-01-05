@@ -1,7 +1,7 @@
 import { appWindow, PhysicalSize } from '@tauri-apps/api/window'
 import { Flex, useDisclosure, Text, Box } from '@chakra-ui/react'
 import Overview from './views/Overview'
-import { ViewState } from './enums'
+import { ViewState } from './constants/enums'
 import { useApplicationContext } from './contexts/applicationContext'
 import Macroview from './views/Macroview'
 import { useEffect } from 'react'
@@ -24,14 +24,23 @@ function App() {
   if (!initComplete) {
     return (
       <Flex h="100vh" justifyContent="center" alignItems="center">
-        <Text fontSize="2xl" fontWeight="bold">Loading</Text>
+        <Text fontSize="2xl" fontWeight="bold">
+          Loading
+        </Text>
       </Flex>
     )
   }
 
   return (
     <Flex h="100vh" pos="relative" direction="column">
-      <Box zIndex={-10} pos="absolute" w="full" h="full" opacity={0.15} backgroundImage="url('/keycapPattern.png')" />
+      <Box
+        zIndex={-10}
+        pos="absolute"
+        w="full"
+        h="full"
+        opacity={0.15}
+        backgroundImage="url('/keycapPattern.png')"
+      />
       {viewState === ViewState.Overview && (
         <Overview onOpenSettingsModal={onOpen} />
       )}

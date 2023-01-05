@@ -1,10 +1,11 @@
-import { HIDCategory } from '../enums'
+import { HIDCategory } from './enums'
 
 export interface HidInfo {
   HIDcode: number
   category: HIDCategory
   displayString: string
   webKeyId: string
+  requiresLongDisplay: boolean
 }
 
 export class Hid {
@@ -13,7 +14,8 @@ export class Hid {
       HIDcode: 4,
       category: HIDCategory.Alphanumeric,
       displayString: 'A',
-      webKeyId: 'KeyA'
+      webKeyId: 'KeyA',
+      requiresLongDisplay: false
     }
   }
   static get B(): HidInfo {
@@ -21,7 +23,8 @@ export class Hid {
       HIDcode: 5,
       category: HIDCategory.Alphanumeric,
       displayString: 'B',
-      webKeyId: 'KeyB'
+      webKeyId: 'KeyB',
+      requiresLongDisplay: false
     }
   }
   static get C(): HidInfo {
@@ -29,7 +32,8 @@ export class Hid {
       HIDcode: 6,
       category: HIDCategory.Alphanumeric,
       displayString: 'C',
-      webKeyId: 'KeyC'
+      webKeyId: 'KeyC',
+      requiresLongDisplay: false
     }
   }
   static get D(): HidInfo {
@@ -37,7 +41,8 @@ export class Hid {
       HIDcode: 7,
       category: HIDCategory.Alphanumeric,
       displayString: 'D',
-      webKeyId: 'KeyD'
+      webKeyId: 'KeyD',
+      requiresLongDisplay: false
     }
   }
   static get E(): HidInfo {
@@ -45,7 +50,8 @@ export class Hid {
       HIDcode: 8,
       category: HIDCategory.Alphanumeric,
       displayString: 'E',
-      webKeyId: 'KeyE'
+      webKeyId: 'KeyE',
+      requiresLongDisplay: false
     }
   }
   static get F(): HidInfo {
@@ -53,7 +59,8 @@ export class Hid {
       HIDcode: 9,
       category: HIDCategory.Alphanumeric,
       displayString: 'F',
-      webKeyId: 'KeyF'
+      webKeyId: 'KeyF',
+      requiresLongDisplay: false
     }
   }
 
@@ -62,7 +69,8 @@ export class Hid {
       HIDcode: 10,
       category: HIDCategory.Alphanumeric,
       displayString: 'G',
-      webKeyId: 'KeyG'
+      webKeyId: 'KeyG',
+      requiresLongDisplay: false
     }
   }
   static get H(): HidInfo {
@@ -70,7 +78,8 @@ export class Hid {
       HIDcode: 11,
       category: HIDCategory.Alphanumeric,
       displayString: 'H',
-      webKeyId: 'KeyH'
+      webKeyId: 'KeyH',
+      requiresLongDisplay: false
     }
   }
   static get I(): HidInfo {
@@ -78,7 +87,8 @@ export class Hid {
       HIDcode: 12,
       category: HIDCategory.Alphanumeric,
       displayString: 'I',
-      webKeyId: 'KeyI'
+      webKeyId: 'KeyI',
+      requiresLongDisplay: false
     }
   }
   static get J(): HidInfo {
@@ -86,7 +96,8 @@ export class Hid {
       HIDcode: 13,
       category: HIDCategory.Alphanumeric,
       displayString: 'J',
-      webKeyId: 'KeyJ'
+      webKeyId: 'KeyJ',
+      requiresLongDisplay: false
     }
   }
   static get K(): HidInfo {
@@ -94,7 +105,8 @@ export class Hid {
       HIDcode: 14,
       category: HIDCategory.Alphanumeric,
       displayString: 'K',
-      webKeyId: 'KeyK'
+      webKeyId: 'KeyK',
+      requiresLongDisplay: false
     }
   }
   static get L(): HidInfo {
@@ -102,7 +114,8 @@ export class Hid {
       HIDcode: 15,
       category: HIDCategory.Alphanumeric,
       displayString: 'L',
-      webKeyId: 'KeyL'
+      webKeyId: 'KeyL',
+      requiresLongDisplay: false
     }
   }
   static get M(): HidInfo {
@@ -110,7 +123,8 @@ export class Hid {
       HIDcode: 16,
       category: HIDCategory.Alphanumeric,
       displayString: 'M',
-      webKeyId: 'KeyM'
+      webKeyId: 'KeyM',
+      requiresLongDisplay: false
     }
   }
   static get N(): HidInfo {
@@ -118,7 +132,8 @@ export class Hid {
       HIDcode: 17,
       category: HIDCategory.Alphanumeric,
       displayString: 'N',
-      webKeyId: 'KeyN'
+      webKeyId: 'KeyN',
+      requiresLongDisplay: false
     }
   }
   static get O(): HidInfo {
@@ -126,7 +141,8 @@ export class Hid {
       HIDcode: 18,
       category: HIDCategory.Alphanumeric,
       displayString: 'O',
-      webKeyId: 'KeyO'
+      webKeyId: 'KeyO',
+      requiresLongDisplay: false
     }
   }
   static get P(): HidInfo {
@@ -134,7 +150,8 @@ export class Hid {
       HIDcode: 19,
       category: HIDCategory.Alphanumeric,
       displayString: 'P',
-      webKeyId: 'KeyP'
+      webKeyId: 'KeyP',
+      requiresLongDisplay: false
     }
   }
 
@@ -143,7 +160,8 @@ export class Hid {
       HIDcode: 20,
       category: HIDCategory.Alphanumeric,
       displayString: 'Q',
-      webKeyId: 'KeyQ'
+      webKeyId: 'KeyQ',
+      requiresLongDisplay: false
     }
   }
   static get R(): HidInfo {
@@ -151,7 +169,8 @@ export class Hid {
       HIDcode: 21,
       category: HIDCategory.Alphanumeric,
       displayString: 'R',
-      webKeyId: 'KeyR'
+      webKeyId: 'KeyR',
+      requiresLongDisplay: false
     }
   }
   static get S(): HidInfo {
@@ -159,7 +178,8 @@ export class Hid {
       HIDcode: 22,
       category: HIDCategory.Alphanumeric,
       displayString: 'S',
-      webKeyId: 'KeyS'
+      webKeyId: 'KeyS',
+      requiresLongDisplay: false
     }
   }
   static get T(): HidInfo {
@@ -167,7 +187,8 @@ export class Hid {
       HIDcode: 23,
       category: HIDCategory.Alphanumeric,
       displayString: 'T',
-      webKeyId: 'KeyT'
+      webKeyId: 'KeyT',
+      requiresLongDisplay: false
     }
   }
   static get U(): HidInfo {
@@ -175,7 +196,8 @@ export class Hid {
       HIDcode: 24,
       category: HIDCategory.Alphanumeric,
       displayString: 'U',
-      webKeyId: 'KeyU'
+      webKeyId: 'KeyU',
+      requiresLongDisplay: false
     }
   }
   static get V(): HidInfo {
@@ -183,7 +205,8 @@ export class Hid {
       HIDcode: 25,
       category: HIDCategory.Alphanumeric,
       displayString: 'V',
-      webKeyId: 'KeyV'
+      webKeyId: 'KeyV',
+      requiresLongDisplay: false
     }
   }
   static get W(): HidInfo {
@@ -191,7 +214,8 @@ export class Hid {
       HIDcode: 26,
       category: HIDCategory.Alphanumeric,
       displayString: 'W',
-      webKeyId: 'KeyW'
+      webKeyId: 'KeyW',
+      requiresLongDisplay: false
     }
   }
   static get X(): HidInfo {
@@ -199,7 +223,8 @@ export class Hid {
       HIDcode: 27,
       category: HIDCategory.Alphanumeric,
       displayString: 'X',
-      webKeyId: 'KeyX'
+      webKeyId: 'KeyX',
+      requiresLongDisplay: false
     }
   }
   static get Y(): HidInfo {
@@ -207,7 +232,8 @@ export class Hid {
       HIDcode: 28,
       category: HIDCategory.Alphanumeric,
       displayString: 'Y',
-      webKeyId: 'KeyY'
+      webKeyId: 'KeyY',
+      requiresLongDisplay: false
     }
   }
   static get Z(): HidInfo {
@@ -215,7 +241,8 @@ export class Hid {
       HIDcode: 29,
       category: HIDCategory.Alphanumeric,
       displayString: 'Z',
-      webKeyId: 'KeyZ'
+      webKeyId: 'KeyZ',
+      requiresLongDisplay: false
     }
   }
 
@@ -224,7 +251,8 @@ export class Hid {
       HIDcode: 30,
       category: HIDCategory.Alphanumeric,
       displayString: '1',
-      webKeyId: 'Digit1'
+      webKeyId: 'Digit1',
+      requiresLongDisplay: false
     }
   }
   static get N2(): HidInfo {
@@ -232,7 +260,8 @@ export class Hid {
       HIDcode: 31,
       category: HIDCategory.Alphanumeric,
       displayString: '2',
-      webKeyId: 'Digit2'
+      webKeyId: 'Digit2',
+      requiresLongDisplay: false
     }
   }
   static get N3(): HidInfo {
@@ -240,7 +269,8 @@ export class Hid {
       HIDcode: 32,
       category: HIDCategory.Alphanumeric,
       displayString: '3',
-      webKeyId: 'Digit3'
+      webKeyId: 'Digit3',
+      requiresLongDisplay: false
     }
   }
   static get N4(): HidInfo {
@@ -248,7 +278,8 @@ export class Hid {
       HIDcode: 33,
       category: HIDCategory.Alphanumeric,
       displayString: '4',
-      webKeyId: 'Digit4'
+      webKeyId: 'Digit4',
+      requiresLongDisplay: false
     }
   }
   static get N5(): HidInfo {
@@ -256,7 +287,8 @@ export class Hid {
       HIDcode: 34,
       category: HIDCategory.Alphanumeric,
       displayString: '5',
-      webKeyId: 'Digit5'
+      webKeyId: 'Digit5',
+      requiresLongDisplay: false
     }
   }
   static get N6(): HidInfo {
@@ -264,7 +296,8 @@ export class Hid {
       HIDcode: 35,
       category: HIDCategory.Alphanumeric,
       displayString: '6',
-      webKeyId: 'Digit6'
+      webKeyId: 'Digit6',
+      requiresLongDisplay: false
     }
   }
   static get N7(): HidInfo {
@@ -272,7 +305,8 @@ export class Hid {
       HIDcode: 36,
       category: HIDCategory.Alphanumeric,
       displayString: '7',
-      webKeyId: 'Digit7'
+      webKeyId: 'Digit7',
+      requiresLongDisplay: false
     }
   }
   static get N8(): HidInfo {
@@ -280,7 +314,8 @@ export class Hid {
       HIDcode: 37,
       category: HIDCategory.Alphanumeric,
       displayString: '8',
-      webKeyId: 'Digit8'
+      webKeyId: 'Digit8',
+      requiresLongDisplay: false
     }
   }
   static get N9(): HidInfo {
@@ -288,7 +323,8 @@ export class Hid {
       HIDcode: 38,
       category: HIDCategory.Alphanumeric,
       displayString: '9',
-      webKeyId: 'Digit9'
+      webKeyId: 'Digit9',
+      requiresLongDisplay: false
     }
   }
   static get N0(): HidInfo {
@@ -296,7 +332,8 @@ export class Hid {
       HIDcode: 39,
       category: HIDCategory.Alphanumeric,
       displayString: '0',
-      webKeyId: 'Digit0'
+      webKeyId: 'Digit0',
+      requiresLongDisplay: false
     }
   }
 
@@ -305,7 +342,8 @@ export class Hid {
       HIDcode: 40,
       category: HIDCategory.Alphanumeric,
       displayString: 'Enter',
-      webKeyId: 'Enter'
+      webKeyId: 'Enter',
+      requiresLongDisplay: false
     }
   }
   static get ESCAPE(): HidInfo {
@@ -313,7 +351,8 @@ export class Hid {
       HIDcode: 41,
       category: HIDCategory.Alphanumeric,
       displayString: 'Escape',
-      webKeyId: 'Escape'
+      webKeyId: 'Escape',
+      requiresLongDisplay: true
     }
   }
   static get BACKSPACE(): HidInfo {
@@ -321,7 +360,8 @@ export class Hid {
       HIDcode: 42,
       category: HIDCategory.Alphanumeric,
       displayString: 'Backspace',
-      webKeyId: 'Backspace'
+      webKeyId: 'Backspace',
+      requiresLongDisplay: true
     }
   }
   static get TAB(): HidInfo {
@@ -329,7 +369,8 @@ export class Hid {
       HIDcode: 43,
       category: HIDCategory.Alphanumeric,
       displayString: 'Tab',
-      webKeyId: 'Tab'
+      webKeyId: 'Tab',
+      requiresLongDisplay: false
     }
   }
   static get SPACE(): HidInfo {
@@ -337,7 +378,8 @@ export class Hid {
       HIDcode: 44,
       category: HIDCategory.Alphanumeric,
       displayString: 'Space',
-      webKeyId: 'Space'
+      webKeyId: 'Space',
+      requiresLongDisplay: true
     }
   }
   static get MINUS(): HidInfo {
@@ -345,7 +387,8 @@ export class Hid {
       HIDcode: 45,
       category: HIDCategory.Alphanumeric,
       displayString: '-',
-      webKeyId: 'Minus'
+      webKeyId: 'Minus',
+      requiresLongDisplay: false
     }
   }
   static get EQUAL(): HidInfo {
@@ -353,7 +396,8 @@ export class Hid {
       HIDcode: 46,
       category: HIDCategory.Alphanumeric,
       displayString: '=',
-      webKeyId: 'Equal'
+      webKeyId: 'Equal',
+      requiresLongDisplay: false
     }
   }
   static get BRACKETL(): HidInfo {
@@ -361,7 +405,8 @@ export class Hid {
       HIDcode: 47,
       category: HIDCategory.Alphanumeric,
       displayString: '[',
-      webKeyId: 'BracketLeft'
+      webKeyId: 'BracketLeft',
+      requiresLongDisplay: false
     }
   }
   static get BRACKETR(): HidInfo {
@@ -369,7 +414,8 @@ export class Hid {
       HIDcode: 48,
       category: HIDCategory.Alphanumeric,
       displayString: ']',
-      webKeyId: 'BracketRight'
+      webKeyId: 'BracketRight',
+      requiresLongDisplay: false
     }
   }
   static get BACKSLASH(): HidInfo {
@@ -377,7 +423,8 @@ export class Hid {
       HIDcode: 49,
       category: HIDCategory.Alphanumeric,
       displayString: '\\',
-      webKeyId: 'Backslash'
+      webKeyId: 'Backslash',
+      requiresLongDisplay: false
     }
   }
 
@@ -386,7 +433,8 @@ export class Hid {
       HIDcode: 51,
       category: HIDCategory.Alphanumeric,
       displayString: ';',
-      webKeyId: 'Semicolon'
+      webKeyId: 'Semicolon',
+      requiresLongDisplay: false
     }
   }
   static get QUOTE(): HidInfo {
@@ -394,7 +442,8 @@ export class Hid {
       HIDcode: 52,
       category: HIDCategory.Alphanumeric,
       displayString: '"',
-      webKeyId: 'Quote'
+      webKeyId: 'Quote',
+      requiresLongDisplay: false
     }
   }
   static get BACKQUOTE(): HidInfo {
@@ -402,7 +451,8 @@ export class Hid {
       HIDcode: 53,
       category: HIDCategory.Alphanumeric,
       displayString: '`',
-      webKeyId: 'Backquote'
+      webKeyId: 'Backquote',
+      requiresLongDisplay: false
     }
   }
   static get COMMA(): HidInfo {
@@ -410,7 +460,8 @@ export class Hid {
       HIDcode: 54,
       category: HIDCategory.Alphanumeric,
       displayString: ',',
-      webKeyId: 'Comma'
+      webKeyId: 'Comma',
+      requiresLongDisplay: false
     }
   }
   static get PERIOD(): HidInfo {
@@ -418,7 +469,8 @@ export class Hid {
       HIDcode: 55,
       category: HIDCategory.Alphanumeric,
       displayString: '.',
-      webKeyId: 'Period'
+      webKeyId: 'Period',
+      requiresLongDisplay: false
     }
   }
   static get SLASH(): HidInfo {
@@ -426,7 +478,8 @@ export class Hid {
       HIDcode: 56,
       category: HIDCategory.Alphanumeric,
       displayString: '/',
-      webKeyId: 'Slash'
+      webKeyId: 'Slash',
+      requiresLongDisplay: false
     }
   }
   static get CAPSLOCK(): HidInfo {
@@ -434,7 +487,8 @@ export class Hid {
       HIDcode: 57,
       category: HIDCategory.Alphanumeric,
       displayString: 'Caps Lock',
-      webKeyId: 'CapsLock'
+      webKeyId: 'CapsLock',
+      requiresLongDisplay: true
     }
   }
   static get F1(): HidInfo {
@@ -442,7 +496,8 @@ export class Hid {
       HIDcode: 58,
       category: HIDCategory.Function,
       displayString: 'F1',
-      webKeyId: 'F1'
+      webKeyId: 'F1',
+      requiresLongDisplay: false
     }
   }
   static get F2(): HidInfo {
@@ -450,7 +505,8 @@ export class Hid {
       HIDcode: 59,
       category: HIDCategory.Function,
       displayString: 'F2',
-      webKeyId: 'F2'
+      webKeyId: 'F2',
+      requiresLongDisplay: false
     }
   }
 
@@ -459,7 +515,8 @@ export class Hid {
       HIDcode: 60,
       category: HIDCategory.Function,
       displayString: 'F3',
-      webKeyId: 'F3'
+      webKeyId: 'F3',
+      requiresLongDisplay: false
     }
   }
   static get F4(): HidInfo {
@@ -467,7 +524,8 @@ export class Hid {
       HIDcode: 61,
       category: HIDCategory.Function,
       displayString: 'F4',
-      webKeyId: 'F4'
+      webKeyId: 'F4',
+      requiresLongDisplay: false
     }
   }
   static get F5(): HidInfo {
@@ -475,7 +533,8 @@ export class Hid {
       HIDcode: 62,
       category: HIDCategory.Function,
       displayString: 'F5',
-      webKeyId: 'F5'
+      webKeyId: 'F5',
+      requiresLongDisplay: false
     }
   }
   static get F6(): HidInfo {
@@ -483,7 +542,8 @@ export class Hid {
       HIDcode: 63,
       category: HIDCategory.Function,
       displayString: 'F6',
-      webKeyId: 'F6'
+      webKeyId: 'F6',
+      requiresLongDisplay: false
     }
   }
   static get F7(): HidInfo {
@@ -491,7 +551,8 @@ export class Hid {
       HIDcode: 64,
       category: HIDCategory.Function,
       displayString: 'F7',
-      webKeyId: 'F7'
+      webKeyId: 'F7',
+      requiresLongDisplay: false
     }
   }
   static get F8(): HidInfo {
@@ -499,7 +560,8 @@ export class Hid {
       HIDcode: 65,
       category: HIDCategory.Function,
       displayString: 'F8',
-      webKeyId: 'F8'
+      webKeyId: 'F8',
+      requiresLongDisplay: false
     }
   }
   static get F9(): HidInfo {
@@ -507,7 +569,8 @@ export class Hid {
       HIDcode: 66,
       category: HIDCategory.Function,
       displayString: 'F9',
-      webKeyId: 'F9'
+      webKeyId: 'F9',
+      requiresLongDisplay: false
     }
   }
   static get F10(): HidInfo {
@@ -515,7 +578,8 @@ export class Hid {
       HIDcode: 67,
       category: HIDCategory.Function,
       displayString: 'F10',
-      webKeyId: 'F10'
+      webKeyId: 'F10',
+      requiresLongDisplay: false
     }
   }
   static get F11(): HidInfo {
@@ -523,7 +587,8 @@ export class Hid {
       HIDcode: 68,
       category: HIDCategory.Function,
       displayString: 'F11',
-      webKeyId: 'F11'
+      webKeyId: 'F11',
+      requiresLongDisplay: false
     }
   }
   static get F12(): HidInfo {
@@ -531,7 +596,8 @@ export class Hid {
       HIDcode: 69,
       category: HIDCategory.Function,
       displayString: 'F12',
-      webKeyId: 'F12'
+      webKeyId: 'F12',
+      requiresLongDisplay: false
     }
   }
 
@@ -540,7 +606,8 @@ export class Hid {
       HIDcode: 70,
       category: HIDCategory.Modifier,
       displayString: 'Print Screen',
-      webKeyId: 'PrintScreen'
+      webKeyId: 'PrintScreen',
+      requiresLongDisplay: true
     }
   }
   static get SCROLLLOCK(): HidInfo {
@@ -548,7 +615,8 @@ export class Hid {
       HIDcode: 71,
       category: HIDCategory.Modifier,
       displayString: 'Scroll Lock',
-      webKeyId: 'ScrollLock'
+      webKeyId: 'ScrollLock',
+      requiresLongDisplay: true
     }
   }
   static get PAUSE(): HidInfo {
@@ -556,7 +624,8 @@ export class Hid {
       HIDcode: 72,
       category: HIDCategory.Modifier,
       displayString: 'Pause',
-      webKeyId: 'Pause'
+      webKeyId: 'Pause',
+      requiresLongDisplay: false
     }
   }
   static get INSERT(): HidInfo {
@@ -564,7 +633,8 @@ export class Hid {
       HIDcode: 73,
       category: HIDCategory.Navigation,
       displayString: 'Insert',
-      webKeyId: 'Insert'
+      webKeyId: 'Insert',
+      requiresLongDisplay: false
     }
   }
   static get HOME(): HidInfo {
@@ -572,7 +642,8 @@ export class Hid {
       HIDcode: 74,
       category: HIDCategory.Navigation,
       displayString: 'Home',
-      webKeyId: 'Home'
+      webKeyId: 'Home',
+      requiresLongDisplay: false
     }
   }
   static get PAGEUP(): HidInfo {
@@ -580,7 +651,8 @@ export class Hid {
       HIDcode: 75,
       category: HIDCategory.Navigation,
       displayString: 'Page Up',
-      webKeyId: 'PageUp'
+      webKeyId: 'PageUp',
+      requiresLongDisplay: true
     }
   }
   static get DELETE(): HidInfo {
@@ -588,7 +660,8 @@ export class Hid {
       HIDcode: 76,
       category: HIDCategory.Navigation,
       displayString: 'Delete',
-      webKeyId: 'Delete'
+      webKeyId: 'Delete',
+      requiresLongDisplay: false
     }
   }
   static get END(): HidInfo {
@@ -596,7 +669,8 @@ export class Hid {
       HIDcode: 77,
       category: HIDCategory.Navigation,
       displayString: 'End',
-      webKeyId: 'End'
+      webKeyId: 'End',
+      requiresLongDisplay: false
     }
   }
   static get PAGEDOWN(): HidInfo {
@@ -604,7 +678,8 @@ export class Hid {
       HIDcode: 78,
       category: HIDCategory.Navigation,
       displayString: 'Page Down',
-      webKeyId: 'PageDown'
+      webKeyId: 'PageDown',
+      requiresLongDisplay: true
     }
   }
   static get ARROWR(): HidInfo {
@@ -612,7 +687,8 @@ export class Hid {
       HIDcode: 79,
       category: HIDCategory.Navigation,
       displayString: 'Right Arrow',
-      webKeyId: 'ArrowRight'
+      webKeyId: 'ArrowRight',
+      requiresLongDisplay: true
     }
   }
 
@@ -621,7 +697,8 @@ export class Hid {
       HIDcode: 80,
       category: HIDCategory.Navigation,
       displayString: 'Left Arrow',
-      webKeyId: 'ArrowLeft'
+      webKeyId: 'ArrowLeft',
+      requiresLongDisplay: true
     }
   }
   static get ARROWD(): HidInfo {
@@ -629,7 +706,8 @@ export class Hid {
       HIDcode: 81,
       category: HIDCategory.Navigation,
       displayString: 'Down Arrow',
-      webKeyId: 'ArrowDown'
+      webKeyId: 'ArrowDown',
+      requiresLongDisplay: true
     }
   }
   static get ARROWU(): HidInfo {
@@ -637,7 +715,8 @@ export class Hid {
       HIDcode: 82,
       category: HIDCategory.Navigation,
       displayString: 'Up Arrow',
-      webKeyId: 'ArrowUp'
+      webKeyId: 'ArrowUp',
+      requiresLongDisplay: true
     }
   }
   static get NUMLOCK(): HidInfo {
@@ -645,7 +724,8 @@ export class Hid {
       HIDcode: 83,
       category: HIDCategory.Numpad,
       displayString: 'Num Lock',
-      webKeyId: 'NumLock'
+      webKeyId: 'NumLock',
+      requiresLongDisplay: true
     }
   }
   static get NUMDIVIDE(): HidInfo {
@@ -653,7 +733,8 @@ export class Hid {
       HIDcode: 84,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Divide',
-      webKeyId: 'NumpadDivide'
+      webKeyId: 'NumpadDivide',
+      requiresLongDisplay: true
     }
   }
   static get NUMMULTIPLY(): HidInfo {
@@ -661,7 +742,8 @@ export class Hid {
       HIDcode: 85,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Multiply',
-      webKeyId: 'NumpadMultiply'
+      webKeyId: 'NumpadMultiply',
+      requiresLongDisplay: true
     }
   }
   static get NUMSUBTRACT(): HidInfo {
@@ -669,7 +751,8 @@ export class Hid {
       HIDcode: 86,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Subtract',
-      webKeyId: 'NumpadSubtract'
+      webKeyId: 'NumpadSubtract',
+      requiresLongDisplay: true
     }
   }
   static get NUMADD(): HidInfo {
@@ -677,7 +760,8 @@ export class Hid {
       HIDcode: 87,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Add',
-      webKeyId: 'NumpadAdd'
+      webKeyId: 'NumpadAdd',
+      requiresLongDisplay: true
     }
   }
   static get NUMENTER(): HidInfo {
@@ -685,7 +769,8 @@ export class Hid {
       HIDcode: 88,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Enter',
-      webKeyId: 'NumpadEnter'
+      webKeyId: 'NumpadEnter',
+      requiresLongDisplay: true
     }
   }
   static get NP1(): HidInfo {
@@ -693,7 +778,8 @@ export class Hid {
       HIDcode: 89,
       category: HIDCategory.Numpad,
       displayString: 'NP1',
-      webKeyId: 'Numpad1'
+      webKeyId: 'Numpad1',
+      requiresLongDisplay: false
     }
   }
 
@@ -702,7 +788,8 @@ export class Hid {
       HIDcode: 90,
       category: HIDCategory.Numpad,
       displayString: 'NP2',
-      webKeyId: 'Numpad2'
+      webKeyId: 'Numpad2',
+      requiresLongDisplay: false
     }
   }
   static get NP3(): HidInfo {
@@ -710,7 +797,8 @@ export class Hid {
       HIDcode: 91,
       category: HIDCategory.Numpad,
       displayString: 'NP3',
-      webKeyId: 'Numpad3'
+      webKeyId: 'Numpad3',
+      requiresLongDisplay: false
     }
   }
   static get NP4(): HidInfo {
@@ -718,7 +806,8 @@ export class Hid {
       HIDcode: 92,
       category: HIDCategory.Numpad,
       displayString: 'NP4',
-      webKeyId: 'Numpad4'
+      webKeyId: 'Numpad4',
+      requiresLongDisplay: false
     }
   }
   static get NP5(): HidInfo {
@@ -726,7 +815,8 @@ export class Hid {
       HIDcode: 93,
       category: HIDCategory.Numpad,
       displayString: 'NP5',
-      webKeyId: 'Numpad5'
+      webKeyId: 'Numpad5',
+      requiresLongDisplay: false
     }
   }
   static get NP6(): HidInfo {
@@ -734,7 +824,8 @@ export class Hid {
       HIDcode: 94,
       category: HIDCategory.Numpad,
       displayString: 'NP6',
-      webKeyId: 'Numpad6'
+      webKeyId: 'Numpad6',
+      requiresLongDisplay: false
     }
   }
   static get NP7(): HidInfo {
@@ -742,7 +833,8 @@ export class Hid {
       HIDcode: 95,
       category: HIDCategory.Numpad,
       displayString: 'NP7',
-      webKeyId: 'Numpad7'
+      webKeyId: 'Numpad7',
+      requiresLongDisplay: false
     }
   }
   static get NP8(): HidInfo {
@@ -750,7 +842,8 @@ export class Hid {
       HIDcode: 96,
       category: HIDCategory.Numpad,
       displayString: 'NP8',
-      webKeyId: 'Numpad8'
+      webKeyId: 'Numpad8',
+      requiresLongDisplay: false
     }
   }
   static get NP9(): HidInfo {
@@ -758,7 +851,8 @@ export class Hid {
       HIDcode: 97,
       category: HIDCategory.Numpad,
       displayString: 'NP9',
-      webKeyId: 'Numpad9'
+      webKeyId: 'Numpad9',
+      requiresLongDisplay: false
     }
   }
   static get NP0(): HidInfo {
@@ -766,7 +860,8 @@ export class Hid {
       HIDcode: 98,
       category: HIDCategory.Numpad,
       displayString: 'NP0',
-      webKeyId: 'Numpad0'
+      webKeyId: 'Numpad0',
+      requiresLongDisplay: false
     }
   }
   static get NUMDECIMAL(): HidInfo {
@@ -774,7 +869,8 @@ export class Hid {
       HIDcode: 99,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Decimal',
-      webKeyId: 'NumpadDecimal'
+      webKeyId: 'NumpadDecimal',
+      requiresLongDisplay: true
     }
   }
 
@@ -783,7 +879,8 @@ export class Hid {
       HIDcode: 104,
       category: HIDCategory.Function,
       displayString: 'F13',
-      webKeyId: 'F13'
+      webKeyId: 'F13',
+      requiresLongDisplay: false
     }
   }
   static get F14(): HidInfo {
@@ -791,7 +888,8 @@ export class Hid {
       HIDcode: 105,
       category: HIDCategory.Function,
       displayString: 'F14',
-      webKeyId: 'F14'
+      webKeyId: 'F14',
+      requiresLongDisplay: false
     }
   }
   static get F15(): HidInfo {
@@ -799,7 +897,8 @@ export class Hid {
       HIDcode: 106,
       category: HIDCategory.Function,
       displayString: 'F15',
-      webKeyId: 'F15'
+      webKeyId: 'F15',
+      requiresLongDisplay: false
     }
   }
   static get F16(): HidInfo {
@@ -807,7 +906,8 @@ export class Hid {
       HIDcode: 107,
       category: HIDCategory.Function,
       displayString: 'F16',
-      webKeyId: 'F16'
+      webKeyId: 'F16',
+      requiresLongDisplay: false
     }
   }
   static get F17(): HidInfo {
@@ -815,7 +915,8 @@ export class Hid {
       HIDcode: 108,
       category: HIDCategory.Function,
       displayString: 'F17',
-      webKeyId: 'F17'
+      webKeyId: 'F17',
+      requiresLongDisplay: false
     }
   }
   static get F18(): HidInfo {
@@ -823,7 +924,8 @@ export class Hid {
       HIDcode: 109,
       category: HIDCategory.Function,
       displayString: 'F18',
-      webKeyId: 'F18'
+      webKeyId: 'F18',
+      requiresLongDisplay: false
     }
   }
   static get F19(): HidInfo {
@@ -831,7 +933,8 @@ export class Hid {
       HIDcode: 110,
       category: HIDCategory.Function,
       displayString: 'F19',
-      webKeyId: 'F19'
+      webKeyId: 'F19',
+      requiresLongDisplay: false
     }
   }
   static get F20(): HidInfo {
@@ -839,7 +942,8 @@ export class Hid {
       HIDcode: 111,
       category: HIDCategory.Function,
       displayString: 'F20',
-      webKeyId: 'F20'
+      webKeyId: 'F20',
+      requiresLongDisplay: false
     }
   }
   static get F21(): HidInfo {
@@ -847,7 +951,8 @@ export class Hid {
       HIDcode: 112,
       category: HIDCategory.Function,
       displayString: 'F21',
-      webKeyId: 'F21'
+      webKeyId: 'F21',
+      requiresLongDisplay: false
     }
   }
   static get F22(): HidInfo {
@@ -855,7 +960,8 @@ export class Hid {
       HIDcode: 113,
       category: HIDCategory.Function,
       displayString: 'F22',
-      webKeyId: 'F22'
+      webKeyId: 'F22',
+      requiresLongDisplay: false
     }
   }
   static get F23(): HidInfo {
@@ -863,7 +969,8 @@ export class Hid {
       HIDcode: 114,
       category: HIDCategory.Function,
       displayString: 'F23',
-      webKeyId: 'F23'
+      webKeyId: 'F23',
+      requiresLongDisplay: false
     }
   }
   static get F24(): HidInfo {
@@ -871,7 +978,8 @@ export class Hid {
       HIDcode: 115,
       category: HIDCategory.Function,
       displayString: 'F24',
-      webKeyId: 'F24'
+      webKeyId: 'F24',
+      requiresLongDisplay: false
     }
   }
 
@@ -880,7 +988,8 @@ export class Hid {
       HIDcode: 224,
       category: HIDCategory.Modifier,
       displayString: 'L-CTRL',
-      webKeyId: 'ControlLeft'
+      webKeyId: 'ControlLeft',
+      requiresLongDisplay: false
     }
   }
   static get SHIFTL(): HidInfo {
@@ -888,7 +997,8 @@ export class Hid {
       HIDcode: 225,
       category: HIDCategory.Modifier,
       displayString: 'L-SHIFT',
-      webKeyId: 'ShiftLeft'
+      webKeyId: 'ShiftLeft',
+      requiresLongDisplay: false
     }
   }
   static get ALTL(): HidInfo {
@@ -896,15 +1006,17 @@ export class Hid {
       HIDcode: 226,
       category: HIDCategory.Modifier,
       displayString: 'L-ALT',
-      webKeyId: 'AltLeft'
+      webKeyId: 'AltLeft',
+      requiresLongDisplay: false
     }
   }
   static get METAL(): HidInfo {
     return {
       HIDcode: 227,
       category: HIDCategory.Modifier,
-      displayString: 'L-Meta',
-      webKeyId: 'MetaLeft'
+      displayString: 'L-Win/Super/Command',
+      webKeyId: 'MetaLeft',
+      requiresLongDisplay: true
     }
   }
   static get CONTROLR(): HidInfo {
@@ -912,7 +1024,8 @@ export class Hid {
       HIDcode: 228,
       category: HIDCategory.Modifier,
       displayString: 'R-CTRL',
-      webKeyId: 'ControlRight'
+      webKeyId: 'ControlRight',
+      requiresLongDisplay: false
     }
   }
   static get SHIFTR(): HidInfo {
@@ -920,7 +1033,8 @@ export class Hid {
       HIDcode: 229,
       category: HIDCategory.Modifier,
       displayString: 'R-SHIFT',
-      webKeyId: 'ShiftRight'
+      webKeyId: 'ShiftRight',
+      requiresLongDisplay: false
     }
   }
   static get ALTR(): HidInfo {
@@ -928,15 +1042,17 @@ export class Hid {
       HIDcode: 230,
       category: HIDCategory.Modifier,
       displayString: 'R-ALT',
-      webKeyId: 'AltRight'
+      webKeyId: 'AltRight',
+      requiresLongDisplay: false
     }
   }
   static get METAR(): HidInfo {
     return {
       HIDcode: 231,
       category: HIDCategory.Modifier,
-      displayString: 'R-Meta',
-      webKeyId: 'MetaRight'
+      displayString: 'R-Win/Super/Command',
+      webKeyId: 'MetaRight',
+      requiresLongDisplay: true
     }
   }
 
@@ -989,8 +1105,8 @@ export class Hid {
     Hid.NP9,
     Hid.ENTER,
     Hid.ESCAPE,
-    Hid.BACKSPACE,
     Hid.TAB,
+    Hid.BACKSPACE,
     Hid.SPACE,
     Hid.MINUS,
     Hid.EQUAL,
@@ -1002,8 +1118,8 @@ export class Hid {
     Hid.BACKQUOTE,
     Hid.COMMA,
     Hid.PERIOD,
-    Hid.SLASH,
     Hid.CAPSLOCK,
+    Hid.SLASH,
     Hid.F1,
     Hid.F2,
     Hid.F3,

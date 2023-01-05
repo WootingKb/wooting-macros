@@ -8,8 +8,8 @@ import {
   StackDivider
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../contexts/macroContext'
-import { HIDLookup } from '../../maps/HIDmap'
-import { mouseEnumLookup } from '../../maps/MouseMap'
+import { HIDLookup } from '../../constants/HIDmap'
+import { mouseEnumLookup } from '../../constants/MouseMap'
 
 type Props = {
   onOpen: () => void
@@ -44,8 +44,7 @@ export default function TriggerArea({ onOpen }: Props) {
         justifyContent="center"
         bg={secondBg}
         rounded="md"
-        py="1"
-        px="2"
+        p="9px"
         shadow="inner"
       >
         {macro.trigger.type === 'KeyPressEvent' &&

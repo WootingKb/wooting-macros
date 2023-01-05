@@ -38,7 +38,7 @@ import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingSequence from '../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../contexts/settingsContext'
-import { KeyType } from '../../enums'
+import { KeyType } from '../../constants/enums'
 import {
   scrollbarsStylesDark,
   scrollbarStylesLight

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
-import { sysEventLookup } from '../../../maps/SystemEventMap'
+import { sysEventLookup } from '../../../constants/SystemEventMap'
 
 export default function OpenEventForm() {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()

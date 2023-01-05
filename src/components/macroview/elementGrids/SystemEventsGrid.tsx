@@ -1,26 +1,25 @@
-import { SimpleGrid } from '@chakra-ui/react'
-import { SystemEvent, SystemEventInfo } from '../../../maps/SystemEventMap'
+import { AspectRatio, SimpleGrid } from '@chakra-ui/react'
+import { SystemEventInfo } from '../../../constants/SystemEventMap'
 import SequenceElementButton from '../SequenceElementButton'
 
 type Props = {
-  searchValue: string
+  elementsToRender: SystemEventInfo[]
 }
 
-export default function SystemEventsGrid({ searchValue }: Props) {
+export default function SystemEventsGrid({ elementsToRender }: Props) {
   return (
     <SimpleGrid
       h="fit"
-      columns={[1, 2]}
+      columns={{
+        base: 2,
+        md: 3,
+        xl: 4
+      }}
       px={4}
       spacing={2}
     >
-      {SystemEvent.all
-        .filter((element) =>
-          element.displayString
-            .toLowerCase()
-            .includes(searchValue.toLowerCase())
-        )
-        .map((info: SystemEventInfo) => (
+      {elementsToRender.map((info: SystemEventInfo) => (
+        <AspectRatio ratio={2 / 1}>
           <SequenceElementButton
             key={info.displayString}
             displayText={info.displayString}
@@ -29,7 +28,8 @@ export default function SystemEventsGrid({ searchValue }: Props) {
               data: info.defaultData
             }}
           />
-        ))}
+        </AspectRatio>
+      ))}
     </SimpleGrid>
   )
 }

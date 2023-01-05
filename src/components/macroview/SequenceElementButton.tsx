@@ -11,16 +11,16 @@ type Props = {
 
 export default function SequenceElementButton({
   properties,
-  displayText
+  displayText,
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
-  const bg = useColorModeValue('primary-light.50', 'primary-dark.800')
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const textColor = useColorModeValue('bg-dark', 'bg-light')
-  const hoverBg = useColorModeValue('primary-light.100', 'primary-dark.700')
+  const hoverBg = useColorModeValue('primary-light.100', 'primary-dark.600')
   const borderColour = useColorModeValue(
     'primary-light.300',
-    'primary-dark.700'
+    'primary-dark.600'
   )
 
   const handleAddElement = useCallback(() => {
@@ -51,6 +51,7 @@ export default function SequenceElementButton({
   return (
     <Box
       w="full"
+      h="full"
       as="button"
       bg={bg}
       p={2}

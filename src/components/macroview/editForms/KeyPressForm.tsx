@@ -10,8 +10,8 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
-import { KeyType } from '../../../enums'
-import { HIDLookup } from '../../../maps/HIDmap'
+import { KeyType } from '../../../constants/enums'
+import { HIDLookup } from '../../../constants/HIDmap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../icons'
 
 export default function KeyPressForm() {
@@ -65,7 +65,7 @@ export default function KeyPressForm() {
       data: { ...selectedElement.data, press_duration: keypressDuration }
     }
     updateElement(temp, selectedElementId)
-  },[keypressDuration, selectedElement, selectedElementId, updateElement])
+  }, [keypressDuration, selectedElement, selectedElementId, updateElement])
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {

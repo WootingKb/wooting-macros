@@ -16,7 +16,7 @@ import {
 } from '../../constants/utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { ViewState } from '../../enums'
+import { ViewState } from '../../constants/enums'
 import { Collection, Macro } from '../../types'
 import MacroCard from './MacroCard'
 
@@ -43,7 +43,7 @@ export default function MacroList() {
     <Box
       w="full"
       h="full"
-      p={"25px"}
+      p={'25px'}
       overflow="hidden"
       overflowY="auto"
       sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
@@ -51,7 +51,7 @@ export default function MacroList() {
       <Grid
         w="full"
         templateColumns={['repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        gap={"25px"}
+        gap={'25px'}
       >
         <Flex h="full" justifyContent="center" alignItems="center">
           <VStack

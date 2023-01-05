@@ -11,9 +11,9 @@ import {
 } from '@chakra-ui/react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
-import { HIDLookup } from '../../../maps/HIDmap'
-import { mouseEnumLookup } from '../../../maps/MouseMap'
-import { sysEventLookup } from '../../../maps/SystemEventMap'
+import { HIDLookup } from '../../../constants/HIDmap'
+import { mouseEnumLookup } from '../../../constants/MouseMap'
+import { sysEventLookup } from '../../../constants/SystemEventMap'
 import { ActionEventType } from '../../../types'
 import {
   DownArrowIcon,
@@ -147,7 +147,13 @@ export default function SortableItem({ id, element }: Props) {
   }
 
   return (
-    <HStack w="full" h="full" justifyContent="space-around" spacing="0px" onClick={onEditButtonPress}>
+    <HStack
+      w="full"
+      h="full"
+      justifyContent="space-around"
+      spacing="0px"
+      onClick={onEditButtonPress}
+    >
       <HStack p={1} px={2} w="full">
         {iconToDisplay}
         <Text

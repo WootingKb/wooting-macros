@@ -1,5 +1,5 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react'
-import { SettingInfo } from '../../maps/SettingsMap'
+import { SettingInfo } from '../../constants/SettingsMap'
 
 type Props = {
   setting: SettingInfo

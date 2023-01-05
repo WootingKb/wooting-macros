@@ -18,10 +18,10 @@ import {
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
-import { HIDLookup } from '../../maps/HIDmap'
+import { HIDLookup } from '../../constants/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { mouseEnumLookup } from '../../maps/MouseMap'
+import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback } from 'react'
 import { KebabVertical } from '../icons'
 
@@ -41,10 +41,6 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const subtextColour = useColorModeValue(
     'primary-light.600',
     'primary-dark.400'
-  )
-  const borderColour = useColorModeValue(
-    'primary-light.300',
-    'primary-dark.700'
   )
 
   const onToggle = useCallback(

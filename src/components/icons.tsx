@@ -14,16 +14,16 @@ import {
 import { GoKebabVertical } from 'react-icons/go'
 
 export const KeyboardIcon = (props: IconProps) => {
-  return <Icon as={RxKeyboard} boxSize={6} {...props} />
+  return <Icon as={RxKeyboard} boxSize={5} {...props} />
 }
 export const MouseIcon = (props: IconProps) => {
-  return <Icon as={MdOutlineMouse} boxSize={6} {...props} />
+  return <Icon as={MdOutlineMouse} boxSize={5} {...props} />
 }
 export const SystemIcon = (props: IconProps) => {
-  return <Icon as={MdOutlineComputer} boxSize={6} {...props} />
+  return <Icon as={MdOutlineComputer} boxSize={5} {...props} />
 }
 export const IntegrationIcon = (props: IconProps) => {
-  return <Icon as={HiOutlinePuzzlePiece} boxSize={6} {...props} />
+  return <Icon as={HiOutlinePuzzlePiece} boxSize={5} {...props} />
 }
 export const DiscordIcon = (props: IconProps) => {
   return <Icon as={FaDiscord} boxSize={6} {...props} />

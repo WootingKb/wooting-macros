@@ -8,8 +8,8 @@ import {
   Flex
 } from '@chakra-ui/react'
 import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
-import { SettingsCategory } from '../../enums'
-import { SettingsGroup } from '../../maps/SettingsMap'
+import { SettingsCategory } from '../../constants/enums'
+import { SettingsGroup } from '../../constants/SettingsMap'
 import SettingsButton from './SettingsButton'
 import { type, version } from '@tauri-apps/api/os'
 import { getVersion } from '@tauri-apps/api/app'

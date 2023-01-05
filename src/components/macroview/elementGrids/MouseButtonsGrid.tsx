@@ -1,26 +1,25 @@
-import { SimpleGrid } from '@chakra-ui/react'
-import { MouseInput, MouseInputInfo } from '../../../maps/MouseMap'
+import { AspectRatio, SimpleGrid } from '@chakra-ui/react'
+import { MouseInputInfo } from '../../../constants/MouseMap'
 import SequenceElementButton from '../SequenceElementButton'
 
 type Props = {
-  searchValue: string
+  elementsToRender: MouseInputInfo[]
 }
 
-export default function MouseButtonsGrid({ searchValue }: Props) {
+export default function MouseButtonsGrid({ elementsToRender }: Props) {
   return (
     <SimpleGrid
       h="fit"
-      columns={[1, 2]}
+      columns={{
+        base: 2,
+        md: 4,
+        xl: 6
+      }}
       px={4}
       spacing={2}
     >
-      {MouseInput.all
-        .filter((element) =>
-          element.displayString
-            .toLowerCase()
-            .includes(searchValue.toLowerCase())
-        )
-        .map((info: MouseInputInfo) => (
+      {elementsToRender.map((info: MouseInputInfo) => (
+        <AspectRatio ratio={2 / 1}>
           <SequenceElementButton
             key={info.webButtonVal}
             displayText={info.displayString}
@@ -36,7 +35,8 @@ export default function MouseButtonsGrid({ searchValue }: Props) {
               }
             }}
           />
-        ))}
+        </AspectRatio>
+      ))}
     </SimpleGrid>
   )
 }

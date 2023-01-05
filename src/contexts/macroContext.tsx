@@ -7,7 +7,7 @@ import {
   useCallback,
   useEffect
 } from 'react'
-import { MacroType, ViewState } from '../enums'
+import { MacroType, ViewState } from '../constants/enums'
 import { MacroState, ActionEventType, Macro, TriggerEventType } from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
@@ -44,8 +44,13 @@ function MacroProvider({ children }: MacroProviderProps) {
   const [isUpdatingMacro, setIsUpdatingMacro] = useState(false)
   const currentMacro = useSelectedMacro()
   const currentCollection = useSelectedCollection()
-  const { collections, viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
-    useApplicationContext()
+  const {
+    collections,
+    viewState,
+    selection,
+    onCollectionUpdate,
+    changeSelectedMacroIndex
+  } = useApplicationContext()
   const { config } = useSettingsContext()
 
   const willCauseTriggerLooping = useMemo(() => {
@@ -115,7 +120,13 @@ function MacroProvider({ children }: MacroProviderProps) {
       }
     }
     return willTriggerAnotherMacro
-  }, [collections, macro.trigger.data, macro.trigger.type, selection.macroIndex, sequence])
+  }, [
+    collections,
+    macro.trigger.data,
+    macro.trigger.type,
+    selection.macroIndex,
+    sequence
+  ])
   const canSaveMacro = useMemo(() => {
     if (
       (macro.trigger.type === 'KeyPressEvent' &&
