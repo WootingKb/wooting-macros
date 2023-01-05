@@ -21,12 +21,12 @@ export const Button = defineStyleConfig({
       }
     }),
     brandSecondary: (props: StyleFunctionProps) => ({
-      bg: mode('primary-light.50', 'primary-dark.800')(props),
+      bg: mode('primary-light.50', 'primary-dark.700')(props),
       transition: "ease-out 150ms",
       _hover: {
-        bg: mode('primary-light.100', 'primary-dark.700')(props),
+        bg: mode('primary-light.100', 'primary-dark.600')(props),
         _disabled: {
-          bg: mode('primary-light.50', 'primary-dark.800')(props),
+          bg: mode('primary-light.50', 'primary-dark.700')(props),
           opacity: 0.5
         }
       },
@@ -94,17 +94,17 @@ export const Button = defineStyleConfig({
       _active: { bg: mode('red.300', 'red.700')(props) }
     }),
     brandWarning: (props: StyleFunctionProps) => ({
-      bg: mode('red.300', 'red.400')(props),
+      bg: mode('red.200', 'red.300')(props),
       color: 'bg-dark',
       _hover: {
-        bg: mode('red.400', 'red.300')(props),
+        bg: mode('red.300', 'red.200')(props),
         _disabled: {
-          bg: mode('red.300', 'red.400')(props),
+          bg: mode('red.200', 'red.300')(props),
           opacity: 0.5
         }
       },
       _disabled: {
-        bg: mode('red.300', 'red.400')(props),
+        bg: mode('red.200', 'red.300')(props),
         opacity: 0.5
       }
     })

@@ -1,6 +1,6 @@
 import { AspectRatio, SimpleGrid } from '@chakra-ui/react'
 import { MouseInputInfo } from '../../../constants/MouseMap'
-import SequenceElementButton from '../SequenceElementButton'
+import SelectElementButton from '../SelectElementButton'
 
 type Props = {
   elementsToRender: MouseInputInfo[]
@@ -20,7 +20,7 @@ export default function MouseButtonsGrid({ elementsToRender }: Props) {
     >
       {elementsToRender.map((info: MouseInputInfo) => (
         <AspectRatio ratio={2 / 1} key={info.webButtonVal}>
-          <SequenceElementButton
+          <SelectElementButton
             displayText={info.displayString}
             properties={{
               type: 'MouseEventAction',

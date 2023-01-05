@@ -1,6 +1,6 @@
 import { AspectRatio, SimpleGrid } from '@chakra-ui/react'
 import { SystemEventInfo } from '../../../constants/SystemEventMap'
-import SequenceElementButton from '../SequenceElementButton'
+import SelectElementButton from '../SelectElementButton'
 
 type Props = {
   elementsToRender: SystemEventInfo[]
@@ -20,7 +20,7 @@ export default function SystemEventsGrid({ elementsToRender }: Props) {
     >
       {elementsToRender.map((info: SystemEventInfo) => (
         <AspectRatio ratio={2 / 1} key={info.displayString}>
-          <SequenceElementButton
+          <SelectElementButton
             displayText={info.displayString}
             properties={{
               type: 'SystemEventAction',

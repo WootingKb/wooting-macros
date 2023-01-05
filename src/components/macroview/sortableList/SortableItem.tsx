@@ -1,4 +1,4 @@
-import { RepeatClockIcon, EditIcon } from '@chakra-ui/icons'
+import { TimeIcon, EditIcon } from '@chakra-ui/icons'
 import {
   Divider,
   HStack,
@@ -7,7 +7,8 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Text
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -30,12 +31,19 @@ type Props = {
 export default function SortableItem({ id, element }: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
+  const [isKeyboardKey, setIsKeyboardKey] = useState(false)
   const {
     selectedElementId,
     onElementAdd,
     onElementDelete,
     updateSelectedElementId
   } = useMacroContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const kebabHoverColour = useColorModeValue(
+    'primary-light.900',
+    'primary-dark.400'
+  )
 
   const onDuplicate = useCallback(() => {
     const newElement = { ...element }
@@ -47,16 +55,19 @@ export default function SortableItem({ id, element }: Props) {
       case 'KeyPressEventAction':
         setDisplayText(HIDLookup.get(element.data.keypress)?.displayString)
         setIsEditable(true)
+        setIsKeyboardKey(true)
         break
       case 'DelayEventAction':
         setDisplayText(element.data.toString() + ' ms')
         setIsEditable(true)
+        setIsKeyboardKey(false)
         break
       case 'MouseEventAction':
         setDisplayText(
           mouseEnumLookup.get(element.data.data.button)?.displayString
         )
         setIsEditable(true)
+        setIsKeyboardKey(false)
         break
       case 'SystemEventAction':
         switch (element.data.type) {
@@ -65,12 +76,14 @@ export default function SortableItem({ id, element }: Props) {
               sysEventLookup.get(element.data.action.type)?.displayString
             )
             setIsEditable(true)
+            setIsKeyboardKey(false)
             break
           case 'Volume':
             setDisplayText(
               sysEventLookup.get(element.data.action.type)?.displayString
             )
             setIsEditable(false)
+            setIsKeyboardKey(false)
             break
           case 'Clipboard':
             setDisplayText(
@@ -79,12 +92,15 @@ export default function SortableItem({ id, element }: Props) {
             switch (element.data.action.type) {
               case 'PasteUserDefinedString':
                 setIsEditable(true)
+                setIsKeyboardKey(false)
                 break
               case 'Sarcasm':
                 setIsEditable(false)
+                setIsKeyboardKey(false)
                 break
               default:
                 setIsEditable(false)
+                setIsKeyboardKey(false)
                 break
             }
             break
@@ -93,10 +109,12 @@ export default function SortableItem({ id, element }: Props) {
               sysEventLookup.get(element.data.action.type)?.displayString
             )
             setIsEditable(true)
+            setIsKeyboardKey(false)
             break
           default:
             setDisplayText('err')
             setIsEditable(false)
+            setIsKeyboardKey(false)
             break
         }
         break
@@ -108,7 +126,7 @@ export default function SortableItem({ id, element }: Props) {
   const iconToDisplay = useMemo(() => {
     switch (element.type) {
       case 'DelayEventAction':
-        return <RepeatClockIcon />
+        return <TimeIcon />
       case 'KeyPressEventAction':
         if (element.data.keytype === 'DownUp') {
           return <DownUpArrowsIcon />
@@ -154,19 +172,25 @@ export default function SortableItem({ id, element }: Props) {
       spacing="0px"
       onClick={onEditButtonPress}
     >
-      <HStack p={1} px={2} w="full">
+      <HStack p={1} px={2} w="full" spacing={0} gap={4}>
         {iconToDisplay}
         <Text
+          bg={isKeyboardKey ? bg : 'none'}
+          border={isKeyboardKey ? '1px solid' : 'none'}
+          borderColor={kebabColour}
+          py={isKeyboardKey ? 1 : 0}
+          px={isKeyboardKey ? 3 : 0}
           fontWeight={
             selectedElementId !== undefined && id === selectedElementId + 1
               ? 'bold'
               : 'normal'
           }
+          rounded="md"
         >
           {displayText}
         </Text>
       </HStack>
-      <HStack p={2} h="full">
+      <HStack py={2} pr={4} h="full" spacing={0} gap={3} alignItems="flex-end">
         {isEditable && (
           <IconButton
             variant="brandSecondary"
@@ -178,20 +202,13 @@ export default function SortableItem({ id, element }: Props) {
         )}
         <Menu variant="brand">
           <MenuButton
-            as={IconButton}
+            h="24px"
             aria-label="Kebab Menu Button"
-            icon={
-              <KebabVertical
-                color={
-                  selectedElementId !== undefined &&
-                  id === selectedElementId + 1
-                    ? 'primary-accent.600'
-                    : ''
-                }
-              />
-            }
-            variant="link"
-          />
+            color={kebabColour}
+            _hover={{ color: kebabHoverColour }}
+          >
+            <KebabVertical />
+          </MenuButton>
           <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             <Divider />

@@ -56,7 +56,8 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
     >
       <Center
         {...listeners}
-        p={2}
+        py={2}
+        px={4}
         h="full"
         bg={handleBg}
         roundedLeft="md"

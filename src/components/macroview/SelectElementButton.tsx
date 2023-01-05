@@ -9,9 +9,9 @@ type Props = {
   displayText: string
 }
 
-export default function SequenceElementButton({
+export default function SelectElementButton({
   properties,
-  displayText,
+  displayText
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()

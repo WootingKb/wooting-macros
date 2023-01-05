@@ -20,7 +20,7 @@ import { HIDCategory, KeyType } from '../../../constants/enums'
 import { Hid, HidInfo } from '../../../constants/HIDmap'
 import { SystemEvent } from '../../../constants/SystemEventMap'
 import { SystemIcon, KeyboardIcon, MouseIcon } from '../../icons'
-import SequenceElementButton from '../SequenceElementButton'
+import SelectElementButton from '../SelectElementButton'
 import MouseButtonsGrid from './MouseButtonsGrid'
 import SystemEventsGrid from './SystemEventsGrid'
 import { MouseInput } from '../../../constants/MouseMap'
@@ -31,7 +31,7 @@ type Props = {
 
 export default function AllElementsGrid({ searchValue }: Props) {
   const { colorMode } = useColorMode()
-  const accordionBg = useColorModeValue('primary-light.100', 'primary-dark.800')
+  const accordionBg = useColorModeValue('primary-light.50', 'primary-dark.800')
 
   const systemEventElements = useMemo(() => {
     return SystemEvent.all.filter((element) =>
@@ -119,7 +119,7 @@ export default function AllElementsGrid({ searchValue }: Props) {
                 <AccordionIcon boxSize={6} />
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4} px={0} bg={accordionBg}>
+            <AccordionPanel pb={4} px={0} bg={accordionBg} shadow="inner">
               <SystemEventsGrid elementsToRender={systemEventElements} />
             </AccordionPanel>
           </AccordionItem>
@@ -147,7 +147,7 @@ export default function AllElementsGrid({ searchValue }: Props) {
                       <AccordionIcon boxSize={6} />
                     </AccordionButton>
                   </h2>
-                  <AccordionPanel pb={4} px={0} bg={accordionBg}>
+                  <AccordionPanel pb={4} px={0} bg={accordionBg} shadow="inner">
                     <Grid
                       w="full"
                       h="fit"
@@ -169,7 +169,7 @@ export default function AllElementsGrid({ searchValue }: Props) {
                               h="full"
                               ratio={HIDinfo.requiresLongDisplay ? 2 / 1 : 1}
                             >
-                              <SequenceElementButton
+                              <SelectElementButton
                                 displayText={HIDinfo.displayString}
                                 properties={{
                                   type: 'KeyPressEventAction',
@@ -207,7 +207,7 @@ export default function AllElementsGrid({ searchValue }: Props) {
                 <AccordionIcon boxSize={6} />
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4} px={0} bg={accordionBg}>
+            <AccordionPanel pb={4} px={0} bg={accordionBg} shadow="inner">
               <MouseButtonsGrid elementsToRender={mouseElements} />
             </AccordionPanel>
           </AccordionItem>

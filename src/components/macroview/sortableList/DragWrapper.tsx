@@ -37,7 +37,14 @@ export default function DragWrapper({ id, element, children }: Props) {
       }
       shadow={shadowColour}
     >
-      <Center p={2} h="full" bg={handleBg} roundedLeft="md" cursor="grab">
+      <Center
+        py={2}
+        px={4}
+        h="full"
+        bg={handleBg}
+        roundedLeft="md"
+        cursor="grab"
+      >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Center>
       {children}

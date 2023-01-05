@@ -11,7 +11,7 @@ export const Textarea = defineStyleConfig({
       shadow: 'inner'
     }),
     brandAccent: (props: StyleFunctionProps) => ({
-      bg: mode('blue.50', 'primary-dark.800')(props),
+      bg: mode('blue.50', 'gray.800')(props),
       border: '1px solid',
       borderColor: mode('primary-light.100', 'primary-dark.700')(props),
       shadow: 'inner'

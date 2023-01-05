@@ -39,7 +39,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     return isMouseButtonArray(items)
   }, [items])
   const [isAllowed, setIsAllowed] = useState(false)
-  const secondBg = useColorModeValue('blue.50', 'primary-dark.800')
+  const secondBg = useColorModeValue('blue.50', 'gray.800')
 
   const getTriggerCanSave = useMemo((): boolean => {
     if (items.length === 0) {

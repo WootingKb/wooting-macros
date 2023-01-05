@@ -98,12 +98,13 @@ export default function Header({ isEditing }: Props) {
         bg={bg}
         w="full"
         h={{ base: '80px', md: '100px', xl: '120px' }}
-        p="2"
+        py={2}
+        px={{base: 2, md: 4, xl: 6}}
         gap={4}
         shadow={shadowColour}
         justifyContent="space-between"
       >
-        <Flex w="50%" h="full" alignItems="center" gap="4">
+        <Flex maxW="400px" h="full" alignItems="center" gap="4">
           <IconButton
             aria-label="Back Button"
             variant="brand"
@@ -158,26 +159,28 @@ export default function Header({ isEditing }: Props) {
           />
         </Flex>
         {/* <MacroTypeArea /> */}
-        <TriggerArea onOpen={onTriggerModalOpen} />
-        <Tooltip
-          variant="brand"
-          label={saveButtonTooltipText}
-          aria-label="Save Button Tooltip"
-          placement="bottom-start"
-          hasArrow
-          rounded="sm"
-        >
-          <Box>
-            <Button
-              size={{ base: 'md', lg: 'lg' }}
-              variant="yellowGradient"
-              isDisabled={!canSaveMacro}
-              onClick={updateMacro}
-            >
-              Save Macro
-            </Button>
-          </Box>
-        </Tooltip>
+        <Flex maxW="700px" flexGrow={1} gap={4} alignItems="center">
+          <TriggerArea onOpen={onTriggerModalOpen} />
+          <Tooltip
+            variant="brand"
+            label={saveButtonTooltipText}
+            aria-label="Save Button Tooltip"
+            placement="bottom-start"
+            hasArrow
+            rounded="sm"
+          >
+            <Box>
+              <Button
+                size={{ base: 'md', lg: 'lg' }}
+                variant="yellowGradient"
+                isDisabled={!canSaveMacro}
+                onClick={updateMacro}
+              >
+                Save Macro
+              </Button>
+            </Box>
+          </Tooltip>
+        </Flex>
       </HStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}

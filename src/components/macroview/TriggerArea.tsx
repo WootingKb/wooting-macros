@@ -5,7 +5,7 @@ import {
   Button,
   Text,
   useColorModeValue,
-  StackDivider
+  StackDivider,
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../contexts/macroContext'
 import { HIDLookup } from '../../constants/HIDmap'
@@ -17,13 +17,12 @@ type Props = {
 
 export default function TriggerArea({ onOpen }: Props) {
   const { macro } = useMacroContext()
-  const secondBg = useColorModeValue('blue.50', 'primary-dark.800')
+  const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('sm', 'white-sm')
 
   return (
     <HStack
-      w="fit"
-      minW="40%"
+      w="full"
       h="fit"
       py={2}
       px={4}

@@ -23,17 +23,17 @@ export const Input = helpers.defineMultiStyleConfig({
     brandAccent: (props: StyleFunctionProps) => ({
       addon: {},
       field: {
-        bg: mode('blue.50', 'primary-dark.800')(props),
+        bg: mode('blue.50', 'gray.800')(props),
         border: '1px solid',
         borderColor: mode('primary-light.100', 'primary-dark.800')(props),
-        shadow: "inner",
+        shadow: 'inner',
         _focus: {
           outline: '1px solid',
-          outlineColor: mode('blue.50', 'primary-dark.500')(props)
+          outlineColor: mode('primary-light.100', 'primary-dark.700')(props)
         },
         _invalid: { outlineColor: 'red.500' }
       },
       element: {}
-    }),
+    })
   }
 })

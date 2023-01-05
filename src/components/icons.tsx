@@ -41,5 +41,5 @@ export const DownUpArrowsIcon = (props: IconProps) => {
   return <Icon as={HiArrowsUpDown} boxSize={6} {...props} />
 }
 export const KebabVertical = (props: IconProps) => {
-  return <Icon as={GoKebabVertical} boxSize={6} {...props} />
+  return <Icon as={GoKebabVertical} w={2} h={6} {...props} />
 }

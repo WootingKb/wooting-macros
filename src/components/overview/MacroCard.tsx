@@ -36,10 +36,15 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
     useApplicationContext()
   const currentCollection = useSelectedCollection()
   const bg = useColorModeValue('bg-light', 'primary-dark.900')
-  const secondBg = useColorModeValue('blue.50', 'primary-dark.800')
+  const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('md', 'white-md')
   const subtextColour = useColorModeValue(
     'primary-light.600',
+    'primary-dark.400'
+  )
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const kebabHoverColour = useColorModeValue(
+    'primary-light.900',
     'primary-dark.400'
   )
 
@@ -71,20 +76,22 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       spacing="8px"
     >
       {/** Top Row */}
-      <HStack w="full" justifyContent="space-between">
-        <Flex w="full" gap="8px" alignItems="center">
+      <HStack w="full" justifyContent="space-between" alignItems="flex-end" spacing={0}>
+        <Flex w="full" gap={2} alignItems="center">
           <Box maxHeight="32px" cursor="default">
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
-          <Text fontWeight="semibold">{macro.name}</Text>
+          <Text textStyle="name" fontWeight="semibold" fontSize="2xl">{macro.name}</Text>
         </Flex>
         <Menu variant="brand">
           <MenuButton
-            as={IconButton}
+          h="24px"
             aria-label="Kebab Menu Button"
-            icon={<KebabVertical color="primary-accent.500" />}
-            variant="link"
-          />
+            color={kebabColour}
+            _hover={{ color: kebabHoverColour }}
+          >
+            <KebabVertical />
+          </MenuButton>
           <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
