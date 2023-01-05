@@ -7,7 +7,8 @@ import {
   useColorModeValue,
   useDisclosure,
   Input,
-  Tooltip
+  Tooltip,
+  Box
 } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
@@ -133,16 +134,19 @@ export default function CollectionPanel() {
               }
               aria-label="Collection delete button tooltip"
               hasArrow
+              placement="bottom-start"
             >
-              <Button
-                leftIcon={<DeleteIcon />}
-                variant="brandWarning"
-                size="md"
-                isDisabled={collections.length <= 1}
-                onClick={onDeleteModalOpen}
-              >
-                Delete Collection
-              </Button>
+              <Box>
+                <Button
+                  leftIcon={<DeleteIcon />}
+                  variant="brandWarning"
+                  size="md"
+                  isDisabled={collections.length <= 1}
+                  onClick={onDeleteModalOpen}
+                >
+                  Delete Collection
+                </Button>
+              </Box>
             </Tooltip>
           </HStack>
         </HStack>
