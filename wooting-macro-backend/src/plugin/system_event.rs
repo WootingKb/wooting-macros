@@ -161,7 +161,7 @@ impl SystemAction {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq)]
 /// Monitor information.
 pub struct Monitor {
     pub device_id: String,

@@ -594,6 +594,7 @@ mod tests {
     }
 
     #[tokio::test]
+    /// This test is probably useless for now but i want to benchmark stuff 
     async fn test_create_new_backend_state() {
         use super::*;
 
@@ -619,10 +620,21 @@ mod tests {
             }
         );
 
-        println!("{:#?}", result.config.read().await);
-        //assert_eq!(result.config.read().await, true);
-        println!("{:#?}", result.triggers.read().await);
-        println!("{:#?}", result.is_listening.load(Ordering::Relaxed));
-        println!("{:#?}", result.display_list.read().await);
+        assert_eq!(
+            result.config.read().await.clone(),
+            ApplicationConfig {
+                auto_start: false,
+                default_delay_value: 20,
+                auto_add_delay: false,
+                auto_select_element: true,
+                minimize_at_launch: false,
+                theme: "light".to_string(),
+                minimize_to_tray: true,
+            }
+        );
+
+        assert_eq!(result.triggers.read().await.clone(), halfbrown::HashMap::new());
+        assert_eq!(result.is_listening.load(Ordering::Relaxed), true);
+        assert_eq!(result.display_list.read().await.clone(), Vec::<system_event::Monitor>::new());
     }
 }

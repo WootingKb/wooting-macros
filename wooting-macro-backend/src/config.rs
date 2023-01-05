@@ -118,7 +118,7 @@ const CONFIG_FILE: &str = "config.json";
 /// Macro data file name
 const DATA_FILE: &str = "data_json.json";
 
-#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 /// Configuration of the application, loaded into the state and from this also written to config.
 pub struct ApplicationConfig {
