@@ -16,14 +16,18 @@ export default function SystemEventActionForm({
       case 'Open':
         return <OpenEventForm />
       case 'Volume':
-        return <VolumeControlForm />
+        return <EmptyForm />
       case 'Clipboard':
-        return <ClipboardForm />
+        if (item.action.type === 'PasteUserDefinedString') {
+          return <ClipboardForm />
+        } else {
+          return <EmptyForm />
+        }
       case 'Brightness':
         return <ScreenBrightnessForm />
       default:
         return <EmptyForm />
     }
-  }, [item.type])
+  }, [item.action.type, item.type])
   return SelectedElementFormComponent
 }

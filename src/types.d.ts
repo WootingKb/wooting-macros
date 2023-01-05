@@ -28,6 +28,8 @@ export type MacroState = {
   ids: number[]
   selectedElementId: number | undefined
   isUpdatingMacro: boolean
+  canSaveMacro: boolean
+  willCauseTriggerLooping: boolean
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
   updateMacroType: (newType: MacroType) => void

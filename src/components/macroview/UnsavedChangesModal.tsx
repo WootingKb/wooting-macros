@@ -4,39 +4,41 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
+  Divider,
   Button,
-  Divider
+  ModalFooter
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 
-type Props = { isOpen: boolean; onClose: () => void }
+type Props = {
+  isOpen: boolean
+  onClose: () => void
+}
 
-export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
-  const { onSelectedCollectionDelete } = useApplicationContext()
-
+export default function UnsavedChangesModal({ isOpen, onClose }: Props) {
+  const { changeSelectedMacroIndex } = useApplicationContext()
   const onModalSuccessClose = useCallback(() => {
-    onSelectedCollectionDelete()
+    changeSelectedMacroIndex(undefined)
     onClose()
-  }, [onClose, onSelectedCollectionDelete])
+  }, [changeSelectedMacroIndex, onClose])
 
   return (
-    <Modal variant="brand" isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} variant="brand" onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent p={2}>
-        <ModalHeader>Delete this collection?</ModalHeader>
+        <ModalHeader>You have unsaved changes</ModalHeader>
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
-          This action is irreversible! Any macros within this collection will be
-          lost.
+          Pressing the back button will discard any changes you have made to the
+          macro.
         </ModalBody>
         <ModalFooter>
           <Button mr={3} onClick={onClose}>
-            Close
+            Cancel
           </Button>
           <Button variant="brandWarning" onClick={onModalSuccessClose}>
-            Yes, delete it
+            Yes, discard changes
           </Button>
         </ModalFooter>
       </ModalContent>

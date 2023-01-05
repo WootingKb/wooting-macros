@@ -44,9 +44,97 @@ function MacroProvider({ children }: MacroProviderProps) {
   const [isUpdatingMacro, setIsUpdatingMacro] = useState(false)
   const currentMacro = useSelectedMacro()
   const currentCollection = useSelectedCollection()
-  const { viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
+  const { collections, viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const { config } = useSettingsContext()
+
+  const willCauseTriggerLooping = useMemo(() => {
+    let willTriggerAnotherMacro = false
+
+    for (const collection of collections) {
+      for (let index = 0; index < collection.macros.length; index++) {
+        // skip the old info of the current macro
+        if (index === selection.macroIndex) {
+          continue
+        }
+
+        const macro = collection.macros[index]
+        if (macro.trigger.type === 'KeyPressEvent') {
+          macro.trigger.data.forEach((triggerKey) => {
+            if (
+              sequence.filter(
+                (element) =>
+                  element.type === 'KeyPressEventAction' &&
+                  element.data.keypress === triggerKey
+              ).length > 0
+            ) {
+              willTriggerAnotherMacro = true
+            }
+          })
+        } else {
+          if (
+            sequence.filter(
+              (element) =>
+                element.type === 'MouseEventAction' &&
+                macro.trigger.type === 'MouseEvent' &&
+                element.data.data.button === macro.trigger.data
+            ).length > 0
+          ) {
+            willTriggerAnotherMacro = true
+          }
+        }
+      }
+    }
+    // Has to check the current macro as well, since the current macro's information may not be the same as what is saved
+    if (macro.trigger.type === 'KeyPressEvent') {
+      if (macro.trigger.data.length > 0) {
+        macro.trigger.data.forEach((triggerKey) => {
+          if (
+            sequence.filter(
+              (element) =>
+                element.type === 'KeyPressEventAction' &&
+                element.data.keypress === triggerKey
+            ).length > 0
+          ) {
+            willTriggerAnotherMacro = true
+          }
+        })
+      }
+    } else {
+      if (macro.trigger.data !== undefined) {
+        if (
+          sequence.filter(
+            (element) =>
+              element.type === 'MouseEventAction' &&
+              macro.trigger.type === 'MouseEvent' &&
+              element.data.data.button === macro.trigger.data
+          ).length > 0
+        ) {
+          willTriggerAnotherMacro = true
+        }
+      }
+    }
+    return willTriggerAnotherMacro
+  }, [collections, macro.trigger.data, macro.trigger.type, selection.macroIndex, sequence])
+  const canSaveMacro = useMemo(() => {
+    if (
+      (macro.trigger.type === 'KeyPressEvent' &&
+        macro.trigger.data.length === 0) ||
+      (macro.trigger.type === 'MouseEvent' &&
+        macro.trigger.data === undefined) ||
+      sequence.length === 0 ||
+      willCauseTriggerLooping
+    ) {
+      return false
+    }
+
+    return true
+  }, [
+    macro.trigger.data,
+    macro.trigger.type,
+    sequence.length,
+    willCauseTriggerLooping
+  ])
 
   useEffect(() => {
     if (currentMacro === undefined) {
@@ -145,16 +233,6 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdAdd(newSequence.length)
       setSequence(newSequence)
       if (config.AutoSelectElement) {
-        if (newElement.type === 'SystemEventAction') {
-          if (newElement.data.type === 'Volume') {
-            return
-          } else if (
-            newElement.data.type === 'Clipboard' &&
-            newElement.data.action.type === 'Sarcasm'
-          ) {
-            return
-          }
-        }
         updateSelectedElementId(newSequence.length - 1)
       }
     },
@@ -169,16 +247,6 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdsAdd(newIds.map((i) => i + 1))
       setSequence(newSequence)
       if (config.AutoSelectElement) {
-        if (newElements[1].type === 'SystemEventAction') {
-          if (newElements[1].data.type === 'Volume') {
-            return
-          } else if (
-            newElements[1].data.type === 'Clipboard' &&
-            newElements[1].data.action.type === 'Sarcasm'
-          ) {
-            return
-          }
-        }
         updateSelectedElementId(newSequence.length - 1)
       }
     },
@@ -219,7 +287,10 @@ function MacroProvider({ children }: MacroProviderProps) {
     }
 
     if (macro.name === '') {
-      itemToAdd = { ...itemToAdd, name: `Macro ${currentCollection.macros.length}` }
+      itemToAdd = {
+        ...itemToAdd,
+        name: `Macro ${currentCollection.macros.length}`
+      }
     }
 
     const newCollection = { ...currentCollection }
@@ -260,6 +331,8 @@ function MacroProvider({ children }: MacroProviderProps) {
       ids,
       selectedElementId,
       isUpdatingMacro,
+      canSaveMacro,
+      willCauseTriggerLooping,
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
@@ -284,6 +357,8 @@ function MacroProvider({ children }: MacroProviderProps) {
       ids,
       selectedElementId,
       isUpdatingMacro,
+      canSaveMacro,
+      willCauseTriggerLooping,
       updateMacroName,
       updateMacroIcon,
       updateMacroType,

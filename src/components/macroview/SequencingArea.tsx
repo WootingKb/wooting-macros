@@ -30,7 +30,7 @@ import {
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
@@ -38,7 +38,6 @@ import { Keypress, MousePressAction } from '../../types'
 import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingSequence from '../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../contexts/settingsContext'
-import { useApplicationContext } from '../../contexts/applicationContext'
 import { KeyType } from '../../enums'
 import {
   scrollbarsStylesDark,
@@ -57,13 +56,12 @@ export default function SequencingArea() {
   const {
     sequence,
     ids,
-    macro: currentMacro,
+    willCauseTriggerLooping,
     onElementAdd,
     onElementsAdd,
     updateElement,
     overwriteIds
   } = useMacroContext()
-  const { collections, selection } = useApplicationContext()
   const { config } = useSettingsContext()
   const { colorMode } = useColorMode()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -156,85 +154,6 @@ export default function SequencingArea() {
   const { recording, startRecording, stopRecording } =
     useRecordingSequence(onItemChanged)
 
-  const showAlert = useMemo(() => {
-    // The alert appears based on the current macro's trigger
-    // Need to adjust to properly check if the current macro will trigger another macro; currently it iterates over the trigger of the current macro one by one, but it should be checking for all of them as a group if there are multiple keys
-    // also this whole thing can easily be removed if the backend fixes this issue of macros triggering other macros.
-    // the one thing is, it seems like logitech's software also has this issue, and they don't communicate it to the user.
-    let willTriggerAnotherMacro = false
-
-    for (const collection of collections) {
-      for (let index = 0; index < collection.macros.length; index++) {
-        // skip the old info of the current macro
-        if (index === selection.macroIndex) {
-          continue
-        }
-
-        const macro = collection.macros[index]
-        if (macro.trigger.type === 'KeyPressEvent') {
-          macro.trigger.data.forEach((triggerKey) => {
-            if (
-              sequence.filter(
-                (element) =>
-                  element.type === 'KeyPressEventAction' &&
-                  element.data.keypress === triggerKey
-              ).length > 0
-            ) {
-              willTriggerAnotherMacro = true
-            }
-          })
-        } else {
-          if (
-            sequence.filter(
-              (element) =>
-                element.type === 'MouseEventAction' &&
-                macro.trigger.type === 'MouseEvent' &&
-                element.data.data.button === macro.trigger.data
-            ).length > 0
-          ) {
-            willTriggerAnotherMacro = true
-          }
-        }
-      }
-    }
-    // Has to check the current macro as well, since the current macro's information may not be the same as what is saved
-    if (currentMacro.trigger.type === 'KeyPressEvent') {
-      if (currentMacro.trigger.data.length > 0) {
-        currentMacro.trigger.data.forEach((triggerKey) => {
-          if (
-            sequence.filter(
-              (element) =>
-                element.type === 'KeyPressEventAction' &&
-                element.data.keypress === triggerKey
-            ).length > 0
-          ) {
-            willTriggerAnotherMacro = true
-          }
-        })
-      }
-    } else {
-      if (currentMacro.trigger.data !== undefined) {
-        if (
-          sequence.filter(
-            (element) =>
-              element.type === 'MouseEventAction' &&
-              currentMacro.trigger.type === 'MouseEvent' &&
-              element.data.data.button === currentMacro.trigger.data
-          ).length > 0
-        ) {
-          willTriggerAnotherMacro = true
-        }
-      }
-    }
-    return willTriggerAnotherMacro
-  }, [
-    collections,
-    currentMacro.trigger.data,
-    currentMacro.trigger.type,
-    selection.macroIndex,
-    sequence
-  ])
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -279,9 +198,9 @@ export default function SequencingArea() {
           <Text fontWeight="semibold" fontSize={['sm', 'md']}>
             Sequence
           </Text>
-          {showAlert && (
+          {willCauseTriggerLooping && (
             <Alert
-              status="warning"
+              status="error"
               w={['full', 'fit']}
               rounded="md"
               py="1"

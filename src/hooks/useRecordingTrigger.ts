@@ -5,14 +5,20 @@ import { MouseButton } from '../enums'
 import { webCodeHIDLookup } from '../maps/HIDmap'
 import { webButtonLookup } from '../maps/MouseMap'
 
-export default function useRecordingTrigger(initialItems: number[]) {
+export default function useRecordingTrigger(
+  initialItems: MouseButton | number[]
+) {
   const [recording, setRecording] = useState(false)
   const [items, setItems] = useState<number[]>([])
   const [prevItems, setPrevItems] = useState<number[]>([])
   const toast = useToast()
 
   useEffect(() => {
-    setItems(initialItems)
+    if (Array.isArray(initialItems)) {
+      setItems(initialItems)
+    } else {
+      setItems([initialItems])
+    }
   }, [initialItems])
 
   const resetItems = useCallback(() => {

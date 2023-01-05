@@ -12,11 +12,9 @@ import {
   HStack,
   VStack,
   Kbd,
-  Switch,
-  Stack,
   Flex,
-  Spacer,
-  useColorModeValue
+  useColorModeValue,
+  Switch
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
@@ -31,13 +29,9 @@ type Props = {
 }
 
 export default function TriggerModal({ isOpen, onClose }: Props) {
-  const { macro, updateTrigger, updateAllowWhileOtherKeys } = useMacroContext()
+  const { macro, updateTrigger } = useMacroContext()
   const { recording, startRecording, stopRecording, items, resetItems } =
-    useRecordingTrigger(
-      macro.trigger.type === 'KeyPressEvent'
-        ? macro.trigger.data
-        : [macro.trigger.data]
-    )
+    useRecordingTrigger(macro.trigger.data)
   const isTriggerMousepress = useMemo(() => {
     if (items.length === 0) {
       return true
@@ -72,15 +66,19 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
         data: items[0]
       })
     } else {
-      updateAllowWhileOtherKeys(isAllowed)
-      updateTrigger({
-        type: 'KeyPressEvent',
-        data: items,
-        allow_while_other_keys: isAllowed
-      })
+      if (macro.trigger.type === 'KeyPressEvent') {
+        updateTrigger({ ...macro.trigger, data: items })
+      } else {
+        updateTrigger({
+          ...macro.trigger,
+          type: 'KeyPressEvent',
+          data: items,
+          allow_while_other_keys: false
+        })
+      }
     }
     onClose()
-  }, [isAllowed, items, onClose, updateAllowWhileOtherKeys, updateTrigger])
+  }, [items, macro.trigger, onClose, updateTrigger])
 
   const getDisplayString = useCallback(
     (element: number, isMouseButton: boolean): string => {
@@ -110,54 +108,46 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent p={2}>
         <ModalHeader>Trigger Keys</ModalHeader>
+        <Divider w="90%" alignSelf="center" />
         <ModalBody>
-          <Stack
-            direction="column"
-            justifyContent="space-between"
-            mb={['4', '8']}
-          >
-            <Text fontSize={['xs', 'sm', 'md']}>
-              You can skip this and set it later.
-            </Text>
-            <Divider w="full" alignSelf="center" />
-            <VStack alignItems="start" spacing="0">
-              <Text fontSize={['xs', 'sm', 'md']}>
-                Set any up to 4 keys (1 non-modifer, up to 3 modifiers) or set a
-                single mouse button to use as the trigger.
-              </Text>
-            </VStack>
-            <Flex justifyContent="center" alignItems="center" gap={4}>
-              <HStack
+          <VStack w="full" justifyContent="space-between">
+            <VStack w="full">
+              <Flex
                 w="full"
-                h="40px"
-                justifyContent="center"
                 gap="4px"
                 bg={secondBg}
                 rounded="md"
-                p={2}
+                p="9px"
                 shadow="inner"
               >
+                {items.length === 0 && (
+                  <Text>
+                    Set up to 4 keys* or a mouse button to use as the trigger.
+                  </Text>
+                )}
                 {items.map((element) => (
                   <Kbd variant="brand" key={element}>
                     {getDisplayString(element, isMouseButtonArray(items))}
                   </Kbd>
                 ))}
+              </Flex>
+              <HStack w="full" justifyContent="space-between">
+                <Text fontSize="xs">* (1 non-modifer, up to 3 modifiers)</Text>
+                <Button
+                  variant="brandRecord"
+                  size="sm"
+                  px={4}
+                  leftIcon={<EditIcon />}
+                  onClick={recording ? stopRecording : startRecording}
+                  isActive={recording}
+                >
+                  {recording ? 'Stop' : 'Record'}
+                </Button>
               </HStack>
-              <Spacer />
-              <Button
-                variant="brandRecord"
-                size="sm"
-                px={4}
-                leftIcon={<EditIcon />}
-                onClick={recording ? stopRecording : startRecording}
-                isActive={recording}
-              >
-                {recording ? 'Stop' : 'Record'}
-              </Button>
-            </Flex>
-          </Stack>
+            </VStack>
+          </VStack>
           <Divider w="full" alignSelf="center" my={['4', '8']} />
           <VStack alignItems="start">
             <HStack w="full" justifyContent="space-between" gap={4}>
@@ -172,12 +162,15 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 onChange={() => setIsAllowed(!isAllowed)}
               />
             </HStack>
-            <Text fontSize={['xs', 'sm', 'md']}>
-              When enabled, the macro will activate when only the trigger keys
-              are being pressed. When disabled, the macro will activate even if
-              the trigger keys are pressed with other keys. (Only matters if the
-              trigger is a keypress / keypresses)
-            </Text>
+            <VStack w="full" spacing={0}>
+              <Text w="full" fontSize={['xs', 'sm', 'md']}>
+                If enabled, the macro will activate when ONLY the trigger keys
+                are pressed.
+              </Text>
+              <Text w="full" fontSize={['xs', 'sm', 'md']}>
+                (Only matters if the trigger is a keypress / keypresses)
+              </Text>
+            </VStack>
           </VStack>
         </ModalBody>
         <ModalFooter>

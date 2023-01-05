@@ -6,22 +6,15 @@ import {
   Button,
   useColorModeValue,
   useDisclosure,
-  Box,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  useColorMode,
   Input,
-  Tooltip,
+  Tooltip
 } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import DeleteCollectionModal from './DeleteCollectionModal'
 import MacroList from './MacroList'
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import EmojiPopover from '../EmojiPopover'
 
 export default function CollectionPanel() {
   const { collections, selection, onCollectionUpdate } = useApplicationContext()
@@ -36,8 +29,6 @@ export default function CollectionPanel() {
     onOpen: onEmojiPopoverOpen,
     onClose: onEmojiPopoverClose
   } = useDisclosure()
-  const { colorMode } = useColorMode()
-  const initialFocusRef = useRef<HTMLDivElement | null>(null)
   const [collectionName, setCollectionName] = useState('')
   const panelBg = useColorModeValue('bg-light', 'primary-dark.900')
   const borderColour = useColorModeValue(
@@ -107,39 +98,12 @@ export default function CollectionPanel() {
       >
         <HStack w="full" justifyContent="space-between">
           <HStack w="full" spacing={4}>
-            <Popover
-              initialFocusRef={initialFocusRef}
-              returnFocusOnClose={false}
-              isOpen={isEmojiPopoverOpen}
-              onClose={onEmojiPopoverClose}
-              closeOnBlur={false}
-              isLazy
-            >
-              <PopoverTrigger>
-                <Box
-                  maxHeight="32px"
-                  onClick={onEmojiPopoverOpen}
-                  _hover={{ transform: 'scale(110%)' }}
-                  transition="ease-out 150ms"
-                >
-                  <em-emoji shortcodes={currentCollection.icon} size="32px" />
-                </Box>
-              </PopoverTrigger>
-              <PopoverContent bg="transparent" border="0px" shadow="none">
-                <PopoverBody>
-                  <Box id="picker-box" w="full" ref={initialFocusRef}>
-                    <Picker
-                      data={data}
-                      theme={colorMode}
-                      autoFocus={true}
-                      onEmojiSelect={onEmojiSelect}
-                      previewPosition="none"
-                      dynamicWidth={true}
-                    />
-                  </Box>
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+            <EmojiPopover
+              isEmojiPopoverOpen={isEmojiPopoverOpen}
+              onEmojiPopoverClose={onEmojiPopoverClose}
+              onEmojiPopoverOpen={onEmojiPopoverOpen}
+              onEmojiSelect={onEmojiSelect}
+            />
             <Input
               w="fit"
               variant="flushed"
@@ -163,7 +127,9 @@ export default function CollectionPanel() {
             <Tooltip
               variant="brand"
               label={
-                collections.length <= 1 ? "Can't delete your last collection!" : ''
+                collections.length <= 1
+                  ? "Can't delete your last collection!"
+                  : ''
               }
               aria-label="Collection delete button tooltip"
               hasArrow

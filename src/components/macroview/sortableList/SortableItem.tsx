@@ -147,7 +147,7 @@ export default function SortableItem({ id, element }: Props) {
   }
 
   return (
-    <HStack w="full" h="full" justifyContent="space-around" spacing="0px">
+    <HStack w="full" h="full" justifyContent="space-around" spacing="0px" onClick={onEditButtonPress}>
       <HStack p={1} px={2} w="full">
         {iconToDisplay}
         <Text

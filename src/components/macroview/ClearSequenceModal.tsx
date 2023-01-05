@@ -33,8 +33,8 @@ export default function ClearSequenceModal({
   return (
     <Modal isOpen={isOpen} variant="brand" onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Delete this collection?</ModalHeader>
+      <ModalContent p={2}>
+        <ModalHeader>Clear the sequence?</ModalHeader>
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           This action will clear the sequence. Don't worry, if you want to
@@ -45,7 +45,7 @@ export default function ClearSequenceModal({
           <Button mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme="red" onClick={onModalSuccessClose}>
+          <Button variant="brandWarning" onClick={onModalSuccessClose}>
             Yes, clear the sequence
           </Button>
         </ModalFooter>
