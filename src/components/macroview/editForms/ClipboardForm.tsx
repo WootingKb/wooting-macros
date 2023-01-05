@@ -68,22 +68,25 @@ export default function ClipboardForm() {
 
   const onTextChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (selectedElement === undefined || selectedElementId === undefined) {
-        return
-      }
-      if (selectedElement.type !== 'SystemEventAction') {
-        return
-      }
       setText(event.target.value)
-      const temp = { ...selectedElement }
-      temp.data = {
-        type: 'Clipboard',
-        action: { type: 'PasteUserDefinedString', data: event.target.value }
-      }
-      updateElement(temp, selectedElementId)
     },
-    [selectedElement, selectedElementId, updateElement]
+    [setText]
   )
+
+  const onInputBlur = useCallback(() => {
+    if (selectedElement === undefined || selectedElementId === undefined) {
+      return
+    }
+    if (selectedElement.type !== 'SystemEventAction') {
+      return
+    }
+    const temp = { ...selectedElement }
+    temp.data = {
+      type: 'Clipboard',
+      action: { type: 'PasteUserDefinedString', data: text}
+    }
+    updateElement(temp, selectedElementId)
+  }, [selectedElement, selectedElementId, text, updateElement])
 
   const onEmojiSelect = useCallback(
     (emoji: { native: string }) => {
@@ -132,7 +135,8 @@ export default function ClipboardForm() {
         variant="brandAccent"
         value={text}
         onChange={onTextChange}
-        placeholder="e.g. glhf"
+        onBlur={onInputBlur}
+        placeholder="e.g. glhf <3"
       />
       {showEmojiPicker && (
         <Box ref={pickerRef} w="full">

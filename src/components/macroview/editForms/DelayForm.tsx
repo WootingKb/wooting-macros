@@ -24,22 +24,24 @@ export default function DelayForm() {
 
   const onDelayDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (selectedElement === undefined || selectedElementId === undefined) {
-        return
-      }
-
       const newValue = parseInt(event.target.value)
       if (newValue === undefined) {
         return
       }
 
       setDelayDuration(newValue)
-      const temp = { ...selectedElement }
-      temp.data = newValue
-      updateElement(temp, selectedElementId)
     },
-    [selectedElement, selectedElementId, updateElement]
+    [setDelayDuration]
   )
+
+  const onInputBlur = useCallback(() => {
+    if (selectedElement === undefined || selectedElementId === undefined) {
+      return
+    }
+    const temp = { ...selectedElement }
+    temp.data = delayDuration
+    updateElement(temp, selectedElementId)
+  }, [delayDuration, selectedElement, selectedElementId, updateElement])
 
   const resetDuration = useCallback(() => {
     if (selectedElement === undefined || selectedElementId === undefined) {
@@ -73,6 +75,7 @@ export default function DelayForm() {
             borderColor="gray.400"
             value={delayDuration}
             onChange={onDelayDurationChange}
+            onBlur={onInputBlur}
           />
         </GridItem>
       </Grid>

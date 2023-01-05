@@ -47,24 +47,27 @@ export default function OpenEventForm() {
 
   const onPathChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (selectedElement === undefined || selectedElementId === undefined) {
-        return
-      }
-      if (selectedElement.type !== 'SystemEventAction') {
-        return
-      }
       setPath(event.target.value)
-      const temp = {
-        ...selectedElement
-      }
-      temp.data = {
-        type: 'Open',
-        action: { type: 'Website', data: event.target.value }
-      }
-      updateElement(temp, selectedElementId)
     },
-    [selectedElement, selectedElementId, updateElement]
+    [setPath]
   )
+
+  const onInputBlur = useCallback(() => {
+    if (selectedElement === undefined || selectedElementId === undefined) {
+      return
+    }
+    if (selectedElement.type !== 'SystemEventAction') {
+      return
+    }
+    const temp = {
+      ...selectedElement
+    }
+    temp.data = {
+      type: 'Open',
+      action: { type: 'Website', data: path }
+    }
+    updateElement(temp, selectedElementId)
+  }, [path, selectedElement, selectedElementId, updateElement])
 
   const onButtonPress = useCallback(
     async (isDirectory: boolean) => {
@@ -124,12 +127,13 @@ export default function OpenEventForm() {
         variant="brand"
         value={path}
         onChange={onPathChange}
+        onBlur={onInputBlur}
         placeholder="path"
         isDisabled={subtype === 'File' || subtype === 'Directory'}
       />
       {subtype === 'File' && (
         <Button
-          variant="brand"
+          variant="brandAccent"
           w={['full', '75%', '50%']}
           onClick={() => onButtonPress(false)}
         >
@@ -138,7 +142,7 @@ export default function OpenEventForm() {
       )}
       {subtype === 'Directory' && (
         <Button
-          variant="brand"
+          variant="brandAccent"
           w={['full', '75%', '50%']}
           onClick={() => onButtonPress(true)}
         >

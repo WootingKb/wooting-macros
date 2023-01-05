@@ -41,29 +41,31 @@ export default function KeyPressForm() {
 
   const onKeypressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      // need to ask about these guards, seems really redundant
-      if (
-        selectedElement === undefined ||
-        selectedElement.type !== 'KeyPressEventAction'
-      ) {
-        return
-      }
-      if (selectedElementId === undefined) {
-        return
-      }
       const newValue = parseInt(event.target.value)
       if (newValue === undefined) {
         return
       }
       setKeypressDuration(newValue)
-      const temp = {
-        ...selectedElement,
-        data: { ...selectedElement.data, press_duration: newValue }
-      }
-      updateElement(temp, selectedElementId)
     },
-    [selectedElement, selectedElementId, updateElement]
+    [setKeypressDuration]
   )
+
+  const onInputBlur = useCallback(() => {
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'KeyPressEventAction'
+    ) {
+      return
+    }
+    if (selectedElementId === undefined) {
+      return
+    }
+    const temp = {
+      ...selectedElement,
+      data: { ...selectedElement.data, press_duration: keypressDuration }
+    }
+    updateElement(temp, selectedElementId)
+  },[keypressDuration, selectedElement, selectedElementId, updateElement])
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -137,22 +139,29 @@ export default function KeyPressForm() {
           </Flex>
         </GridItem>
       </Grid>
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
-        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
-          <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
-            Duration (ms)
-          </Text>
-        </GridItem>
-        <GridItem w="full">
+      {keypressType === KeyType.DownUp && (
+        <Grid templateRows={'20px 1fr'} gap="2" w="full">
+          <GridItem
+            w="full"
+            h="8px"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+              Duration (ms)
+            </Text>
+          </GridItem>
+          <GridItem w="full">
             <Input
               type="number"
               variant="brandAccent"
-              isDisabled={keypressType === KeyType.DownUp ? false : true}
               value={keypressDuration}
               onChange={onKeypressDurationChange}
+              onBlur={onInputBlur}
             />
-        </GridItem>
-      </Grid>
+          </GridItem>
+        </Grid>
+      )}
     </>
   )
 }

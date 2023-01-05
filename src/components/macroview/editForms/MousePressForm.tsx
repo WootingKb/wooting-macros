@@ -7,7 +7,7 @@ import {
   Input,
   Text
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { KeyType } from '../../../enums'
@@ -41,10 +41,18 @@ export default function MousePressForm() {
     )
   }, [selectedElement])
 
-  const onMousepressDurationChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    // need to ask about these guards, seems really redundant
+  const onMousepressDurationChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = parseInt(event.target.value)
+      if (newValue === undefined) {
+        return
+      }
+      setMousepressDuration(newValue)
+    },
+    [setMousepressDuration]
+  )
+
+  const onInputBlur = useCallback(() => {
     if (selectedElement === undefined) {
       return
     }
@@ -58,42 +66,40 @@ export default function MousePressForm() {
     if (temp.data.data.type !== 'DownUp') {
       return
     }
-    const newValue = parseInt(event.target.value)
-    if (newValue === undefined) {
-      return
-    }
-    temp.data.data.duration = newValue
-    setMousepressDuration(newValue)
+    temp.data.data.duration = mousepressDuration
     updateElement(temp, selectedElementId)
-  }
+  }, [mousepressDuration, selectedElement, selectedElementId, updateElement])
 
-  const onMousepressTypeChange = (newType: KeyType) => {
-    if (selectedElement === undefined) {
-      return
-    }
-    if (selectedElement.type !== 'MouseEventAction') {
-      return
-    }
-    if (selectedElementId === undefined) {
-      return
-    }
-    setMousepressType(newType)
-    const temp = { ...selectedElement }
-    switch (newType) {
-      case KeyType.Down:
-        temp.data.data.type = 'Down'
-        break
-      case KeyType.Up:
-        temp.data.data.type = 'Up'
-        break
-      case KeyType.DownUp:
-        temp.data.data.type = 'DownUp'
-        break
-      default:
-        break
-    }
-    updateElement(temp, selectedElementId)
-  }
+  const onMousepressTypeChange = useCallback(
+    (newType: KeyType) => {
+      if (selectedElement === undefined) {
+        return
+      }
+      if (selectedElement.type !== 'MouseEventAction') {
+        return
+      }
+      if (selectedElementId === undefined) {
+        return
+      }
+      setMousepressType(newType)
+      const temp = { ...selectedElement }
+      switch (newType) {
+        case KeyType.Down:
+          temp.data.data.type = 'Down'
+          break
+        case KeyType.Up:
+          temp.data.data.type = 'Up'
+          break
+        case KeyType.DownUp:
+          temp.data.data.type = 'DownUp'
+          break
+        default:
+          break
+      }
+      updateElement(temp, selectedElementId)
+    },
+    [selectedElement, selectedElementId, updateElement]
+  )
 
   return (
     <>
@@ -146,22 +152,29 @@ export default function MousePressForm() {
           </Flex>
         </GridItem>
       </Grid>
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
-        <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
-          <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
-            Duration (ms)
-          </Text>
-        </GridItem>
-        <GridItem w="full">
-          <Input
-            type="number"
-            variant="brandAccent"
-            isDisabled={mousepressType === KeyType.DownUp ? false : true}
-            value={mousepressDuration}
-            onChange={onMousepressDurationChange}
-          />
-        </GridItem>
-      </Grid>
+      {mousepressType === KeyType.DownUp && (
+        <Grid templateRows={'20px 1fr'} gap="2" w="full">
+          <GridItem
+            w="full"
+            h="8px"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+              Duration (ms)
+            </Text>
+          </GridItem>
+          <GridItem w="full">
+            <Input
+              type="number"
+              variant="brandAccent"
+              value={mousepressDuration}
+              onChange={onMousepressDurationChange}
+              onBlur={onInputBlur}
+            />
+          </GridItem>
+        </Grid>
+      )}
     </>
   )
 }
