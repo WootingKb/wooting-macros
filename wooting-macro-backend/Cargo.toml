@@ -34,7 +34,7 @@ env_logger = "0.10.0"
 rayon = "1.6.1"
 
 [dev-dependencies]
-criterion = "0.4"
+criterion = {version = "0.4.0"}
 
 [[bench]]
 name = "file_creation_benchmark"
