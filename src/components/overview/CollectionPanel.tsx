@@ -100,6 +100,7 @@ export default function CollectionPanel() {
         <HStack w="full" justifyContent="space-between">
           <HStack w="full" spacing={4}>
             <EmojiPopover
+              shortcodeToShow={currentCollection.icon}
               isEmojiPopoverOpen={isEmojiPopoverOpen}
               onEmojiPopoverClose={onEmojiPopoverClose}
               onEmojiPopoverOpen={onEmojiPopoverOpen}

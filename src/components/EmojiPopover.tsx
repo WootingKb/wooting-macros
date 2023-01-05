@@ -9,9 +9,9 @@ import {
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { useRef } from 'react'
-import { useSelectedCollection } from '../contexts/selectors'
 
 type Props = {
+  shortcodeToShow: string
   isEmojiPopoverOpen: boolean
   onEmojiPopoverOpen: () => void
   onEmojiPopoverClose: () => void
@@ -19,12 +19,12 @@ type Props = {
 }
 
 export default function EmojiPopover({
+  shortcodeToShow,
   isEmojiPopoverOpen,
   onEmojiPopoverClose,
   onEmojiPopoverOpen,
   onEmojiSelect
 }: Props) {
-  const currentCollection = useSelectedCollection()
   const { colorMode } = useColorMode()
   const initialFocusRef = useRef<HTMLDivElement | null>(null)
   return (
@@ -43,7 +43,7 @@ export default function EmojiPopover({
           _hover={{ transform: 'scale(110%)' }}
           transition="ease-out 150ms"
         >
-          <em-emoji shortcodes={currentCollection.icon} size="32px" />
+          <em-emoji shortcodes={shortcodeToShow} size="32px" />
         </Box>
       </PopoverTrigger>
       <PopoverContent bg="transparent" border="0px" shadow="none">

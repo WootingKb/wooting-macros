@@ -138,6 +138,7 @@ export default function Header({ isEditing }: Props) {
             }}
           />
           <EmojiPopover
+            shortcodeToShow={macro.icon}
             isEmojiPopoverOpen={isEmojiPopoverOpen}
             onEmojiPopoverClose={onEmojiPopoverClose}
             onEmojiPopoverOpen={onEmojiPopoverOpen}
