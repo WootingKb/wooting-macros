@@ -163,11 +163,11 @@ export default function AllElementsGrid({ searchValue }: Props) {
                         (HIDinfo: HidInfo) => (
                           <GridItem
                             colSpan={HIDinfo.requiresLongDisplay ? 2 : 1}
+                            key={HIDinfo.HIDcode}
                           >
                             <AspectRatio
                               h="full"
                               ratio={HIDinfo.requiresLongDisplay ? 2 / 1 : 1}
-                              key={HIDinfo.HIDcode}
                             >
                               <SequenceElementButton
                                 displayText={HIDinfo.displayString}

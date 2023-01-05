@@ -19,9 +19,8 @@ export default function MouseButtonsGrid({ elementsToRender }: Props) {
       spacing={2}
     >
       {elementsToRender.map((info: MouseInputInfo) => (
-        <AspectRatio ratio={2 / 1}>
+        <AspectRatio ratio={2 / 1} key={info.webButtonVal}>
           <SequenceElementButton
-            key={info.webButtonVal}
             displayText={info.displayString}
             properties={{
               type: 'MouseEventAction',

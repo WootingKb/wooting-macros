@@ -19,9 +19,8 @@ export default function SystemEventsGrid({ elementsToRender }: Props) {
       spacing={2}
     >
       {elementsToRender.map((info: SystemEventInfo) => (
-        <AspectRatio ratio={2 / 1}>
+        <AspectRatio ratio={2 / 1} key={info.displayString}>
           <SequenceElementButton
-            key={info.displayString}
             displayText={info.displayString}
             properties={{
               type: 'SystemEventAction',
