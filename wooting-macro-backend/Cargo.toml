@@ -34,7 +34,7 @@ env_logger = "0.10.0"
 rayon = "1.6.1"
 
 [dev-dependencies]
-criterion = {version = "0.4.0"}
+criterion = {version = "0.4.0", features=["async_tokio"]}
 
 [[bench]]
 name = "file_creation_benchmark"

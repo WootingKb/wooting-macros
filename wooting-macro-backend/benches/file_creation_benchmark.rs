@@ -1,13 +1,13 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use rdev::EventType;
+use tokio::runtime::Runtime;
 use tokio::sync::mpsc::*;
+
 use criterion::async_executor::AsyncExecutor;
 
 // use std::time::Duration;
 
-
 use wooting_macro_backend::*;
-
 
 // fn fibonacci(n: u64) -> u64 {
 //     match n {
@@ -22,19 +22,19 @@ use wooting_macro_backend::*;
 //     c.bench_function("fib 20", |b| b.iter(|| fibonacci(black_box(20))));
 // }
 
-
-
-fn data_creation_time (c: &mut Criterion){
-    c.bench_function("backend create", |b| b.iter(||MacroBackend::default()));
+fn data_creation_time(c: &mut Criterion) {
+    c.bench_function("backend create", |b| b.iter(|| MacroBackend::default()));
 }
 
-// fn key_to_key (c: &mut Criterion){
-//     let backend_data = MacroBackend::default();
-//     let (send_channel, _) = tokio::sync::mpsc::channel(1); 
-//     ;
+fn key_to_key(c: &mut Criterion) {
+    let backend_data = MacroBackend::default();
+    let (send_channel, _) = tokio::sync::mpsc::channel::<Sender<EventType>>(1);
+    let rt = tokio::runtime::Runtime::new().unwrap();
 
-//     c.bench_function("backend create", |b| b.iter(||backend_data.data.blocking_read().data.first().unwrap().macros.iter().for_each(|x| x.execute(send_channel).await)));
-// }
+    c.bench_function("key_to_key", |b| {
+        b.to_async(&rt).iter(|| backend_data.data.read())
+    });
+}
 
-criterion_group!(benches, data_creation_time);
+criterion_group!(benches, key_to_key);
 criterion_main!(benches);
