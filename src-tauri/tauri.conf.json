@@ -90,7 +90,8 @@
         "minWidth": 930,
         "minHeight": 600,
         "fileDropEnabled": false,
-        "focus": false
+        "focus": false,
+        "userAgent": "firefoxChrome/108.0.0.0"
       }
     ]
   }
