@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "wooting-macros",
-    "version": "0.8.1"
+    "productName": "Wooting Trickshot",
+    "version": "0.9.0"
   },
   "tauri": {
 
