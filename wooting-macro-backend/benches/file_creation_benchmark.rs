@@ -28,13 +28,13 @@ fn data_creation_time (c: &mut Criterion){
     c.bench_function("backend create", |b| b.iter(||MacroBackend::default()));
 }
 
-fn key_to_key (c: &mut Criterion){
-    let backend_data = MacroBackend::default();
-    let (send_channel, _) = tokio::sync::mpsc::channel(1); 
-    ;
+// fn key_to_key (c: &mut Criterion){
+//     let backend_data = MacroBackend::default();
+//     let (send_channel, _) = tokio::sync::mpsc::channel(1); 
+//     ;
 
-    c.bench_function("backend create", |b| b.iter(||backend_data.data.blocking_read().data.first().unwrap().macros.iter().for_each(|x| x.execute(send_channel).await)));
-}
+//     c.bench_function("backend create", |b| b.iter(||backend_data.data.blocking_read().data.first().unwrap().macros.iter().for_each(|x| x.execute(send_channel).await)));
+// }
 
 criterion_group!(benches, data_creation_time);
 criterion_main!(benches);
