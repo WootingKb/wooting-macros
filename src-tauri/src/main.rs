@@ -5,6 +5,8 @@
 
 extern crate core;
 
+use log::info;
+
 use std::env::current_exe;
 
 use tauri::{
@@ -14,8 +16,6 @@ use tauri::{
 
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
-
-use log::info;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -79,7 +79,7 @@ async fn main() {
 
     let backend = MacroBackend::default();
 
-    println!("Running the macro backend");
+    info!("Running the macro backend");
 
     backend.init().await;
 

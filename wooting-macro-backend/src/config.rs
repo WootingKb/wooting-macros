@@ -2,6 +2,8 @@ use crate::MacroData;
 use std::fs::File;
 use std::path::PathBuf;
 
+use log::{error, info};
+
 /// Trait to get data or write out data from the state to file.
 pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {
     fn file_name() -> PathBuf;
@@ -16,7 +18,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                 let data: Self = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
-                        eprintln!("Error reading config.json, using default data. {}", error);
+                        error!("Error reading config.json, using default data. {}", error);
                         default.write_to_file();
                         default
                     }
@@ -25,7 +27,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
             }
 
             Err(err) => {
-                eprintln!("Error opening file, using default config {}", err);
+                error!("Error opening file, using default config {}", err);
                 default.write_to_file();
                 default
             }
@@ -39,10 +41,10 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
             serde_json::to_string_pretty(&self).unwrap(),
         ) {
             Ok(_) => {
-                println!("Success writing a new file");
+                info!("Success writing a new file");
             }
             Err(err) => {
-                eprintln!(
+                error!(
                     "Error writing a new file, using only read only defaults. {}",
                     err
                 );
