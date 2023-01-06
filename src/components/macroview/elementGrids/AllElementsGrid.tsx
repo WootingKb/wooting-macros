@@ -106,7 +106,7 @@ export default function AllElementsGrid({ searchValue }: Props) {
       {indices !== undefined && indices.length === 0 && searchValue !== '' && (
         <>
           <Divider />
-          <Text mt={4}>Nothing found, try another query.</Text>
+          <Text mt={4} fontWeight="semibold">Nothing found, try another query.</Text>
         </>
       )}
       <Accordion w="full" allowMultiple p={0} index={indices}>
