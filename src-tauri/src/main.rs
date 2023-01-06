@@ -186,30 +186,30 @@ async fn main() {
     //     tauri::RunEvent::Updater(updater_event) => {
     //         match updater_event {
     //             UpdaterEvent::UpdateAvailable { body, date, version } => {
-    //                 println!("update available {} {:?} {}", body, date, version);
+    //                 info!("update available {} {:?} {}", body, date, version);
     //             }
     //             // Emitted when the download is about to be started.
     //             UpdaterEvent::Pending => {
-    //                 println!("update is pending!");
+    //                 info!("update is pending!");
     //             }
     //             UpdaterEvent::DownloadProgress { chunk_length, content_length } => {
-    //                 println!("downloaded {} of {:?}", chunk_length, content_length);
+    //                 info!("downloaded {} of {:?}", chunk_length, content_length);
     //             }
     //             // Emitted when the download has finished and the update is about to be installed.
     //             UpdaterEvent::Downloaded => {
-    //                 println!("update has been downloaded!");
+    //                 info!("update has been downloaded!");
     //             }
     //             // Emitted when the update was installed. You can then ask to restart the app.
     //             UpdaterEvent::Updated => {
-    //                 println!("app has been updated");
+    //                 info!("app has been updated");
     //             }
     //             // Emitted when the app already has the latest version installed and an update is not needed.
     //             UpdaterEvent::AlreadyUpToDate => {
-    //                 println!("app is already up to date");
+    //                 info!("app is already up to date");
     //             }
     //             // Emitted when there is an error with the updater. We suggest to listen to this event even if the default dialog is enabled.
     //             UpdaterEvent::Error(error) => {
-    //                 println!("failed to update: {}", error);
+    //                 error!("failed to update: {}", error);
     //             }
     //             _ => (),
     //         }
