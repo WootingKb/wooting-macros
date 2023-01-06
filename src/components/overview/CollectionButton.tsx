@@ -73,7 +73,13 @@ export default function CollectionButton({
           placement="bottom"
           hasArrow
           aria-label="Toggle Collection Switch"
-          label={collection.active ? 'Disable Collection' : 'Enable Collection'}
+          label={
+            isMacroOutputEnabled
+              ? collection.active
+                ? 'Disable Collection'
+                : 'Enable Collection'
+              : 'Re-enable Macro Output!'
+          }
         >
           <Box>
             <Switch
@@ -82,6 +88,7 @@ export default function CollectionButton({
               zIndex={10}
               defaultChecked={collection.active}
               isChecked={isMacroOutputEnabled ? collection.active : false}
+              isDisabled={!isMacroOutputEnabled}
               onChange={() => toggleCollection(index)}
             />
           </Box>

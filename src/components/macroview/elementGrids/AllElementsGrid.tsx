@@ -9,7 +9,9 @@ import {
   useColorMode,
   useColorModeValue,
   Grid,
-  GridItem
+  GridItem,
+  Text,
+  Divider
 } from '@chakra-ui/react'
 import { useCallback, useMemo } from 'react'
 import {
@@ -82,9 +84,7 @@ export default function AllElementsGrid({ searchValue }: Props) {
     if (mouseElements.length > 0) {
       count++
     }
-    const temp = [...Array(count).keys()]
-    console.log(temp)
-    return temp
+    return [...Array(count).keys()]
   }, [
     keyboardKeyElements,
     mouseElements.length,
@@ -94,13 +94,22 @@ export default function AllElementsGrid({ searchValue }: Props) {
 
   return (
     <Flex
-      direction={'column'}
+      direction="column"
       w="full"
       h="fit"
       overflowY="auto"
+      alignItems={
+        indices !== undefined && indices.length === 0 ? 'center' : 'flex-start'
+      }
       sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
     >
-      <Accordion allowMultiple p={0} index={indices}>
+      {indices !== undefined && indices.length === 0 && searchValue !== '' && (
+        <>
+          <Divider />
+          <Text mt={4}>Nothing found, try another query.</Text>
+        </>
+      )}
+      <Accordion w="full" allowMultiple p={0} index={indices}>
         {/** System Events */}
         {systemEventElements.length > 0 && (
           <AccordionItem>

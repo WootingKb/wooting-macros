@@ -1,5 +1,10 @@
 import { Icon, IconProps } from '@chakra-ui/react'
-import { FaDiscord, FaGithub } from 'react-icons/fa'
+import {
+  FaDiscord,
+  FaGithub,
+  FaStopCircle,
+  FaRegPlayCircle
+} from 'react-icons/fa'
 import { RxKeyboard } from 'react-icons/Rx'
 import { MdOutlineMouse, MdOutlineComputer } from 'react-icons/md'
 import {
@@ -39,4 +44,10 @@ export const DownUpArrowsIcon = (props: IconProps) => {
 }
 export const KebabVertical = (props: IconProps) => {
   return <Icon as={GoKebabVertical} w={2} h={6} {...props} />
+}
+export const StopIcon = (props: IconProps) => {
+  return <Icon as={FaStopCircle} boxSize={4} {...props} />
+}
+export const RecordIcon = (props: IconProps) => {
+  return <Icon as={FaRegPlayCircle} boxSize={4} {...props} />
 }

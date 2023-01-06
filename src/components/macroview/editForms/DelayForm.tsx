@@ -72,7 +72,6 @@ export default function DelayForm() {
           <Input
             type="number"
             variant="brandAccent"
-            borderColor="gray.400"
             value={delayDuration}
             onChange={onDelayDurationChange}
             onBlur={onInputBlur}

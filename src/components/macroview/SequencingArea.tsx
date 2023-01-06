@@ -9,9 +9,9 @@ import {
   AlertDescription,
   Stack,
   useColorMode,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react'
-import { DeleteIcon, EditIcon, TimeIcon } from '@chakra-ui/icons'
+import { DeleteIcon, TimeIcon } from '@chakra-ui/icons'
 import {
   closestCenter,
   DndContext,
@@ -44,6 +44,7 @@ import {
   scrollbarStylesLight
 } from '../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
+import { RecordIcon, StopIcon } from '../icons'
 
 const isKeypress = (
   e: Keypress | MousePressAction | undefined
@@ -231,7 +232,7 @@ export default function SequencingArea() {
         </Button>
         <Button
           variant="brandRecord"
-          leftIcon={<EditIcon />}
+          leftIcon={recording ? <StopIcon /> : <RecordIcon />}
           size={['xs', 'sm', 'md']}
           isActive={recording}
           onClick={recording ? stopRecording : startRecording}

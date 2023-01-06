@@ -39,6 +39,7 @@ export default function EmojiPopover({
       <PopoverTrigger>
         <Box
           maxHeight="32px"
+          cursor="pointer"
           onClick={onEmojiPopoverOpen}
           _hover={{ transform: 'scale(110%)' }}
           transition="ease-out 150ms"

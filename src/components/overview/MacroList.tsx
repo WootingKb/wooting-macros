@@ -56,7 +56,8 @@ export default function MacroList() {
         <Flex h="full" justifyContent="center" alignItems="center">
           <VStack
             w="full"
-            h="187px"
+            minH="202px"
+            h="full"
             bg={bg}
             boxShadow={shadowColour}
             rounded="2xl"
@@ -67,9 +68,6 @@ export default function MacroList() {
           >
             <Button
               variant="yellowGradient"
-              _hover={{
-                transform: 'scale(105%)'
-              }}
               leftIcon={<AddIcon />}
               size={['sm', 'md', 'lg']}
               onClick={() => {

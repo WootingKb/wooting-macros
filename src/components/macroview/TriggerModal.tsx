@@ -1,4 +1,3 @@
-import { EditIcon } from '@chakra-ui/icons'
 import {
   Modal,
   ModalOverlay,
@@ -22,6 +21,7 @@ import useRecordingTrigger from '../../hooks/useRecordingTrigger'
 import { HIDLookup } from '../../constants/HIDmap'
 import { mouseEnumLookup } from '../../constants/MouseMap'
 import { isMouseButtonArray } from '../../constants/utils'
+import { RecordIcon, StopIcon } from '../icons'
 
 type Props = {
   isOpen: boolean
@@ -117,7 +117,9 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               <Flex
                 w="full"
                 gap="4px"
+                minH="42px"
                 bg={secondBg}
+                alignItems="center"
                 rounded="md"
                 p="9px"
                 shadow="inner"
@@ -128,7 +130,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                   </Text>
                 )}
                 {items.map((element) => (
-                  <Kbd variant="brand" key={element}>
+                  <Kbd variant="brand" h="fit-content" key={element}>
                     {getDisplayString(element, isMouseButtonArray(items))}
                   </Kbd>
                 ))}
@@ -139,7 +141,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                   variant="brandRecord"
                   size="sm"
                   px={4}
-                  leftIcon={<EditIcon />}
+                  leftIcon={recording ? <StopIcon /> : <RecordIcon />}
                   onClick={recording ? stopRecording : startRecording}
                   isActive={recording}
                 >
@@ -168,7 +170,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 are pressed.
               </Text>
               <Text w="full" fontSize={['xs', 'sm', 'md']}>
-                (Only matters if the trigger is a keypress / keypresses)
+                (Only matters if the trigger is a keypress(es))
               </Text>
             </VStack>
           </VStack>

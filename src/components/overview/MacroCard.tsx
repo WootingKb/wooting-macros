@@ -2,7 +2,6 @@ import {
   Button,
   Flex,
   Text,
-  IconButton,
   Switch,
   Divider,
   VStack,
@@ -73,19 +72,35 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       p={5}
       m="auto"
       justifyContent="space-between"
-      spacing="8px"
+      spacing={4}
     >
       {/** Top Row */}
-      <HStack w="full" justifyContent="space-between" alignItems="flex-end" spacing={0}>
+      <HStack
+        w="full"
+        justifyContent="space-between"
+        alignItems="flex-end"
+        spacing={0}
+      >
         <Flex w="full" gap={2} alignItems="center">
-          <Box maxHeight="32px" cursor="default">
+          <Box
+            maxHeight="32px"
+            cursor="default"
+            opacity={macro.active ? 1 : 0.5}
+          >
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
-          <Text textStyle="name" fontWeight="semibold" fontSize="2xl">{macro.name}</Text>
+          <Text
+            textStyle="name"
+            fontWeight="semibold"
+            fontSize="2xl"
+            opacity={macro.active ? 1 : 0.5}
+          >
+            {macro.name}
+          </Text>
         </Flex>
         <Menu variant="brand">
           <MenuButton
-          h="24px"
+            h="24px"
             aria-label="Kebab Menu Button"
             color={kebabColour}
             _hover={{ color: kebabHoverColour }}
@@ -104,7 +119,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <VStack w="full" spacing={1}>
+      <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
           Trigger Keys:
         </Text>
@@ -144,12 +159,20 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           placement="bottom"
           hasArrow
           aria-label="Toggle Macro Switch"
-          label={macro.active ? 'Disable Macro' : 'Enable Macro'}
+          label={
+            currentCollection.active
+              ? macro.active
+                ? 'Disable Macro'
+                : 'Enable Macro'
+              : 'Re-enable Collection!'
+          }
         >
           <Box>
             <Switch
               variant="brand"
               defaultChecked={macro.active}
+              isChecked={currentCollection.active ? macro.active : false}
+              isDisabled={!currentCollection.active}
               onChange={onToggle}
             />
           </Box>
