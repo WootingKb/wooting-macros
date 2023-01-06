@@ -1,15 +1,12 @@
-import {
-  Icon,
-  IconProps,
-} from '@chakra-ui/react'
-import { FaDiscord, FaTwitter} from 'react-icons/fa'
+import { Icon, IconProps } from '@chakra-ui/react'
+import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { RxKeyboard } from 'react-icons/Rx'
 import { MdOutlineMouse, MdOutlineComputer } from 'react-icons/md'
 import {
   HiOutlinePuzzlePiece,
   HiArrowUp,
   HiArrowDown,
-  HiArrowsUpDown,
+  HiArrowsUpDown
 } from 'react-icons/hi2'
 import { GoKebabVertical } from 'react-icons/go'
 
@@ -28,8 +25,8 @@ export const IntegrationIcon = (props: IconProps) => {
 export const DiscordIcon = (props: IconProps) => {
   return <Icon as={FaDiscord} boxSize={6} {...props} />
 }
-export const TwitterIcon = (props: IconProps) => {
-  return <Icon as={FaTwitter} boxSize={6} {...props} />
+export const GithubIcon = (props: IconProps) => {
+  return <Icon as={FaGithub} boxSize={6} {...props} />
 }
 export const DownArrowIcon = (props: IconProps) => {
   return <Icon as={HiArrowDown} boxSize={6} {...props} />

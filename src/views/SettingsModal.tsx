@@ -12,19 +12,15 @@ import {
   Flex
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
-import { settingInfoLookup } from '../../constants/SettingsMap'
-import AccessibilitySettings from './generalPages/AccessibilitySettings'
-import AppearanceSettings from './generalPages/AppearanceSettings'
-import IntegrationSettings from './generalPages/IntegrationSettings'
-import LanguageSettings from './generalPages/LanguageSettings'
-import ApplicationSettings from './generalPages/ApplicationSettings'
-import Support from './otherPages/Support'
-import Updates from './otherPages/Updates'
-import SettingsLeftPanel from '../../components/settings/SettingsLeftPanel'
-import {
-  scrollbarStylesLight,
-  scrollbarsStylesDark
-} from '../../constants/utils'
+import { settingInfoLookup } from '../constants/SettingsMap'
+import AccessibilitySettingsPanel from '../components/settings/AccessibilitySettingsPanel'
+import AppearanceSettingsPanel from '../components/settings/AppearanceSettingsPanel'
+import IntegrationSettingsPanel from '../components/settings/IntegrationSettingsPanel'
+import LanguageSettingsPanel from '../components/settings/LanguageSettingsPanel'
+import ApplicationSettingsPanel from '../components/settings/ApplicationSettingsPanel'
+import PatchNotesPanel from '../components/settings/PatchNotesPanel'
+import SettingsLeftPanel from '../components/settings/SettingsLeftPanel'
+import { scrollbarStylesLight, scrollbarsStylesDark } from '../constants/utils'
 
 type Props = {
   isOpen: boolean
@@ -44,19 +40,17 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   const SelectedPageComponent = useMemo(() => {
     switch (pageIndex) {
       case 0:
-        return <ApplicationSettings />
+        return <ApplicationSettingsPanel />
       case 1:
-        return <AppearanceSettings />
+        return <AppearanceSettingsPanel />
       case 2:
-        return <AccessibilitySettings />
+        return <AccessibilitySettingsPanel />
       case 3:
-        return <LanguageSettings />
+        return <LanguageSettingsPanel />
       case 4:
-        return <IntegrationSettings />
+        return <IntegrationSettingsPanel />
       case 5:
-        return <Updates />
-      case 6:
-        return <Support />
+        return <PatchNotesPanel />
       default:
         return <></>
     }

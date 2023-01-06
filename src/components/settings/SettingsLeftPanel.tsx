@@ -7,14 +7,14 @@ import {
   useColorMode,
   Flex
 } from '@chakra-ui/react'
-import { openDiscordLink, openTwitterLink } from '../../constants/externalLinks'
+import { openDiscordLink, openGithubLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../constants/enums'
 import { SettingsGroup } from '../../constants/SettingsMap'
 import SettingsButton from './SettingsButton'
 import { type, version } from '@tauri-apps/api/os'
 import { getVersion } from '@tauri-apps/api/app'
 import { useEffect, useState } from 'react'
-import { DiscordIcon, TwitterIcon } from '../icons'
+import { DiscordIcon, GithubIcon } from '../icons'
 import {
   scrollbarStylesLight,
   scrollbarsStylesDark
@@ -137,9 +137,9 @@ export default function SettingsLeftPanel({
               }}
               transition="ease-out 150ms"
             />
-            <TwitterIcon
+            <GithubIcon
               color={strokeColour}
-              onClick={openTwitterLink}
+              onClick={openGithubLink}
               _hover={{
                 color: strokeHoverColour,
                 cursor: 'pointer',

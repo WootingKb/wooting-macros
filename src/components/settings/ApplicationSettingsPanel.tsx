@@ -1,9 +1,9 @@
 import { Divider, Text, VStack } from '@chakra-ui/react'
-import NumberInputSetting from '../../../components/settings/NumberInputSetting'
-import ToggleSetting from '../../../components/settings/ToggleSetting'
-import { useSettingsContext } from '../../../contexts/settingsContext'
+import NumberInputSetting from './NumberInputSetting'
+import ToggleSetting from './ToggleSetting'
+import { useSettingsContext } from '../../contexts/settingsContext'
 
-export default function ApplicationSettings() {
+export default function ApplicationSettingsPanel() {
   const {
     config,
     updateLaunchOnStartup,

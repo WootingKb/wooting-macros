@@ -10,9 +10,9 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
-import { useSettingsContext } from '../../../contexts/settingsContext'
+import { useSettingsContext } from '../../contexts/settingsContext'
 
-export default function AppearanceSettings() {
+export default function AppearanceSettingsPanel() {
   const [value, setValue] = useState('')
   const { updateTheme } = useSettingsContext()
   const { colorMode } = useColorMode()

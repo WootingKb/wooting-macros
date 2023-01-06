@@ -49,13 +49,6 @@ export class SettingsGroup {
       displayString: 'Patch Notes'
     }
   }
-  static get Support(): SettingInfo {
-    return {
-      pageIndex: 6,
-      category: SettingsCategory.Other,
-      displayString: 'Help & Guides'
-    }
-  }
 
   static readonly all: SettingInfo[] = [
     SettingsGroup.Application,
@@ -64,7 +57,6 @@ export class SettingsGroup {
     // SettingsGroup.Language,
     // SettingsGroup.Integration,
     SettingsGroup.Updates,
-    SettingsGroup.Support
   ]
 }
 
