@@ -1,10 +1,10 @@
 [package]
 name = "wooting-macros"
-version = "0.8.1"
+version = "0.9.0"
 description = "Macro software made by Wooting."
-authors = ["David Manca, Khang"]
+authors = ["Jeroen N, Erik S, Simon W, David M, Khang N"]
 license = ""
-repository = ""
+repository = "https://github.com/WootingKb/wooting-macros"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -20,16 +20,23 @@ tokio = { version = "1.23", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.4"
+log = "0.4.17"
+env_logger = "0.10.0"
 
 
 
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
-default = [ "custom-protocol" ]
+default = ["custom-protocol"]
 # this feature is used used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
-custom-protocol = [ "tauri/custom-protocol" ]
+custom-protocol = ["tauri/custom-protocol"]
 
+[dependencies.tauri-plugin-single-instance]
+git = "https://github.com/tauri-apps/tauri-plugin-single-instance"
+#change this to stable release once it is available
+branch = "dev"
 
-
+[profile.release]
+lto = true

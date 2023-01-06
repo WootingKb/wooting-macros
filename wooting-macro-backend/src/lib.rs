@@ -2,7 +2,9 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
-use log::{error, info, log_enabled, Level};
+use rayon::prelude::*;
+
+use log::{error, info};
 
 use itertools::Itertools;
 
@@ -18,7 +20,9 @@ use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::task;
 
 //This has to be imported for release build
+#[allow(unused_imports)]
 use crate::config::CONFIG_DIR;
+
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
@@ -64,8 +68,7 @@ pub enum ActionEventType {
     },
     //IDEA: Phillips hue notification
     OBSEventAction {},
-    
-    
+
     DiscordEventAction {},
     //IDEA: IKEADesk
     MouseEventAction {
@@ -132,8 +135,7 @@ impl Macro {
                             .await
                             .unwrap();
 
-                        tokio::time::sleep(time::Duration::from_millis(data.press_duration as u64))
-                            .await;
+                        tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
 
                         send_channel
                             .send(rdev::EventType::KeyRelease(
@@ -191,8 +193,8 @@ impl Default for MacroData {
     fn default() -> Self {
         MacroData {
             data: vec![Collection {
-                name: "Default".to_string(),
-                icon: 'i'.to_string(),
+                name: "Collection 1".to_string(),
+                icon: ":smile:".to_string(),
                 macros: vec![],
                 active: true,
             }],
@@ -250,9 +252,8 @@ pub struct Collection {
 async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
-            if log_enabled!(Level::Info) {
-                info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
-            }
+            info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
+
             let cloned_channel = channel;
 
             task::spawn(async move {
@@ -274,7 +275,6 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     loop {
-
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
         //Windows requires a delay between each macro execution.
@@ -298,14 +298,14 @@ fn check_macro_execution_efficiently(
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
                 if *data == pressed_events {
-                    println!("MATCHED MACRO: {:#?}", pressed_events);
+                    info!("MATCHED MACRO: {:#?}", pressed_events);
 
-                    //? Kinda works for now but needs to be improved.
-                    pressed_events.iter().for_each(|x| {
-                        channel_sender
-                            .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
-                            .unwrap();
-                    });
+                    // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
+                    // pressed_events.par_iter().for_each(|x| {
+                    //     channel_sender
+                    //         .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
+                    //         .unwrap();
+                    // });
 
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
@@ -319,12 +319,10 @@ fn check_macro_execution_efficiently(
             TriggerEventType::MouseEvent { data } => {
                 let event_to_check: Vec<u32> = vec![data.into()];
 
-                if log_enabled!(Level::Info) {
-                    info!(
-                        "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
-                        event_to_check
-                    );
-                }
+                info!(
+                    "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
+                    event_to_check
+                );
 
                 if event_to_check == pressed_events {
                     let channel_clone = channel_sender.clone();
@@ -367,9 +365,8 @@ impl MacroBackend {
         *self.config.write().await = config;
     }
 
+    #[inline(always)]
     pub async fn init(&self) {
-        env_logger::init();
-
         //let config = ApplicationConfig::read_data().minimize_to_tray;
 
         // Spawn the channels
@@ -385,10 +382,9 @@ impl MacroBackend {
         //==============TESTING GROUND======================
         //==================================================
 
-        //IDEA: io-uring async read files and write files
+        //? : io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
-        //TODO: Make the modifier keys non-ordered?
         //==================================================
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
@@ -399,13 +395,12 @@ impl MacroBackend {
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
-                
                 match Ok::<&rdev::Event, rdev::GrabError>(&event) {
                     Ok(_data) => {
                         if inner_is_listening.load(Ordering::Relaxed) {
                             match event.event_type {
                                 rdev::EventType::KeyPress(key) => {
-                                    println!("Key Pressed RAW: {:?}", key);
+                                    info!("Key Pressed RAW: {:?}", key);
                                     let key_to_push = key;
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
@@ -415,30 +410,32 @@ impl MacroBackend {
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
                                         .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .collect::<Vec<u32>>()
                                         .into_iter()
                                         .unique()
                                         .collect();
-                                    println!("Pressed Keys CONVERTED TO HID:  {:?}", pressed_keys_copy_converted);
-                                    println!("Pressed Keys CONVERTED TO RDEV: {:?}",
-                                             pressed_keys_copy_converted
-                                                 .iter()
-                                                 .map(|x| *SCANCODE_TO_RDEV
-                                                     .get(x)
-                                                     .unwrap_or(&rdev::Key::Unknown(0)))
-                                                 .collect::<Vec<rdev::Key>>());
+                                    info!(
+                                        "Pressed Keys CONVERTED TO HID:  {:?}",
+                                        pressed_keys_copy_converted
+                                    );
+                                    info!(
+                                        "Pressed Keys CONVERTED TO RDEV: {:?}",
+                                        pressed_keys_copy_converted
+                                            .par_iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
-                                    if log_enabled!(Level::Info) {
-                                        info!(
-                                            "Pressed Keys: {:?}",
-                                            pressed_keys_copy_converted
-                                                .iter()
-                                                .map(|x| *SCANCODE_TO_RDEV
-                                                    .get(x)
-                                                    .unwrap_or(&rdev::Key::Unknown(0)))
-                                                .collect::<Vec<rdev::Key>>()
-                                        )
-                                    }
+                                    info!(
+                                        "Pressed Keys: {:?}",
+                                        pressed_keys_copy_converted
+                                            .par_iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
                                     let first_key: u32 = match pressed_keys_copy_converted.first() {
                                         None => 0,
@@ -456,7 +453,7 @@ impl MacroBackend {
 
                                     let channel_copy_send = schan_execute.clone();
 
-                                    //TODO: up the pressed keys here immidiately?
+                                    // ? up the pressed keys here immidiately?
 
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
@@ -473,27 +470,19 @@ impl MacroBackend {
 
                                 rdev::EventType::KeyRelease(key) => {
                                     keys_pressed.blocking_write().retain(|x| *x != key);
-                                    if log_enabled!(Level::Info) {
-                                        info!("Key state: {:?}", keys_pressed.blocking_read());
-                                    }
+
+                                    info!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
                                 }
 
                                 rdev::EventType::ButtonPress(button) => {
-                                    if log_enabled!(Level::Info) {
-                                        info!("Button pressed: {:?}", button);
-                                    }
+                                    info!("Button pressed: {:?}", button);
 
                                     let converted_button_to_u32: u32 =
                                         BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                                    if log_enabled!(Level::Info) {
-                                        info!(
-                                            "Pressed button: {:?}",
-                                            buttons_pressed.blocking_read()
-                                        );
-                                    }
+                                    info!("Pressed button: {:?}", buttons_pressed.blocking_read());
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
@@ -520,9 +509,7 @@ impl MacroBackend {
                                     }
                                 }
                                 rdev::EventType::ButtonRelease(button) => {
-                                    if log_enabled!(Level::Info) {
-                                        info!("Button released: {:?}", button);
-                                    }
+                                    info!("Button released: {:?}", button);
 
                                     buttons_pressed.blocking_write().retain(|x| *x != button);
 
@@ -530,25 +517,24 @@ impl MacroBackend {
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
                                 rdev::EventType::Wheel { delta_x, delta_y } => {
-                                    if log_enabled!(Level::Info) {
-                                        info!("Scrolled: {:?} {:?}", delta_x, delta_y);
-                                    }
+                                    info!("Scrolled: {:?} {:?}", delta_x, delta_y);
 
                                     Some(event)
                                 }
                             }
                         } else {
-                            if log_enabled!(Level::Info) {
-                                info!(
-                                    "Passing event through... macro recording disabled: {:?}",
-                                    event
-                                );
+                            info!(
+                                "Passing event through... macro recording disabled: {:?}",
+                                event
+                            );
 
-                            }
                             Some(event)
                         }
                     }
-                    Err(_) => None,
+                    Err(error) => {
+                        error!("Error grabbing: {:#?}", error);
+                        None
+                    }
                 }
             })
         });

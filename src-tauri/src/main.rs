@@ -5,14 +5,17 @@
 
 extern crate core;
 
+use log::{info, error};
+
 use std::env::current_exe;
 
-use auto_launch;
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, WindowEvent};
+use tauri::{
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
+    WindowEvent,
+};
 
+use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
-use wooting_macro_backend::config::ApplicationConfig;
-use wooting_macro_backend::config::ConfigFile;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -45,7 +48,8 @@ async fn set_macros(
     state: tauri::State<'_, MacroBackend>,
     frontend_data: MacroData,
 ) -> Result<(), ()> {
-    Ok(state.set_macros(frontend_data).await)
+    state.set_macros(frontend_data).await;
+    Ok(())
 }
 
 #[tauri::command]
@@ -59,7 +63,8 @@ async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
     frontend_bool: bool,
 ) -> Result<(), ()> {
-    Ok(set_macro_listening(state, frontend_bool))
+    set_macro_listening(state, frontend_bool);
+    Ok(())
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
@@ -67,12 +72,14 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
+    env_logger::init();
+
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
 
     let backend = MacroBackend::default();
 
-    println!("Running the macro backend");
+    info!("Running the macro backend");
 
     backend.init().await;
 
@@ -109,18 +116,27 @@ async fn main() {
             let current_exe = current_exe().unwrap();
 
             let auto_start = auto_launch::AutoLaunchBuilder::new()
-                .set_app_name(&app_name)
-                .set_app_path(&current_exe.as_path().to_str().unwrap())
+                .set_app_name(app_name)
+                .set_app_path(current_exe.as_path().to_str().unwrap())
                 .set_use_launch_agent(true)
                 .build()
                 .unwrap();
 
             match set_autolaunch {
                 true => auto_start.enable().unwrap(),
-                false => match auto_start.disable() {
-                    Ok(x) => x,
-                    Err(_) => (),
-                },
+                false => {
+                    if let Err(e) = auto_start.disable() {
+                        match e {
+                            auto_launch::Error::Io(err) => match err.kind() {
+                                std::io::ErrorKind::NotFound => {
+                                    info!("Autostart is already removed, finished checking.")
+                                }
+                                _ => error!("{}", err),
+                            },
+                            _ => error!("{}", e),
+                        }
+                    }
+                }
             }
 
             Ok(())
@@ -163,15 +179,17 @@ async fn main() {
                 window.hide().unwrap();
             }
         })
-        .on_window_event(move |event| match event.event() {
-            WindowEvent::CloseRequested { api, .. } => {
+        .on_window_event(move |event| {
+            if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
             }
-            _ => {}
         })
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+            info!("{}, {argv:?}, {cwd}", app.package_info().name);
+        }))
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -180,30 +198,30 @@ async fn main() {
     //     tauri::RunEvent::Updater(updater_event) => {
     //         match updater_event {
     //             UpdaterEvent::UpdateAvailable { body, date, version } => {
-    //                 println!("update available {} {:?} {}", body, date, version);
+    //                 info!("update available {} {:?} {}", body, date, version);
     //             }
     //             // Emitted when the download is about to be started.
     //             UpdaterEvent::Pending => {
-    //                 println!("update is pending!");
+    //                 info!("update is pending!");
     //             }
     //             UpdaterEvent::DownloadProgress { chunk_length, content_length } => {
-    //                 println!("downloaded {} of {:?}", chunk_length, content_length);
+    //                 info!("downloaded {} of {:?}", chunk_length, content_length);
     //             }
     //             // Emitted when the download has finished and the update is about to be installed.
     //             UpdaterEvent::Downloaded => {
-    //                 println!("update has been downloaded!");
+    //                 info!("update has been downloaded!");
     //             }
     //             // Emitted when the update was installed. You can then ask to restart the app.
     //             UpdaterEvent::Updated => {
-    //                 println!("app has been updated");
+    //                 info!("app has been updated");
     //             }
     //             // Emitted when the app already has the latest version installed and an update is not needed.
     //             UpdaterEvent::AlreadyUpToDate => {
-    //                 println!("app is already up to date");
+    //                 info!("app is already up to date");
     //             }
     //             // Emitted when there is an error with the updater. We suggest to listen to this event even if the default dialog is enabled.
     //             UpdaterEvent::Error(error) => {
-    //                 println!("failed to update: {}", error);
+    //                 error!("failed to update: {}", error);
     //             }
     //             _ => (),
     //         }

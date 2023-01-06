@@ -16,6 +16,10 @@ use brightness::{Brightness, BrightnessDevice};
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 use futures::{StreamExt, TryFutureExt};
 
+// Frequently used constants
+const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
+const PASTE_HOTKEY: [rdev::Key; 2] =[rdev::Key::ControlLeft, rdev::Key::KeyV];
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum DirectoryAction {
@@ -33,8 +37,6 @@ pub enum SystemAction {
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
 }
-
-// const COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::C];
 
 impl SystemAction {
     /// Execute the keys themselves
@@ -108,15 +110,13 @@ impl SystemAction {
                         .unwrap();
                 }
                 ClipboardAction::Copy => {
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
-                        .await;
+                    util::send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
                 }
                 ClipboardAction::GetClipboard => {
                     ClipboardContext::new().unwrap().get_contents().unwrap();
                 }
                 ClipboardAction::Paste => {
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
-                        .await;
+                    util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
@@ -125,23 +125,20 @@ impl SystemAction {
                         .set_contents(data.to_owned())
                         .unwrap();
 
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
-                        .await;
+                    util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
 
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().unwrap();
 
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyC])
-                        .await;
+                    util::send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
 
                     //Transform the text
                     let content = transform_text(ctx.get_contents().unwrap());
                     ctx.set_contents(content).unwrap();
 
                     //Paste the text again
-                    util::send_hotkey(&send_channel, vec![rdev::Key::ControlLeft, rdev::Key::KeyV])
-                        .await;
+                    util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
             },
         }
@@ -160,7 +157,7 @@ pub struct Monitor {
 pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
 
-    for i in brightness::brightness_devices()
+    if let Ok(i) = brightness::brightness_devices()
         .into_future()
         .await
         .0
@@ -182,7 +179,7 @@ pub async fn backend_load_monitors() -> Vec<Monitor> {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Sets brightness of all monitors to the given level.
 async fn brightness_set_all_device(percentage_level: u32) {
-    for mut devices in brightness::brightness_devices()
+    if let Ok(mut devices) = brightness::brightness_devices()
         .into_future()
         .await
         .0
@@ -197,7 +194,7 @@ async fn brightness_set_all_device(percentage_level: u32) {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Sets brightness of a specific device (it's name) to the given level.
 async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
-    for mut devices in brightness::brightness_devices()
+    if let Ok(mut devices) = brightness::brightness_devices()
         .into_future()
         .await
         .0
@@ -214,7 +211,7 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Decreases brightness of specific devices by 2%
 async fn brightness_change_specific(by_how_much: i32, name: &str) {
-    for mut devices in brightness::brightness_devices()
+    if let Ok(mut devices) = brightness::brightness_devices()
         .into_future()
         .await
         .0
@@ -236,7 +233,7 @@ async fn brightness_change_specific(by_how_much: i32, name: &str) {
 #[cfg(any(target_os = "windows", target_os = "linux"))]
 /// Decrements brightness of all devices by 2%
 async fn brightness_change_all(by_how_much: i32) {
-    for mut devices in brightness::brightness_devices()
+    if let Ok(mut devices) = brightness::brightness_devices()
         .into_future()
         .await
         .0

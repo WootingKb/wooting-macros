@@ -1,7 +1,11 @@
 [package]
 name = "wooting-macro-backend"
-version = "0.8.1"
+version = "0.9.0"
 edition = "2021"
+description = "Macro software backend made by Wooting."
+authors = ["Jeroen N, Erik S, Simon W, David M, Khang N"]
+license = ""
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -27,8 +31,12 @@ itertools = "0.10"
 anyhow = "1.0.66"
 log = "0.4.17"
 env_logger = "0.10.0"
+rayon = "1.6.1"
 
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
 brightness = { version = "0.5"}
 futures = "0.3"
+
+[profile.release]
+lto = true

@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "wooting-macros",
-    "version": "0.8.1"
+    "productName": "Wootomation",
+    "version": "0.9.0"
   },
   "tauri": {
 
@@ -19,16 +19,12 @@
       "category": "DeveloperTool",
       "copyright": "",
       "deb": {
-        "depends": []
+        "depends": [
+          "xserver-xorg-input-evdev",
+          "libevdev2"
+        ]
       },
       "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
       "identifier": "com.wooting.macros",
       "longDescription": "",
       "macOS": {
@@ -67,11 +63,12 @@
         "fullscreen": false,
         "height": 768,
         "resizable": true,
-        "title": "Wooting Macros",
+        "title": "Wootomation",
         "width": 1024,
         "fileDropEnabled": false,
         "focus": false
       }
     ]
+    
   }
 }

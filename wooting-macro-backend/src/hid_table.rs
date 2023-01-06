@@ -305,6 +305,12 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::F11, 0x44); //F11
         scancode.insert(Key::F12, 0x45); //F12
 
+        #[cfg(target_os = "windows")]
+        {
+        scancode.insert(Key::Unknown(173), 0x7f); //VOLUME_MUTE
+        scancode.insert(Key::Unknown(174), 0x81); //VOLUME_DOWN
+        scancode.insert(Key::Unknown(175), 0x80); //VOLUME_UP
+
         scancode.insert(Key::Unknown(124), 0x68); //F13
         scancode.insert(Key::Unknown(125), 0x69); //F14
         scancode.insert(Key::Unknown(126), 0x6a); //F15
@@ -319,7 +325,29 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::Unknown(133), 0x71); //F22
         scancode.insert(Key::Unknown(134), 0x72); //F23
         scancode.insert(Key::Unknown(135), 0x73); //F24
+        }
 
+        #[cfg(target_os = "linux")]
+        {
+        scancode.insert(Key::Unknown(121), 0x7f); //VOLUME_MUTE
+        scancode.insert(Key::Unknown(122), 0x81); //VOLUME_DOWN
+        scancode.insert(Key::Unknown(123), 0x80); //VOLUME_UP
+
+        scancode.insert(Key::Unknown(191), 0x68); //F13
+        scancode.insert(Key::Unknown(192), 0x69); //F14
+        scancode.insert(Key::Unknown(193), 0x6a); //F15
+        scancode.insert(Key::Unknown(194), 0x6b); //F16
+
+        scancode.insert(Key::Unknown(195), 0x6c); //F17
+        scancode.insert(Key::Unknown(196), 0x6d); //F18
+        scancode.insert(Key::Unknown(197), 0x6e); //F19
+        scancode.insert(Key::Unknown(198), 0x6f); //F20
+
+        scancode.insert(Key::Unknown(199), 0x70); //F21
+        scancode.insert(Key::Unknown(200), 0x71); //F22
+        scancode.insert(Key::Unknown(201), 0x72); //F23
+        scancode.insert(Key::Unknown(202), 0x73); //F24
+        }
 
         scancode.insert(Key::PrintScreen, 0x46); //PRINT_SCREEN
         scancode.insert(Key::ScrollLock, 0x47); //SCROLL_LOCK
