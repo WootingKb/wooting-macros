@@ -6,8 +6,6 @@ use rdev;
 use std::vec;
 use tokio::sync::mpsc::Sender;
 
-use lazy_static::lazy_static;
-
 use crate::hid_table::SCANCODE_TO_RDEV;
 
 #[cfg(target_os = "windows")]
@@ -19,13 +17,8 @@ use brightness::{Brightness, BrightnessDevice};
 use futures::{StreamExt, TryFutureExt};
 
 // Frequently used constants
-lazy_static! {
-    pub static ref COPY_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::KeyC];
-}
-
-lazy_static! {
-    pub static ref PASTE_HOTKEY: Vec<rdev::Key> = vec![rdev::Key::ControlLeft, rdev::Key::KeyV];
-}
+const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
+const PASTE_HOTKEY: [rdev::Key; 2] =[rdev::Key::ControlLeft, rdev::Key::KeyV];
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
