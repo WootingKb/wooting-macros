@@ -5,7 +5,7 @@
 
 extern crate core;
 
-use log::info;
+use log::{info, error};
 
 use std::env::current_exe;
 
@@ -124,7 +124,19 @@ async fn main() {
 
             match set_autolaunch {
                 true => auto_start.enable().unwrap(),
-                false => auto_start.disable().unwrap_or(()),
+                false => {
+                    if let Err(e) = auto_start.disable() {
+                        match e {
+                            auto_launch::Error::Io(err) => match err.kind() {
+                                std::io::ErrorKind::NotFound => {
+                                    info!("Autostart is already removed, finished checking.")
+                                }
+                                _ => error!("{}", err),
+                            },
+                            _ => error!("{}", e),
+                        }
+                    }
+                }
             }
 
             Ok(())
