@@ -12,8 +12,8 @@ use tauri::{
     WindowEvent,
 };
 
-use wooting_macro_backend::*;
 use wooting_macro_backend::config::*;
+use wooting_macro_backend::*;
 
 use log::info;
 
