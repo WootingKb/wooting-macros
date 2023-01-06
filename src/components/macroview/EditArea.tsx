@@ -1,4 +1,4 @@
-import { useColorModeValue, VStack } from '@chakra-ui/react'
+import { useColorModeValue, VStack, Text } from '@chakra-ui/react'
 import { useMemo } from 'react'
 import { useSelectedElement } from '../../contexts/selectors'
 import DelayForm from './editForms/DelayForm'
@@ -39,6 +39,9 @@ export default function EditArea() {
       px={[2, 4, 6]}
       pt={[2, 4]}
     >
+      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
+        Edit Element
+      </Text>
       {SelectedElementFormComponent}
     </VStack>
   )

@@ -73,7 +73,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     >
       <VStack w="full" h="full" pt={1} overflow="hidden" gap={2}>
         <HStack w="full" justifyContent="space-between" px={1}>
-          <Text w="full" fontWeight="bold" fontSize={"28px"}>
+          <Text w="full" fontWeight="bold" fontSize={'28px'}>
             Collections
           </Text>
           <Tooltip
@@ -124,7 +124,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           size="lg"
           w="full"
           variant="yellowGradient"
-          p="2"
+          p={2}
           leftIcon={<AddIcon />}
           onClick={onNewCollectionButtonPress}
         >
@@ -135,31 +135,31 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           h="full"
           overflowX="hidden"
           overflowY="auto"
+          ref={parent}
+          spacing={1}
           sx={
             colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark
           }
         >
-          <VStack w="full" ref={parent} spacing={1} p={1}>
-            {collections.map((collection: Collection, index: number) => (
-              <CollectionButton
-                collection={collection}
-                index={index}
-                key={`${collection.name} + ${index}`}
-                isFocused={index == selection.collectionIndex}
-                isMacroOutputEnabled={isMacroOutputEnabled}
-                setFocus={(index) => changeSelectedCollectionIndex(index)}
-                toggleCollection={() =>
-                  onCollectionUpdate(
-                    {
-                      ...collections[index],
-                      active: !collections[index].active
-                    },
-                    index
-                  )
-                }
-              />
-            ))}
-          </VStack>
+          {collections.map((collection: Collection, index: number) => (
+            <CollectionButton
+              collection={collection}
+              index={index}
+              key={`${collection.name} + ${index}`}
+              isFocused={index == selection.collectionIndex}
+              isMacroOutputEnabled={isMacroOutputEnabled}
+              setFocus={(index) => changeSelectedCollectionIndex(index)}
+              toggleCollection={() =>
+                onCollectionUpdate(
+                  {
+                    ...collections[index],
+                    active: !collections[index].active
+                  },
+                  index
+                )
+              }
+            />
+          ))}
         </VStack>
       </VStack>
       <HStack w="full">
