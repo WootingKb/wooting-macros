@@ -373,7 +373,7 @@ impl MacroBackend {
 
     #[inline(always)]
     pub async fn init(&self) {
-        env_logger::init();
+        
 
         //let config = ApplicationConfig::read_data().minimize_to_tray;
 

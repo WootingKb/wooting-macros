@@ -5589,6 +5589,8 @@ name = "wooting-macros"
 version = "0.8.1"
 dependencies = [
  "auto-launch",
+ "env_logger",
+ "log",
  "serde",
  "serde_json",
  "tauri",

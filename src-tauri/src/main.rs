@@ -12,9 +12,10 @@ use tauri::{
     WindowEvent,
 };
 
-use wooting_macro_backend::config::ApplicationConfig;
-use wooting_macro_backend::config::ConfigFile;
 use wooting_macro_backend::*;
+use wooting_macro_backend::config::*;
+
+use log::info;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -71,6 +72,8 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
+    env_logger::init();
+
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
 
@@ -173,7 +176,7 @@ async fn main() {
             }
         })
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            println!("{}, {argv:?}, {cwd}", app.package_info().name);
+            info!("{}, {argv:?}, {cwd}", app.package_info().name);
         }))
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
