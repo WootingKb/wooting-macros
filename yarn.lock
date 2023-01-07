@@ -1559,20 +1559,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emoji-mart/data@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@emoji-mart/data@npm:1.1.1"
-  checksum: 705d8021c62f8d22f8ed3fa2a106b11eea58610cb8899a401a104be59e83e4ba18e57b06e34d0b3a967fa8e5fbee5f6646162c2ee540db06cb757a5e4370e92e
+"@emoji-mart/data@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@emoji-mart/data@npm:1.1.0"
+  checksum: 6adf2bf746a7b46de31ac0f6f5b80b9beef8b9d75f22396730f57ba3edd02bdbaccccb970fa3af4dba78c34c517e6403b401ab23a17227f15ffa3e7274a149f4
   languageName: node
   linkType: hard
 
-"@emoji-mart/react@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@emoji-mart/react@npm:1.1.1"
+"@emoji-mart/react@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@emoji-mart/react@npm:1.1.0"
   peerDependencies:
     emoji-mart: ^5.2
     react: ^16.8 || ^17 || ^18
-  checksum: def4dddaa01ce88c396510d84d1878b881fe0f9c484a836a50e3db784a91ab98edf94816cff503b4d1cab7b00400a01c87e32d19dee2d950f64ef9243f79101e
+  checksum: 7ac5f13ce2adb3363af624d3d51896c36ac46237113ec1d0ec3833188ce2926311c946df8fd877aa53451b97d6a5ee006baf165a1334468c64571cf7a664d165
   languageName: node
   linkType: hard
 
@@ -5729,8 +5729,8 @@ __metadata:
     "@dnd-kit/modifiers": ^6.0.1
     "@dnd-kit/sortable": ^7.0.2
     "@dnd-kit/utilities": ^3.2.1
-    "@emoji-mart/data": ^1.1.1
-    "@emoji-mart/react": ^1.1.1
+    "@emoji-mart/data": 1.1.0
+    "@emoji-mart/react": 1.1.0
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@fontsource/montserrat": ^4.5.13
