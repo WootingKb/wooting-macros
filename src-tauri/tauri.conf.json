@@ -52,7 +52,7 @@
       "iconAsTemplate": true
     },
     "updater": {
-      "active": false,
+      "active": true,
       "endpoints": [
         "https://github.com/tauri-apps/tauri-test/releases/download/v1.0.0/app-x86_64.app.tar.gz"
       ],
