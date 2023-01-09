@@ -18,6 +18,7 @@
       "active": true,
       "category": "DeveloperTool",
       "copyright": "",
+      "icon": ["icons/icon.ico"],
       "deb": {
         "depends": [
           "xserver-xorg-input-evdev",
