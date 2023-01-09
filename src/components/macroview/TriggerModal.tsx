@@ -23,7 +23,7 @@ import { mouseEnumLookup } from '../../constants/MouseMap'
 import { checkIfMouseButtonArray } from '../../constants/utils'
 import { RecordIcon, StopIcon } from '../icons'
 
-type Props = {
+interface Props {
   isOpen: boolean
   onClose: () => void
 }

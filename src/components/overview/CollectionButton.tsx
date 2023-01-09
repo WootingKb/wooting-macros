@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 
-type Props = {
+interface Props {
   collection: Collection
   index: number
   isFocused: boolean

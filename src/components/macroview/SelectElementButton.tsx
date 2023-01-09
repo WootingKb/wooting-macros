@@ -4,7 +4,7 @@ import { useMacroContext } from '../../contexts/macroContext'
 import { useSettingsContext } from '../../contexts/settingsContext'
 import { ActionEventType } from '../../types'
 
-type Props = {
+interface Props {
   properties: ActionEventType
   displayText: string
 }

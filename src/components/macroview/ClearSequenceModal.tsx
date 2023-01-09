@@ -11,7 +11,7 @@ import {
 import { useCallback } from 'react'
 import { useMacroContext } from '../../contexts/macroContext'
 
-type Props = {
+interface Props {
   isOpen: boolean
   onClose: () => void
   stopRecording: () => void

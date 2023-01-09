@@ -11,7 +11,7 @@ import {
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 
-type Props = {
+interface Props {
   isOpen: boolean
   onClose: () => void
 }

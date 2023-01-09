@@ -27,7 +27,7 @@ import MouseButtonsGrid from './MouseButtonsGrid'
 import SystemEventsGrid from './SystemEventsGrid'
 import { MouseInput } from '../../../constants/MouseMap'
 
-type Props = {
+interface Props {
   searchValue: string
 }
 

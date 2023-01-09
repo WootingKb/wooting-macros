@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
-type Props = {
+interface Props {
   title: string
   description: string
   defaultValue: number

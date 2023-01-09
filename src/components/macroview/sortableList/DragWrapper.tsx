@@ -4,7 +4,7 @@ import { Center, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../types'
 import { useMacroContext } from '../../../contexts/macroContext'
 
-type Props = {
+interface Props {
   id: number
   element: ActionEventType
   children: ReactNode

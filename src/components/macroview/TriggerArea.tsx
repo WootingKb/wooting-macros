@@ -11,7 +11,7 @@ import { useMacroContext } from '../../contexts/macroContext'
 import { HIDLookup } from '../../constants/HIDmap'
 import { mouseEnumLookup } from '../../constants/MouseMap'
 
-type Props = {
+interface Props {
   onOpen: () => void
 }
 

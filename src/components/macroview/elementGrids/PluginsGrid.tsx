@@ -1,6 +1,6 @@
 import { SimpleGrid } from '@chakra-ui/react'
 
-type Props = {
+interface Props {
   searchValue: string
 }
 

@@ -10,7 +10,7 @@ import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { useRef } from 'react'
 
-type Props = {
+interface Props {
   shortcodeToShow: string
   isEmojiPopoverOpen: boolean
   onEmojiPopoverOpen: () => void

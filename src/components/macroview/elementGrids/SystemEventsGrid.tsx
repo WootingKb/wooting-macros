@@ -2,7 +2,7 @@ import { AspectRatio, SimpleGrid } from '@chakra-ui/react'
 import { SystemEventInfo } from '../../../constants/SystemEventMap'
 import SelectElementButton from '../SelectElementButton'
 
-type Props = {
+interface Props {
   elementsToRender: SystemEventInfo[]
 }
 

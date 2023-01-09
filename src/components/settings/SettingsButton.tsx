@@ -1,7 +1,7 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react'
 import { SettingInfo } from '../../constants/SettingsMap'
 
-type Props = {
+interface Props {
   setting: SettingInfo
   index: number
   isFocused: boolean

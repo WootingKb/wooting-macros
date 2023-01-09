@@ -19,7 +19,7 @@ import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from './UnsavedChangesModal'
 
-type Props = {
+interface Props {
   isEditing: boolean
 }
 

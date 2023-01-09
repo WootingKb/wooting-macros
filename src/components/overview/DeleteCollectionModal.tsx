@@ -11,7 +11,10 @@ import {
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 
-type Props = { isOpen: boolean; onClose: () => void }
+interface Props {
+  isOpen: boolean
+  onClose: () => void
+}
 
 export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
   const { onSelectedCollectionDelete } = useApplicationContext()

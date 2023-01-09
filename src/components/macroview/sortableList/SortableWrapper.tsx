@@ -5,7 +5,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useMacroContext } from '../../../contexts/macroContext'
 
-type Props = {
+interface Props {
   id: number
   isSmall: boolean
   children: ReactNode

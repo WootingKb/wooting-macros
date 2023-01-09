@@ -13,7 +13,7 @@ import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../constants/utils'
 
-type ApplicationProviderProps = { children: ReactNode }
+interface ApplicationProviderProps { children: ReactNode }
 
 const ApplicationContext = createContext<AppState | undefined>(undefined)
 

@@ -23,7 +23,7 @@ import {
   UpArrowIcon
 } from '../../icons'
 
-type Props = {
+interface Props {
   id: number
   element: ActionEventType
   recording: boolean

@@ -2,7 +2,7 @@ import { AspectRatio, SimpleGrid } from '@chakra-ui/react'
 import { MouseInputInfo } from '../../../constants/MouseMap'
 import SelectElementButton from '../SelectElementButton'
 
-type Props = {
+interface Props {
   elementsToRender: MouseInputInfo[]
 }
 

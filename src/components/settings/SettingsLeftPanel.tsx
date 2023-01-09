@@ -20,7 +20,7 @@ import {
   scrollbarsStylesDark
 } from '../../constants/utils'
 
-type Props = {
+interface Props {
   pageIndex: number
   onSettingsButtonPress: (index: number) => void
 }

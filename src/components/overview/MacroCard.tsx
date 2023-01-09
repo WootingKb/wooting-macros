@@ -24,7 +24,7 @@ import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback } from 'react'
 import { KebabVertical } from '../icons'
 
-type Props = {
+interface Props {
   macro: Macro
   index: number
   onDelete: (index: number) => void

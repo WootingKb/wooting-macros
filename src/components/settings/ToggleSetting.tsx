@@ -1,6 +1,6 @@
 import { HStack, VStack, Text, Switch } from '@chakra-ui/react'
 
-type Props = {
+interface Props {
   title: string
   description: string
   value: boolean

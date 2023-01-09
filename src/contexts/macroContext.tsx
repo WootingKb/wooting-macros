@@ -13,7 +13,7 @@ import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
 
-type MacroProviderProps = { children: ReactNode }
+interface MacroProviderProps { children: ReactNode }
 
 const MacroContext = createContext<MacroState | undefined>(undefined)
 
@@ -246,7 +246,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         updateSelectedElementId(newSequence.length - 1)
       }
     },
-    [config.AutoSelectElement, onIdAdd, sequence, updateSelectedElementId]
+    [config, onIdAdd, sequence, updateSelectedElementId]
   )
   const onElementsAdd = useCallback(
     (newElements: ActionEventType[]) => {
@@ -260,7 +260,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         updateSelectedElementId(newSequence.length - 1)
       }
     },
-    [config.AutoSelectElement, onIdsAdd, sequence, updateSelectedElementId]
+    [config, onIdsAdd, sequence, updateSelectedElementId]
   )
 
   const updateElement = useCallback(

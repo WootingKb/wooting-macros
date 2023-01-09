@@ -24,7 +24,7 @@ import { invoke } from '@tauri-apps/api'
 import { useCallback, useState } from 'react'
 import data from '@emoji-mart/data'
 
-type Props = {
+interface Props {
   onOpenSettingsModal: () => void
 }
 

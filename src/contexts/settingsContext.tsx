@@ -1,4 +1,4 @@
-import { useColorMode } from '@chakra-ui/react'
+import { useColorMode, useToast } from '@chakra-ui/react'
 import { invoke } from '@tauri-apps/api'
 import {
   createContext,
@@ -34,6 +34,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
     Theme: 'light',
     MinimizeToTray: true
   })
+  const toast = useToast()
 
   const { setColorMode } = useColorMode()
 
@@ -44,8 +45,15 @@ function SettingsProvider({ children }: SettingsProviderProps) {
       })
       .catch((e) => {
         console.error(e)
+        toast({
+          title: 'Error loading settings',
+          description: 'Unable to load settings, please re-open the app.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
       })
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     updateSettings(config)
