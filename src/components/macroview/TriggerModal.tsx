@@ -20,7 +20,7 @@ import { useMacroContext } from '../../contexts/macroContext'
 import useRecordingTrigger from '../../hooks/useRecordingTrigger'
 import { HIDLookup } from '../../constants/HIDmap'
 import { mouseEnumLookup } from '../../constants/MouseMap'
-import { isMouseButtonArray } from '../../constants/utils'
+import { checkIfMouseButtonArray } from '../../constants/utils'
 import { RecordIcon, StopIcon } from '../icons'
 
 type Props = {
@@ -36,7 +36,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     if (items.length === 0) {
       return true
     }
-    return isMouseButtonArray(items)
+    return checkIfMouseButtonArray(items)
   }, [items])
   const [isAllowed, setIsAllowed] = useState(false)
   const secondBg = useColorModeValue('blue.50', 'gray.800')
@@ -60,7 +60,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
   }, [isTriggerMousepress, items])
 
   const onModalSuccessClose = useCallback(() => {
-    if (isMouseButtonArray(items)) {
+    if (checkIfMouseButtonArray(items)) {
       updateTrigger({
         type: 'MouseEvent',
         data: items[0]
@@ -131,7 +131,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 )}
                 {items.map((element) => (
                   <Kbd variant="brand" h="fit-content" key={element}>
-                    {getDisplayString(element, isMouseButtonArray(items))}
+                    {getDisplayString(element, checkIfMouseButtonArray(items))}
                   </Kbd>
                 ))}
               </Flex>

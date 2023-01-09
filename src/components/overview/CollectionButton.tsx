@@ -72,7 +72,7 @@ export default function CollectionButton({
           variant="brand"
           placement="bottom"
           hasArrow
-          aria-label="Toggle Collection Switch"
+          aria-label="Toggle Collection"
           label={
             isMacroOutputEnabled
               ? collection.active

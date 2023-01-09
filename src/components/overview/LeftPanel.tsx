@@ -47,9 +47,14 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
   )
 
   const onNewCollectionButtonPress = useCallback(() => {
-    const keys = Object.keys(data.emojis)
-    let randomEmoji = keys[Math.floor(Math.random() * keys.length)]
-    if (randomEmoji.includes('flag')) {
+    const randomCategory =
+      data.categories[Math.floor(Math.random() * (6 - 1 + 1) + 1)]
+    console.log(randomCategory)
+    let randomEmoji =
+      randomCategory.emojis[
+        Math.floor(Math.random() * randomCategory.emojis.length)
+      ]
+    if (randomEmoji.includes('flag') || randomEmoji.includes('symbols')) {
       randomEmoji = 'smile'
     }
 
@@ -84,7 +89,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 : 'Enable Macro Output'
             }
             closeOnClick={false}
-            aria-label="Toggle Macro Output button tooltip"
+            aria-label="Toggle Macro Output button description"
             rounded="sm"
             variant="brand"
           >

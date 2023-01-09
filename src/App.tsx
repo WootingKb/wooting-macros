@@ -34,7 +34,7 @@ function App() {
   return (
     <Flex h="100vh" pos="relative" direction="column">
       <Box
-        zIndex={-10}
+        zIndex={-1}
         pos="absolute"
         w="full"
         h="full"

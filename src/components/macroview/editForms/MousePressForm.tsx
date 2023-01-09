@@ -22,13 +22,11 @@ export default function MousePressForm() {
   const { selectedElementId, updateElement } = useMacroContext()
 
   useEffect(() => {
-    if (selectedElement === undefined) {
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'MouseEventAction'
+    )
       return
-    }
-
-    if (selectedElement.type !== 'MouseEventAction') {
-      return
-    }
 
     const typeString: keyof typeof KeyType = selectedElement.data.data
       .type as keyof typeof KeyType
@@ -53,15 +51,13 @@ export default function MousePressForm() {
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined) {
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'MouseEventAction' ||
+      selectedElementId === undefined
+    )
       return
-    }
-    if (selectedElement.type !== 'MouseEventAction') {
-      return
-    }
-    if (selectedElementId === undefined) {
-      return
-    }
+
     const temp = { ...selectedElement }
     if (temp.data.data.type !== 'DownUp') {
       return
@@ -72,26 +68,41 @@ export default function MousePressForm() {
 
   const onMousepressTypeChange = useCallback(
     (newType: KeyType) => {
-      if (selectedElement === undefined) {
+      if (
+        selectedElement === undefined ||
+        selectedElement.type !== 'MouseEventAction' ||
+        selectedElementId === undefined
+      )
         return
-      }
-      if (selectedElement.type !== 'MouseEventAction') {
-        return
-      }
-      if (selectedElementId === undefined) {
-        return
-      }
+
       setMousepressType(newType)
-      const temp = { ...selectedElement }
+      let temp = { ...selectedElement }
       switch (newType) {
         case KeyType.Down:
-          temp.data.data.type = 'Down'
+          temp = {
+            ...temp,
+            data: { ...temp.data, data: { ...temp.data.data, type: 'Down' } }
+          }
           break
         case KeyType.Up:
-          temp.data.data.type = 'Up'
+          temp = {
+            ...temp,
+            data: { ...temp.data, data: { ...temp.data.data, type: 'Up' } }
+          }
           break
         case KeyType.DownUp:
-          temp.data.data.type = 'DownUp'
+          temp = {
+            ...temp,
+            data: {
+              ...temp.data,
+              data: {
+                ...temp.data.data,
+                type: 'DownUp',
+                duration:
+                  temp.data.data.type === 'DownUp' ? temp.data.data.duration : 1
+              }
+            }
+          }
           break
         default:
           break

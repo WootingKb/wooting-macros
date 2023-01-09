@@ -4,6 +4,7 @@ import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
 import { sysEventLookup } from '../../../constants/SystemEventMap'
+import { ActionEventType } from '../../../types'
 
 export default function OpenEventForm() {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()
@@ -14,15 +15,13 @@ export default function OpenEventForm() {
   const { selectedElementId, updateElement } = useMacroContext()
 
   useEffect(() => {
-    if (selectedElement === undefined) {
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'SystemEventAction' ||
+      selectedElement.data.type !== 'Open'
+    )
       return
-    }
-    if (selectedElement.type !== 'SystemEventAction') {
-      return
-    }
-    if (selectedElement.data.type !== 'Open') {
-      return
-    }
+
     switch (selectedElement.data.action.type) {
       case 'File':
         setSubtype('File')
@@ -59,13 +58,14 @@ export default function OpenEventForm() {
     if (selectedElement.type !== 'SystemEventAction') {
       return
     }
-    const temp = {
-      ...selectedElement
+    const temp: ActionEventType = {
+      ...selectedElement,
+      data: {
+        type: 'Open',
+        action: { type: 'Website', data: path }
+      }
     }
-    temp.data = {
-      type: 'Open',
-      action: { type: 'Website', data: path }
-    }
+
     updateElement(temp, selectedElementId)
   }, [path, selectedElement, selectedElementId, updateElement])
 
@@ -87,12 +87,12 @@ export default function OpenEventForm() {
           return
         }
         setPath(dir)
-        const temp = {
-          ...selectedElement
-        }
-        temp.data = {
-          type: 'Open',
-          action: { type: 'Directory', data: dir }
+        const temp: ActionEventType = {
+          ...selectedElement,
+          data: {
+            type: 'Open',
+            action: { type: 'Directory', data: dir }
+          }
         }
         updateElement(temp, selectedElementId)
       } else {
@@ -104,10 +104,10 @@ export default function OpenEventForm() {
           return
         }
         setPath(file)
-        const temp = {
-          ...selectedElement
+        const temp: ActionEventType = {
+          ...selectedElement,
+          data: { type: 'Open', action: { type: 'File', data: file } }
         }
-        temp.data = { type: 'Open', action: { type: 'File', data: file } }
         updateElement(temp, selectedElementId)
       }
     },

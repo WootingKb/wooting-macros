@@ -1,18 +1,14 @@
 import { Icon, IconProps } from '@chakra-ui/react'
-import {
-  FaDiscord,
-  FaGithub,
-  FaStopCircle,
-  FaRegPlayCircle
-} from 'react-icons/fa'
+import { SiDiscord, SiGithub } from 'react-icons/si'
 import { RxKeyboard } from 'react-icons/Rx'
 import { MdOutlineMouse, MdOutlineComputer } from 'react-icons/md'
 import {
   HiOutlinePuzzlePiece,
   HiArrowUp,
   HiArrowDown,
-  HiArrowsUpDown
+  HiArrowsUpDown,
 } from 'react-icons/hi2'
+import { HiStop, HiPlay } from 'react-icons/hi'
 import { GoKebabVertical } from 'react-icons/go'
 
 export const KeyboardIcon = (props: IconProps) => {
@@ -28,10 +24,10 @@ export const IntegrationIcon = (props: IconProps) => {
   return <Icon as={HiOutlinePuzzlePiece} boxSize={5} {...props} />
 }
 export const DiscordIcon = (props: IconProps) => {
-  return <Icon as={FaDiscord} boxSize={6} {...props} />
+  return <Icon as={SiDiscord} boxSize={6} {...props} />
 }
 export const GithubIcon = (props: IconProps) => {
-  return <Icon as={FaGithub} boxSize={6} {...props} />
+  return <Icon as={SiGithub} boxSize={6} {...props} />
 }
 export const DownArrowIcon = (props: IconProps) => {
   return <Icon as={HiArrowDown} boxSize={6} {...props} />
@@ -46,8 +42,8 @@ export const KebabVertical = (props: IconProps) => {
   return <Icon as={GoKebabVertical} w={2} h={6} {...props} />
 }
 export const StopIcon = (props: IconProps) => {
-  return <Icon as={FaStopCircle} boxSize={4} {...props} />
+  return <Icon as={HiStop} boxSize={5} {...props} />
 }
 export const RecordIcon = (props: IconProps) => {
-  return <Icon as={FaRegPlayCircle} boxSize={4} {...props} />
+  return <Icon as={HiPlay} boxSize={5} {...props} />
 }

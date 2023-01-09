@@ -37,7 +37,7 @@ export default function SelectElementArea() {
           }}
         />
       </HStack>
-      <AllElementsGrid searchValue={searchValue} />
+      <AllElementsGrid searchValue={searchValue.toLowerCase()} />
     </VStack>
   )
 }

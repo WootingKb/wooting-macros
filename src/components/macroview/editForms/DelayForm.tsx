@@ -11,13 +11,10 @@ export default function DelayForm() {
   const selectedElement = useSelectedElement()
 
   useEffect(() => {
-    if (selectedElement === undefined) {
-      return
-    }
-
-    if (selectedElement.type !== 'DelayEventAction') {
-      return
-    }
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'DelayEventAction'
+    ) return
 
     setDelayDuration(selectedElement.data)
   }, [selectedElement])

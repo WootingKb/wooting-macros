@@ -133,7 +133,7 @@ export default function CollectionPanel() {
                   ? "Can't delete your last collection!"
                   : ''
               }
-              aria-label="Collection delete button tooltip"
+              aria-label="Collection delete button error"
               hasArrow
               placement="bottom-start"
             >

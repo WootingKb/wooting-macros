@@ -36,7 +36,7 @@ const macroDefault: Macro = {
 
 function MacroProvider({ children }: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>(macroDefault)
-  const [sequence, setSequence] = useState<ActionEventType[]>([]) // still needed because of how the sortable list works
+  const [sequence, setSequence] = useState<ActionEventType[]>([])
   const [ids, setIds] = useState<number[]>([])
   const [selectedElementId, setSelectedElementId] = useState<
     number | undefined
@@ -58,7 +58,6 @@ function MacroProvider({ children }: MacroProviderProps) {
 
     for (const collection of collections) {
       for (let index = 0; index < collection.macros.length; index++) {
-        // skip the old info of the current macro
         if (index === selection.macroIndex) {
           continue
         }
@@ -90,7 +89,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         }
       }
     }
-    // Has to check the current macro as well, since the current macro's information may not be the same as what is saved
+
     if (macro.trigger.type === 'KeyPressEvent') {
       if (macro.trigger.data.length > 0) {
         macro.trigger.data.forEach((triggerKey) => {
@@ -294,7 +293,7 @@ function MacroProvider({ children }: MacroProviderProps) {
   const updateMacro = useCallback(() => {
     let itemToAdd = {
       ...macro,
-      sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
+      sequence: ids.map((id) => sequence[id - 1])
     }
 
     if (macro.name === '') {

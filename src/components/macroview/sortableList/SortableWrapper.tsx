@@ -11,7 +11,11 @@ type Props = {
   children: ReactNode
 }
 
-export default function SortableWrapper({ id, isSmall, children }: Props) {
+export default function SortableWrapper({
+  id,
+  isSmall,
+  children,
+}: Props) {
   const {
     attributes,
     listeners,

@@ -35,7 +35,7 @@ export default function MacroTypeArea() {
           .map((value: string, index: number) => (
             <IconButton
               icon={typeIcons[index]}
-              aria-label="macro type button"
+              aria-label="macro type"
               size="sm"
               colorScheme={
                 macro.macro_type === value ? 'primary-accent' : 'gray'

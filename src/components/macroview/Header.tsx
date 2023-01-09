@@ -91,6 +91,35 @@ export default function Header({ isEditing }: Props) {
     [onEmojiPopoverClose, updateMacroIcon]
   )
 
+  const onBackButtonPress = useCallback(() => {
+    if (currentMacro !== undefined) {
+      if (
+        currentMacro.trigger === macro.trigger &&
+        currentMacro.name === macro.name &&
+        currentMacro.icon === macro.icon &&
+        sequence === macro.sequence
+      ) {
+        changeSelectedMacroIndex(undefined)
+        return
+      }
+      onUnsavedChangesModalOpen()
+    } else {
+      if (
+        sequence.length > 0 ||
+        macro.name !== '' ||
+        macro.icon !== ':smile:' ||
+        (macro.trigger.type === 'KeyPressEvent' &&
+          macro.trigger.data.length > 0) ||
+        (macro.trigger.type === 'MouseEvent' &&
+          macro.trigger.data !== undefined)
+      ) {
+        onUnsavedChangesModalOpen()
+      } else {
+        changeSelectedMacroIndex(undefined)
+      }
+    }
+  }, [changeSelectedMacroIndex, currentMacro, macro.icon, macro.name, macro.sequence, macro.trigger, onUnsavedChangesModalOpen, sequence])
+
   return (
     <>
       <HStack
@@ -106,37 +135,11 @@ export default function Header({ isEditing }: Props) {
       >
         <Flex maxW="400px" h="full" alignItems="center" gap="4">
           <IconButton
-            aria-label="Back Button"
+            aria-label="Back"
             variant="brand"
             icon={<ArrowBackIcon />}
             size="sm"
-            onClick={() => {
-              if (currentMacro !== undefined) {
-                if (
-                  currentMacro.trigger === macro.trigger &&
-                  currentMacro.name === macro.name &&
-                  sequence === macro.sequence
-                ) {
-                  changeSelectedMacroIndex(undefined)
-                  return
-                }
-                onUnsavedChangesModalOpen()
-              } else {
-                if (
-                  sequence.length > 0 ||
-                  macro.name !== '' ||
-                  macro.icon !== ':smile:' ||
-                  (macro.trigger.type === 'KeyPressEvent' &&
-                    macro.trigger.data.length > 0) ||
-                  (macro.trigger.type === 'MouseEvent' &&
-                    macro.trigger.data !== undefined)
-                ) {
-                  onUnsavedChangesModalOpen()
-                } else {
-                  changeSelectedMacroIndex(undefined)
-                }
-              }
-            }}
+            onClick={onBackButtonPress}
           />
           <EmojiPopover
             shortcodeToShow={macro.icon}
@@ -164,7 +167,7 @@ export default function Header({ isEditing }: Props) {
           <Tooltip
             variant="brand"
             label={saveButtonTooltipText}
-            aria-label="Save Button Tooltip"
+            aria-label="Save Button error"
             placement="bottom-start"
             hasArrow
             rounded="sm"

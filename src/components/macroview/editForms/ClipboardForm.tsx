@@ -21,19 +21,12 @@ export default function ClipboardForm() {
   const { colorMode } = useColorMode()
 
   useEffect(() => {
-    if (selectedElement === undefined) {
-      return
-    }
-
-    if (selectedElement.type !== 'SystemEventAction') {
-      return
-    }
-    if (selectedElement.data.type !== 'Clipboard') {
-      return
-    }
-    if (selectedElement.data.action.type !== 'PasteUserDefinedString') {
-      return
-    }
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'SystemEventAction' ||
+      selectedElement.data.type !== 'Clipboard' ||
+      selectedElement.data.action.type !== 'PasteUserDefinedString'
+    ) return
 
     setText(selectedElement.data.action.data)
   }, [selectedElement])
@@ -150,7 +143,7 @@ export default function ClipboardForm() {
             maxFrequentRows={1}
           />
         </Box>
-        // need to figure out how to adjust height of picker, as it doesn't allow for customizing style. Maybe it will be updated one day or we find a different emoji picker
+        // TODO: need to figure out how to adjust height of picker, as it doesn't allow for customizing style. Maybe it will be updated one day or we find a different emoji picker
       )}
     </>
   )

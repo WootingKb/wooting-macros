@@ -36,32 +36,41 @@ export default function AllElementsGrid({ searchValue }: Props) {
   const accordionBg = useColorModeValue('primary-light.50', 'primary-dark.800')
 
   const systemEventElements = useMemo(() => {
+    if (searchValue.trim() === '') {
+      return SystemEvent.all
+    }
     return SystemEvent.all.filter((element) =>
-      element.displayString.toLowerCase().includes(searchValue.toLowerCase())
+      element.displayString.toLowerCase().includes(searchValue)
     )
   }, [searchValue])
 
   const keyboardKeyElements = useCallback(
     (categoryName: string) => {
+      if (searchValue.trim() === '') {
+        return Hid.all.filter(
+          (element) => HIDCategory[element.category] === categoryName
+        )
+      }
       return Hid.all.filter(
         (element) =>
-          element.displayString
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) &&
-          HIDCategory[element.category] === categoryName
+          HIDCategory[element.category] === categoryName &&
+          element.displayString.toLowerCase().includes(searchValue)
       )
     },
     [searchValue]
   )
 
   const mouseElements = useMemo(() => {
+    if (searchValue.trim() === '') {
+      return MouseInput.all
+    }
     return MouseInput.all.filter((element) =>
-      element.displayString.toLowerCase().includes(searchValue.toLowerCase())
+      element.displayString.toLowerCase().includes(searchValue)
     )
   }, [searchValue])
 
   const indices = useMemo(() => {
-    if (searchValue === '') {
+    if (searchValue.trim() === '') {
       return undefined
     }
 
@@ -106,7 +115,9 @@ export default function AllElementsGrid({ searchValue }: Props) {
       {indices !== undefined && indices.length === 0 && searchValue !== '' && (
         <>
           <Divider />
-          <Text mt={4} fontWeight="semibold">Nothing found, try another query.</Text>
+          <Text mt={4} fontWeight="semibold">
+            Nothing found, try another query.
+          </Text>
         </>
       )}
       <Accordion w="full" allowMultiple p={0} index={indices}>

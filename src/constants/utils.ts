@@ -1,12 +1,12 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { MouseButton } from './enums'
-import { ApplicationConfig, Collection, MacroData } from '../types'
+import { ApplicationConfig, Collection, Keypress, MacroData, MousePressAction } from '../types'
 
 export const updateBackendConfig = (collections: Collection[]) => {
   const macroData: MacroData = { data: collections }
   invoke<void>('set_macros', { frontendData: macroData }).catch((e) => {
     console.error(e)
-  }) // return promise
+  })
 }
 
 export const updateSettings = (newConfig: ApplicationConfig) => {
@@ -18,12 +18,24 @@ export const updateSettings = (newConfig: ApplicationConfig) => {
   }
 }
 
-export const isMouseButtonArray = (
+export const checkIfMouseButtonArray = (
   items: number[] | MouseButton[]
 ): items is MouseButton[] => {
   return Object.keys(MouseButton).includes(
     (items as MouseButton[])[0].toString()
   )
+}
+
+export const checkIfKeypress = (
+  e: Keypress | MousePressAction | undefined
+): e is Keypress => {
+  return (e as Keypress).keypress !== undefined
+}
+
+export const checkIfMouseButton = (
+  e: Keypress | MousePressAction | undefined
+): e is MousePressAction => {
+  return (e as MousePressAction).button !== undefined
 }
 
 export const checkIfStringIsNonNumeric: (text: string) => boolean = function (

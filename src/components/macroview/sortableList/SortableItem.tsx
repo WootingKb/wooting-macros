@@ -26,12 +26,18 @@ import {
 type Props = {
   id: number
   element: ActionEventType
+  recording: boolean
+  stopRecording: () => void
 }
 
-export default function SortableItem({ id, element }: Props) {
+export default function SortableItem({
+  id,
+  element,
+  recording,
+  stopRecording
+}: Props) {
   const [isEditable, setIsEditable] = useState(true)
   const [displayText, setDisplayText] = useState<string | undefined>('')
-  const [isKeyboardKey, setIsKeyboardKey] = useState(false)
   const {
     selectedElementId,
     onElementAdd,
@@ -44,6 +50,9 @@ export default function SortableItem({ id, element }: Props) {
     'primary-light.900',
     'primary-dark.400'
   )
+  const isKeyboardKey = useMemo(() => {
+    return element.type === 'KeyPressEventAction'
+  }, [element.type])
 
   const onDuplicate = useCallback(() => {
     const newElement = { ...element }
@@ -55,19 +64,16 @@ export default function SortableItem({ id, element }: Props) {
       case 'KeyPressEventAction':
         setDisplayText(HIDLookup.get(element.data.keypress)?.displayString)
         setIsEditable(true)
-        setIsKeyboardKey(true)
         break
       case 'DelayEventAction':
         setDisplayText(element.data.toString() + ' ms')
         setIsEditable(true)
-        setIsKeyboardKey(false)
         break
       case 'MouseEventAction':
         setDisplayText(
           mouseEnumLookup.get(element.data.data.button)?.displayString
         )
         setIsEditable(true)
-        setIsKeyboardKey(false)
         break
       case 'SystemEventAction':
         switch (element.data.type) {
@@ -76,14 +82,12 @@ export default function SortableItem({ id, element }: Props) {
               sysEventLookup.get(element.data.action.type)?.displayString
             )
             setIsEditable(true)
-            setIsKeyboardKey(false)
             break
           case 'Volume':
             setDisplayText(
               sysEventLookup.get(element.data.action.type)?.displayString
             )
             setIsEditable(false)
-            setIsKeyboardKey(false)
             break
           case 'Clipboard':
             setDisplayText(
@@ -92,15 +96,12 @@ export default function SortableItem({ id, element }: Props) {
             switch (element.data.action.type) {
               case 'PasteUserDefinedString':
                 setIsEditable(true)
-                setIsKeyboardKey(false)
                 break
               case 'Sarcasm':
                 setIsEditable(false)
-                setIsKeyboardKey(false)
                 break
               default:
                 setIsEditable(false)
-                setIsKeyboardKey(false)
                 break
             }
             break
@@ -109,12 +110,10 @@ export default function SortableItem({ id, element }: Props) {
               sysEventLookup.get(element.data.action.type)?.displayString
             )
             setIsEditable(true)
-            setIsKeyboardKey(false)
             break
           default:
             setDisplayText('err')
             setIsEditable(false)
-            setIsKeyboardKey(false)
             break
         }
         break
@@ -150,19 +149,29 @@ export default function SortableItem({ id, element }: Props) {
     }
   }, [element])
 
-  const onEditButtonPress = () => {
+  const onItemPress = useCallback(() => {
+    if (recording) return
+
     if (selectedElementId === id - 1) {
       return
     }
     updateSelectedElementId(id - 1)
-  }
+  }, [id, recording, selectedElementId, updateSelectedElementId])
 
-  const onDeleteButtonPress = () => {
+  const onEditButtonPress = useCallback(() => {
+    stopRecording()
+    if (selectedElementId === id - 1) {
+      return
+    }
+    updateSelectedElementId(id - 1)
+  }, [id, selectedElementId, stopRecording, updateSelectedElementId])
+
+  const onDeleteButtonPress = useCallback(() => {
     if (selectedElementId === id - 1) {
       updateSelectedElementId(undefined)
     }
     onElementDelete(id - 1)
-  }
+  }, [id, onElementDelete, selectedElementId, updateSelectedElementId])
 
   return (
     <HStack
@@ -170,7 +179,7 @@ export default function SortableItem({ id, element }: Props) {
       h="full"
       justifyContent="space-around"
       spacing="0px"
-      onClick={onEditButtonPress}
+      onClick={onItemPress}
     >
       <HStack p={1} px={2} w="full" spacing={0} gap={4}>
         {iconToDisplay}
@@ -194,7 +203,7 @@ export default function SortableItem({ id, element }: Props) {
         {isEditable && (
           <IconButton
             variant="brandSecondary"
-            aria-label="edit-button"
+            aria-label="edit element"
             icon={<EditIcon />}
             size={['xs', 'sm']}
             onClick={onEditButtonPress}
@@ -203,7 +212,7 @@ export default function SortableItem({ id, element }: Props) {
         <Menu variant="brand">
           <MenuButton
             h="24px"
-            aria-label="Kebab Menu Button"
+            aria-label="element options"
             color={kebabColour}
             _hover={{ color: kebabHoverColour }}
           >

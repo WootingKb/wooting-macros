@@ -22,13 +22,11 @@ export default function KeyPressForm() {
   const { selectedElementId, updateElement } = useMacroContext()
 
   useEffect(() => {
-    if (selectedElement === undefined) {
+    if (
+      selectedElement === undefined ||
+      selectedElement.type !== 'KeyPressEventAction'
+    )
       return
-    }
-
-    if (selectedElement.type !== 'KeyPressEventAction') {
-      return
-    }
 
     const typeString: keyof typeof KeyType = selectedElement.data
       .keytype as keyof typeof KeyType
@@ -53,13 +51,11 @@ export default function KeyPressForm() {
   const onInputBlur = useCallback(() => {
     if (
       selectedElement === undefined ||
-      selectedElement.type !== 'KeyPressEventAction'
-    ) {
+      selectedElement.type !== 'KeyPressEventAction' ||
+      selectedElementId === undefined
+    )
       return
-    }
-    if (selectedElementId === undefined) {
-      return
-    }
+
     const temp = {
       ...selectedElement,
       data: { ...selectedElement.data, press_duration: keypressDuration }
@@ -71,13 +67,11 @@ export default function KeyPressForm() {
     (newType: KeyType) => {
       if (
         selectedElement === undefined ||
-        selectedElement.type !== 'KeyPressEventAction'
-      ) {
+        selectedElement.type !== 'KeyPressEventAction' ||
+        selectedElementId === undefined
+      )
         return
-      }
-      if (selectedElementId === undefined) {
-        return
-      }
+
       setKeypressType(newType)
       const temp = {
         ...selectedElement,
@@ -140,7 +134,7 @@ export default function KeyPressForm() {
         </GridItem>
       </Grid>
       {keypressType === KeyType.DownUp && (
-        <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <Grid templateRows="20px 1fr" gap={2} w="full">
           <GridItem
             w="full"
             h="8px"

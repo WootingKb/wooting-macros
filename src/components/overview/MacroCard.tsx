@@ -101,7 +101,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         <Menu variant="brand">
           <MenuButton
             h="24px"
-            aria-label="Kebab Menu Button"
+            aria-label="macro options"
             color={kebabColour}
             _hover={{ color: kebabHoverColour }}
           >
@@ -158,7 +158,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           variant="brand"
           placement="bottom"
           hasArrow
-          aria-label="Toggle Macro Switch"
+          aria-label="Toggle Macro Switch description"
           label={
             currentCollection.active
               ? macro.active

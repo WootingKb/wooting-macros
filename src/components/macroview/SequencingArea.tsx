@@ -40,17 +40,13 @@ import useRecordingSequence from '../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../contexts/settingsContext'
 import { KeyType } from '../../constants/enums'
 import {
+  checkIfKeypress,
+  checkIfMouseButton,
   scrollbarsStylesDark,
   scrollbarStylesLight
 } from '../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../icons'
-
-const isKeypress = (
-  e: Keypress | MousePressAction | undefined
-): e is Keypress => {
-  return (e as Keypress).keypress !== undefined
-}
 
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
@@ -79,7 +75,7 @@ export default function SequencingArea() {
       }
 
       if (isUpEvent && prevItem !== undefined) {
-        if ('keypress' in prevItem && 'keypress' in item) {
+        if (checkIfKeypress(prevItem) && checkIfKeypress(item)) {
           if (prevItem.keypress === item.keypress) {
             updateElement(
               {
@@ -94,7 +90,7 @@ export default function SequencingArea() {
             )
             return
           }
-        } else if ('button' in prevItem && 'button' in item) {
+        } else if (checkIfMouseButton(prevItem) && checkIfMouseButton(item)) {
           if (prevItem.button === item.button) {
             updateElement(
               {
@@ -112,7 +108,7 @@ export default function SequencingArea() {
       }
 
       if (prevItem === undefined) {
-        if (isKeypress(item)) {
+        if (checkIfKeypress(item)) {
           onElementAdd({
             type: 'KeyPressEventAction',
             data: item
@@ -124,7 +120,7 @@ export default function SequencingArea() {
           })
         }
       } else {
-        if (isKeypress(item)) {
+        if (checkIfKeypress(item)) {
           onElementsAdd([
             {
               type: 'DelayEventAction',
@@ -177,13 +173,17 @@ export default function SequencingArea() {
       }
       setActiveId(undefined)
     },
-    [ids, overwriteIds]
+    [ids, overwriteIds, setActiveId]
   )
 
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    const { active } = event
-    setActiveId(Number(active.id))
-  }, [])
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      stopRecording()
+      const { active } = event
+      setActiveId(Number(active.id))
+    },
+    [stopRecording, setActiveId]
+  )
 
   return (
     <VStack w="41%" h="full">
@@ -222,15 +222,6 @@ export default function SequencingArea() {
         px={[2, 4, 6]}
       >
         <Button
-          variant="brandWarning"
-          leftIcon={<DeleteIcon />}
-          size={['xs', 'sm', 'md']}
-          onClick={onOpen}
-          isDisabled={sequence.length === 0}
-        >
-          Clear
-        </Button>
-        <Button
           variant="brandRecord"
           leftIcon={recording ? <StopIcon /> : <RecordIcon />}
           size={['xs', 'sm', 'md']}
@@ -238,6 +229,15 @@ export default function SequencingArea() {
           onClick={recording ? stopRecording : startRecording}
         >
           {recording ? 'Stop' : 'Record'}
+        </Button>
+        <Button
+          variant="brandWarning"
+          leftIcon={<DeleteIcon />}
+          size={['xs', 'sm', 'md']}
+          onClick={onOpen}
+          isDisabled={sequence.length === 0}
+        >
+          Clear
         </Button>
         <Button
           variant="brandAccent"
@@ -287,7 +287,12 @@ export default function SequencingArea() {
                 key={id}
                 isSmall={sequence[id - 1].type === 'DelayEventAction'}
               >
-                <SortableItem id={id} element={sequence[id - 1]} />
+                <SortableItem
+                  id={id}
+                  element={sequence[id - 1]}
+                  recording={recording}
+                  stopRecording={stopRecording}
+                />
               </SortableWrapper>
             ))}
           </VStack>
@@ -295,7 +300,12 @@ export default function SequencingArea() {
         <DragOverlay>
           {activeId ? (
             <DragWrapper id={activeId} element={sequence[activeId - 1]}>
-              <SortableItem id={activeId} element={sequence[activeId - 1]} />
+              <SortableItem
+                id={activeId}
+                element={sequence[activeId - 1]}
+                recording={recording}
+                stopRecording={stopRecording}
+              />
             </DragWrapper>
           ) : undefined}
         </DragOverlay>
