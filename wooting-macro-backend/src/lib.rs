@@ -287,6 +287,15 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     }
 }
 
+async fn lift_keys(pressed_events: Vec<u32>, channel_sender: Sender<rdev::EventType>) {
+    for x in pressed_events {
+        channel_sender
+            .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&x]))
+            .await
+            .unwrap();
+    }
+}
+
 /// A more efficient way using hashtable to check whether the trigger keys match the macro.
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
@@ -294,6 +303,7 @@ fn check_macro_execution_efficiently(
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
     let mut output = false;
+
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
@@ -301,17 +311,26 @@ fn check_macro_execution_efficiently(
                     info!("MATCHED MACRO: {:#?}", pressed_events);
 
                     // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
-                    // pressed_events.par_iter().for_each(|x| {
+                    // pressed_events.iter().for_each(|x| {
                     //     channel_sender
-                    //         .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
+                    //         .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x])).await
                     //         .unwrap();
-                    // });
+                    // })
 
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
 
+                    let channel_clone2 = channel_sender.clone();
+                    let pressed_events2 = pressed_events.clone();
+                    // let macro_clone2 = macros.clone();
+
                     task::spawn(async move {
                         execute_macro(macro_clone, channel_clone).await;
+                    });
+
+                    // This should fix the Darrel issue. Makes sure keys are released properly before returning grabbing. May need more optimizing but doesn't lag.
+                    task::spawn(async move {
+                        lift_keys(pressed_events2, channel_clone2).await;
                     });
                     output = true;
                 }
@@ -453,6 +472,11 @@ impl MacroBackend {
                                     let channel_copy_send = schan_execute.clone();
 
                                     // ? up the pressed keys here immidiately?
+                                    // pressed_events.iter().for_each(|x| {
+                                    //     channel_sender
+                                    //         .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x])).await
+                                    //         .unwrap();
+                                    // });
 
                                     let should_grab = check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
