@@ -389,7 +389,11 @@ impl MacroBackend {
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
 
-        // Spawn the grabbing
+        // Spawn the grabbing. Deactivate the grabbing on macOS by keeping the thread busy for now
+        // #[cfg(target_os = "macos")]
+        // loop{}
+        
+        #[cfg(any(target_os = "windows", target_os = "linux"))]
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
