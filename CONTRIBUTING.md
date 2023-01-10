@@ -32,8 +32,6 @@ Once you submit a pull request, one of our core contributors will review it.
 - [Rust](https://www.rust-lang.org/)
 - [Node.js](https://nodejs.org/en/)
 - [Yarn (latest)](https://yarnpkg.com/getting-started)
-- [ReactJS](https://reactjs.org/)
-- [Chakra-UI](https://chakra-ui.com/getting-started)
 - [Tauri's prequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
 
 ## Building
