@@ -46,21 +46,21 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
     [searchValue]
   )
 
-  const pluginElements = useCallback(
-    (pluginGroup: string) => {
-      if (searchValue.trim() === '') {
-        return Plugin.all.filter(
-          (element) => PluginGroup[element.pluginGroup] === pluginGroup
-        )
-      }
-      return Plugin.all.filter(
-        (element) =>
-          PluginGroup[element.pluginGroup] === pluginGroup &&
-          element.displayString.toLowerCase().includes(searchValue)
-      )
-    },
-    [searchValue]
-  )
+  // const pluginElements = useCallback(
+  //   (pluginGroup: string) => {
+  //     if (searchValue.trim() === '') {
+  //       return Plugin.all.filter(
+  //         (element) => PluginGroup[element.pluginGroup] === pluginGroup
+  //       )
+  //     }
+  //     return Plugin.all.filter(
+  //       (element) =>
+  //         PluginGroup[element.pluginGroup] === pluginGroup &&
+  //         element.displayString.toLowerCase().includes(searchValue)
+  //     )
+  //   },
+  //   [searchValue]
+  // )
 
   const mouseElements = useMemo(() => {
     if (searchValue.trim() === '') {
@@ -92,23 +92,23 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
         count++
       }
     }
-    const pluginGroups = Object.keys(PluginGroup).filter((key) =>
-      isNaN(Number(key))
-    )
+    // const pluginGroups = Object.keys(PluginGroup).filter((key) =>
+    //   isNaN(Number(key))
+    // )
 
-    for (let i = 0; i < pluginGroups.length; i++) {
-      const pluginGroupName = pluginGroups[i]
-      if (pluginElements(pluginGroupName).length > 0) {
-        count++
-      }
-    }
+    // for (let i = 0; i < pluginGroups.length; i++) {
+    //   const pluginGroupName = pluginGroups[i]
+    //   if (pluginElements(pluginGroupName).length > 0) {
+    //     count++
+    //   }
+    // }
     if (mouseElements.length > 0) {
       count++
     }
     return [...Array(count).keys()]
   }, [
     keyboardKeyElements,
-    pluginElements,
+    // pluginElements,
     searchValue,
     mouseElements.length,
     systemEventElements.length

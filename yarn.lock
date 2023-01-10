@@ -1785,7 +1785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formkit/auto-animate@npm:^1.0.0-beta.5":
+"@formkit/auto-animate@npm:1.0.0-beta.5":
   version: 1.0.0-beta.5
   resolution: "@formkit/auto-animate@npm:1.0.0-beta.5"
   checksum: 479a4f694d91e7272b2d8bdf2051fd1ae2dd5fbb522612406eaef55d88b7131402a7d5f683df8eb4e7c00810ebec8d3048483a774b0864c299d2d7af81262eb2
@@ -5734,7 +5734,7 @@ __metadata:
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@fontsource/montserrat": ^4.5.13
-    "@formkit/auto-animate": ^1.0.0-beta.5
+    "@formkit/auto-animate": 1.0.0-beta.5
     "@tauri-apps/api": ^1.1.0
     "@tauri-apps/cli": ^1.2.2
     "@types/eslint": ^8
