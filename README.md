@@ -43,4 +43,4 @@ Interested in contributing? We have some [contributing guidelines](./CONTRIBUTIN
 
 ## License
 
---- © Wooting
+This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3  - see the [LICENSE](LICENSE) file for details.
