@@ -4,7 +4,7 @@ pub mod plugin;
 
 use rayon::prelude::*;
 
-use log::{error, info};
+use log::*;
 
 use itertools::Itertools;
 

@@ -2,7 +2,7 @@ use crate::MacroData;
 use std::fs::File;
 use std::path::PathBuf;
 
-use log::{error, info};
+use log::*;
 
 /// Trait to get data or write out data from the state to file.
 pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {

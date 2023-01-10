@@ -5,7 +5,7 @@
 
 extern crate core;
 
-use log::{info, error};
+use log::*;
 
 use std::env::current_exe;
 

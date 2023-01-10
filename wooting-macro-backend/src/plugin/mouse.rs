@@ -1,4 +1,4 @@
-use log::info;
+use log::*;
 use rdev::EventType;
 use serde_repr;
 use tokio::sync::mpsc::Sender;
