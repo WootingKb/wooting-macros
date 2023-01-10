@@ -4,7 +4,7 @@ pub mod plugin;
 
 use rayon::prelude::*;
 
-use log::{error, info};
+use log::*;
 
 use itertools::Itertools;
 
@@ -369,6 +369,18 @@ impl MacroBackend {
     pub async fn init(&self) {
         //let config = ApplicationConfig::read_data().minimize_to_tray;
 
+        //? : io-uring async read files and write files
+        //TODO: implement drop when the application ends to clean up the downed keys
+
+        //==================================================
+
+        // Spawn the grabbing. Deactivate the grabbing on macOS by keeping the thread busy for now
+        // #[cfg(target_os = "macos")]
+        // loop{}
+
+        let inner_triggers = self.triggers.clone();
+        let inner_is_listening = self.is_listening.clone();
+
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
 
@@ -377,19 +389,6 @@ impl MacroBackend {
             keypress_executor_sender(rchan_execute);
         });
 
-        //==============TESTING GROUND======================
-
-        //==============TESTING GROUND======================
-        //==================================================
-
-        //? : io-uring async read files and write files
-        //TODO: implement drop when the application ends to clean up the downed keys
-
-        //==================================================
-        let inner_triggers = self.triggers.clone();
-        let inner_is_listening = self.is_listening.clone();
-
-        // Spawn the grabbing
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));

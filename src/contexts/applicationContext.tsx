@@ -57,8 +57,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   }, [toast])
 
   useEffect(() => {
-    updateBackendConfig(collections)
-  }, [collections])
+    if (initComplete) updateBackendConfig(collections)
+  }, [collections, initComplete])
 
   const changeViewState = useCallback(
     (newState: ViewState) => {

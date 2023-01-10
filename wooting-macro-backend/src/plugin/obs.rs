@@ -1,4 +1,4 @@
-use log::info;
+use log::*;
 use obws::Client;
 
 /// Engage the OBS plugin. Not done.

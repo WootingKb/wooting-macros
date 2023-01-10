@@ -5,7 +5,7 @@
 
 extern crate core;
 
-use log::{info, error};
+use log::*;
 
 use std::env::current_exe;
 
@@ -54,7 +54,11 @@ async fn set_macros(
 
 #[tauri::command]
 async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
-    Ok(plugin::system_event::backend_load_monitors().await)
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
+    return Ok(plugin::system_event::backend_load_monitors().await);
+
+    #[cfg(target_os = "macos")]
+    return Ok(vec![]);
 }
 
 #[tauri::command]
@@ -81,6 +85,7 @@ async fn main() {
 
     info!("Running the macro backend");
 
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
     backend.init().await;
 
     let set_autolaunch: bool = backend.config.read().await.auto_start;

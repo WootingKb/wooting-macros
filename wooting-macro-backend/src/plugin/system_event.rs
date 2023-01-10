@@ -1,7 +1,7 @@
 use super::util;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
-use log::{error, info};
+use log::*;
 use rdev;
 use std::vec;
 use tokio::sync::mpsc::Sender;
@@ -18,7 +18,7 @@ use futures::{StreamExt, TryFutureExt};
 
 // Frequently used constants
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
-const PASTE_HOTKEY: [rdev::Key; 2] =[rdev::Key::ControlLeft, rdev::Key::KeyV];
+const PASTE_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyV];
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
@@ -40,6 +40,7 @@ pub enum SystemAction {
 
 impl SystemAction {
     /// Execute the keys themselves
+
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         match &self {
             SystemAction::Open { action } => match action {
@@ -76,32 +77,43 @@ impl SystemAction {
                         .await;
                 }
             },
-            SystemAction::Brightness { action } => match action {
-                MonitorBrightnessAction::SetAll { level } => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_set_all_device(*level).await;
-                    #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS");
+
+            SystemAction::Brightness { action } => {
+                #[cfg(any(target_os = "windows", target_os = "linux"))]
+                match action {
+                    MonitorBrightnessAction::SetAll { level } => {
+                        #[cfg(any(target_os = "windows", target_os = "linux"))]
+                        brightness_set_all_device(*level).await;
+                        #[cfg(target_os = "macos")]
+                        error!("Not supported on macOS");
+                    }
+                    MonitorBrightnessAction::SetSpecific { level, name } => {
+                        #[cfg(any(target_os = "windows", target_os = "linux"))]
+                        brightness_set_specific_device(*level, name).await;
+                        #[cfg(target_os = "macos")]
+                        error!("Not supported on macOS");
+                    }
+                    MonitorBrightnessAction::ChangeSpecific { by_how_much, name } => {
+                        #[cfg(any(target_os = "windows", target_os = "linux"))]
+                        brightness_change_specific(*by_how_much, name).await;
+                        #[cfg(target_os = "macos")]
+                        error!("Not supported on macOS");
+                    }
+                    MonitorBrightnessAction::ChangeAll { by_how_much } => {
+                        #[cfg(any(target_os = "windows", target_os = "linux"))]
+                        brightness_change_all(*by_how_much).await;
+                        #[cfg(target_os = "macos")]
+                        error!("Not supported on macOS");
+                    }
                 }
-                MonitorBrightnessAction::SetSpecific { level, name } => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_set_specific_device(*level, name).await;
-                    #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS");
+                #[cfg(target_os = "macos")]
+                match action {
+                    _ => {
+                        error!("Not supported on macOS");
+                    }
                 }
-                MonitorBrightnessAction::ChangeSpecific { by_how_much, name } => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_change_specific(*by_how_much, name).await;
-                    #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS");
-                }
-                MonitorBrightnessAction::ChangeAll { by_how_much } => {
-                    #[cfg(any(target_os = "windows", target_os = "linux"))]
-                    brightness_change_all(*by_how_much).await;
-                    #[cfg(target_os = "macos")]
-                    error!("Not supported on macOS");
-                }
-            },
+            }
+
             SystemAction::Clipboard { action } => match action {
                 ClipboardAction::SetClipboard { data } => {
                     ClipboardContext::new()
