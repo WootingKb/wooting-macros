@@ -1,7 +1,8 @@
 import { Icon, IconProps } from '@chakra-ui/react'
 import { SiDiscord, SiGithub } from 'react-icons/si'
 import { RxKeyboard } from 'react-icons/Rx'
-import { MdOutlineMouse, MdOutlineComputer } from 'react-icons/md'
+import { BsMouse2 } from 'react-icons/bs'
+import { SlScreenDesktop } from 'react-icons/sl'
 import {
   HiOutlinePuzzlePiece,
   HiArrowUp,
@@ -15,10 +16,10 @@ export const KeyboardIcon = (props: IconProps) => {
   return <Icon as={RxKeyboard} boxSize={5} {...props} />
 }
 export const MouseIcon = (props: IconProps) => {
-  return <Icon as={MdOutlineMouse} boxSize={5} {...props} />
+  return <Icon as={BsMouse2} boxSize={5} {...props} />
 }
 export const SystemIcon = (props: IconProps) => {
-  return <Icon as={MdOutlineComputer} boxSize={5} {...props} />
+  return <Icon as={SlScreenDesktop} boxSize={5} {...props} />
 }
 export const IntegrationIcon = (props: IconProps) => {
   return <Icon as={HiOutlinePuzzlePiece} boxSize={5} {...props} />
