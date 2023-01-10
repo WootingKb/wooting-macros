@@ -1779,17 +1779,9 @@ __metadata:
   linkType: hard
 
 "@formkit/auto-animate@npm:^1.0.0-beta.5":
-  version: 1.0.0-pre-alpha.3
-  resolution: "@formkit/auto-animate@npm:1.0.0-pre-alpha.3"
-  peerDependencies:
-    react: ^16.8.0
-    vue: ^3.0.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    vue:
-      optional: true
-  checksum: d0d5fa8a32c4614d33ffba3d56f184a23161d82139e090f39778457673d2450b353a46b59d7468089850fcfbc3b0897371ae1888b713349caf1bf760687369ad
+  version: 1.0.0-beta.5
+  resolution: "@formkit/auto-animate@npm:1.0.0-beta.5"
+  checksum: 479a4f694d91e7272b2d8bdf2051fd1ae2dd5fbb522612406eaef55d88b7131402a7d5f683df8eb4e7c00810ebec8d3048483a774b0864c299d2d7af81262eb2
   languageName: node
   linkType: hard
 
