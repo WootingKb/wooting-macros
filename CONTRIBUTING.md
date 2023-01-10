@@ -25,11 +25,38 @@ Once you submit a pull request, one of our core contributors will review it.
 - If any changes are needed, they will provide feedback in the pull request.
 - Once the changes are made, and everything runs well, the pull request will be merged.
 
-The main frameworks and languages you will need to know:
+### Dependencies
+
 - [Rust](https://www.rust-lang.org/)
-- [Tauri](https://tauri.app/)
+- [Node.js](https://nodejs.org/en/)
+- [Yarn (latest)](https://yarnpkg.com/getting-started)
 - [ReactJS](https://reactjs.org/)
 - [Chakra-UI](https://chakra-ui.com/getting-started)
+- [Tauri's prequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
+
+## Building
+
+First, run yarn to install all the necessary dependencies.
+
+```
+yarn
+```
+
+### Devving
+
+To start the development server, run:
+
+```
+yarn tauri dev
+```
+
+### Deploying
+
+To make a production build, run:
+
+```
+yarn tauri build
+```
 
 ## Additional details for adding a new functionality
 Adding new functionality requires work in both the backend and frontend. There are two types of functionality that can be added:
