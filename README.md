@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://twitter.com/intent/follow?screen_name=WootingKB">
-    <img alt="Follow us on Twitter" src="https://img.shields.io/twitter/follow/WootingKB?style=social">
+  <a href="Join us on Discord">
+    <img alt="Join us on Discord" src="https://discord.gg/wooting">
   </a>
 </p>
 
