@@ -54,7 +54,13 @@ in the cloned repo. You might need to run the
 yarn install
 ``` 
 
-command too. When you have the setup ready there is additional dependencies you must install on Linux to make the grabbing work, namely the ``xserver-xorg-input-evdev`` and ``libevdev2`` libraries. You might also need to add yourself to the ``input`` group. For more information, please look at the https://github.com/Narsil/rdev library instructions.
+command as well to install all the dependencies if running just ``yarn`` isn't enough. When you have the setup ready there is additional dependencies you must install on Linux to make the grabbing work, namely the ``xserver-xorg-input-evdev`` and ``libevdev2`` libraries. You might also need to add yourself to the ``input`` group. For more information, please look at the https://github.com/Narsil/rdev library instructions.
+
+### Good practices
+
+For development we recommend using Visual Studio Code with the ``rust-analyzer`` addon as well as using the ``clippy`` linter. Please, use ``cargo clippy`` and ``cargo check`` before you submit your code as we do treat warnings as hard errors on builds. 
+
+Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``env-logger`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in Deploying.
 
 ### Devving
 
@@ -62,6 +68,14 @@ To start the development server, run:
 
 ```
 yarn tauri dev
+```
+
+Note that the development server might take a long time to initialize the frontend - this will not be the case when the application is built in release mode.
+
+Note that in order to see the logging in the terminal, you should set your environmental variables like so:
+
+```
+RUST_LOG = info
 ```
 
 ### Deploying
@@ -72,7 +86,9 @@ To make a production build, run:
 yarn tauri build
 ```
 
-Note that you might be required to sign the application. If this is the case and the build fails, you can remove the 
+Note that you might be required to sign the application. If this is the case and the build fails, you can remove the ``"windows"`` certificate section in the ``"tauri"`` part of the ``tauri.conf.json``. Note that distributing the unsigned application is not recommended as it might be problematic for anti-virus and anti-cheat software.
+
+Note that AppImage was not verified to work correctly.
 
 ## Additional details for adding a new functionality
 Adding new functionality requires work in both the backend and frontend. There are two types of functionality that can be added:
@@ -83,8 +99,6 @@ Adding new functionality requires work in both the backend and frontend. There a
 The backend can be run on macOS but it will not work with frontend running. The split nature of the backend allows you to develop and prototype on macOS but the full stack is not yet supported.
 
 The backend is about making the application do what it should do. Many features are done via different libraries. The entire backend is async and using the Tokio executor for achieving good performance. Communication via the frontend is done using Rust's enums/structs serialized into JSON format via serde.
-
-
 
 There are 2 main types of actions: Trigger event types and Action event types. When you make a macro you can assign a trigger - this is handled by the Trigger event type enum and represents the possible triggers of a macro. 
 
