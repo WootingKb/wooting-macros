@@ -22,15 +22,14 @@ export default function useRecordingSequence(
   >(undefined)
   const [eventType, setEventType] = useState<'Down' | 'Up'>('Down')
   const [prevEventType, setPrevEventType] = useState<'Down' | 'Up'>('Down')
-  const [timeDiff, setTimeDiff] = useState(0)
+
   const [prevTimestamp, setPrevTimestamp] = useState(0)
 
   const startRecording = useCallback(() => {
-    setTimeDiff(0)
     setItem(undefined)
     setPrevItem(undefined)
     setRecording(true)
-  }, [setTimeDiff, setItem, setRecording])
+  }, [setItem, setRecording])
 
   const stopRecording = useCallback(() => {
     setRecording(false)
@@ -49,8 +48,8 @@ export default function useRecordingSequence(
       if (HIDcode === undefined) {
         return
       }
+      const timeDiff = Math.round(event.timeStamp - prevTimestamp)
 
-      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
       setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
       setPrevItem(item)
@@ -76,7 +75,7 @@ export default function useRecordingSequence(
       setItem(keydown)
       onItemChanged(keydown, item, timeDiff, false)
     },
-    [eventType, item, onItemChanged, prevTimestamp, timeDiff]
+    [eventType, item, onItemChanged, prevTimestamp]
   )
 
   const addMousepress = useCallback(
@@ -97,7 +96,7 @@ export default function useRecordingSequence(
         return
       }
 
-      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
+      const timeDiff = Math.round(event.timeStamp - prevTimestamp)
       setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
       setPrevItem(item)
@@ -122,7 +121,7 @@ export default function useRecordingSequence(
       setItem(mousedown)
       onItemChanged(mousedown, item, timeDiff, false)
     },
-    [eventType, item, onItemChanged, prevTimestamp, timeDiff]
+    [eventType, item, onItemChanged, prevTimestamp]
   )
 
   useEffect(() => {
@@ -155,7 +154,6 @@ export default function useRecordingSequence(
     stopRecording,
     item,
     eventType,
-    timeDiff,
     prevEventType,
     prevItem
   }
