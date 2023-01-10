@@ -85,6 +85,7 @@ async fn main() {
 
     info!("Running the macro backend");
 
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
     backend.init().await;
 
     let set_autolaunch: bool = backend.config.read().await.auto_start;
