@@ -121,4 +121,4 @@ Files to edit:
 - ```/constants/SystemEventMap.ts```: If you are adding a new system event, you will need to extend this file.
 
 ## License
-By contributing your code to the Wootomations GitHub repository, you agree to license your contribution under the --- license.
+By contributing your code to the Wootomation GitHub repository, you agree to license your contribution under the --- license.
