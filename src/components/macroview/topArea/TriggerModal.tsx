@@ -150,7 +150,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </HStack>
             </VStack>
           </VStack>
-          <Divider w="full" alignSelf="center" my={['4', '8']} />
+          {/* <Divider w="full" alignSelf="center" my={['4', '8']} />
           <VStack alignItems="start">
             <HStack w="full" justifyContent="space-between" gap={4}>
               <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']}>
@@ -173,7 +173,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 (Only matters if the trigger is a keypress(es))
               </Text>
             </VStack>
-          </VStack>
+          </VStack> */}
         </ModalBody>
         <ModalFooter>
           <Button
