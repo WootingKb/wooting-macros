@@ -5607,6 +5607,7 @@ dependencies = [
 name = "wooting-macros"
 version = "0.9.0"
 dependencies = [
+ "anyhow",
  "auto-launch",
  "env_logger",
  "log",
