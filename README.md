@@ -14,7 +14,7 @@
 - **Organize your macros:** Group macros into specific collections, allowing you to toggle the entire collection on/off.
 - **Any Keyboard, Any Mouse:** You can bind the macros to be activated by any keyboard key or mouse button*.
 - **Open Source:** Want to help out? See below on how to get started.
-- **Windows & Linux:** Support for Windows 10/11 and most Linux distros**. MacOS support is definitely on our radar.
+- **Windows & Linux:** Support for Windows 10/11 and most Linux distros**. MacOS support is on our radar.
 
 *Mice with more than 5 buttons may experience unintended behaviour. Please report any issues on the discord!
 
