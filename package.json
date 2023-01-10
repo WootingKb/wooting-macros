@@ -23,7 +23,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/montserrat": "^4.5.13",
-    "@formkit/auto-animate": "^1.0.0-beta.5",
+    "@formkit/auto-animate": "1.0.0-beta.5",
     "@tauri-apps/api": "^1.1.0",
     "emoji-mart": "^5.4.0",
     "framer-motion": "^7.6.4",
