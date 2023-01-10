@@ -60,56 +60,6 @@ export type SettingsState = {
   updateTheme: (value: string) => void
 }
 
-// Action Event Structs
-export interface Keypress {
-  keypress: number
-  press_duration: number
-  keytype: string
-}
-
-export interface Monitor {
-  device_id: string
-  brightness: number
-  display_name: string
-}
-
-export type MousePressAction =
-  | { type: 'Down'; button: MouseButton }
-  | { type: 'Up'; button: MouseButton }
-  | { type: 'DownUp'; button: MouseButton; duration: number }
-
-export type MouseAction = { type: 'Press'; data: MousePressAction }
-
-export type SystemAction =
-  | { type: 'Open'; action: DirectoryAction }
-  | { type: 'Volume'; action: VolumeAction }
-  | { type: 'Clipboard'; action: ClipboardAction }
-  | { type: 'Brightness'; action: MonitorBrightnessAction }
-
-export type DirectoryAction =
-  | { type: 'Directory'; data: string }
-  | { type: 'File'; data: string }
-  | { type: 'Website'; data: string }
-
-export type ClipboardAction =
-  | { type: 'SetClipboard'; data: string }
-  | { type: 'Copy' }
-  | { type: 'GetClipboard' }
-  | { type: 'Paste' }
-  | { type: 'PasteUserDefinedString'; data: string }
-  | { type: 'Sarcasm' }
-
-export type VolumeAction =
-  | { type: 'LowerVolume' }
-  | { type: 'IncreaseVolume' }
-  | { type: 'ToggleMute' }
-
-export type MonitorBrightnessAction =
-  | { type: 'SetAll'; level: number }
-  | { type: 'SetSpecific'; level: number; name: string }
-  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
-  | { type: 'ChangeAll'; by_how_much: number }
-
 // Input Event Types
 export type TriggerEventType =
   | {
@@ -119,6 +69,7 @@ export type TriggerEventType =
     }
   | { type: 'MouseEvent'; data: MouseButton }
 
+/** To be Extended */
 export type ActionEventType =
   | { type: 'KeyPressEventAction'; data: Keypress }
   | { type: 'DelayEventAction'; data: number }
@@ -175,3 +126,53 @@ declare global {
     }
   }
 }
+
+// Action Event Structs - To be Extended
+export interface Keypress {
+  keypress: number
+  press_duration: number
+  keytype: string
+}
+
+export interface Monitor {
+  device_id: string
+  brightness: number
+  display_name: string
+}
+
+export type MousePressAction =
+  | { type: 'Down'; button: MouseButton }
+  | { type: 'Up'; button: MouseButton }
+  | { type: 'DownUp'; button: MouseButton; duration: number }
+
+export type MouseAction = { type: 'Press'; data: MousePressAction }
+
+export type SystemAction =
+  | { type: 'Open'; action: DirectoryAction }
+  | { type: 'Volume'; action: VolumeAction }
+  | { type: 'Clipboard'; action: ClipboardAction }
+  | { type: 'Brightness'; action: MonitorBrightnessAction }
+
+export type DirectoryAction =
+  | { type: 'Directory'; data: string }
+  | { type: 'File'; data: string }
+  | { type: 'Website'; data: string }
+
+export type ClipboardAction =
+  | { type: 'SetClipboard'; data: string }
+  | { type: 'Copy' }
+  | { type: 'GetClipboard' }
+  | { type: 'Paste' }
+  | { type: 'PasteUserDefinedString'; data: string }
+  | { type: 'Sarcasm' }
+
+export type VolumeAction =
+  | { type: 'LowerVolume' }
+  | { type: 'IncreaseVolume' }
+  | { type: 'ToggleMute' }
+
+export type MonitorBrightnessAction =
+  | { type: 'SetAll'; level: number }
+  | { type: 'SetSpecific'; level: number; name: string }
+  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
+  | { type: 'ChangeAll'; by_how_much: number }

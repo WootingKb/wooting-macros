@@ -8,11 +8,11 @@ import {
   Text
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
-import { useMacroContext } from '../../../contexts/macroContext'
-import { useSelectedElement } from '../../../contexts/selectors'
-import { KeyType } from '../../../constants/enums'
-import { mouseEnumLookup } from '../../../constants/MouseMap'
-import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../icons'
+import { useMacroContext } from '../../../../contexts/macroContext'
+import { useSelectedElement } from '../../../../contexts/selectors'
+import { KeyType } from '../../../../constants/enums'
+import { mouseEnumLookup } from '../../../../constants/MouseMap'
+import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
 
 export default function MousePressForm() {
   const [headingText, setHeadingText] = useState('')

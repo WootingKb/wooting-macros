@@ -1,18 +1,26 @@
 import { ReactNode } from 'react'
 import { DragHandleIcon } from '@chakra-ui/icons'
-import { Center, HStack, useColorModeValue } from '@chakra-ui/react'
-import { ActionEventType } from '../../../types'
-import { useMacroContext } from '../../../contexts/macroContext'
+import { HStack, useColorModeValue, Center } from '@chakra-ui/react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { useMacroContext } from '../../../../contexts/macroContext'
 
 interface Props {
   id: number
-  element: ActionEventType
+  isSmall: boolean
   children: ReactNode
 }
 
-export default function DragWrapper({ id, element, children }: Props) {
+export default function SortableWrapper({ id, isSmall, children }: Props) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: id })
   const { selectedElementId } = useMacroContext()
-
   const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const selectedBg = useColorModeValue(
     'primary-accent.200',
@@ -25,9 +33,18 @@ export default function DragWrapper({ id, element, children }: Props) {
   )
   const shadowColour = useColorModeValue('sm', 'white-sm')
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0 : 1
+  }
+
   return (
     <HStack
-      w={element.type === 'DelayEventAction' ? 'fit-content' : 'full'}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      w={isSmall ? 'fit-content' : 'full'}
       rounded="md"
       spacing="0px"
       bg={
@@ -38,6 +55,7 @@ export default function DragWrapper({ id, element, children }: Props) {
       shadow={shadowColour}
     >
       <Center
+        {...listeners}
         py={2}
         px={4}
         h="full"

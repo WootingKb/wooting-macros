@@ -6,9 +6,9 @@ import {
   StackDivider
 } from '@chakra-ui/react'
 import { HiArrowRight, HiArrowDownTray, HiArrowPath } from 'react-icons/hi2'
-import { useMacroContext } from '../../contexts/macroContext'
-import { MacroType } from '../../constants/enums'
-import { checkIfStringIsNonNumeric } from '../../constants/utils'
+import { useMacroContext } from '../../../contexts/macroContext'
+import { MacroType } from '../../../constants/enums'
+import { checkIfStringIsNonNumeric } from '../../../constants/utils'
 
 export default function MacroTypeArea() {
   const { macro, updateMacroType } = useMacroContext()

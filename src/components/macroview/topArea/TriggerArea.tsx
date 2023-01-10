@@ -5,11 +5,11 @@ import {
   Button,
   Text,
   useColorModeValue,
-  StackDivider,
+  StackDivider
 } from '@chakra-ui/react'
-import { useMacroContext } from '../../contexts/macroContext'
-import { HIDLookup } from '../../constants/HIDmap'
-import { mouseEnumLookup } from '../../constants/MouseMap'
+import { useMacroContext } from '../../../contexts/macroContext'
+import { HIDLookup } from '../../../constants/HIDmap'
+import { mouseEnumLookup } from '../../../constants/MouseMap'
 
 interface Props {
   onOpen: () => void

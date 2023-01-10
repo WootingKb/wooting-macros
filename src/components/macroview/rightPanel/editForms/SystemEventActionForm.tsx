@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { SystemAction } from '../../../types'
+import { SystemAction } from '../../../../types'
 import ClipboardForm from './ClipboardForm'
 import EmptyForm from './EmptyForm'
 import OpenEventForm from './OpenEventForm'

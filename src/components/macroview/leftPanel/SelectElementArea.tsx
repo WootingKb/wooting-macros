@@ -1,6 +1,12 @@
-import { Text, VStack, Input, useColorModeValue, HStack } from '@chakra-ui/react'
+import {
+  Text,
+  VStack,
+  Input,
+  useColorModeValue,
+  HStack
+} from '@chakra-ui/react'
 import { useState } from 'react'
-import AllElementsGrid from './elementGrids/AllElementsGrid'
+import SelectAreaAccordion from './selectAreaComponents/SelectAreaAccordion'
 
 export default function SelectElementArea() {
   const [searchValue, setSearchValue] = useState('')
@@ -37,7 +43,7 @@ export default function SelectElementArea() {
           }}
         />
       </HStack>
-      <AllElementsGrid searchValue={searchValue.toLowerCase()} />
+      <SelectAreaAccordion searchValue={searchValue.toLowerCase()} />
     </VStack>
   )
 }

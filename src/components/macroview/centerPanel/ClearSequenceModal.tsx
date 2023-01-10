@@ -9,7 +9,7 @@ import {
   ModalFooter
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
-import { useMacroContext } from '../../contexts/macroContext'
+import { useMacroContext } from '../../../contexts/macroContext'
 
 interface Props {
   isOpen: boolean

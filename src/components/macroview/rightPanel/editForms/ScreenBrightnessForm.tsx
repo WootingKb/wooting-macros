@@ -1,9 +1,9 @@
 import { Divider, Text, Input, Select } from '@chakra-ui/react'
 import { invoke } from '@tauri-apps/api'
 import { useState, useEffect } from 'react'
-import { useMacroContext } from '../../../contexts/macroContext'
-import { useSelectedElement } from '../../../contexts/selectors'
-import { Monitor } from '../../../types'
+import { useMacroContext } from '../../../../contexts/macroContext'
+import { useSelectedElement } from '../../../../contexts/selectors'
+import { Monitor } from '../../../../types'
 
 export default function ScreenBrightnessForm() {
   const [brightnessVal, setBrightnessVal] = useState(75)

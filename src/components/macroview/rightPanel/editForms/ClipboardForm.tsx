@@ -7,8 +7,8 @@ import {
   useColorMode
 } from '@chakra-ui/react'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useMacroContext } from '../../../contexts/macroContext'
-import { useSelectedElement } from '../../../contexts/selectors'
+import { useMacroContext } from '../../../../contexts/macroContext'
+import { useSelectedElement } from '../../../../contexts/selectors'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 
@@ -26,7 +26,8 @@ export default function ClipboardForm() {
       selectedElement.type !== 'SystemEventAction' ||
       selectedElement.data.type !== 'Clipboard' ||
       selectedElement.data.action.type !== 'PasteUserDefinedString'
-    ) return
+    )
+      return
 
     setText(selectedElement.data.action.data)
   }, [selectedElement])
@@ -76,7 +77,7 @@ export default function ClipboardForm() {
     const temp = { ...selectedElement }
     temp.data = {
       type: 'Clipboard',
-      action: { type: 'PasteUserDefinedString', data: text}
+      action: { type: 'PasteUserDefinedString', data: text }
     }
     updateElement(temp, selectedElementId)
   }, [selectedElement, selectedElementId, text, updateElement])

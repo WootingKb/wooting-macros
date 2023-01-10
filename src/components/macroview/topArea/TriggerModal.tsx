@@ -16,12 +16,12 @@ import {
   Switch
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
-import { useMacroContext } from '../../contexts/macroContext'
-import useRecordingTrigger from '../../hooks/useRecordingTrigger'
-import { HIDLookup } from '../../constants/HIDmap'
-import { mouseEnumLookup } from '../../constants/MouseMap'
-import { checkIfMouseButtonArray } from '../../constants/utils'
-import { RecordIcon, StopIcon } from '../icons'
+import { useMacroContext } from '../../../contexts/macroContext'
+import useRecordingTrigger from '../../../hooks/useRecordingTrigger'
+import { HIDLookup } from '../../../constants/HIDmap'
+import { mouseEnumLookup } from '../../../constants/MouseMap'
+import { checkIfMouseButtonArray } from '../../../constants/utils'
+import { RecordIcon, StopIcon } from '../../icons'
 
 interface Props {
   isOpen: boolean

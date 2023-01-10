@@ -1,11 +1,8 @@
-import {
-  VStack,
-  HStack,
-} from '@chakra-ui/react'
-import EditArea from '../components/macroview/EditArea'
-import SelectElementArea from '../components/macroview/SelectElementArea'
-import SequencingArea from '../components/macroview/SequencingArea'
-import Header from '../components/macroview/Header'
+import { VStack, HStack } from '@chakra-ui/react'
+import EditArea from '../components/macroview/rightPanel/EditArea'
+import SelectElementArea from '../components/macroview/leftPanel/SelectElementArea'
+import SequencingArea from '../components/macroview/centerPanel/SequencingArea'
+import Header from '../components/macroview/topArea/Header'
 
 type Props = {
   isEditing: boolean

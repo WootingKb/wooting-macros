@@ -1,8 +1,8 @@
 import { Divider, Grid, GridItem, Input, Button, Text } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
-import { useMacroContext } from '../../../contexts/macroContext'
-import { useSelectedElement } from '../../../contexts/selectors'
-import { useSettingsContext } from '../../../contexts/settingsContext'
+import { useMacroContext } from '../../../../contexts/macroContext'
+import { useSelectedElement } from '../../../../contexts/selectors'
+import { useSettingsContext } from '../../../../contexts/settingsContext'
 
 export default function DelayForm() {
   const [delayDuration, setDelayDuration] = useState(0)
@@ -14,7 +14,8 @@ export default function DelayForm() {
     if (
       selectedElement === undefined ||
       selectedElement.type !== 'DelayEventAction'
-    ) return
+    )
+      return
 
     setDelayDuration(selectedElement.data)
   }, [selectedElement])

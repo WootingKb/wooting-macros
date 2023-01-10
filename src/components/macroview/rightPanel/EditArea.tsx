@@ -1,6 +1,6 @@
 import { useColorModeValue, VStack, Text } from '@chakra-ui/react'
 import { useMemo } from 'react'
-import { useSelectedElement } from '../../contexts/selectors'
+import { useSelectedElement } from '../../../contexts/selectors'
 import DelayForm from './editForms/DelayForm'
 import EmptyForm from './editForms/EmptyForm'
 import KeyPressForm from './editForms/KeyPressForm'

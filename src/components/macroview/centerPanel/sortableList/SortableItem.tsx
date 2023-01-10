@@ -11,17 +11,17 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { useMacroContext } from '../../../contexts/macroContext'
-import { HIDLookup } from '../../../constants/HIDmap'
-import { mouseEnumLookup } from '../../../constants/MouseMap'
-import { sysEventLookup } from '../../../constants/SystemEventMap'
-import { ActionEventType } from '../../../types'
+import { useMacroContext } from '../../../../contexts/macroContext'
+import { HIDLookup } from '../../../../constants/HIDmap'
+import { mouseEnumLookup } from '../../../../constants/MouseMap'
+import { sysEventLookup } from '../../../../constants/SystemEventMap'
+import { ActionEventType } from '../../../../types'
 import {
   DownArrowIcon,
   DownUpArrowsIcon,
   KebabVertical,
   UpArrowIcon
-} from '../../icons'
+} from '../../../icons'
 
 interface Props {
   id: number

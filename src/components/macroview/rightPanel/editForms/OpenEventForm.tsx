@@ -1,10 +1,10 @@
 import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
-import { useMacroContext } from '../../../contexts/macroContext'
-import { useSelectedElement } from '../../../contexts/selectors'
+import { useMacroContext } from '../../../../contexts/macroContext'
+import { useSelectedElement } from '../../../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
-import { sysEventLookup } from '../../../constants/SystemEventMap'
-import { ActionEventType } from '../../../types'
+import { sysEventLookup } from '../../../../constants/SystemEventMap'
+import { ActionEventType } from '../../../../types'
 
 export default function OpenEventForm() {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()

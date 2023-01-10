@@ -17,6 +17,7 @@ import { Switch } from './components/switch'
 import { Textarea } from './components/textArea'
 import { shadows } from './shadows'
 import { fonts } from './fonts'
+import { Accordion } from './components/accordion'
 
 const overrides = {
   config,
@@ -35,7 +36,8 @@ const overrides = {
     NumberInput,
     Input,
     Switch,
-    Textarea
+    Textarea,
+    Accordion,
   },
   textStyles,
   shadows,

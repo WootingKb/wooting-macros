@@ -1,8 +1,8 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react'
 import { useCallback } from 'react'
-import { useMacroContext } from '../../contexts/macroContext'
-import { useSettingsContext } from '../../contexts/settingsContext'
-import { ActionEventType } from '../../types'
+import { useMacroContext } from '../../../contexts/macroContext'
+import { useSettingsContext } from '../../../contexts/settingsContext'
+import { ActionEventType } from '../../../types'
 
 interface Props {
   properties: ActionEventType

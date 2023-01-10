@@ -34,19 +34,19 @@ import { useCallback, useState } from 'react'
 import SortableWrapper from './sortableList/SortableWrapper'
 import SortableItem from './sortableList/SortableItem'
 import DragWrapper from './sortableList/DragWrapper'
-import { Keypress, MousePressAction } from '../../types'
-import { useMacroContext } from '../../contexts/macroContext'
-import useRecordingSequence from '../../hooks/useRecordingSequence'
-import { useSettingsContext } from '../../contexts/settingsContext'
-import { KeyType } from '../../constants/enums'
+import { Keypress, MousePressAction } from '../../../types'
+import { useMacroContext } from '../../../contexts/macroContext'
+import useRecordingSequence from '../../../hooks/useRecordingSequence'
+import { useSettingsContext } from '../../../contexts/settingsContext'
+import { KeyType } from '../../../constants/enums'
 import {
   checkIfKeypress,
   checkIfMouseButton,
   scrollbarsStylesDark,
   scrollbarStylesLight
-} from '../../constants/utils'
+} from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
-import { RecordIcon, StopIcon } from '../icons'
+import { RecordIcon, StopIcon } from '../../icons'
 
 export default function SequencingArea() {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)

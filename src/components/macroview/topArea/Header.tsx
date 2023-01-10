@@ -11,13 +11,13 @@ import {
   Box
 } from '@chakra-ui/react'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { useApplicationContext } from '../../contexts/applicationContext'
-import { useMacroContext } from '../../contexts/macroContext'
-import { useSelectedMacro } from '../../contexts/selectors'
-import EmojiPopover from '../EmojiPopover'
+import { useApplicationContext } from '../../../contexts/applicationContext'
+import { useMacroContext } from '../../../contexts/macroContext'
+import { useSelectedMacro } from '../../../contexts/selectors'
+import EmojiPopover from '../../EmojiPopover'
 import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
-import UnsavedChangesModal from './UnsavedChangesModal'
+import UnsavedChangesModal from '../UnsavedChangesModal'
 
 interface Props {
   isEditing: boolean
@@ -118,7 +118,16 @@ export default function Header({ isEditing }: Props) {
         changeSelectedMacroIndex(undefined)
       }
     }
-  }, [changeSelectedMacroIndex, currentMacro, macro.icon, macro.name, macro.sequence, macro.trigger, onUnsavedChangesModalOpen, sequence])
+  }, [
+    changeSelectedMacroIndex,
+    currentMacro,
+    macro.icon,
+    macro.name,
+    macro.sequence,
+    macro.trigger,
+    onUnsavedChangesModalOpen,
+    sequence
+  ])
 
   return (
     <>
@@ -128,7 +137,7 @@ export default function Header({ isEditing }: Props) {
         w="full"
         h={{ base: '80px', md: '100px', xl: '120px' }}
         py={2}
-        px={{base: 2, md: 4, xl: 6}}
+        px={{ base: 2, md: 4, xl: 6 }}
         gap={4}
         shadow={shadowColour}
         justifyContent="space-between"

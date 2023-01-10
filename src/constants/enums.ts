@@ -45,7 +45,7 @@ export enum HIDCategory {
   Navigation, // arrow keys and pg up, pg down, etc
 }
 
-/** Currently unused */
+/** To be Expanded */
 export enum PluginGroup {
-
+  // e.g. PhillipsHue, or OBS
 }
