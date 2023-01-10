@@ -108,20 +108,7 @@ impl SystemAction {
                 }
                 #[cfg(target_os = "macos")]
                 match action {
-                    MonitorBrightnessAction::SetAll { .. } => {
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                    MonitorBrightnessAction::SetSpecific { .. } => {
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                    MonitorBrightnessAction::ChangeSpecific { .. } => {
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                    MonitorBrightnessAction::ChangeAll { .. } => {
-                        #[cfg(target_os = "macos")]
+                    _ => {
                         error!("Not supported on macOS");
                     }
                 }
