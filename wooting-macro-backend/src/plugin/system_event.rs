@@ -18,7 +18,7 @@ use futures::{StreamExt, TryFutureExt};
 
 // Frequently used constants
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
-const PASTE_HOTKEY: [rdev::Key; 2] =[rdev::Key::ControlLeft, rdev::Key::KeyV];
+const PASTE_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyV];
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
