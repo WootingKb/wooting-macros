@@ -1,5 +1,7 @@
 We welcome contributions to our project! Here's a few guidelines on how to expand this project.
 
+Please note that the project currently only works on MS Windows and Linux, macOS is only available as an experimental backend-only application you can run on your own - see the backend section.
+
 ## What can you do?
 There are a couple things you can focus on:
 1. Implementing new functionality (actions)
@@ -38,9 +40,21 @@ Once you submit a pull request, one of our core contributors will review it.
 
 First, run yarn to install all the necessary dependencies.
 
+The backend is written in Rust. You must install Rust via https://www.rust-lang.org/tools/install. For windows installations you require the C++ build tools - see the information on the Rust page on how to install them.
+
+You then need to install Node. Install Node from the binaires available, then enable the ``corepack`` subsystem. After that run:
+
 ```
 yarn
 ```
+
+in the cloned repo. You might need to run the 
+
+```
+yarn install
+``` 
+
+command too. When you have the setup ready there is additional dependencies you must install on Linux to make the grabbing work, namely the ``xserver-xorg-input-evdev`` and ``libevdev2`` libraries. You might also need to add yourself to the ``input`` group. For more information, please look at the https://github.com/Narsil/rdev library instructions.
 
 ### Devving
 
@@ -58,12 +72,29 @@ To make a production build, run:
 yarn tauri build
 ```
 
+Note that you might be required to sign the application. If this is the case and the build fails, you can remove the 
+
 ## Additional details for adding a new functionality
 Adding new functionality requires work in both the backend and frontend. There are two types of functionality that can be added:
 1. Plugins - Plugins are planned to be groups of actions related to a specific program, e.g. OBS. When rendered in the UI, they would all appear under the same accordion collapsible.
 2. System Events - Anything that is related to the system itself (Windows, Linux, Mac) or anything that isn't related to another application (i.e. plugin) is a system event
 
 ### Backend
+The backend can be run on macOS but it will not work with frontend running. The split nature of the backend allows you to develop and prototype on macOS but the full stack is not yet supported.
+
+The backend is about making the application do what it should do. Many features are done via different libraries. The entire backend is async and using the Tokio executor for achieving good performance. Communication via the frontend is done using Rust's enums/structs serialized into JSON format via serde.
+
+
+
+There are 2 main types of actions: Trigger event types and Action event types. When you make a macro you can assign a trigger - this is handled by the Trigger event type enum and represents the possible triggers of a macro. 
+
+Action event types represent all the actions that can happen - be it a keypress or some OBS action. The required data is then represented and handled by the specific module file that you can link to. When an action gets executed, the executor starts reading the macro according to the sequence of actions and queuing sequence of actions to execute. Some need to be normalized and handled by a single executor (key presses) in order to preserve the OS required delays between actions, others can happen instantly when their turn is up. 
+
+The entire backend that handles actions is in ``wooting-macro-backend``. The backend that handles close communication and initialization with the frontend is in ``src-tauri``. Both cooperate, but are intentionally designed to be split from each other. This is an important thing to think about when extending the tauri function calls in ``src-tauri``'s ``main``. 
+
+In order to add a new action, you should create a new plugin file, make all the required functions and datastructures there (including adding libraries), then add the module to ``mod.rs``. After that, go to the ``lib.rs`` and expand the enums to cover the new plugin. After that you need to implement the ``execute`` method on the enums and then you are basically finished - only thing remaining is to do the frontend and update the data structures there to save the data in a proper format.
+
+There might be some scalability issues involved in how we handle the passing of data to the executors of macros, some data may be required to pass without of which you cannot meaningfully extend the backend. Feel free to suggest changes that can make the entire process of expanding the functionality easier. Currently, we do not have a modular "enable-disable" plugin system in place, though it could be implemented. Feel free to experiment in these areas too.
 
 ### Frontend
 The frontend is all about converting the backend actions into frontend structs, rendering out components to allow the user to add the new plugin-related actions to their macros.
