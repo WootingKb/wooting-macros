@@ -248,7 +248,7 @@ impl MacroData {
                 "MacroTriggerListKey: {} -> {:?}",
                 key,
                 value
-                    .into_iter()
+                    .iter()
                     .map(|x| x.name.clone())
                     .collect::<Vec<String>>()
             );
