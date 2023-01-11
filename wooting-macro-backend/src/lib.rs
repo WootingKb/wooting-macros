@@ -494,12 +494,12 @@ impl MacroBackend {
                                         Some(data_found) => data_found.to_vec(),
                                     };
 
-                                    let channel_copy_send = schan_execute.clone();
 
                                     // ? up the pressed keys here immidiately?
 
                                     let should_grab = {
                                         if !check_these_macros.is_empty() {
+                                            let channel_copy_send = schan_execute.clone();
                                             check_macro_execution_efficiently(
                                                 pressed_keys_copy_converted,
                                                 check_these_macros,
