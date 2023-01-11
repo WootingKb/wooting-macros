@@ -213,18 +213,21 @@ impl MacroData {
                     if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
-                                //let test = *data.iter().permutations(data.len()).unique().map(|x| **x.first().unwrap()).collect::<Vec<u32>>().first().unwrap();
-
-                                data.iter()
-                                    .permutations(data.len())
-                                    .unique()
-                                    .map(|x| **x.first().unwrap())
-                                    .unique()
-                                    .collect::<Vec<u32>>()
-                                    .iter()
-                                    .for_each(|x| {
-                                        output_hashmap.entry(*x).or_default().push(macros.clone());
-                                    })
+                                match data.len() {
+                                    0 => (),
+                                    1 => output_hashmap
+                                        .entry(*data.first().unwrap())
+                                        .or_default()
+                                        .push(macros.clone()),
+                                    _ => data[..data.len()-1]
+                                        .iter()
+                                        .for_each(|x| {
+                                            output_hashmap
+                                                .entry(*x)
+                                                .or_default()
+                                                .push(macros.clone());
+                                        }),
+                                }
                             }
                             TriggerEventType::MouseEvent { data } => {
                                 // let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
