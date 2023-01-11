@@ -16,6 +16,7 @@ use log4rs::{
     filter::threshold::ThresholdFilter,
 };
 
+
 use std::env::current_exe;
 
 use tauri::{
@@ -81,20 +82,20 @@ async fn control_grabbing(
     Ok(())
 }
 
-#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
-/// Spawn the backend thread.
-/// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
-/// (will crash on key grab/listen)
-async fn main() {
-    env_logger::init();
 
+fn engage_logger() -> Result<(), SetLoggerError>{
     #[cfg(debug_assertions)]
     let level = log::LevelFilter::Info;
 
     #[cfg(not(debug_assertions))]
     let level = log::LevelFilter::Warn;
 
-    let file_path = wooting_macro_backend::config::LogFilePath::default();
+
+    let default = wooting_macro_backend::config::LogFilePath::default();
+
+    println!("DEFAULT LINE: {:?}", wooting_macro_backend::config::LogFilePath::file_name());
+
+    let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
     // Build a stderr logger.
     let stderr = ConsoleAppender::builder().target(Target::Stderr).build();
@@ -123,11 +124,24 @@ async fn main() {
         )
         .unwrap();
 
-    // Use this to change log levels at runtime.
-    // This means you can change the default log level to trace
-    // if you are trying to debug an issue and need more logs on then turn it off
-    // once you are done.
-    let _handle = log4rs::init_config(config).unwrap();
+        let _handle = log4rs::init_config(config);
+        Ok(())
+}
+
+#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
+/// Spawn the backend thread.
+/// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
+/// (will crash on key grab/listen)
+async fn main() {
+    //env_logger::init();
+
+    engage_logger().unwrap();
+
+    error!("Goes to stderr and file");
+    warn!("Goes to stderr and file");
+    info!("Goes to stderr and file");
+    debug!("Goes to file only");
+    trace!("Goes to file only");
 
 
     #[cfg(not(debug_assertions))]
@@ -135,7 +149,7 @@ async fn main() {
 
     let backend = MacroBackend::default();
 
-    info!("Running the macro backend");
+    error!("Running the macro backend");
 
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     backend.init().await;

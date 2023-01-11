@@ -22,7 +22,7 @@ wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.4"
 log = "0.4.17"
 env_logger = "0.10.0"
-log4rs = "1.2.0"
+log4rs = {version = "1.2.0", features= ["file_appender", "console_appender"] }
 
 
 
