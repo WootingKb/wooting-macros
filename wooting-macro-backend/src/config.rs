@@ -72,6 +72,22 @@ impl ConfigFile for ApplicationConfig {
     }
 }
 
+impl ConfigFile for LogFilePath {
+    fn file_name() -> PathBuf {
+        let dir = {
+            #[cfg(debug_assertions)]
+            let x = PathBuf::from("..");
+
+            #[cfg(not(debug_assertions))]
+            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+
+            x
+        };
+
+        dir.join(LOG_FILE)
+    }
+}
+
 impl ConfigFile for MacroData {
     fn file_name() -> PathBuf {
         let dir = {
@@ -112,6 +128,8 @@ pub const CONFIG_DIR: &str = "wooting-macro-app";
 /// Debug builds save configs to the working parent directory.
 pub const CONFIG_DIR: &str = "..";
 
+const LOG_FILE: &str = "application_log.log";
+
 /// Config file name
 const CONFIG_FILE: &str = "config.json";
 
@@ -129,4 +147,18 @@ pub struct ApplicationConfig {
     pub minimize_at_launch: bool,
     pub theme: String,
     pub minimize_to_tray: bool,
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct LogFilePath {
+    pub file_name: String,
+}
+
+impl Default for LogFilePath {
+    fn default() -> Self {
+        LogFilePath {
+            file_name: "application_logfile.log".to_string(),
+        }
+    }
 }

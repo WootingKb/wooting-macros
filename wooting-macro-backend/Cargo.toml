@@ -32,6 +32,7 @@ anyhow = "1.0.66"
 log = "0.4.17"
 env_logger = "0.10.0"
 rayon = "1.6.1"
+log4rs = "1.2.0"
 
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
