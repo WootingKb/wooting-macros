@@ -22,7 +22,7 @@
 
 ## Warnings
 
-**Please do be aware that this application does grab and analyze keystrokes. While you are able to disable this temporarily using an appropriate function, you should still not use this application with anti-cheat heavy games (use at your own risk!) such as: Dota 2, CS:GO, Rainbow Six: Siege, Valorant, League of Legends, Tower Unite. Please doublecheck if a game is using an anti-cheat software!**
+**Please do be aware that this application does grab and analyze keystrokes. While you are able to disable this temporarily using an appropriate function, you should still not have this application running alongside games (use at your own risk!). Macros (depending on how you configure them) are considered cheating.**
 
 
 ## Table of Contents
