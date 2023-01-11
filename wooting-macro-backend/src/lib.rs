@@ -337,6 +337,7 @@ fn check_macro_execution_efficiently(
                         }
                     }
                     2..=4 => {
+                        // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
                         if data[..(data.len() - 1)]
                             .iter()
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
