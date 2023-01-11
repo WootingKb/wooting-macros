@@ -58,7 +58,7 @@ command as well to install all the dependencies if running just ``yarn`` isn't e
 
 For development we recommend using Visual Studio Code with the ``rust-analyzer`` addon as well as using the ``clippy`` linter. Please, use ``cargo clippy`` and ``cargo check`` before you submit your code as we do treat warnings as hard errors on builds. 
 
-Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``env-logger`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in Deploying.
+Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``log`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in Devving.
 
 ### Devving
 
