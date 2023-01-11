@@ -18,7 +18,7 @@ export const Modal = helpers.defineMultiStyleConfig({
   variants: {
     brand: (props: StyleFunctionProps) => ({
       header: { },
-      overlay: { bg: 'blackAlpha.900' },
+      overlay: { bg: 'blackAlpha.700' },
       dialogContainer: {},
       dialog: {
         bg: mode('bg-light', 'bg-dark')(props),

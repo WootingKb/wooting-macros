@@ -18,7 +18,7 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingTrigger from '../../../hooks/useRecordingTrigger'
-import { HIDLookup } from '../../../constants/HIDmap'
+import { Hid, HIDLookup } from '../../../constants/HIDmap'
 import { mouseEnumLookup } from '../../../constants/MouseMap'
 import { checkIfMouseButtonArray } from '../../../constants/utils'
 import { RecordIcon, StopIcon } from '../../icons'
@@ -49,7 +49,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
         return true
       } else {
         return items.some((element) => {
-          if (element < 224) {
+          if (element < Hid.CONTROLL.HIDcode) {
             return true
           } else {
             return false
@@ -99,6 +99,21 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     []
   )
 
+  const displayNames = useMemo((): string[] => {
+    if (items.length === 0) return []
+    const names: string[] = []
+    if (checkIfMouseButtonArray(items)) {
+      items.forEach((element) => {
+        names.push(getDisplayString(element, true))
+      })
+    } else {
+      items.forEach((element) => {
+        names.push(getDisplayString(element, false))
+      })
+    }
+    return names
+  }, [getDisplayString, items])
+
   return (
     <Modal
       isOpen={isOpen}
@@ -129,9 +144,9 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                     Set up to 4 keys* or a mouse button to use as the trigger.
                   </Text>
                 )}
-                {items.map((element) => (
+                {items.map((element, index) => (
                   <Kbd variant="brand" h="fit-content" key={element}>
-                    {getDisplayString(element, checkIfMouseButtonArray(items))}
+                    {displayNames[index]}
                   </Kbd>
                 ))}
               </Flex>

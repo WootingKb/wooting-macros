@@ -29,7 +29,6 @@ export default function Header({ isEditing }: Props) {
     macro,
     sequence,
     canSaveMacro,
-    changeIsUpdatingMacro,
     updateMacroName,
     updateMacro,
     updateMacroIcon
@@ -59,13 +58,16 @@ export default function Header({ isEditing }: Props) {
   const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
-    changeIsUpdatingMacro(isEditing)
     if (isEditing) {
       setInputValue(macro.name)
-      return
     }
-    onTriggerModalOpen()
-  }, [isEditing, changeIsUpdatingMacro, macro.name, onTriggerModalOpen])
+  }, [isEditing, macro.name])
+
+  useEffect(() => {
+    if (!isEditing) {
+      onTriggerModalOpen()
+    }
+  }, [isEditing, onTriggerModalOpen])
 
   const saveButtonTooltipText = useMemo((): string => {
     if (
@@ -95,8 +97,6 @@ export default function Header({ isEditing }: Props) {
     if (currentMacro !== undefined) {
       if (
         currentMacro.trigger === macro.trigger &&
-        currentMacro.name === macro.name &&
-        currentMacro.icon === macro.icon &&
         sequence === macro.sequence
       ) {
         changeSelectedMacroIndex(undefined)
@@ -106,8 +106,6 @@ export default function Header({ isEditing }: Props) {
     } else {
       if (
         sequence.length > 0 ||
-        macro.name !== '' ||
-        macro.icon !== ':smile:' ||
         (macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.length > 0) ||
         (macro.trigger.type === 'MouseEvent' &&
@@ -121,8 +119,6 @@ export default function Header({ isEditing }: Props) {
   }, [
     changeSelectedMacroIndex,
     currentMacro,
-    macro.icon,
-    macro.name,
     macro.sequence,
     macro.trigger,
     onUnsavedChangesModalOpen,

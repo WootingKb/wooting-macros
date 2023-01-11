@@ -48,21 +48,27 @@ export default function KeyboardKeysSection({ keyboardKeyElements }: Props) {
                     h="fit"
                     px={4}
                     templateColumns={{
-                      base: 'repeat(4, 1fr)',
-                      md: 'repeat(6, 1fr)',
-                      xl: 'repeat(8, 1fr)'
+                      base: 'repeat(6, 1fr)',
+                      md: 'repeat(8, 1fr)',
+                      xl: 'repeat(10, 1fr)'
                     }}
                     gap={2}
                   >
                     {keyboardKeyElements(categoryName).map(
                       (HIDinfo: HidInfo) => (
                         <GridItem
-                          colSpan={HIDinfo.requiresLongDisplay ? 2 : 1}
+                          colSpan={
+                            HIDinfo.colSpan !== undefined ? HIDinfo.colSpan : 1
+                          }
                           key={HIDinfo.HIDcode}
                         >
                           <AspectRatio
                             h="full"
-                            ratio={HIDinfo.requiresLongDisplay ? 2 / 1 : 1}
+                            ratio={
+                              HIDinfo.colSpan !== undefined
+                                ? HIDinfo.colSpan / 1
+                                : 1
+                            }
                           >
                             <SelectElementButton
                               displayText={HIDinfo.displayString}

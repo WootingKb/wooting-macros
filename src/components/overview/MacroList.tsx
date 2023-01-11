@@ -5,7 +5,6 @@ import {
   Flex,
   Grid,
   GridItem,
-  useColorMode,
   useColorModeValue,
   VStack
 } from '@chakra-ui/react'
@@ -24,7 +23,10 @@ export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
   const currentCollection: Collection = useSelectedCollection()
-  const { colorMode } = useColorMode()
+  const scrollbarStyles = useColorModeValue(
+    scrollbarStylesLight,
+    scrollbarsStylesDark
+  )
   const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const shadowColour = useColorModeValue('md', 'white-md')
 
@@ -43,10 +45,10 @@ export default function MacroList() {
     <Box
       w="full"
       h="full"
-      p={'25px'}
+      p='25px'
       overflow="hidden"
       overflowY="auto"
-      sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
+      sx={scrollbarStyles}
     >
       <Grid
         w="full"
@@ -61,10 +63,10 @@ export default function MacroList() {
             bg={bg}
             boxShadow={shadowColour}
             rounded="2xl"
-            p="3"
+            p={3}
             m="auto"
             justifyContent="center"
-            spacing="8px"
+            spacing={2}
           >
             <Button
               variant="yellowGradient"

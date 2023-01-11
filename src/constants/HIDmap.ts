@@ -5,7 +5,7 @@ export interface HidInfo {
   category: HIDCategory
   displayString: string
   webKeyId: string
-  requiresLongDisplay?: boolean
+  colSpan?: number
 }
 
 export class Hid {
@@ -306,7 +306,8 @@ export class Hid {
       HIDcode: 40,
       category: HIDCategory.Alphanumeric,
       displayString: 'Enter',
-      webKeyId: 'Enter'
+      webKeyId: 'Enter',
+      colSpan: 2
     }
   }
   static get ESCAPE(): HidInfo {
@@ -315,7 +316,7 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Escape',
       webKeyId: 'Escape',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get BACKSPACE(): HidInfo {
@@ -324,7 +325,7 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Backspace',
       webKeyId: 'Backspace',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get TAB(): HidInfo {
@@ -341,7 +342,7 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Space',
       webKeyId: 'Space',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get MINUS(): HidInfo {
@@ -439,7 +440,7 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Caps Lock',
       webKeyId: 'CapsLock',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get F1(): HidInfo {
@@ -546,7 +547,7 @@ export class Hid {
       category: HIDCategory.Modifier,
       displayString: 'Print Screen',
       webKeyId: 'PrintScreen',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get SCROLLLOCK(): HidInfo {
@@ -555,7 +556,7 @@ export class Hid {
       category: HIDCategory.Modifier,
       displayString: 'Scroll Lock',
       webKeyId: 'ScrollLock',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get PAUSE(): HidInfo {
@@ -563,7 +564,8 @@ export class Hid {
       HIDcode: 72,
       category: HIDCategory.Modifier,
       displayString: 'Pause',
-      webKeyId: 'Pause'
+      webKeyId: 'Pause',
+      colSpan: 2
     }
   }
   static get INSERT(): HidInfo {
@@ -571,7 +573,8 @@ export class Hid {
       HIDcode: 73,
       category: HIDCategory.Navigation,
       displayString: 'Insert',
-      webKeyId: 'Insert'
+      webKeyId: 'Insert',
+      colSpan: 2
     }
   }
   static get HOME(): HidInfo {
@@ -579,7 +582,8 @@ export class Hid {
       HIDcode: 74,
       category: HIDCategory.Navigation,
       displayString: 'Home',
-      webKeyId: 'Home'
+      webKeyId: 'Home',
+      colSpan: 2
     }
   }
   static get PAGEUP(): HidInfo {
@@ -588,7 +592,7 @@ export class Hid {
       category: HIDCategory.Navigation,
       displayString: 'Page Up',
       webKeyId: 'PageUp',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get DELETE(): HidInfo {
@@ -596,7 +600,8 @@ export class Hid {
       HIDcode: 76,
       category: HIDCategory.Navigation,
       displayString: 'Delete',
-      webKeyId: 'Delete'
+      webKeyId: 'Delete',
+      colSpan: 2
     }
   }
   static get END(): HidInfo {
@@ -604,7 +609,8 @@ export class Hid {
       HIDcode: 77,
       category: HIDCategory.Navigation,
       displayString: 'End',
-      webKeyId: 'End'
+      webKeyId: 'End',
+      colSpan: 2
     }
   }
   static get PAGEDOWN(): HidInfo {
@@ -613,7 +619,7 @@ export class Hid {
       category: HIDCategory.Navigation,
       displayString: 'Page Down',
       webKeyId: 'PageDown',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get ARROWR(): HidInfo {
@@ -622,7 +628,7 @@ export class Hid {
       category: HIDCategory.Navigation,
       displayString: 'Right Arrow',
       webKeyId: 'ArrowRight',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
 
@@ -632,7 +638,7 @@ export class Hid {
       category: HIDCategory.Navigation,
       displayString: 'Left Arrow',
       webKeyId: 'ArrowLeft',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get ARROWD(): HidInfo {
@@ -641,7 +647,7 @@ export class Hid {
       category: HIDCategory.Navigation,
       displayString: 'Down Arrow',
       webKeyId: 'ArrowDown',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get ARROWU(): HidInfo {
@@ -650,7 +656,7 @@ export class Hid {
       category: HIDCategory.Navigation,
       displayString: 'Up Arrow',
       webKeyId: 'ArrowUp',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NUMLOCK(): HidInfo {
@@ -659,7 +665,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Num Lock',
       webKeyId: 'NumLock',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NUMDIVIDE(): HidInfo {
@@ -668,7 +674,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Numpad Divide',
       webKeyId: 'NumpadDivide',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NUMMULTIPLY(): HidInfo {
@@ -677,7 +683,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Numpad Multiply',
       webKeyId: 'NumpadMultiply',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NUMSUBTRACT(): HidInfo {
@@ -686,7 +692,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Numpad Subtract',
       webKeyId: 'NumpadSubtract',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NUMADD(): HidInfo {
@@ -695,7 +701,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Numpad Add',
       webKeyId: 'NumpadAdd',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NUMENTER(): HidInfo {
@@ -704,7 +710,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Numpad Enter',
       webKeyId: 'NumpadEnter',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
   static get NP1(): HidInfo {
@@ -794,7 +800,7 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'Numpad Decimal',
       webKeyId: 'NumpadDecimal',
-      requiresLongDisplay: true
+      colSpan: 2
     }
   }
 
@@ -900,7 +906,8 @@ export class Hid {
       HIDcode: 224,
       category: HIDCategory.Modifier,
       displayString: 'L-CTRL',
-      webKeyId: 'ControlLeft'
+      webKeyId: 'ControlLeft',
+      colSpan: 2
     }
   }
   static get SHIFTL(): HidInfo {
@@ -908,7 +915,8 @@ export class Hid {
       HIDcode: 225,
       category: HIDCategory.Modifier,
       displayString: 'L-SHIFT',
-      webKeyId: 'ShiftLeft'
+      webKeyId: 'ShiftLeft',
+      colSpan: 2
     }
   }
   static get ALTL(): HidInfo {
@@ -916,7 +924,8 @@ export class Hid {
       HIDcode: 226,
       category: HIDCategory.Modifier,
       displayString: 'L-ALT',
-      webKeyId: 'AltLeft'
+      webKeyId: 'AltLeft',
+      colSpan: 2
     }
   }
   static get METAL(): HidInfo {
@@ -925,7 +934,7 @@ export class Hid {
       category: HIDCategory.Modifier,
       displayString: 'L-Win/Super/Command',
       webKeyId: 'MetaLeft',
-      requiresLongDisplay: true
+      colSpan: 4
     }
   }
   static get CONTROLR(): HidInfo {
@@ -933,7 +942,8 @@ export class Hid {
       HIDcode: 228,
       category: HIDCategory.Modifier,
       displayString: 'R-CTRL',
-      webKeyId: 'ControlRight'
+      webKeyId: 'ControlRight',
+      colSpan: 2
     }
   }
   static get SHIFTR(): HidInfo {
@@ -941,7 +951,8 @@ export class Hid {
       HIDcode: 229,
       category: HIDCategory.Modifier,
       displayString: 'R-SHIFT',
-      webKeyId: 'ShiftRight'
+      webKeyId: 'ShiftRight',
+      colSpan: 2
     }
   }
   static get ALTR(): HidInfo {
@@ -949,7 +960,8 @@ export class Hid {
       HIDcode: 230,
       category: HIDCategory.Modifier,
       displayString: 'R-ALT',
-      webKeyId: 'AltRight'
+      webKeyId: 'AltRight',
+      colSpan: 2
     }
   }
   static get METAR(): HidInfo {
@@ -958,7 +970,7 @@ export class Hid {
       category: HIDCategory.Modifier,
       displayString: 'R-Win/Super/Command',
       webKeyId: 'MetaRight',
-      requiresLongDisplay: true
+      colSpan: 4
     }
   }
 
@@ -1011,8 +1023,8 @@ export class Hid {
     Hid.NP9,
     Hid.ENTER,
     Hid.ESCAPE,
-    Hid.TAB,
     Hid.BACKSPACE,
+    Hid.TAB,
     Hid.SPACE,
     Hid.MINUS,
     Hid.EQUAL,
@@ -1076,8 +1088,8 @@ export class Hid {
     Hid.METAL,
     Hid.SHIFTR,
     Hid.CONTROLR,
-    Hid.ALTR,
-    Hid.METAR
+    Hid.METAR,
+    Hid.ALTR
   ]
 }
 

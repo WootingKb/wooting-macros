@@ -67,12 +67,11 @@ export default function SettingsLeftPanel({
       }
     }
 
-    const getAppVersionText = async () => {
-      await getVersion().then((version) => setVersionText(version))
-    }
+    getVersion()
+      .then((version) => setVersionText(version))
+      .catch(console.error)
 
     getOSType().catch((err) => console.error(err))
-    getAppVersionText().catch((err) => console.error(err))
   }, [])
 
   return (
@@ -126,6 +125,9 @@ export default function SettingsLeftPanel({
         </VStack>
         <Divider />
         <VStack w="full" spacing={2} px={1} pt={1}>
+          <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
+            Got Feedback? Let us know through these channels!
+          </Text>
           <HStack w="full">
             <DiscordIcon
               color={strokeColour}
@@ -148,9 +150,6 @@ export default function SettingsLeftPanel({
               transition="ease-out 150ms"
             />
           </HStack>
-          <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
-            Got Feedback? Let us know through these channels!
-          </Text>
           <VStack w="full" spacing={0}>
             <Text
               w="full"

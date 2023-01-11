@@ -53,6 +53,7 @@ export default function SortableItem({
   const isKeyboardKey = useMemo(() => {
     return element.type === 'KeyPressEventAction'
   }, [element.type])
+  const isSelected = selectedElementId === id - 1
 
   const onDuplicate = useCallback(() => {
     const newElement = { ...element }
@@ -152,26 +153,26 @@ export default function SortableItem({
   const onItemPress = useCallback(() => {
     if (recording) return
 
-    if (selectedElementId === id - 1) {
+    if (isSelected) {
       return
     }
     updateSelectedElementId(id - 1)
-  }, [id, recording, selectedElementId, updateSelectedElementId])
+  }, [id, isSelected, recording, updateSelectedElementId])
 
   const onEditButtonPress = useCallback(() => {
     stopRecording()
-    if (selectedElementId === id - 1) {
+    if (isSelected) {
       return
     }
     updateSelectedElementId(id - 1)
-  }, [id, selectedElementId, stopRecording, updateSelectedElementId])
+  }, [id, isSelected, stopRecording, updateSelectedElementId])
 
   const onDeleteButtonPress = useCallback(() => {
-    if (selectedElementId === id - 1) {
+    if (isSelected) {
       updateSelectedElementId(undefined)
     }
     onElementDelete(id - 1)
-  }, [id, onElementDelete, selectedElementId, updateSelectedElementId])
+  }, [id, isSelected, onElementDelete, updateSelectedElementId])
 
   return (
     <HStack
@@ -184,11 +185,15 @@ export default function SortableItem({
       <HStack p={1} px={2} w="full" spacing={0} gap={4}>
         {iconToDisplay}
         <Text
-          bg={isKeyboardKey ? bg : 'none'}
-          border={isKeyboardKey ? '1px solid' : 'none'}
+          {...(isKeyboardKey
+            ? {
+                bg: bg,
+                border: '1px solid',
+                py: 1,
+                px: 3
+              }
+            : {})}
           borderColor={kebabColour}
-          py={isKeyboardKey ? 1 : 0}
-          px={isKeyboardKey ? 3 : 0}
           fontWeight={
             selectedElementId !== undefined && id === selectedElementId + 1
               ? 'bold'
@@ -203,7 +208,7 @@ export default function SortableItem({
         {isEditable && (
           <IconButton
             variant="brandSecondary"
-            aria-label="edit element"
+            aria-label="Edit item"
             icon={<EditIcon />}
             size={['xs', 'sm']}
             onClick={onEditButtonPress}
@@ -212,7 +217,7 @@ export default function SortableItem({
         <Menu variant="brand">
           <MenuButton
             h="24px"
-            aria-label="element options"
+            aria-label="Item options"
             color={kebabColour}
             _hover={{ color: kebabHoverColour }}
           >

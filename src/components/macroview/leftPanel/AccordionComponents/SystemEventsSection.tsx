@@ -23,7 +23,7 @@ export default function SystemEventsSection({ elementsToRender }: Props) {
           <Flex
             flex="1"
             textAlign="left"
-            fontWeight={'semibold'}
+            fontWeight="semibold"
             alignItems="center"
             gap={2}
           >

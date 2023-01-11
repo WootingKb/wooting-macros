@@ -3,10 +3,15 @@ import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { useSelectedElement } from '../../../../contexts/selectors'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
+import { ActionEventType } from '../../../../types'
 
-export default function DelayForm() {
+interface Props {
+  selectedElementId: number
+}
+
+export default function DelayForm({ selectedElementId }: Props) {
   const [delayDuration, setDelayDuration] = useState(0)
-  const { selectedElementId, updateElement } = useMacroContext()
+  const { updateElement } = useMacroContext()
   const { config } = useSettingsContext()
   const selectedElement = useSelectedElement()
 
@@ -26,28 +31,33 @@ export default function DelayForm() {
       if (newValue === undefined) {
         return
       }
-
       setDelayDuration(newValue)
     },
     [setDelayDuration]
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined || selectedElementId === undefined) {
+    if (selectedElement === undefined) {
       return
     }
-    const temp = { ...selectedElement }
-    temp.data = delayDuration
+    const temp: ActionEventType = {
+      ...selectedElement,
+      type: 'DelayEventAction',
+      data: delayDuration
+    }
     updateElement(temp, selectedElementId)
   }, [delayDuration, selectedElement, selectedElementId, updateElement])
 
   const resetDuration = useCallback(() => {
-    if (selectedElement === undefined || selectedElementId === undefined) {
+    if (selectedElement === undefined) {
       return
     }
     setDelayDuration(config.DefaultDelayValue)
-    const temp = { ...selectedElement }
-    temp.data = config.DefaultDelayValue
+    const temp: ActionEventType = {
+      ...selectedElement,
+      type: 'DelayEventAction',
+      data: config.DefaultDelayValue
+    }
     updateElement(temp, selectedElementId)
   }, [
     config.DefaultDelayValue,
@@ -59,7 +69,7 @@ export default function DelayForm() {
   return (
     <>
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
-        {'Delay Element'}
+        Delay Element
       </Text>
       <Divider />
       <Grid templateRows={'20px 1fr'} gap="2" w="full">

@@ -6,13 +6,17 @@ import { open } from '@tauri-apps/api/dialog'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { ActionEventType } from '../../../../types'
 
-export default function OpenEventForm() {
+interface Props {
+  selectedElementId: number
+}
+
+export default function OpenEventForm({ selectedElementId }: Props) {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()
   const [headerText, setHeaderText] = useState('')
   const [subHeaderText, setSubHeaderText] = useState('')
   const [path, setPath] = useState('')
   const selectedElement = useSelectedElement()
-  const { selectedElementId, updateElement } = useMacroContext()
+  const { updateElement } = useMacroContext()
 
   useEffect(() => {
     if (
@@ -52,7 +56,7 @@ export default function OpenEventForm() {
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined || selectedElementId === undefined) {
+    if (selectedElement === undefined) {
       return
     }
     if (selectedElement.type !== 'SystemEventAction') {
@@ -71,7 +75,7 @@ export default function OpenEventForm() {
 
   const onButtonPress = useCallback(
     async (isDirectory: boolean) => {
-      if (selectedElement === undefined || selectedElementId === undefined) {
+      if (selectedElement === undefined) {
         return
       }
       if (selectedElement.type !== 'SystemEventAction') {

@@ -1,6 +1,12 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { MouseButton } from './enums'
-import { ApplicationConfig, Collection, Keypress, MacroData, MousePressAction } from '../types'
+import {
+  ApplicationConfig,
+  Collection,
+  Keypress,
+  MacroData,
+  MousePressAction
+} from '../types'
 
 export const updateBackendConfig = (collections: Collection[]) => {
   const macroData: MacroData = { data: collections }
@@ -16,6 +22,12 @@ export const updateSettings = (newConfig: ApplicationConfig) => {
       console.error(e)
     })
   }
+}
+
+export const updateMacroOutput = (value: boolean): Promise<void> => {
+  return invoke<void>('control_grabbing', {
+    frontendBool: !value
+  })
 }
 
 export const checkIfMouseButtonArray = (

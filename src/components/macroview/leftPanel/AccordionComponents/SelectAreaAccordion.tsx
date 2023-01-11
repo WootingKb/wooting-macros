@@ -1,4 +1,10 @@
-import { Accordion, Flex, useColorMode, Text, Divider } from '@chakra-ui/react'
+import {
+  Accordion,
+  Flex,
+  Text,
+  Divider,
+  useColorModeValue
+} from '@chakra-ui/react'
 import { useCallback, useMemo } from 'react'
 import {
   scrollbarsStylesDark,
@@ -19,7 +25,10 @@ interface Props {
 }
 
 export default function SelectAreaAccordion({ searchValue }: Props) {
-  const { colorMode } = useColorMode()
+  const scrollbarStyles = useColorModeValue(
+    scrollbarStylesLight,
+    scrollbarsStylesDark
+  )
 
   const systemEventElements = useMemo(() => {
     if (searchValue.trim() === '') {
@@ -114,18 +123,20 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
     systemEventElements.length
   ])
 
+  const isValidSearch = useMemo(() => {
+    return indices !== undefined && indices.length === 0
+  }, [indices])
+
   return (
     <Flex
       direction="column"
       w="full"
       h="fit"
       overflowY="auto"
-      alignItems={
-        indices !== undefined && indices.length === 0 ? 'center' : 'flex-start'
-      }
-      sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
+      alignItems={isValidSearch ? 'center' : 'flex-start'}
+      sx={scrollbarStyles}
     >
-      {indices !== undefined && indices.length === 0 && searchValue !== '' && (
+      {isValidSearch && searchValue !== '' && (
         <>
           <Divider />
           <Text mt={4} fontWeight="semibold">

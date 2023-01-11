@@ -9,17 +9,23 @@ export default function useRecordingTrigger(
   initialItems: MouseButton | number[]
 ) {
   const [recording, setRecording] = useState(false)
-  const [items, setItems] = useState<number[]>([])
+  const [items, setItems] = useState<number[]>(() => {
+    if (Array.isArray(initialItems)) {
+      return initialItems
+    } else {
+      return [initialItems]
+    }
+  })
   const [prevItems, setPrevItems] = useState<number[]>([])
   const toast = useToast()
 
-  useEffect(() => {
-    if (Array.isArray(initialItems)) {
-      setItems(initialItems)
-    } else {
-      setItems([initialItems])
-    }
-  }, [initialItems])
+  // useEffect(() => {
+  //   if (Array.isArray(initialItems)) {
+  //     setItems(initialItems)
+  //   } else {
+  //     setItems([initialItems])
+  //   }
+  // }, [initialItems])
 
   const resetItems = useCallback(() => {
     setItems(prevItems)

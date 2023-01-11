@@ -9,18 +9,17 @@ import {
   Tooltip,
   Switch,
   useToast,
-  Box,
-  useColorMode
+  Box
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import {
   scrollbarsStylesDark,
-  scrollbarStylesLight
+  scrollbarStylesLight,
+  updateMacroOutput
 } from '../../constants/utils'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { invoke } from '@tauri-apps/api'
 import { useCallback, useState } from 'react'
 import data from '@emoji-mart/data'
 
@@ -39,7 +38,10 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
-  const { colorMode } = useColorMode()
+  const scrollbarStyles = useColorModeValue(
+    scrollbarStylesLight,
+    scrollbarsStylesDark
+  )
   const panelBg = useColorModeValue('bg-light', 'primary-dark.900')
   const borderColour = useColorModeValue(
     'primary-light.100',
@@ -48,8 +50,9 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
 
   const onNewCollectionButtonPress = useCallback(() => {
     const randomCategory =
-      data.categories[Math.floor(Math.random() * (6 - 1 + 1) + 1)]
-    console.log(randomCategory)
+      data.categories[
+        Math.floor(Math.random() * (data.categories.length - 3) + 1) // The plus 1 is to avoid selecting the frequent category. The - 3 is to avoid selecting the flags and symbols categories
+      ]
     let randomEmoji =
       randomCategory.emojis[
         Math.floor(Math.random() * randomCategory.emojis.length)
@@ -71,14 +74,14 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
       bg={panelBg}
       h="100vh"
       p={4}
-      w={'300px'}
+      w="300px"
       borderRight="1px"
       borderColor={borderColour}
       justifyContent="space-between"
     >
       <VStack w="full" h="full" pt={1} overflow="hidden" gap={2}>
         <HStack w="full" justifyContent="space-between" px={1}>
-          <Text w="full" fontWeight="bold" fontSize={'28px'}>
+          <Text w="full" fontWeight="bold" fontSize="28px">
             Collections
           </Text>
           <Tooltip
@@ -101,9 +104,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 isChecked={isMacroOutputEnabled}
                 onChange={() => {
                   setIsMacroOutputEnabled((value) => {
-                    invoke<void>('control_grabbing', {
-                      frontendBool: !value
-                    }).catch((e) => {
+                    updateMacroOutput(value).catch((e) => {
                       console.error(e)
                       toast({
                         title: `Error ${
@@ -131,6 +132,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           variant="yellowGradient"
           p={2}
           leftIcon={<AddIcon />}
+          fontSize="md"
           onClick={onNewCollectionButtonPress}
         >
           New Collection
@@ -142,9 +144,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           overflowY="auto"
           ref={parent}
           spacing={1}
-          sx={
-            colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark
-          }
+          sx={scrollbarStyles}
         >
           {collections.map((collection: Collection, index: number) => (
             <CollectionButton

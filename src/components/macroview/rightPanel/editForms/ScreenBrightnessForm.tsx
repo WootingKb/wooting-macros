@@ -3,7 +3,7 @@ import { invoke } from '@tauri-apps/api'
 import { useState, useEffect } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { useSelectedElement } from '../../../../contexts/selectors'
-import { Monitor } from '../../../../types'
+import { ActionEventType, Monitor } from '../../../../types'
 
 export default function ScreenBrightnessForm() {
   const [brightnessVal, setBrightnessVal] = useState(75)
@@ -48,10 +48,12 @@ export default function ScreenBrightnessForm() {
     }
 
     setBrightnessVal(newValue)
-    const temp = { ...selectedElement }
-    temp.data = {
-      type: 'Brightness',
-      action: { type: 'SetAll', level: newValue }
+    const temp: ActionEventType = {
+      ...selectedElement,
+      data: {
+        type: 'Brightness',
+        action: { type: 'SetAll', level: newValue }
+      }
     }
     updateElement(temp, selectedElementId)
   }
@@ -59,7 +61,7 @@ export default function ScreenBrightnessForm() {
   return (
     <>
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-        {'Set Screen Brightness'}
+        Set Screen Brightness
       </Text>
       <Divider />
       <Text w="full" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">

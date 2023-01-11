@@ -11,13 +11,18 @@ import { useMacroContext } from '../../../../contexts/macroContext'
 import { useSelectedElement } from '../../../../contexts/selectors'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
+import { ActionEventType } from '../../../../types'
 
-export default function ClipboardForm() {
+interface Props {
+  selectedElementId: number
+}
+
+export default function ClipboardForm({ selectedElementId }: Props) {
   const pickerRef = useRef<HTMLDivElement | null>(null)
   const [text, setText] = useState('')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const selectedElement = useSelectedElement()
-  const { selectedElementId, updateElement } = useMacroContext()
+  const { updateElement } = useMacroContext()
   const { colorMode } = useColorMode()
 
   useEffect(() => {
@@ -68,23 +73,25 @@ export default function ClipboardForm() {
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined || selectedElementId === undefined) {
+    if (selectedElement === undefined) {
       return
     }
     if (selectedElement.type !== 'SystemEventAction') {
       return
     }
-    const temp = { ...selectedElement }
-    temp.data = {
-      type: 'Clipboard',
-      action: { type: 'PasteUserDefinedString', data: text }
+    const temp: ActionEventType = {
+      ...selectedElement,
+      data: {
+        type: 'Clipboard',
+        action: { type: 'PasteUserDefinedString', data: text }
+      }
     }
     updateElement(temp, selectedElementId)
   }, [selectedElement, selectedElementId, text, updateElement])
 
   const onEmojiSelect = useCallback(
     (emoji: { native: string }) => {
-      if (selectedElement === undefined || selectedElementId === undefined) {
+      if (selectedElement === undefined) {
         return
       }
       if (selectedElement.type !== 'SystemEventAction') {
@@ -92,12 +99,14 @@ export default function ClipboardForm() {
       }
       const newString = text + emoji.native
       setText(newString)
-      const temp = { ...selectedElement }
-      temp.data = {
-        type: 'Clipboard',
-        action: {
-          type: 'PasteUserDefinedString',
-          data: newString
+      const temp: ActionEventType = {
+        ...selectedElement,
+        data: {
+          type: 'Clipboard',
+          action: {
+            type: 'PasteUserDefinedString',
+            data: newString
+          }
         }
       }
       updateElement(temp, selectedElementId)
@@ -108,7 +117,7 @@ export default function ClipboardForm() {
   return (
     <>
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
-        {'Paste Text'}
+        Paste Text
       </Text>
       <Divider />
       <HStack w="full" justifyContent="space-between">

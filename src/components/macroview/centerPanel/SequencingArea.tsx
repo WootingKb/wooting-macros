@@ -8,59 +8,29 @@ import {
   AlertIcon,
   AlertDescription,
   Stack,
-  useColorMode,
   useDisclosure
 } from '@chakra-ui/react'
 import { DeleteIcon, TimeIcon } from '@chakra-ui/icons'
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors
-} from '@dnd-kit/core'
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-  sortableKeyboardCoordinates
-} from '@dnd-kit/sortable'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useCallback, useState } from 'react'
-import SortableWrapper from './sortableList/SortableWrapper'
-import SortableItem from './sortableList/SortableItem'
-import DragWrapper from './sortableList/DragWrapper'
+import { useCallback } from 'react'
 import { Keypress, MousePressAction } from '../../../types'
 import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingSequence from '../../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../../contexts/settingsContext'
 import { KeyType } from '../../../constants/enums'
-import {
-  checkIfKeypress,
-  checkIfMouseButton,
-  scrollbarsStylesDark,
-  scrollbarStylesLight
-} from '../../../constants/utils'
+import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
+import SortableList from './SortableList'
 
 export default function SequencingArea() {
-  const [activeId, setActiveId] = useState<number | undefined>(undefined)
   const {
     sequence,
-    ids,
     willCauseTriggerLooping,
     onElementAdd,
     onElementsAdd,
-    updateElement,
-    overwriteIds
+    updateElement
   } = useMacroContext()
   const { config } = useSettingsContext()
-  const { colorMode } = useColorMode()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const onItemChanged = useCallback(
@@ -73,7 +43,7 @@ export default function SequencingArea() {
       if (item === undefined) {
         return
       }
-
+      // If necessary, adjust previous element.
       if (isUpEvent && prevItem !== undefined) {
         if (checkIfKeypress(prevItem) && checkIfKeypress(item)) {
           if (prevItem.keypress === item.keypress) {
@@ -106,7 +76,7 @@ export default function SequencingArea() {
           }
         }
       }
-
+      // Add elements to the sequence. If there is no previous item, the item we are adding is the first one, thus we do not include a delay element.
       if (prevItem === undefined) {
         if (checkIfKeypress(item)) {
           onElementAdd({
@@ -150,40 +120,6 @@ export default function SequencingArea() {
 
   const { recording, startRecording, stopRecording } =
     useRecordingSequence(onItemChanged)
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  )
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event
-
-      if (over === null) {
-        return
-      }
-
-      if (active.id !== over.id) {
-        const oldIndex = ids.indexOf(Number(active.id))
-        const newIndex = ids.indexOf(Number(over.id))
-        overwriteIds(arrayMove(ids, oldIndex, newIndex))
-      }
-      setActiveId(undefined)
-    },
-    [ids, overwriteIds, setActiveId]
-  )
-
-  const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      stopRecording()
-      const { active } = event
-      setActiveId(Number(active.id))
-    },
-    [stopRecording, setActiveId]
-  )
 
   return (
     <VStack w="41%" h="full">
@@ -253,63 +189,14 @@ export default function SequencingArea() {
           Add Delay
         </Button>
       </HStack>
+      {/** Header End */}
       <ClearSequenceModal
         isOpen={isOpen}
         onClose={onClose}
         stopRecording={stopRecording}
       />
       <Divider w="full" />
-      {/** Timeline */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis]}
-      >
-        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-          <VStack
-            w="full"
-            h="full"
-            px={4}
-            pb={4}
-            overflowY="auto"
-            overflowX="hidden"
-            sx={
-              colorMode === 'light'
-                ? scrollbarStylesLight
-                : scrollbarsStylesDark
-            }
-          >
-            {ids.map((id) => (
-              <SortableWrapper
-                id={id}
-                key={id}
-                isSmall={sequence[id - 1].type === 'DelayEventAction'}
-              >
-                <SortableItem
-                  id={id}
-                  element={sequence[id - 1]}
-                  recording={recording}
-                  stopRecording={stopRecording}
-                />
-              </SortableWrapper>
-            ))}
-          </VStack>
-        </SortableContext>
-        <DragOverlay>
-          {activeId ? (
-            <DragWrapper id={activeId} element={sequence[activeId - 1]}>
-              <SortableItem
-                id={activeId}
-                element={sequence[activeId - 1]}
-                recording={recording}
-                stopRecording={stopRecording}
-              />
-            </DragWrapper>
-          ) : undefined}
-        </DragOverlay>
-      </DndContext>
+      <SortableList recording={recording} stopRecording={stopRecording} />
     </VStack>
   )
 }

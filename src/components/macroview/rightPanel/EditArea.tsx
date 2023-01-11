@@ -1,5 +1,6 @@
 import { useColorModeValue, VStack, Text } from '@chakra-ui/react'
 import { useMemo } from 'react'
+import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import DelayForm from './editForms/DelayForm'
 import EmptyForm from './editForms/EmptyForm'
@@ -9,26 +10,32 @@ import SystemEventActionForm from './editForms/SystemEventActionForm'
 
 export default function EditArea() {
   const selectedElement = useSelectedElement()
+  const { selectedElementId } = useMacroContext()
   const bg = useColorModeValue('bg-light', 'primary-dark.900')
 
   const SelectedElementFormComponent = useMemo(() => {
-    if (!selectedElement) {
+    if (!selectedElement || selectedElementId === undefined) {
       return <EmptyForm />
     }
 
     switch (selectedElement.type) {
       case 'SystemEventAction':
-        return <SystemEventActionForm item={selectedElement.data} />
+        return (
+          <SystemEventActionForm
+            item={selectedElement.data}
+            selectedElementId={selectedElementId}
+          />
+        )
       case 'DelayEventAction':
-        return <DelayForm />
+        return <DelayForm selectedElementId={selectedElementId}/>
       case 'KeyPressEventAction':
-        return <KeyPressForm />
+        return <KeyPressForm selectedElementId={selectedElementId} />
       case 'MouseEventAction':
-        return <MousePressForm />
+        return <MousePressForm selectedElementId={selectedElementId}/>
       default:
         return <EmptyForm />
     }
-  }, [selectedElement])
+  }, [selectedElement, selectedElementId])
 
   return (
     <VStack

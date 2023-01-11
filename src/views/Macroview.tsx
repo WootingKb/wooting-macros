@@ -3,12 +3,19 @@ import EditArea from '../components/macroview/rightPanel/EditArea'
 import SelectElementArea from '../components/macroview/leftPanel/SelectElementArea'
 import SequencingArea from '../components/macroview/centerPanel/SequencingArea'
 import Header from '../components/macroview/topArea/Header'
+import { useMacroContext } from '../contexts/macroContext'
+import { useEffect } from 'react'
 
 type Props = {
   isEditing: boolean
 }
 
 export default function Macroview({ isEditing }: Props) {
+  const {changeIsUpdatingMacro} = useMacroContext()
+
+  useEffect(() => {
+    changeIsUpdatingMacro(isEditing)
+  }, [changeIsUpdatingMacro, isEditing])
   return (
     <VStack h="full" spacing="0px" overflow="hidden">
       {/** Top Header */}

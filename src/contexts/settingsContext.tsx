@@ -28,7 +28,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
     DefaultDelayValue: 20,
-    AutoAddDelay: true,
+    AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,
     Theme: 'light',

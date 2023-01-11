@@ -36,10 +36,11 @@ export default function CollectionPanel() {
     'primary-light.100',
     'primary-dark.700'
   )
+  const isCollectionDeletable = collections.length <= 1
 
   useEffect(() => {
     setCollectionName(currentCollection.name)
-  }, [currentCollection.icon, currentCollection.name])
+  }, [currentCollection.name])
 
   const onEmojiSelect = useCallback(
     (emoji: { shortcodes: string }) => {
@@ -60,7 +61,6 @@ export default function CollectionPanel() {
     }
 
     if (collectionName === '') {
-      setCollectionName(`Collection ${selection.collectionIndex + 1}`)
       onCollectionUpdate(
         {
           ...currentCollection,
@@ -114,7 +114,7 @@ export default function CollectionPanel() {
               value={collectionName}
               size="xl"
               textStyle="name"
-              placeholder={'Collection Name'}
+              placeholder='Collection Name'
               _placeholder={{ opacity: 1, color: borderColour }}
               _focusVisible={{ borderColor: 'primary-accent.500' }}
             />
@@ -129,7 +129,7 @@ export default function CollectionPanel() {
             <Tooltip
               variant="brand"
               label={
-                collections.length <= 1
+                isCollectionDeletable
                   ? "Can't delete your last collection!"
                   : ''
               }
@@ -142,7 +142,7 @@ export default function CollectionPanel() {
                   leftIcon={<DeleteIcon />}
                   variant="brandWarning"
                   size="md"
-                  isDisabled={collections.length <= 1}
+                  isDisabled={isCollectionDeletable}
                   onClick={onDeleteModalOpen}
                 >
                   Delete Collection

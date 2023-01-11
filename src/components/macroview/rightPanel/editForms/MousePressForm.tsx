@@ -14,12 +14,16 @@ import { KeyType } from '../../../../constants/enums'
 import { mouseEnumLookup } from '../../../../constants/MouseMap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
 
-export default function MousePressForm() {
+interface Props {
+  selectedElementId: number
+}
+
+export default function MousePressForm({ selectedElementId }: Props) {
   const [headingText, setHeadingText] = useState('')
   const [mousepressDuration, setMousepressDuration] = useState(1)
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const selectedElement = useSelectedElement()
-  const { selectedElementId, updateElement } = useMacroContext()
+  const { updateElement } = useMacroContext()
 
   useEffect(() => {
     if (
@@ -53,16 +57,23 @@ export default function MousePressForm() {
   const onInputBlur = useCallback(() => {
     if (
       selectedElement === undefined ||
-      selectedElement.type !== 'MouseEventAction' ||
-      selectedElementId === undefined
+      selectedElement.type !== 'MouseEventAction'
     )
       return
 
-    const temp = { ...selectedElement }
-    if (temp.data.data.type !== 'DownUp') {
+    if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    temp.data.data.duration = mousepressDuration
+    const temp = {
+      ...selectedElement,
+      data: {
+        ...selectedElement.data,
+        data: {
+          ...selectedElement.data.data,
+          duration: mousepressDuration
+        }
+      }
+    }
     updateElement(temp, selectedElementId)
   }, [mousepressDuration, selectedElement, selectedElementId, updateElement])
 
@@ -70,8 +81,7 @@ export default function MousePressForm() {
     (newType: KeyType) => {
       if (
         selectedElement === undefined ||
-        selectedElement.type !== 'MouseEventAction' ||
-        selectedElementId === undefined
+        selectedElement.type !== 'MouseEventAction'
       )
         return
 

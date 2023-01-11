@@ -60,7 +60,7 @@ export default function AppearanceSettingsPanel() {
             >
               <Radio
                 colorScheme="primary-accent"
-                value={'light'}
+                value='light'
                 variant="brand"
               />
               <SunIcon />
@@ -78,7 +78,7 @@ export default function AppearanceSettingsPanel() {
             >
               <Radio
                 colorScheme="primary-accent"
-                value={'dark'}
+                value='dark'
                 variant="brand"
               />
               <MoonIcon />

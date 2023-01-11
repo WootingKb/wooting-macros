@@ -23,28 +23,22 @@ export default function ApplicationSettingsPanel() {
       </VStack>
       <VStack w="full" spacing={[4]}>
         <ToggleSetting
-          title={'Launch on startup'}
-          description={
-            "The app will open during your computer's startup phase."
-          }
+          title="Launch on startup"
+          description="The app will open during your computer's startup phase."
           value={config.AutoStart}
           onChange={updateLaunchOnStartup}
         />
         <Divider />
         <ToggleSetting
-          title={'Minimize on startup'}
-          description={
-            "The app will open quietly in the background on startup. Requires 'Launch on Startup' to be enabled."
-          }
+          title="Minimize on startup"
+          description="The app will open quietly in the background on startup. Requires 'Launch on Startup' to be enabled."
           value={config.MinimizeAtLaunch}
           onChange={updateMinimizeOnStartup}
         />
         <Divider />
         <ToggleSetting
-          title={'Minimize on close'}
-          description={
-            'Pressing X will minimize the app instead of closing it.'
-          }
+          title="Minimize on close"
+          description="Pressing X will minimize the app instead of closing it."
           value={config.MinimizeToTray}
           onChange={updateMinimizeOnClose}
         />
@@ -57,19 +51,15 @@ export default function ApplicationSettingsPanel() {
       </VStack>
       <VStack w="full" spacing={[4]}>
         <ToggleSetting
-          title={'Auto-add Delay'}
-          description={
-            'When enabled, a delay element is automatically added to the sequence, if the last element of the sequence is not a delay.'
-          }
+          title="Auto-add Delay"
+          description="When enabled, a delay element is automatically added to the sequence, if the last element of the sequence is not a delay."
           value={config.AutoAddDelay}
           onChange={updateAutoAddDelay}
         />
         <Divider />
         <NumberInputSetting
-          title={'Default Delay Value'}
-          description={
-            'The value (in ms) that all Delay elements will default to when added to the sequence.'
-          }
+          title="Default Delay Value"
+          description="The value (in ms) that all Delay elements will default to when added to the sequence."
           defaultValue={config.DefaultDelayValue}
           onChange={updateDefaultDelayVal}
         />
@@ -82,10 +72,8 @@ export default function ApplicationSettingsPanel() {
       </VStack>
       <VStack w="full" spacing={[4]}>
         <ToggleSetting
-          title={'Auto-select Element on Add'}
-          description={
-            'When enabled, adding a new element automatically selects it for Editing (if applicable), rendering related options in the Edit Panel.'
-          }
+          title="Auto-select Element on Add"
+          description="When enabled, adding a new element automatically selects it for Editing (if applicable), rendering related options in the Edit Panel."
           value={config.AutoSelectElement}
           onChange={updateAutoSelectElement}
         />

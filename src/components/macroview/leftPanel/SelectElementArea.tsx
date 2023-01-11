@@ -6,7 +6,7 @@ import {
   HStack
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import SelectAreaAccordion from './selectAreaComponents/SelectAreaAccordion'
+import SelectAreaAccordion from './AccordionComponents/SelectAreaAccordion'
 
 export default function SelectElementArea() {
   const [searchValue, setSearchValue] = useState('')

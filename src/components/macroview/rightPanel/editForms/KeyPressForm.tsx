@@ -13,13 +13,18 @@ import { useSelectedElement } from '../../../../contexts/selectors'
 import { KeyType } from '../../../../constants/enums'
 import { HIDLookup } from '../../../../constants/HIDmap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
+import { ActionEventType } from '../../../../types'
 
-export default function KeyPressForm() {
+interface Props {
+  selectedElementId: number
+}
+
+export default function KeyPressForm({selectedElementId}: Props) {
   const [headingText, setHeadingText] = useState('')
   const [keypressDuration, setKeypressDuration] = useState(1)
   const [keypressType, setKeypressType] = useState<KeyType>()
   const selectedElement = useSelectedElement()
-  const { selectedElementId, updateElement } = useMacroContext()
+  const { updateElement } = useMacroContext()
 
   useEffect(() => {
     if (
@@ -28,8 +33,7 @@ export default function KeyPressForm() {
     )
       return
 
-    const typeString: keyof typeof KeyType = selectedElement.data
-      .keytype as keyof typeof KeyType
+    const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
     setKeypressDuration(selectedElement.data.press_duration)
     setHeadingText(
@@ -51,12 +55,11 @@ export default function KeyPressForm() {
   const onInputBlur = useCallback(() => {
     if (
       selectedElement === undefined ||
-      selectedElement.type !== 'KeyPressEventAction' ||
-      selectedElementId === undefined
+      selectedElement.type !== 'KeyPressEventAction'
     )
       return
 
-    const temp = {
+    const temp: ActionEventType = {
       ...selectedElement,
       data: { ...selectedElement.data, press_duration: keypressDuration }
     }
@@ -67,13 +70,12 @@ export default function KeyPressForm() {
     (newType: KeyType) => {
       if (
         selectedElement === undefined ||
-        selectedElement.type !== 'KeyPressEventAction' ||
-        selectedElementId === undefined
+        selectedElement.type !== 'KeyPressEventAction'
       )
         return
 
       setKeypressType(newType)
-      const temp = {
+      const temp: ActionEventType = {
         ...selectedElement,
         data: { ...selectedElement.data, keytype: KeyType[newType].toString() }
       }
