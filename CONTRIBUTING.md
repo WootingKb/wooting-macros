@@ -58,7 +58,7 @@ command as well to install all the dependencies if running just ``yarn`` isn't e
 
 For development we recommend using Visual Studio Code with the ``rust-analyzer`` addon as well as using the ``clippy`` linter. Please, use ``cargo clippy`` and ``cargo check`` before you submit your code as we do treat warnings as hard errors on builds. 
 
-Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``log`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in Devving.
+Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``log`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in [Devving](#devving).
 
 ### Devving
 
@@ -84,9 +84,7 @@ To make a production build, run:
 yarn tauri build
 ```
 
-Note that you might be required to sign the application. If this is the case and the build fails, you can remove the ``"windows"`` certificate section in the ``"tauri"`` part of the ``tauri.conf.json``. Note that distributing the unsigned application is not recommended as it might be problematic for anti-virus and anti-cheat software.
-
-Note that AppImage was not verified to work correctly.
+Note that you might be required to sign the application on MS Windows. If this is the case and the build fails, you can remove the ``"windows"`` certificate section in the ``"tauri"`` part of the ``tauri.conf.json``. Note that distributing the unsigned application is not recommended as it might be problematic for anti-virus and anti-cheat software.
 
 ## Additional details for adding a new functionality
 Adding new functionality requires work in both the backend and frontend. There are two types of functionality that can be added:
