@@ -242,16 +242,7 @@ impl MacroData {
             }
         }
 
-        for (key, value) in output_hashmap.iter() {
-            debug!(
-                "MacroTriggerListKey: {} -> {:?}",
-                key,
-                value
-                    .iter()
-                    .map(|x| x.name.clone())
-                    .collect::<Vec<String>>()
-            );
-        }
+        
 
         output_hashmap
     }
