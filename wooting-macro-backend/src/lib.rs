@@ -213,6 +213,7 @@ impl MacroData {
                     if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
+                                //TODO: optimize using references
                                 match data.len() {
                                     0 => (),
                                     1 => output_hashmap
