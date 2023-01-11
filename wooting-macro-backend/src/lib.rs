@@ -215,19 +215,14 @@ impl MacroData {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
                                 match data.len() {
-                                    0 => (),
+                                    0 => error!("A trigger key can't be zero...: {:#?}", data),
                                     1 => output_hashmap
                                         .entry(*data.first().unwrap())
                                         .or_default()
                                         .push(macros.clone()),
-                                    _ => data[..data.len()-1]
-                                        .iter()
-                                        .for_each(|x| {
-                                            output_hashmap
-                                                .entry(*x)
-                                                .or_default()
-                                                .push(macros.clone());
-                                        }),
+                                    _ => data[..data.len() - 1].iter().for_each(|x| {
+                                        output_hashmap.entry(*x).or_default().push(macros.clone());
+                                    }),
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
@@ -503,11 +498,17 @@ impl MacroBackend {
 
                                     // ? up the pressed keys here immidiately?
 
-                                    let should_grab = check_macro_execution_efficiently(
-                                        pressed_keys_copy_converted,
-                                        check_these_macros,
-                                        channel_copy_send,
-                                    );
+                                    let should_grab = {
+                                        if !check_these_macros.is_empty() {
+                                            check_macro_execution_efficiently(
+                                                pressed_keys_copy_converted,
+                                                check_these_macros,
+                                                channel_copy_send,
+                                            )
+                                        } else {
+                                            false
+                                        }
+                                    };
 
                                     if should_grab {
                                         None
