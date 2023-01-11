@@ -431,4 +431,3 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
 };
 
 }
-

@@ -223,7 +223,7 @@ impl MacroData {
                                     .collect::<Vec<u32>>()
                                     .iter()
                                     .for_each(|x| {
-                                        output_hashmap.insert_nocheck(*x, vec![macros.clone()]);
+                                        output_hashmap.entry(*x).or_default().push(macros.clone());
                                     })
                             }
                             TriggerEventType::MouseEvent { data } => {
@@ -244,7 +244,14 @@ impl MacroData {
         }
 
         for (key, value) in output_hashmap.iter() {
-            debug!("MacroTriggerListKey: {} -> {:?}", key, value.into_iter().map(|x|x.name.clone()).collect::<Vec<String>>());
+            debug!(
+                "MacroTriggerListKey: {} -> {:?}",
+                key,
+                value
+                    .into_iter()
+                    .map(|x| x.name.clone())
+                    .collect::<Vec<String>>()
+            );
         }
 
         output_hashmap
@@ -305,17 +312,19 @@ fn check_macro_execution_efficiently(
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
+    let trigger_overview_print = trigger_overview.clone();
+
+    debug!("Got data: {:?}", trigger_overview_print);
+    debug!("Got keys: {:?}", pressed_events);
 
     let mut output = false;
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                // println!("ModifierList: {:#?}", MODIFIER_LIST_RDEV);
-
                 match data.len() {
                     1 => {
                         if pressed_events == *data {
-                            info!("MATCHED MACRO singlekey: {:#?}", pressed_events);
+                            warn!("MATCHED MACRO singlekey: {:#?}", pressed_events);
 
                             // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
@@ -334,7 +343,7 @@ fn check_macro_execution_efficiently(
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
                             && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
-                            info!("MATCHED MACRO multikey: {:#?}", pressed_events);
+                            warn!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
                             // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
@@ -476,6 +485,8 @@ impl MacroBackend {
                                     };
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
+
+                                    debug!("TRIGGER LIST: {:#?}", trigger_list);
 
                                     let check_these_macros = match trigger_list.get(&first_key) {
                                         None => {
