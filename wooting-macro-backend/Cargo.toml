@@ -4,7 +4,7 @@ version = "0.9.0"
 edition = "2021"
 description = "Macro software backend made by Wooting."
 authors = ["Jeroen N, Erik S, Simon W, David M, Khang N"]
-license = ""
+license = "GNU GPL 3.0"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
