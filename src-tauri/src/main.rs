@@ -17,6 +17,7 @@ use log4rs::{
 };
 
 
+
 use std::env::current_exe;
 
 use tauri::{
@@ -90,20 +91,17 @@ fn engage_logger() -> Result<(), SetLoggerError>{
     #[cfg(not(debug_assertions))]
     let level = log::LevelFilter::Warn;
 
-
-    let default = wooting_macro_backend::config::LogFilePath::default();
-
     println!("DEFAULT LINE: {:?}", wooting_macro_backend::config::LogFilePath::file_name());
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
     // Build a stderr logger.
-    let stderr = ConsoleAppender::builder().target(Target::Stderr).build();
+    let stderr = ConsoleAppender::builder().encoder(Box::new(PatternEncoder::new("{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}"))).target(Target::Stderr).build();
 
     // Logging to log file.
     let logfile = FileAppender::builder()
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
-        .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
+        .encoder(Box::new(PatternEncoder::new("{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}")))
         .build(file_path)
         .unwrap();
 
