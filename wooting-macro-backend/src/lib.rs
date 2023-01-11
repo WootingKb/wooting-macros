@@ -361,7 +361,7 @@ fn check_macro_execution_efficiently(
             TriggerEventType::MouseEvent { data } => {
                 let event_to_check: Vec<u32> = vec![data.into()];
 
-                info!(
+                debug!(
                     "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
                     event_to_check
                 );
@@ -441,7 +441,7 @@ impl MacroBackend {
                         if inner_is_listening.load(Ordering::Relaxed) {
                             match event.event_type {
                                 rdev::EventType::KeyPress(key) => {
-                                    info!("Key Pressed RAW: {:?}", key);
+                                    debug!("Key Pressed RAW: {:?}", key);
                                     let key_to_push = key;
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
@@ -454,11 +454,11 @@ impl MacroBackend {
                                         .into_iter()
                                         .unique()
                                         .collect();
-                                    info!(
+                                    debug!(
                                         "Pressed Keys CONVERTED TO HID:  {:?}",
                                         pressed_keys_copy_converted
                                     );
-                                    info!(
+                                    debug!(
                                         "Pressed Keys CONVERTED TO RDEV: {:?}",
                                         pressed_keys_copy_converted
                                             .par_iter()
@@ -468,7 +468,7 @@ impl MacroBackend {
                                             .collect::<Vec<rdev::Key>>()
                                     );
 
-                                    info!(
+                                    debug!(
                                         "Pressed Keys: {:?}",
                                         pressed_keys_copy_converted
                                             .par_iter()
@@ -520,18 +520,18 @@ impl MacroBackend {
                                 rdev::EventType::KeyRelease(key) => {
                                     keys_pressed.blocking_write().retain(|x| *x != key);
 
-                                    info!("Key state: {:?}", keys_pressed.blocking_read());
+                                    debug!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
                                 }
 
                                 rdev::EventType::ButtonPress(button) => {
-                                    info!("Button pressed: {:?}", button);
+                                    debug!("Button pressed: {:?}", button);
 
                                     let converted_button_to_u32: u32 =
                                         BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                                    info!("Pressed button: {:?}", buttons_pressed.blocking_read());
+                                    debug!("Pressed button: {:?}", buttons_pressed.blocking_read());
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
@@ -558,7 +558,7 @@ impl MacroBackend {
                                     }
                                 }
                                 rdev::EventType::ButtonRelease(button) => {
-                                    info!("Button released: {:?}", button);
+                                    debug!("Button released: {:?}", button);
 
                                     buttons_pressed.blocking_write().retain(|x| *x != button);
 
@@ -568,7 +568,7 @@ impl MacroBackend {
                                 rdev::EventType::Wheel { .. } => Some(event),
                             }
                         } else {
-                            info!(
+                            debug!(
                                 "Passing event through... macro recording disabled: {:?}",
                                 event
                             );
