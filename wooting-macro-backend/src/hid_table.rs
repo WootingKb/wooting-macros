@@ -2,7 +2,19 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use lazy_static::lazy_static;
+use log::*;
 use rdev::{Button, Key};
+
+pub const MODIFIER_LIST_RDEV: [rdev::Key; 8] = [
+    Key::AltGr,
+    Key::Alt,
+    Key::ShiftLeft,
+    Key::ShiftRight,
+    Key::ControlLeft,
+    Key::ControlRight,
+    Key::MetaLeft,
+    Key::MetaRight,
+];
 
 lazy_static! {
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
@@ -429,5 +441,11 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
 
     scancode
 };
+
+}
+
+lazy_static! {
+#[derive(Debug)]
+pub static ref MODIFIER_LIST_HID: Vec<u32> = MODIFIER_LIST_RDEV.iter().map(|x| *SCANCODE_TO_HID.get(x).unwrap()).collect::<Vec<u32>>();
 
 }

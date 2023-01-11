@@ -213,10 +213,17 @@ impl MacroData {
                     if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
-                                output_hashmap.insert_nocheck(
-                                    *data.clone().first().unwrap(),
-                                    vec![macros.clone()],
-                                );
+                                //let test = *data.iter().permutations(data.len()).unique().map(|x| **x.first().unwrap()).collect::<Vec<u32>>().first().unwrap();
+
+                                data.iter()
+                                    .permutations(data.len())
+                                    .unique()
+                                    .map(|x| **x.first().unwrap())
+                                    .collect::<Vec<u32>>()
+                                    .iter()
+                                    .for_each(|x| {
+                                        output_hashmap.insert_nocheck(*x, vec![macros.clone()]);
+                                    })
                             }
                             TriggerEventType::MouseEvent { data } => {
                                 // let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
@@ -233,6 +240,10 @@ impl MacroData {
                     }
                 }
             }
+        }
+
+        for (key, _) in output_hashmap.iter() {
+            debug!("MacroTriggerListKey: {}", key);
         }
 
         output_hashmap
@@ -293,27 +304,51 @@ fn check_macro_execution_efficiently(
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
+    debug!("TriggerList: {:#?}", trigger_overview);
+    debug!("Pressed keys: {:#?}", pressed_events);
+
     let mut output = false;
     for macros in &trigger_overview {
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
-                if *data == pressed_events {
-                    info!("MATCHED MACRO: {:#?}", pressed_events);
+                // println!("ModifierList: {:#?}", MODIFIER_LIST_RDEV);
 
-                    // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
-                    // pressed_events.par_iter().for_each(|x| {
-                    //     channel_sender
-                    //         .blocking_send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[x]))
-                    //         .unwrap();
-                    // });
+                match data.len() {
+                    1 => {
+                        if pressed_events == *data {
+                            info!("MATCHED MACRO eo: {:#?}", pressed_events);
 
-                    let channel_clone = channel_sender.clone();
-                    let macro_clone = macros.clone();
+                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
-                    task::spawn(async move {
-                        execute_macro(macro_clone, channel_clone).await;
-                    });
-                    output = true;
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    2..=4 => {
+                        if data[..(data.len() - 1)]
+                            .iter()
+                            .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
+                            && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
+                        {
+                            info!("MATCHED MACRO: {:#?}", pressed_events);
+
+                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
+
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    _ => (),
                 }
             }
             TriggerEventType::MouseEvent { data } => {
@@ -515,11 +550,7 @@ impl MacroBackend {
                                     Some(event)
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
-                                rdev::EventType::Wheel { delta_x, delta_y } => {
-                                    info!("Scrolled: {:?} {:?}", delta_x, delta_y);
-
-                                    Some(event)
-                                }
+                                rdev::EventType::Wheel { .. } => Some(event),
                             }
                         } else {
                             info!(
