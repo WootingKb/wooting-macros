@@ -16,8 +16,6 @@ use log4rs::{
     filter::threshold::ThresholdFilter,
 };
 
-
-
 use std::env::current_exe;
 
 use tauri::{
@@ -83,25 +81,34 @@ async fn control_grabbing(
     Ok(())
 }
 
-
-fn engage_logger() -> Result<(), SetLoggerError>{
+fn engage_logger() -> Result<(), SetLoggerError> {
     #[cfg(debug_assertions)]
     let level = log::LevelFilter::Info;
 
     #[cfg(not(debug_assertions))]
     let level = log::LevelFilter::Warn;
 
-    println!("DEFAULT LINE: {:?}", wooting_macro_backend::config::LogFilePath::file_name());
+    println!(
+        "DEFAULT LINE: {:?}",
+        wooting_macro_backend::config::LogFilePath::file_name()
+    );
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
     // Build a stderr logger.
-    let stderr = ConsoleAppender::builder().encoder(Box::new(PatternEncoder::new("{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}"))).target(Target::Stderr).build();
+    let stderr = ConsoleAppender::builder()
+        .encoder(Box::new(PatternEncoder::new(
+            "{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}",
+        )))
+        .target(Target::Stderr)
+        .build();
 
     // Logging to log file.
     let logfile = FileAppender::builder()
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
-        .encoder(Box::new(PatternEncoder::new("{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}")))
+        .encoder(Box::new(PatternEncoder::new(
+            "{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}",
+        )))
         .build(file_path)
         .unwrap();
 
@@ -122,8 +129,8 @@ fn engage_logger() -> Result<(), SetLoggerError>{
         )
         .unwrap();
 
-        let _handle = log4rs::init_config(config);
-        Ok(())
+    let _handle = log4rs::init_config(config);
+    Ok(())
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
@@ -140,7 +147,6 @@ async fn main() {
     info!("Goes to stderr and file");
     debug!("Goes to file only");
     trace!("Goes to file only");
-
 
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
