@@ -4504,7 +4504,7 @@ dependencies = [
  "tauri-utils",
  "tempfile",
  "thiserror",
- "time",
+ "time 0.3.17",
  "tokio",
  "url",
  "uuid 1.2.2",

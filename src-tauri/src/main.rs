@@ -81,17 +81,12 @@ async fn control_grabbing(
     Ok(())
 }
 
-fn engage_logger() -> Result<(), SetLoggerError> {
+fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
     #[cfg(debug_assertions)]
-    let level = log::LevelFilter::Info;
+    let level = log::LevelFilter::Debug;
 
     #[cfg(not(debug_assertions))]
     let level = log::LevelFilter::Warn;
-
-    println!(
-        "DEFAULT LINE: {:?}",
-        wooting_macro_backend::config::LogFilePath::file_name()
-    );
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
@@ -125,12 +120,12 @@ fn engage_logger() -> Result<(), SetLoggerError> {
             Root::builder()
                 .appender("logfile")
                 .appender("stderr")
-                .build(LevelFilter::Trace),
+                .build(level),
         )
         .unwrap();
 
-    let _handle = log4rs::init_config(config);
-    Ok(())
+    let handle = log4rs::init_config(config)?;
+    Ok(handle)
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
@@ -138,22 +133,15 @@ fn engage_logger() -> Result<(), SetLoggerError> {
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    //env_logger::init();
-
-    engage_logger().unwrap();
-
-    error!("Goes to stderr and file");
-    warn!("Goes to stderr and file");
-    info!("Goes to stderr and file");
-    debug!("Goes to file only");
-    trace!("Goes to file only");
+    //This is here for possible future logging configuration from the frontend
+    let _log_config_var = engage_logger().unwrap();
 
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
 
     let backend = MacroBackend::default();
 
-    error!("Running the macro backend");
+    info!("Running the macro backend");
 
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     backend.init().await;
