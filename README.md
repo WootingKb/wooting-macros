@@ -1,5 +1,7 @@
+# Wootomation
+
 <p align="center">
-  <img alt="Wooting Macro App* – Create macros to use with any keyboard and any mouse" src=".github/assets/app-hero-banner.svg">
+  <img alt="Wootomation* – Create macros to use with any keyboard and any mouse" src=".github/assets/app-hero-banner.svg">
 </p>
 
 <p align="center">
