@@ -219,6 +219,7 @@ impl MacroData {
                                     .permutations(data.len())
                                     .unique()
                                     .map(|x| **x.first().unwrap())
+                                    .unique()
                                     .collect::<Vec<u32>>()
                                     .iter()
                                     .for_each(|x| {
@@ -242,8 +243,8 @@ impl MacroData {
             }
         }
 
-        for (key, _) in output_hashmap.iter() {
-            debug!("MacroTriggerListKey: {}", key);
+        for (key, value) in output_hashmap.iter() {
+            debug!("MacroTriggerListKey: {} -> {:?}", key, value.into_iter().map(|x|x.name.clone()).collect::<Vec<String>>());
         }
 
         output_hashmap
@@ -304,8 +305,6 @@ fn check_macro_execution_efficiently(
     trigger_overview: Vec<Macro>,
     channel_sender: Sender<rdev::EventType>,
 ) -> bool {
-    debug!("TriggerList: {:#?}", trigger_overview);
-    debug!("Pressed keys: {:#?}", pressed_events);
 
     let mut output = false;
     for macros in &trigger_overview {
@@ -316,7 +315,7 @@ fn check_macro_execution_efficiently(
                 match data.len() {
                     1 => {
                         if pressed_events == *data {
-                            info!("MATCHED MACRO eo: {:#?}", pressed_events);
+                            info!("MATCHED MACRO singlekey: {:#?}", pressed_events);
 
                             // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
@@ -335,7 +334,7 @@ fn check_macro_execution_efficiently(
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
                             && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
-                            info!("MATCHED MACRO: {:#?}", pressed_events);
+                            info!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
                             // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
