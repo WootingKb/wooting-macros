@@ -72,7 +72,6 @@ export default function CollectionButton({
           variant="brand"
           placement="bottom"
           hasArrow
-          aria-label="Toggle Collection"
           label={
             isMacroOutputEnabled
               ? collection.active
@@ -90,6 +89,7 @@ export default function CollectionButton({
               isChecked={isMacroOutputEnabled ? collection.active : false}
               isDisabled={!isMacroOutputEnabled}
               onChange={() => toggleCollection(index)}
+              aria-label="Collection Toggle"
             />
           </Box>
         </Tooltip>

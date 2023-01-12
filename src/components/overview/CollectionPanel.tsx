@@ -114,7 +114,7 @@ export default function CollectionPanel() {
               value={collectionName}
               size="xl"
               textStyle="name"
-              placeholder='Collection Name'
+              placeholder="Collection Name"
               _placeholder={{ opacity: 1, color: borderColour }}
               _focusVisible={{ borderColor: 'primary-accent.500' }}
             />
@@ -133,7 +133,6 @@ export default function CollectionPanel() {
                   ? "Can't delete your last collection!"
                   : ''
               }
-              aria-label="Collection delete button error"
               hasArrow
               placement="bottom-start"
             >
@@ -144,6 +143,7 @@ export default function CollectionPanel() {
                   size="md"
                   isDisabled={isCollectionDeletable}
                   onClick={onDeleteModalOpen}
+                  aria-label="Delete Collection"
                 >
                   Delete Collection
                 </Button>

@@ -181,7 +181,6 @@ export default function Header({ isEditing }: Props) {
           <Tooltip
             variant="brand"
             label={saveButtonTooltipText}
-            aria-label="Save Button error"
             placement="bottom-start"
             hasArrow
           >
@@ -191,6 +190,7 @@ export default function Header({ isEditing }: Props) {
                 variant="yellowGradient"
                 isDisabled={!canSaveMacro}
                 onClick={updateMacro}
+                aria-label="Save"
               >
                 Save Macro
               </Button>

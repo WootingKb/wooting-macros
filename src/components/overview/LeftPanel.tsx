@@ -92,7 +92,6 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 : 'Enable Macro Output'
             }
             closeOnClick={false}
-            aria-label="Toggle Macro Output button description"
             variant="brand"
           >
             <Box>
@@ -101,6 +100,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 variant="brand"
                 defaultChecked={isMacroOutputEnabled}
                 isChecked={isMacroOutputEnabled}
+                aria-label="Macro Output Toggle"
                 onChange={() => {
                   setIsMacroOutputEnabled((value) => {
                     updateMacroOutput(value).catch((e) => {

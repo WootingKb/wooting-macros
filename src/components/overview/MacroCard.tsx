@@ -158,7 +158,6 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           variant="brand"
           placement="bottom"
           hasArrow
-          aria-label="Toggle Macro Switch description"
           label={
             currentCollection.active
               ? macro.active
@@ -173,6 +172,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
               defaultChecked={macro.active}
               isChecked={currentCollection.active ? macro.active : false}
               isDisabled={!currentCollection.active}
+              aria-label="Macro Toggle"
               onChange={onToggle}
             />
           </Box>
