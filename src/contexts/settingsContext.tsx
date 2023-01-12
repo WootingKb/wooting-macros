@@ -25,6 +25,7 @@ function useSettingsContext() {
 }
 
 function SettingsProvider({ children }: SettingsProviderProps) {
+  const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
     DefaultDelayValue: 20,
@@ -42,6 +43,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
     invoke<ApplicationConfig>('get_config')
       .then((res) => {
         setConfig(res)
+        setInitComplete(true)
       })
       .catch((e) => {
         console.error(e)
@@ -56,8 +58,8 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   }, [toast])
 
   useEffect(() => {
-    updateSettings(config)
-  }, [config])
+    if (initComplete) updateSettings(config)
+  }, [config, initComplete])
 
   const updateLaunchOnStartup = useCallback((value: boolean) => {
     setConfig((config) => {

@@ -58,36 +58,36 @@ export const checkIfStringIsNonNumeric: (text: string) => boolean = function (
 
 export const scrollbarStylesLight = {
   '&::-webkit-scrollbar': {
-    width: '10px'
+    width: '8px'
   },
   '&::-webkit-scrollbar-track': {
     background: '#D5DAE2',
-    borderRadius: '10px'
+    borderRadius: '8px'
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#9EAABD',
-    borderRadius: '10px'
+    borderRadius: '8px'
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#8392AA',
-    borderRadius: '10px'
+    borderRadius: '8px'
   }
 }
 
 export const scrollbarsStylesDark = {
   '&::-webkit-scrollbar': {
-    width: '10px'
+    width: '8px'
   },
   '&::-webkit-scrollbar-track': {
     background: '#27272a',
-    borderRadius: '10px'
+    borderRadius: '8px'
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#3f3f46',
-    borderRadius: '10px'
+    borderRadius: '8px'
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#52525b',
-    borderRadius: '10px'
+    borderRadius: '8px'
   }
 }

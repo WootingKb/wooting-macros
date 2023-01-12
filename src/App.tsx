@@ -18,14 +18,19 @@ function App() {
   useEffect(() => {
     appWindow.setMinSize(new PhysicalSize(800, 600))
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
+    // TODO: Figure out how to disable other keyboard shortcuts like CTRL-F
     init({ data })
   }, [])
 
   if (!initComplete) {
     return (
-      <Flex h="100vh" justifyContent="center" alignItems="center">
-        <Text fontSize="2xl" fontWeight="bold">
-          Loading
+      <Flex
+        h="100vh"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text fontSize="4xl" fontWeight="bold">
+          Loading...
         </Text>
       </Flex>
     )

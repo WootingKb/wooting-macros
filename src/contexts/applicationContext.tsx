@@ -31,7 +31,7 @@ function useApplicationContext() {
 
 function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [viewState, setViewState] = useState<ViewState>(ViewState.Overview)
-  const [initComplete, setInitComplete] = useState<boolean>(false)
+  const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
