@@ -34,6 +34,7 @@ export default function Header({ isEditing }: Props) {
     updateMacroIcon
   } = useMacroContext()
   const currentMacro = useSelectedMacro()
+  const [hasUserChangedIcon, setHasUserChangedIcon] = useState(false)
   const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const placeholderTextColour = useColorModeValue(
     'primary-light.300',
@@ -88,6 +89,7 @@ export default function Header({ isEditing }: Props) {
   const onEmojiSelect = useCallback(
     (emoji: { shortcodes: string }) => {
       updateMacroIcon(emoji.shortcodes)
+      setHasUserChangedIcon(true)
       onEmojiPopoverClose()
     },
     [onEmojiPopoverClose, updateMacroIcon]
@@ -97,7 +99,9 @@ export default function Header({ isEditing }: Props) {
     if (currentMacro !== undefined) {
       if (
         currentMacro.trigger === macro.trigger &&
-        sequence === macro.sequence
+        sequence === macro.sequence &&
+        currentMacro.name === macro.name &&
+        currentMacro.icon === macro.icon
       ) {
         changeSelectedMacroIndex(undefined)
         return
@@ -109,7 +113,9 @@ export default function Header({ isEditing }: Props) {
         (macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.length > 0) ||
         (macro.trigger.type === 'MouseEvent' &&
-          macro.trigger.data !== undefined)
+          macro.trigger.data !== undefined) ||
+        macro.name !== '' ||
+        hasUserChangedIcon
       ) {
         onUnsavedChangesModalOpen()
       } else {
@@ -119,6 +125,9 @@ export default function Header({ isEditing }: Props) {
   }, [
     changeSelectedMacroIndex,
     currentMacro,
+    hasUserChangedIcon,
+    macro.icon,
+    macro.name,
     macro.sequence,
     macro.trigger,
     onUnsavedChangesModalOpen,
