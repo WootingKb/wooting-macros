@@ -10,7 +10,6 @@
     "version": "0.9.0"
   },
   "tauri": {
-
     "allowlist": {
       "all": true
     },
@@ -20,10 +19,7 @@
       "copyright": "",
       "icon": ["icons/icon.ico"],
       "deb": {
-        "depends": [
-          "xserver-xorg-input-evdev",
-          "libevdev2"
-        ]
+        "depends": ["xserver-xorg-input-evdev", "libevdev2"]
       },
       "externalBin": [],
       "identifier": "com.wooting.macros",
@@ -54,10 +50,10 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://github.com/tauri-apps/tauri-test/releases/download/v1.0.0/app-x86_64.app.tar.gz"
+        "https://github.com/WootingKb/wooting-macros/releases/latest/download/latest.json"
       ],
       "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMyMTA3RTUwMjM0RDZCOEUKUldTT2EwMGpVSDRRTW9oVHFXeTdIQ1NsMjZvVWxOUkJSVURLMVYvZGI1V0thYXZHV1J0a2phQkgK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDREQUQ1NEIxNDQzMzRDRApSV1ROTkVNVVM5WGFCRnJ1bmtMZmtOa0ZwT1dQSWhyZmk4WWJhSmU1YXpaSTBicHVabE02RnVLMAo="
     },
     "windows": [
       {
@@ -70,6 +66,5 @@
         "focus": false
       }
     ]
-    
   }
 }
