@@ -52,6 +52,6 @@ jobs:
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
           releaseName: 'v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          releaseBody: 'Please see https://github.com/WootingKb/wooting-macros/releases/tag/v__VERSION__ for full changelog'
           releaseDraft: true
           prerelease: false
