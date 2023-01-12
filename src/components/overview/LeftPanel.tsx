@@ -93,7 +93,6 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
             }
             closeOnClick={false}
             aria-label="Toggle Macro Output button description"
-            rounded="sm"
             variant="brand"
           >
             <Box>

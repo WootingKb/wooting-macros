@@ -13,7 +13,9 @@ import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../constants/utils'
 
-interface ApplicationProviderProps { children: ReactNode }
+interface ApplicationProviderProps {
+  children: ReactNode
+}
 
 const ApplicationContext = createContext<AppState | undefined>(undefined)
 
@@ -110,7 +112,9 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       (_, i) => i !== selection.collectionIndex
     )
     setCollections(newCollections)
-    changeSelectedCollectionIndex(0)
+    changeSelectedCollectionIndex(
+      Math.min(selection.collectionIndex, newCollections.length - 1)
+    )
   }, [changeSelectedCollectionIndex, collections, selection.collectionIndex])
 
   const onCollectionUpdate = useCallback(

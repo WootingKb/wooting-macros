@@ -30,7 +30,7 @@ export default function EmojiPopover({
   return (
     <Popover
       initialFocusRef={initialFocusRef}
-      returnFocusOnClose={false}
+      returnFocusOnClose={true}
       isOpen={isEmojiPopoverOpen}
       onClose={onEmojiPopoverClose}
       closeOnBlur={true}

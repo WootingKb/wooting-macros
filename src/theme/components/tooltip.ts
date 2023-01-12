@@ -12,7 +12,8 @@ export const Tooltip = defineStyleConfig({
       [$arrowBg.variable]: mode(
         'colors.primary-light.800',
         'colors.primary-dark.700'
-      )(props)
+      )(props),
+      borderRadius: 'md',
     })
   }
 })

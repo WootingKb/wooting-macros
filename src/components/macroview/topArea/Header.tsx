@@ -175,7 +175,6 @@ export default function Header({ isEditing }: Props) {
             aria-label="Save Button error"
             placement="bottom-start"
             hasArrow
-            rounded="sm"
           >
             <Box>
               <Button
