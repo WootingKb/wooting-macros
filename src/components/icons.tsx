@@ -1,13 +1,13 @@
 import { Icon, IconProps } from '@chakra-ui/react'
 import { SiDiscord, SiGithub } from 'react-icons/si'
-import { RxKeyboard } from 'react-icons/Rx'
+import { RxKeyboard } from 'react-icons/rx'
 import { BsMouse2 } from 'react-icons/bs'
 import { SlScreenDesktop } from 'react-icons/sl'
 import {
   HiOutlinePuzzlePiece,
   HiArrowUp,
   HiArrowDown,
-  HiArrowsUpDown,
+  HiArrowsUpDown
 } from 'react-icons/hi2'
 import { HiStop, HiPlay } from 'react-icons/hi'
 import { GoKebabVertical } from 'react-icons/go'
