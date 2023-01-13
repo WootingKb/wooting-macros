@@ -5,7 +5,6 @@ import {
   Button,
   HStack,
   Text,
-  useColorModeValue,
   Tooltip,
   Switch,
   useToast,
@@ -13,15 +12,14 @@ import {
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
-import {
-  scrollbarsStylesDark,
-  scrollbarStylesLight,
-  updateMacroOutput
-} from '../../constants/utils'
+import { updateMacroOutput } from '../../constants/utils'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { useCallback, useState } from 'react'
 import data from '@emoji-mart/data'
+import useScrollbarStyles from '../../hooks/useScrollbarStyles'
+import useMainBgColour from '../../hooks/useMainBgColour'
+import useBorderColour from '../../hooks/useBorderColour'
 
 interface Props {
   onOpenSettingsModal: () => void
@@ -38,15 +36,6 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
-  const scrollbarStyles = useColorModeValue(
-    scrollbarStylesLight,
-    scrollbarsStylesDark
-  )
-  const panelBg = useColorModeValue('bg-light', 'primary-dark.900')
-  const borderColour = useColorModeValue(
-    'primary-light.100',
-    'primary-dark.700'
-  )
 
   const onNewCollectionButtonPress = useCallback(() => {
     const randomCategory =
@@ -71,15 +60,14 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
 
   return (
     <VStack
-      bg={panelBg}
+      bg={useMainBgColour()}
       h="100vh"
-      p={4}
       w="300px"
       borderRight="1px"
-      borderColor={borderColour}
+      borderColor={useBorderColour()}
       justifyContent="space-between"
     >
-      <VStack w="full" h="full" pt={1} overflow="hidden" gap={2}>
+      <VStack w="full" p={4} overflow="hidden" gap={2}>
         <HStack w="full" justifyContent="space-between" px={1}>
           <Text w="full" fontWeight="bold" fontSize="28px">
             Collections
@@ -111,7 +99,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                         } macro output`,
                         description: `Unable to ${
                           !value ? 'disable' : 'enable'
-                        } macro output, please re-open the app.`,
+                        } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
                         status: 'error',
                         duration: 2000,
                         isClosable: true
@@ -136,37 +124,37 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
         >
           New Collection
         </Button>
-        <VStack
-          w="full"
-          h="full"
-          overflowX="hidden"
-          overflowY="auto"
-          ref={parent}
-          spacing={1}
-          sx={scrollbarStyles}
-        >
-          {collections.map((collection: Collection, index: number) => (
-            <CollectionButton
-              collection={collection}
-              index={index}
-              key={`${collection.name} + ${index}`}
-              isFocused={index == selection.collectionIndex}
-              isMacroOutputEnabled={isMacroOutputEnabled}
-              setFocus={(index) => changeSelectedCollectionIndex(index)}
-              toggleCollection={() =>
-                onCollectionUpdate(
-                  {
-                    ...collections[index],
-                    active: !collections[index].active
-                  },
-                  index
-                )
-              }
-            />
-          ))}
-        </VStack>
       </VStack>
-      <HStack w="full">
+      <VStack
+        w="full"
+        h="full"
+        overflowY="auto"
+        ref={parent}
+        px={4}
+        spacing={1}
+        sx={useScrollbarStyles()}
+      >
+        {collections.map((collection: Collection, index: number) => (
+          <CollectionButton
+            collection={collection}
+            index={index}
+            key={`${collection.name} + ${index}`}
+            isFocused={index == selection.collectionIndex}
+            isMacroOutputEnabled={isMacroOutputEnabled}
+            setFocus={(index) => changeSelectedCollectionIndex(index)}
+            toggleCollection={() =>
+              onCollectionUpdate(
+                {
+                  ...collections[index],
+                  active: !collections[index].active
+                },
+                index
+              )
+            }
+          />
+        ))}
+      </VStack>
+      <HStack w="full" px={4} pb={4}>
         <Button
           w="full"
           variant="brandAccent"

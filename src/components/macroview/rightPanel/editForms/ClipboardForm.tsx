@@ -8,27 +8,27 @@ import {
 } from '@chakra-ui/react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSelectedElement } from '../../../../contexts/selectors'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-import { ActionEventType } from '../../../../types'
+import { SystemEventAction } from '../../../../types'
 
 interface Props {
   selectedElementId: number
+  selectedElement: SystemEventAction
 }
 
-export default function ClipboardForm({ selectedElementId }: Props) {
+export default function ClipboardForm({
+  selectedElementId,
+  selectedElement
+}: Props) {
   const pickerRef = useRef<HTMLDivElement | null>(null)
   const [text, setText] = useState('')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const selectedElement = useSelectedElement()
   const { updateElement } = useMacroContext()
   const { colorMode } = useColorMode()
 
   useEffect(() => {
     if (
-      selectedElement === undefined ||
-      selectedElement.type !== 'SystemEventAction' ||
       selectedElement.data.type !== 'Clipboard' ||
       selectedElement.data.action.type !== 'PasteUserDefinedString'
     )
@@ -73,13 +73,7 @@ export default function ClipboardForm({ selectedElementId }: Props) {
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined) {
-      return
-    }
-    if (selectedElement.type !== 'SystemEventAction') {
-      return
-    }
-    const temp: ActionEventType = {
+    const temp: SystemEventAction = {
       ...selectedElement,
       data: {
         type: 'Clipboard',
@@ -91,15 +85,9 @@ export default function ClipboardForm({ selectedElementId }: Props) {
 
   const onEmojiSelect = useCallback(
     (emoji: { native: string }) => {
-      if (selectedElement === undefined) {
-        return
-      }
-      if (selectedElement.type !== 'SystemEventAction') {
-        return
-      }
       const newString = text + emoji.native
       setText(newString)
-      const temp: ActionEventType = {
+      const temp: SystemEventAction = {
         ...selectedElement,
         data: {
           type: 'Clipboard',

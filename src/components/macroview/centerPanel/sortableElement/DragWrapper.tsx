@@ -3,6 +3,7 @@ import { DragHandleIcon } from '@chakra-ui/icons'
 import { Center, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../../types'
 import { useMacroContext } from '../../../../contexts/macroContext'
+import useMainBgColour from '../../../../hooks/useMainBgColour'
 
 interface Props {
   id: number
@@ -13,7 +14,7 @@ interface Props {
 export default function DragWrapper({ id, element, children }: Props) {
   const { selectedElementId } = useMacroContext()
 
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
+  const bg = useMainBgColour()
   const selectedBg = useColorModeValue(
     'primary-accent.200',
     'primary-accent.800'

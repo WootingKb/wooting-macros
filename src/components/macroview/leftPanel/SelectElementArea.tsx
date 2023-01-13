@@ -6,11 +6,11 @@ import {
   HStack
 } from '@chakra-ui/react'
 import { useState } from 'react'
+import useMainBgColour from '../../../hooks/useMainBgColour'
 import SelectAreaAccordion from './AccordionComponents/SelectAreaAccordion'
 
 export default function SelectElementArea() {
   const [searchValue, setSearchValue] = useState('')
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const borderColour = useColorModeValue(
     'primary-light.500',
     'primary-dark.500'
@@ -18,7 +18,7 @@ export default function SelectElementArea() {
   const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
 
   return (
-    <VStack w="33%" h="full" bg={bg} spacing={0}>
+    <VStack w="33%" h="full" bg={useMainBgColour()} spacing={0}>
       <HStack w="full" px={[2, 4, 6]} py={[2, 4]} alignItems="center">
         <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
           Elements

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
+import { checkIfModifierKey } from '../constants/utils'
 
 export default function useRecordingTrigger(
   initialItems: MouseButton | number[]
@@ -18,14 +19,6 @@ export default function useRecordingTrigger(
   })
   const [prevItems, setPrevItems] = useState<number[]>([])
   const toast = useToast()
-
-  // useEffect(() => {
-  //   if (Array.isArray(initialItems)) {
-  //     setItems(initialItems)
-  //   } else {
-  //     setItems([initialItems])
-  //   }
-  // }, [initialItems])
 
   const resetItems = useCallback(() => {
     setItems(prevItems)
@@ -54,23 +47,15 @@ export default function useRecordingTrigger(
       setItems((items) => {
         let newItems: number[] = []
         if (items.filter((item) => item === HIDcode).length > 0) {
+          // Prevent duplicate keys
           newItems = items
-        } else if (
-          items.filter(
-            (item) => item >= MouseButton.Left && item <= MouseButton.Mouse5
-          ).length > 0
-        ) {
-          newItems = [HIDcode]
         } else {
           newItems = [...items, HIDcode]
         }
         return newItems
       })
 
-      if (HIDcode < 224) {
-        // this condition can be changed in the future, if we would like to increase the amount of "modifier keys"
-        stopRecording()
-      }
+      if (!checkIfModifierKey(HIDcode)) stopRecording()
     },
     [stopRecording]
   )
@@ -110,7 +95,8 @@ export default function useRecordingTrigger(
       console.error(e)
       toast({
         title: 'Error disabling macro output',
-        description: 'Unable to disable macro output, please re-open the app.',
+        description:
+          'Unable to disable macro output, please re-open the app. If that does not work, please contact us on Discord.',
         status: 'error',
         duration: 2000,
         isClosable: true
@@ -124,7 +110,8 @@ export default function useRecordingTrigger(
         console.error(e)
         toast({
           title: 'Error enabling macro output',
-          description: 'Unable to enable macro output, please re-open the app.',
+          description:
+            'Unable to enable macro output, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
           duration: 2000,
           isClosable: true

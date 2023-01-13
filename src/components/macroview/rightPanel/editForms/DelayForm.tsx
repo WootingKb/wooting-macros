@@ -1,19 +1,21 @@
 import { Divider, Grid, GridItem, Input, Button, Text } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSelectedElement } from '../../../../contexts/selectors'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
-import { ActionEventType } from '../../../../types'
+import { DelayEventAction } from '../../../../types'
 
 interface Props {
   selectedElementId: number
+  selectedElement: DelayEventAction
 }
 
-export default function DelayForm({ selectedElementId }: Props) {
+export default function DelayForm({
+  selectedElementId,
+  selectedElement
+}: Props) {
   const [delayDuration, setDelayDuration] = useState(0)
   const { updateElement } = useMacroContext()
   const { config } = useSettingsContext()
-  const selectedElement = useSelectedElement()
 
   useEffect(() => {
     if (
@@ -37,25 +39,17 @@ export default function DelayForm({ selectedElementId }: Props) {
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined) {
-      return
-    }
-    const temp: ActionEventType = {
+    const temp: DelayEventAction = {
       ...selectedElement,
-      type: 'DelayEventAction',
       data: delayDuration
     }
     updateElement(temp, selectedElementId)
   }, [delayDuration, selectedElement, selectedElementId, updateElement])
 
   const resetDuration = useCallback(() => {
-    if (selectedElement === undefined) {
-      return
-    }
     setDelayDuration(config.DefaultDelayValue)
-    const temp: ActionEventType = {
+    const temp: DelayEventAction = {
       ...selectedElement,
-      type: 'DelayEventAction',
       data: config.DefaultDelayValue
     }
     updateElement(temp, selectedElementId)

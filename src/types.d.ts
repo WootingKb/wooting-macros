@@ -1,4 +1,6 @@
 import { MacroType, ViewState, MouseButton } from './constants/enums'
+import { HidInfo } from './constants/HIDmap'
+import { PluginEventInfo } from './constants/PluginsEventMap'
 
 // Contexts
 export interface CurrentSelection {
@@ -69,13 +71,23 @@ export type TriggerEventType =
     }
   | { type: 'MouseEvent'; data: MouseButton }
 
+export type KeyPressEventAction = {
+  type: 'KeyPressEventAction'
+  data: Keypress
+}
+export type DelayEventAction = { type: 'DelayEventAction'; data: number }
+export type SystemEventAction = {
+  type: 'SystemEventAction'
+  data: SystemAction
+}
+export type MouseEventAction = { type: 'MouseEventAction'; data: MouseAction }
+
 /** To be Extended */
 export type ActionEventType =
-  | { type: 'KeyPressEventAction'; data: Keypress }
-  | { type: 'DelayEventAction'; data: number }
-  | { type: 'SystemEventAction'; data: SystemAction }
-  | { type: 'MouseEventAction'; data: MouseAction }
-  | { type: 'PhillipsHueEventAction'; data: undefined }
+  | KeyPressEventAction
+  | DelayEventAction
+  | SystemEventAction
+  | MouseEventAction
 
 // Main Data Structures
 export interface MacroData {
@@ -151,7 +163,7 @@ export type SystemAction =
   | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-  | { type: 'Brightness'; action: MonitorBrightnessAction }
+  // | { type: 'Brightness'; action: MonitorBrightnessAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -176,3 +188,13 @@ export type MonitorBrightnessAction =
   | { type: 'SetSpecific'; level: number; name: string }
   | { type: 'ChangeSpecific'; by_how_much: number; name: string }
   | { type: 'ChangeAll'; by_how_much: number }
+
+/** Misc */
+export interface KeyboardKeyCategory {
+  name: string
+  elements: HidInfo[]
+}
+export interface PluginCategory {
+  name: string
+  elements: PluginEventInfo[]
+}

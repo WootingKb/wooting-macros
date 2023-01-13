@@ -8,12 +8,21 @@ import {
   useEffect
 } from 'react'
 import { MacroType, ViewState } from '../constants/enums'
-import { MacroState, ActionEventType, Macro, TriggerEventType } from '../types'
+import {
+  MacroState,
+  ActionEventType,
+  Macro,
+  TriggerEventType,
+  KeyPressEventAction,
+  MouseEventAction
+} from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
 
-interface MacroProviderProps { children: ReactNode }
+interface MacroProviderProps {
+  children: ReactNode
+}
 
 const MacroContext = createContext<MacroState | undefined>(undefined)
 
@@ -53,6 +62,24 @@ function MacroProvider({ children }: MacroProviderProps) {
   } = useApplicationContext()
   const { config } = useSettingsContext()
 
+  const keypressesInSequence = useMemo(() => {
+    return sequence
+      .filter(
+        (element): element is KeyPressEventAction =>
+          element.type === 'KeyPressEventAction'
+      )
+      .map((element: KeyPressEventAction) => element.data.keypress)
+  }, [sequence])
+
+  const mousepressesInSequence = useMemo(() => {
+    return sequence
+      .filter(
+        (element): element is MouseEventAction =>
+          element.type === 'MouseEventAction'
+      )
+      .map((element: MouseEventAction) => element.data.data.button)
+  }, [sequence])
+
   const willCauseTriggerLooping = useMemo(() => {
     let willTriggerAnotherMacro = false
 
@@ -62,60 +89,38 @@ function MacroProvider({ children }: MacroProviderProps) {
           continue
         }
 
-        const macro = collection.macros[index]
-        if (macro.trigger.type === 'KeyPressEvent') {
-          macro.trigger.data.forEach((triggerKey) => {
-            if (
-              sequence.filter(
-                (element) =>
-                  element.type === 'KeyPressEventAction' &&
-                  element.data.keypress === triggerKey
-              ).length > 0
-            ) {
-              willTriggerAnotherMacro = true
-            }
-          })
+        const macroToCheck = collection.macros[index]
+
+        if (macroToCheck.trigger.type === 'KeyPressEvent') {
+          willTriggerAnotherMacro = macroToCheck.trigger.data.every(
+            (triggerKey) => keypressesInSequence.includes(triggerKey)
+          )
+          if (willTriggerAnotherMacro) {
+            break
+          }
         } else {
-          if (
-            sequence.filter(
-              (element) =>
-                element.type === 'MouseEventAction' &&
-                macro.trigger.type === 'MouseEvent' &&
-                element.data.data.button === macro.trigger.data
-            ).length > 0
-          ) {
-            willTriggerAnotherMacro = true
+          willTriggerAnotherMacro = mousepressesInSequence.includes(
+            macroToCheck.trigger.data
+          )
+          if (willTriggerAnotherMacro) {
+            break
           }
         }
       }
     }
 
+    // Check the data for the currently editing macro, as the user may have changed the trigger but not saved yet
     if (macro.trigger.type === 'KeyPressEvent') {
       if (macro.trigger.data.length > 0) {
-        macro.trigger.data.forEach((triggerKey) => {
-          if (
-            sequence.filter(
-              (element) =>
-                element.type === 'KeyPressEventAction' &&
-                element.data.keypress === triggerKey
-            ).length > 0
-          ) {
-            willTriggerAnotherMacro = true
-          }
-        })
+        willTriggerAnotherMacro = macro.trigger.data.every((triggerKey) =>
+          keypressesInSequence.includes(triggerKey)
+        )
       }
     } else {
       if (macro.trigger.data !== undefined) {
-        if (
-          sequence.filter(
-            (element) =>
-              element.type === 'MouseEventAction' &&
-              macro.trigger.type === 'MouseEvent' &&
-              element.data.data.button === macro.trigger.data
-          ).length > 0
-        ) {
-          willTriggerAnotherMacro = true
-        }
+        willTriggerAnotherMacro = mousepressesInSequence.includes(
+          macro.trigger.data
+        )
       }
     }
     return willTriggerAnotherMacro
@@ -123,8 +128,9 @@ function MacroProvider({ children }: MacroProviderProps) {
     collections,
     macro.trigger.data,
     macro.trigger.type,
-    selection.macroIndex,
-    sequence
+    keypressesInSequence,
+    mousepressesInSequence,
+    selection.macroIndex
   ])
   const canSaveMacro = useMemo(() => {
     if (

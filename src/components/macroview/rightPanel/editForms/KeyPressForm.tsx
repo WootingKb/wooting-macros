@@ -9,21 +9,23 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSelectedElement } from '../../../../contexts/selectors'
 import { KeyType } from '../../../../constants/enums'
 import { HIDLookup } from '../../../../constants/HIDmap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
-import { ActionEventType } from '../../../../types'
+import { KeyPressEventAction } from '../../../../types'
 
 interface Props {
   selectedElementId: number
+  selectedElement: KeyPressEventAction
 }
 
-export default function KeyPressForm({selectedElementId}: Props) {
+export default function KeyPressForm({
+  selectedElementId,
+  selectedElement
+}: Props) {
   const [headingText, setHeadingText] = useState('')
   const [keypressDuration, setKeypressDuration] = useState(1)
   const [keypressType, setKeypressType] = useState<KeyType>()
-  const selectedElement = useSelectedElement()
   const { updateElement } = useMacroContext()
 
   useEffect(() => {
@@ -53,13 +55,7 @@ export default function KeyPressForm({selectedElementId}: Props) {
   )
 
   const onInputBlur = useCallback(() => {
-    if (
-      selectedElement === undefined ||
-      selectedElement.type !== 'KeyPressEventAction'
-    )
-      return
-
-    const temp: ActionEventType = {
+    const temp: KeyPressEventAction = {
       ...selectedElement,
       data: { ...selectedElement.data, press_duration: keypressDuration }
     }
@@ -68,14 +64,8 @@ export default function KeyPressForm({selectedElementId}: Props) {
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {
-      if (
-        selectedElement === undefined ||
-        selectedElement.type !== 'KeyPressEventAction'
-      )
-        return
-
       setKeypressType(newType)
-      const temp: ActionEventType = {
+      const temp: KeyPressEventAction = {
         ...selectedElement,
         data: { ...selectedElement.data, keytype: KeyType[newType].toString() }
       }

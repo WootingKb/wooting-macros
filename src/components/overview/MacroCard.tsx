@@ -23,6 +23,7 @@ import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback } from 'react'
 import { KebabVertical } from '../icons'
+import useMainBgColour from '../../hooks/useMainBgColour'
 
 interface Props {
   macro: Macro
@@ -34,7 +35,6 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('md', 'white-md')
   const subtextColour = useColorModeValue(
@@ -66,7 +66,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
     <VStack
       w="full"
       h="full"
-      bg={bg}
+      bg={useMainBgColour()}
       boxShadow={shadowColour}
       rounded="2xl"
       p={5}
@@ -138,7 +138,9 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
               </Kbd>
             ))}
           {macro.trigger.type === 'MouseEvent' && (
-            <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
+            <Kbd variant="brand">
+              {mouseEnumLookup.get(macro.trigger.data)?.displayString}
+            </Kbd>
           )}
         </Flex>
       </VStack>

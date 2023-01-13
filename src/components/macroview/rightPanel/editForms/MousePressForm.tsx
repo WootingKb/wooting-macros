@@ -9,29 +9,26 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSelectedElement } from '../../../../contexts/selectors'
 import { KeyType } from '../../../../constants/enums'
 import { mouseEnumLookup } from '../../../../constants/MouseMap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
+import { MouseEventAction } from '../../../../types'
 
 interface Props {
   selectedElementId: number
+  selectedElement: MouseEventAction
 }
 
-export default function MousePressForm({ selectedElementId }: Props) {
+export default function MousePressForm({
+  selectedElementId,
+  selectedElement
+}: Props) {
   const [headingText, setHeadingText] = useState('')
   const [mousepressDuration, setMousepressDuration] = useState(1)
   const [mousepressType, setMousepressType] = useState<KeyType>()
-  const selectedElement = useSelectedElement()
   const { updateElement } = useMacroContext()
 
   useEffect(() => {
-    if (
-      selectedElement === undefined ||
-      selectedElement.type !== 'MouseEventAction'
-    )
-      return
-
     const typeString: keyof typeof KeyType = selectedElement.data.data
       .type as keyof typeof KeyType
     setMousepressType(KeyType[typeString])
@@ -55,16 +52,10 @@ export default function MousePressForm({ selectedElementId }: Props) {
   )
 
   const onInputBlur = useCallback(() => {
-    if (
-      selectedElement === undefined ||
-      selectedElement.type !== 'MouseEventAction'
-    )
-      return
-
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    const temp = {
+    const temp: MouseEventAction = {
       ...selectedElement,
       data: {
         ...selectedElement.data,
@@ -79,14 +70,8 @@ export default function MousePressForm({ selectedElementId }: Props) {
 
   const onMousepressTypeChange = useCallback(
     (newType: KeyType) => {
-      if (
-        selectedElement === undefined ||
-        selectedElement.type !== 'MouseEventAction'
-      )
-        return
-
       setMousepressType(newType)
-      let temp = { ...selectedElement }
+      let temp: MouseEventAction = { ...selectedElement }
       switch (newType) {
         case KeyType.Down:
           temp = {

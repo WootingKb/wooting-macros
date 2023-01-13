@@ -18,6 +18,7 @@ import EmojiPopover from '../../EmojiPopover'
 import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
+import useMainBgColour from '../../../hooks/useMainBgColour'
 
 interface Props {
   isEditing: boolean
@@ -35,7 +36,6 @@ export default function Header({ isEditing }: Props) {
   } = useMacroContext()
   const currentMacro = useSelectedMacro()
   const [hasUserChangedIcon, setHasUserChangedIcon] = useState(false)
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
   const placeholderTextColour = useColorModeValue(
     'primary-light.300',
     'primary-dark.600'
@@ -138,7 +138,7 @@ export default function Header({ isEditing }: Props) {
     <>
       <HStack
         zIndex={1}
-        bg={bg}
+        bg={useMainBgColour()}
         w="full"
         h={{ base: '80px', md: '100px', xl: '120px' }}
         py={2}

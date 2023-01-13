@@ -49,7 +49,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         console.error(e)
         toast({
           title: 'Error loading macros',
-          description: 'Unable to load macros, please re-open the app.',
+          description:
+            'Unable to load macros, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
           duration: 2000,
           isClosable: true
@@ -58,8 +59,19 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   }, [toast])
 
   useEffect(() => {
-    if (initComplete) updateBackendConfig(collections)
-  }, [collections, initComplete])
+    if (initComplete)
+      updateBackendConfig(collections).catch((e) => {
+        console.error(e)
+        toast({
+          title: 'Error updating macro data',
+          description:
+            'Unable to update macro data, please re-open the app. If that does not work, please contact us on Discord.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
+      })
+  }, [collections, initComplete, toast])
 
   const changeViewState = useCallback(
     (newState: ViewState) => {

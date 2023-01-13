@@ -1,4 +1,4 @@
-import { useColorModeValue, VStack } from '@chakra-ui/react'
+import { VStack } from '@chakra-ui/react'
 import {
   DndContext,
   closestCenter,
@@ -18,11 +18,8 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable'
 import { useCallback, useState } from 'react'
-import {
-  scrollbarStylesLight,
-  scrollbarsStylesDark
-} from '../../../constants/utils'
 import { useMacroContext } from '../../../contexts/macroContext'
+import useScrollbarStyles from '../../../hooks/useScrollbarStyles'
 import DragWrapper from './sortableElement/DragWrapper'
 import SortableItem from './sortableElement/SortableItem'
 import SortableWrapper from './sortableElement/SortableWrapper'
@@ -35,10 +32,6 @@ interface Props {
 export default function SortableList({ recording, stopRecording }: Props) {
   const [activeId, setActiveId] = useState<number | undefined>(undefined)
   const { sequence, ids, overwriteIds } = useMacroContext()
-  const scrollbarStyles = useColorModeValue(
-    scrollbarStylesLight,
-    scrollbarsStylesDark
-  )
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -89,7 +82,7 @@ export default function SortableList({ recording, stopRecording }: Props) {
           pb={4}
           overflowY="auto"
           overflowX="hidden"
-          sx={scrollbarStyles}
+          sx={useScrollbarStyles()}
         >
           {ids.map((id) => (
             <SortableWrapper

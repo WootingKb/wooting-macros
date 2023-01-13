@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { MouseButton } from './enums'
+import { HIDCategory, MouseButton } from './enums'
 import {
   ApplicationConfig,
   Collection,
@@ -7,21 +7,17 @@ import {
   MacroData,
   MousePressAction
 } from '../types'
+import { HIDLookup } from './HIDmap'
 
-export const updateBackendConfig = (collections: Collection[]) => {
+export const updateBackendConfig = (
+  collections: Collection[]
+): Promise<void> => {
   const macroData: MacroData = { data: collections }
-  invoke<void>('set_macros', { frontendData: macroData }).catch((e) => {
-    console.error(e)
-  })
+  return invoke<void>('set_macros', { frontendData: macroData })
 }
 
-export const updateSettings = (newConfig: ApplicationConfig) => {
-  if ('AutoStart' in newConfig) {
-    // BUG: without this type guard, some how macro data is passed through????
-    invoke<void>('set_config', { config: newConfig }).catch((e) => {
-      console.error(e)
-    })
-  }
+export const updateSettings = (newConfig: ApplicationConfig): Promise<void> => {
+  return invoke<void>('set_config', { config: newConfig })
 }
 
 export const updateMacroOutput = (value: boolean): Promise<void> => {
@@ -50,10 +46,13 @@ export const checkIfMouseButton = (
   return (e as MousePressAction).button !== undefined
 }
 
-export const checkIfStringIsNonNumeric: (text: string) => boolean = function (
-  value: string
-): boolean {
+/** Currently unused, if Macro types are added back this can probably be refactored elsewhere */
+export const checkIfStringIsNonNumeric = (value: string): boolean => {
   return !(isNaN(Number(value)) === false)
+}
+
+export const checkIfModifierKey = (hid: number): boolean => {
+  return HIDLookup.get(hid)?.category === HIDCategory.Modifier
 }
 
 export const scrollbarStylesLight = {

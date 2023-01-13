@@ -49,7 +49,8 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         console.error(e)
         toast({
           title: 'Error loading settings',
-          description: 'Unable to load settings, please re-open the app.',
+          description:
+            'Unable to load settings, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
           duration: 2000,
           isClosable: true
@@ -58,8 +59,19 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   }, [toast])
 
   useEffect(() => {
-    if (initComplete) updateSettings(config)
-  }, [config, initComplete])
+    if (initComplete)
+      updateSettings(config).catch((e) => {
+        console.error(e)
+        toast({
+          title: 'Error updating settings',
+          description:
+            'Unable to update settings, please re-open the app. If that does not work, please contact us on Discord.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
+      })
+  }, [config, initComplete, toast])
 
   const updateLaunchOnStartup = useCallback((value: boolean) => {
     setConfig((config) => {

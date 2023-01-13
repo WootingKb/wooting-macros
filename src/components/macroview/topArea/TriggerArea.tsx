@@ -53,7 +53,9 @@ export default function TriggerArea({ onOpen }: Props) {
             </Kbd>
           ))}
         {macro.trigger.type === 'MouseEvent' && (
-          <Kbd>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Kbd>
+          <Kbd variant="brand">
+            {mouseEnumLookup.get(macro.trigger.data)?.displayString}
+          </Kbd>
         )}
       </HStack>
       <Button

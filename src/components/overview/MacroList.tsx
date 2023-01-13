@@ -9,25 +9,18 @@ import {
   VStack
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
-import {
-  scrollbarStylesLight,
-  scrollbarsStylesDark
-} from '../../constants/utils'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../constants/enums'
-import { Collection, Macro } from '../../types'
+import { Macro } from '../../types'
 import MacroCard from './MacroCard'
+import useScrollbarStyles from '../../hooks/useScrollbarStyles'
+import useMainBgColour from '../../hooks/useMainBgColour'
 
 export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
-  const currentCollection: Collection = useSelectedCollection()
-  const scrollbarStyles = useColorModeValue(
-    scrollbarStylesLight,
-    scrollbarsStylesDark
-  )
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
+  const currentCollection = useSelectedCollection()
   const shadowColour = useColorModeValue('md', 'white-md')
 
   const onMacroDelete = useCallback(
@@ -48,7 +41,7 @@ export default function MacroList() {
       p='25px'
       overflow="hidden"
       overflowY="auto"
-      sx={scrollbarStyles}
+      sx={useScrollbarStyles()}
     >
       <Grid
         w="full"
@@ -60,7 +53,7 @@ export default function MacroList() {
             w="full"
             minH="202px"
             h="full"
-            bg={bg}
+            bg={useMainBgColour()}
             boxShadow={shadowColour}
             rounded="2xl"
             p={3}

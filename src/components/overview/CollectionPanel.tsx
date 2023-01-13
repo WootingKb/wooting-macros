@@ -4,7 +4,6 @@ import {
   Flex,
   HStack,
   Button,
-  useColorModeValue,
   useDisclosure,
   Input,
   Tooltip,
@@ -16,6 +15,8 @@ import DeleteCollectionModal from './DeleteCollectionModal'
 import MacroList from './MacroList'
 import { useState, useCallback, useEffect } from 'react'
 import EmojiPopover from '../EmojiPopover'
+import useMainBgColour from '../../hooks/useMainBgColour'
+import useBorderColour from '../../hooks/useBorderColour'
 
 export default function CollectionPanel() {
   const { collections, selection, onCollectionUpdate } = useApplicationContext()
@@ -31,12 +32,8 @@ export default function CollectionPanel() {
     onClose: onEmojiPopoverClose
   } = useDisclosure()
   const [collectionName, setCollectionName] = useState('')
-  const panelBg = useColorModeValue('bg-light', 'primary-dark.900')
-  const borderColour = useColorModeValue(
-    'primary-light.100',
-    'primary-dark.700'
-  )
-  const isCollectionDeletable = collections.length <= 1
+  const borderColour = useBorderColour()
+  const isCollectionUndeletable = collections.length <= 1
 
   useEffect(() => {
     setCollectionName(currentCollection.name)
@@ -87,7 +84,7 @@ export default function CollectionPanel() {
   return (
     <VStack w="full" h="100vh" spacing="0">
       <Flex
-        bg={panelBg}
+        bg={useMainBgColour()}
         justifyContent="space-between"
         alignItems="center"
         py={2}
@@ -129,7 +126,7 @@ export default function CollectionPanel() {
             <Tooltip
               variant="brand"
               label={
-                isCollectionDeletable
+                isCollectionUndeletable
                   ? "Can't delete your last collection!"
                   : ''
               }
@@ -141,7 +138,7 @@ export default function CollectionPanel() {
                   leftIcon={<DeleteIcon />}
                   variant="brandWarning"
                   size="md"
-                  isDisabled={isCollectionDeletable}
+                  isDisabled={isCollectionUndeletable}
                   onClick={onDeleteModalOpen}
                   aria-label="Delete Collection"
                 >

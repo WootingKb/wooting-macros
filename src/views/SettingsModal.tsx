@@ -8,7 +8,6 @@ import {
   VStack,
   Text,
   useColorModeValue,
-  useColorMode,
   Flex
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
@@ -20,7 +19,8 @@ import LanguageSettingsPanel from '../components/settings/LanguageSettingsPanel'
 import ApplicationSettingsPanel from '../components/settings/ApplicationSettingsPanel'
 import PatchNotesPanel from '../components/settings/PatchNotesPanel'
 import SettingsLeftPanel from '../components/settings/SettingsLeftPanel'
-import { scrollbarStylesLight, scrollbarsStylesDark } from '../constants/utils'
+import useScrollbarStyles from '../hooks/useScrollbarStyles'
+import useMainBgColour from '../hooks/useMainBgColour'
 
 type Props = {
   isOpen: boolean
@@ -29,8 +29,7 @@ type Props = {
 
 export default function SettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
-  const { colorMode } = useColorMode()
-  const rightPanelBg = useColorModeValue('bg-light', 'primary-dark.900')
+  const rightPanelBg = useMainBgColour()
   const leftPanelBg = useColorModeValue('primary-light.50', 'bg-dark')
 
   useEffect(() => {
@@ -91,11 +90,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
             flexBasis="800px"
             alignItems="flex-start"
             overflow="auto"
-            sx={
-              colorMode === 'light'
-                ? scrollbarStylesLight
-                : scrollbarsStylesDark
-            }
+            sx={useScrollbarStyles()}
           >
             <ModalBody w="full" p={0}>
               <VStack w="600px" justifyContent="left" spacing={4}>

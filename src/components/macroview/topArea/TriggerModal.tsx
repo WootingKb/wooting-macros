@@ -18,9 +18,12 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingTrigger from '../../../hooks/useRecordingTrigger'
-import { Hid, HIDLookup } from '../../../constants/HIDmap'
+import { HIDLookup } from '../../../constants/HIDmap'
 import { mouseEnumLookup } from '../../../constants/MouseMap'
-import { checkIfMouseButtonArray } from '../../../constants/utils'
+import {
+  checkIfModifierKey,
+  checkIfMouseButtonArray
+} from '../../../constants/utils'
 import { RecordIcon, StopIcon } from '../../icons'
 
 interface Props {
@@ -38,7 +41,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     }
     return checkIfMouseButtonArray(items)
   }, [items])
-  const [isAllowed, setIsAllowed] = useState(false)
+  const [isAllowed, setIsAllowed] = useState(false) // Currently not used
   const secondBg = useColorModeValue('blue.50', 'gray.800')
 
   const getTriggerCanSave = useMemo((): boolean => {
@@ -49,10 +52,10 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
         return true
       } else {
         return items.some((element) => {
-          if (element < Hid.CONTROLL.HIDcode) {
-            return true
-          } else {
+          if (checkIfModifierKey(element)) {
             return false
+          } else {
+            return true
           }
         })
       }

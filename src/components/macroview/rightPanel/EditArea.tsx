@@ -1,7 +1,8 @@
-import { useColorModeValue, VStack, Text } from '@chakra-ui/react'
+import { VStack, Text } from '@chakra-ui/react'
 import { useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
+import useMainBgColour from '../../../hooks/useMainBgColour'
 import DelayForm from './editForms/DelayForm'
 import EmptyForm from './editForms/EmptyForm'
 import KeyPressForm from './editForms/KeyPressForm'
@@ -11,7 +12,6 @@ import SystemEventActionForm from './editForms/SystemEventActionForm'
 export default function EditArea() {
   const selectedElement = useSelectedElement()
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
 
   const SelectedElementFormComponent = useMemo(() => {
     if (!selectedElement || selectedElementId === undefined) {
@@ -22,16 +22,31 @@ export default function EditArea() {
       case 'SystemEventAction':
         return (
           <SystemEventActionForm
-            item={selectedElement.data}
             selectedElementId={selectedElementId}
+            selectedElement={selectedElement}
           />
         )
       case 'DelayEventAction':
-        return <DelayForm selectedElementId={selectedElementId}/>
+        return (
+          <DelayForm
+            selectedElementId={selectedElementId}
+            selectedElement={selectedElement}
+          />
+        )
       case 'KeyPressEventAction':
-        return <KeyPressForm selectedElementId={selectedElementId} />
+        return (
+          <KeyPressForm
+            selectedElementId={selectedElementId}
+            selectedElement={selectedElement}
+          />
+        )
       case 'MouseEventAction':
-        return <MousePressForm selectedElementId={selectedElementId}/>
+        return (
+          <MousePressForm
+            selectedElementId={selectedElementId}
+            selectedElement={selectedElement}
+          />
+        )
       default:
         return <EmptyForm />
     }
@@ -42,7 +57,7 @@ export default function EditArea() {
       position="relative"
       w="26%"
       h="full"
-      bg={bg}
+      bg={useMainBgColour()}
       px={[2, 4, 6]}
       pt={[2, 4]}
     >

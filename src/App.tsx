@@ -24,11 +24,15 @@ function App() {
 
   if (!initComplete) {
     return (
-      <Flex
-        h="100vh"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Flex h="100vh" justifyContent="center" alignItems="center">
+        <Box
+          zIndex={-1}
+          pos="absolute"
+          w="full"
+          h="full"
+          opacity={0.15}
+          backgroundImage="url('/keycapPattern.png')"
+        />
         <Text fontSize="4xl" fontWeight="bold">
           Loading...
         </Text>

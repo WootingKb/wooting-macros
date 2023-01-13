@@ -4,6 +4,7 @@ import { HStack, useColorModeValue, Center } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useMacroContext } from '../../../../contexts/macroContext'
+import useMainBgColour from '../../../../hooks/useMainBgColour'
 
 interface Props {
   id: number
@@ -21,7 +22,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
     isDragging
   } = useSortable({ id: id })
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('bg-light', 'primary-dark.900')
+  const bg = useMainBgColour()
   const selectedBg = useColorModeValue(
     'primary-accent.200',
     'primary-accent.800'

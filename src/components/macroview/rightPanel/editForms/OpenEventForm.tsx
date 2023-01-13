@@ -1,30 +1,27 @@
 import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSelectedElement } from '../../../../contexts/selectors'
 import { open } from '@tauri-apps/api/dialog'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
-import { ActionEventType } from '../../../../types'
+import { SystemEventAction } from '../../../../types'
 
 interface Props {
+  selectedElement: SystemEventAction
   selectedElementId: number
 }
 
-export default function OpenEventForm({ selectedElementId }: Props) {
+export default function OpenEventForm({
+  selectedElementId,
+  selectedElement
+}: Props) {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()
   const [headerText, setHeaderText] = useState('')
   const [subHeaderText, setSubHeaderText] = useState('')
   const [path, setPath] = useState('')
-  const selectedElement = useSelectedElement()
   const { updateElement } = useMacroContext()
 
   useEffect(() => {
-    if (
-      selectedElement === undefined ||
-      selectedElement.type !== 'SystemEventAction' ||
-      selectedElement.data.type !== 'Open'
-    )
-      return
+    if (selectedElement.data.type !== 'Open') return
 
     switch (selectedElement.data.action.type) {
       case 'File':
@@ -56,13 +53,7 @@ export default function OpenEventForm({ selectedElementId }: Props) {
   )
 
   const onInputBlur = useCallback(() => {
-    if (selectedElement === undefined) {
-      return
-    }
-    if (selectedElement.type !== 'SystemEventAction') {
-      return
-    }
-    const temp: ActionEventType = {
+    const temp: SystemEventAction = {
       ...selectedElement,
       data: {
         type: 'Open',
@@ -75,12 +66,6 @@ export default function OpenEventForm({ selectedElementId }: Props) {
 
   const onButtonPress = useCallback(
     async (isDirectory: boolean) => {
-      if (selectedElement === undefined) {
-        return
-      }
-      if (selectedElement.type !== 'SystemEventAction') {
-        return
-      }
       if (isDirectory) {
         const dir = await open({
           directory: true,
@@ -91,7 +76,7 @@ export default function OpenEventForm({ selectedElementId }: Props) {
           return
         }
         setPath(dir)
-        const temp: ActionEventType = {
+        const temp: SystemEventAction = {
           ...selectedElement,
           data: {
             type: 'Open',
@@ -108,7 +93,7 @@ export default function OpenEventForm({ selectedElementId }: Props) {
           return
         }
         setPath(file)
-        const temp: ActionEventType = {
+        const temp: SystemEventAction = {
           ...selectedElement,
           data: { type: 'Open', action: { type: 'File', data: file } }
         }

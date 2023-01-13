@@ -3,13 +3,8 @@ import {
   Flex,
   Text,
   Divider,
-  useColorModeValue
 } from '@chakra-ui/react'
-import { useCallback, useMemo } from 'react'
-import {
-  scrollbarsStylesDark,
-  scrollbarStylesLight
-} from '../../../../constants/utils'
+import { useMemo } from 'react'
 import { HIDCategory, PluginGroup } from '../../../../constants/enums'
 import { Hid } from '../../../../constants/HIDmap'
 import { SystemEvent } from '../../../../constants/SystemEventMap'
@@ -19,17 +14,14 @@ import { MouseInput } from '../../../../constants/MouseMap'
 import KeyboardKeysSection from './KeyboardKeysSection'
 import PluginsSection from './PluginsSection'
 import { Plugin } from '../../../../constants/PluginsEventMap'
+import { KeyboardKeyCategory, PluginCategory } from '../../../../types'
+import useScrollbarStyles from '../../../../hooks/useScrollbarStyles'
 
 interface Props {
   searchValue: string
 }
 
 export default function SelectAreaAccordion({ searchValue }: Props) {
-  const scrollbarStyles = useColorModeValue(
-    scrollbarStylesLight,
-    scrollbarsStylesDark
-  )
-
   const systemEventElements = useMemo(() => {
     if (searchValue.trim() === '') {
       return SystemEvent.all
@@ -39,37 +31,58 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
     )
   }, [searchValue])
 
-  const keyboardKeyElements = useCallback(
-    (categoryName: string) => {
-      if (searchValue.trim() === '') {
-        return Hid.all.filter(
-          (element) => HIDCategory[element.category] === categoryName
-        )
-      }
-      return Hid.all.filter(
-        (element) =>
-          HIDCategory[element.category] === categoryName &&
-          element.displayString.toLowerCase().includes(searchValue)
-      )
-    },
-    [searchValue]
-  )
+  const keyboardKeyElements = useMemo(() => {
+    if (searchValue.trim() === '') {
+      return Hid.all
+    }
+    return Hid.all.filter((element) =>
+      element.displayString.toLowerCase().includes(searchValue)
+    )
+  }, [searchValue])
 
-  // const pluginElements = useCallback(
-  //   (pluginGroup: string) => {
+  const keyboardKeyCategories = useMemo<KeyboardKeyCategory[]>(() => {
+    const temp: KeyboardKeyCategory[] = []
+    const categories = Object.keys(HIDCategory).filter((key) =>
+      isNaN(Number(key))
+    )
+
+    for (let i = 0; i < categories.length; i++) {
+      const categoryName = categories[i]
+      const elements = keyboardKeyElements.filter((element) => {
+        return HIDCategory[element.category] === categoryName
+      })
+      temp.push({ name: categoryName, elements: elements })
+    }
+    return temp
+  }, [keyboardKeyElements])
+
+  // const pluginElements = useMemo(() => {
   //     if (searchValue.trim() === '') {
-  //       return Plugin.all.filter(
-  //         (element) => PluginGroup[element.pluginGroup] === pluginGroup
-  //       )
+  //       return Plugin.all
   //     }
   //     return Plugin.all.filter(
   //       (element) =>
-  //         PluginGroup[element.pluginGroup] === pluginGroup &&
   //         element.displayString.toLowerCase().includes(searchValue)
   //     )
   //   },
   //   [searchValue]
   // )
+
+  // const pluginCategories = useMemo<PluginCategory[]>(() => {
+  //   const temp: PluginCategory[] = []
+  //   const pluginGroups = Object.keys(PluginGroup).filter((key) =>
+  //     isNaN(Number(key))
+  //   )
+
+  //   for (let i = 0; i < pluginGroups.length; i++) {
+  //     const groupName = pluginGroups[i]
+  //     const elements = pluginElements.filter((element) => {
+  //       return PluginGroup[element.pluginGroup] === groupName
+  //     })
+  //     temp.push({ name: groupName, elements: elements })
+  //   }
+  //   return temp
+  // }, [pluginElements])
 
   const mouseElements = useMemo(() => {
     if (searchValue.trim() === '') {
@@ -91,36 +104,27 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
       count++
     }
 
-    const keyboardKeyCategories = Object.keys(HIDCategory).filter((key) =>
-      isNaN(Number(key))
-    )
-
-    for (let i = 0; i < keyboardKeyCategories.length; i++) {
-      const categoryName = keyboardKeyCategories[i]
-      if (keyboardKeyElements(categoryName).length > 0) {
+    keyboardKeyCategories.forEach((category) => {
+      if (category.elements.length > 0) {
         count++
       }
-    }
-    // const pluginGroups = Object.keys(PluginGroup).filter((key) =>
-    //   isNaN(Number(key))
-    // )
+    })
 
-    // for (let i = 0; i < pluginGroups.length; i++) {
-    //   const pluginGroupName = pluginGroups[i]
-    //   if (pluginElements(pluginGroupName).length > 0) {
+    // pluginCategories.forEach((category) => {
+    //   if (category.elements.length > 0) {
     //     count++
     //   }
-    // }
+    // })
+
     if (mouseElements.length > 0) {
       count++
     }
     return [...Array(count).keys()]
   }, [
-    keyboardKeyElements,
-    // pluginElements,
     searchValue,
-    mouseElements.length,
-    systemEventElements.length
+    systemEventElements.length,
+    keyboardKeyCategories,
+    mouseElements.length
   ])
 
   const isValidSearch = useMemo(() => {
@@ -134,7 +138,7 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
       h="fit"
       overflowY="auto"
       alignItems={isValidSearch ? 'center' : 'flex-start'}
-      sx={scrollbarStyles}
+      sx={useScrollbarStyles()}
     >
       {isValidSearch && searchValue !== '' && (
         <>
@@ -148,11 +152,11 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
         {systemEventElements.length > 0 && (
           <SystemEventsSection elementsToRender={systemEventElements} />
         )}
-        <KeyboardKeysSection keyboardKeyElements={keyboardKeyElements} />
+        <KeyboardKeysSection keyboardKeyCategories={keyboardKeyCategories} />
         {mouseElements.length > 0 && (
           <MouseButtonsSection elementsToRender={mouseElements} />
         )}
-        {/* <PluginsSection pluginGroupElements={pluginElements} /> */}
+        {/* <PluginsSection pluginCategories={pluginCategories} /> */}
       </Accordion>
     </Flex>
   )

@@ -4,7 +4,6 @@ import {
   Text,
   useColorModeValue,
   HStack,
-  useColorMode,
   Flex
 } from '@chakra-ui/react'
 import { openDiscordLink, openGithubLink } from '../../constants/externalLinks'
@@ -15,10 +14,8 @@ import { type, version } from '@tauri-apps/api/os'
 import { getVersion } from '@tauri-apps/api/app'
 import { useEffect, useState } from 'react'
 import { DiscordIcon, GithubIcon } from '../icons'
-import {
-  scrollbarStylesLight,
-  scrollbarsStylesDark
-} from '../../constants/utils'
+import useScrollbarStyles from '../../hooks/useScrollbarStyles'
+import useBorderColour from '../../hooks/useBorderColour'
 
 interface Props {
   pageIndex: number
@@ -29,12 +26,7 @@ export default function SettingsLeftPanel({
   pageIndex,
   onSettingsButtonPress
 }: Props) {
-  const { colorMode } = useColorMode()
   const panelBg = useColorModeValue('primary-light.50', 'bg-dark')
-  const borderColour = useColorModeValue(
-    'primary-light.100',
-    'primary-dark.700'
-  )
   const [osText, setOsText] = useState<string | undefined>(undefined)
   const [versionText, setVersionText] = useState<string | undefined>(undefined)
   const applicationTextColour = useColorModeValue(
@@ -78,7 +70,7 @@ export default function SettingsLeftPanel({
     <Flex
       bg={panelBg}
       borderRight="1px"
-      borderColor={borderColour}
+      borderColor={useBorderColour()}
       h="100vh"
       px={2}
       py={16}
@@ -87,7 +79,7 @@ export default function SettingsLeftPanel({
       flexBasis="auto"
       justifyContent="flex-end"
       overflowY="auto"
-      sx={colorMode === 'light' ? scrollbarStylesLight : scrollbarsStylesDark}
+      sx={useScrollbarStyles()}
     >
       <VStack w="200px" spacing={1}>
         <VStack w="full" spacing={1}>
@@ -126,7 +118,7 @@ export default function SettingsLeftPanel({
         <Divider />
         <VStack w="full" spacing={2} px={1} pt={1}>
           <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
-            Got Feedback? Let us know through these channels!
+            Got feedback? Let us know through these channels!
           </Text>
           <HStack w="full">
             <DiscordIcon

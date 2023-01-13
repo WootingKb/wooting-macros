@@ -106,12 +106,6 @@ export default function SortableItem({
                 break
             }
             break
-          case 'Brightness':
-            setDisplayText(
-              sysEventLookup.get(element.data.action.type)?.displayString
-            )
-            setIsEditable(true)
-            break
           default:
             setDisplayText('err')
             setIsEditable(false)
@@ -204,7 +198,7 @@ export default function SortableItem({
           {displayText}
         </Text>
       </HStack>
-      <HStack py={2} pr={4} h="full" spacing={0} gap={3} alignItems="flex-end">
+      <HStack py={2} pr={2} h="full" spacing={0} gap={2} alignItems="flex-end">
         {isEditable && (
           <IconButton
             variant="brandSecondary"
@@ -219,6 +213,7 @@ export default function SortableItem({
             h="24px"
             aria-label="Item options"
             color={kebabColour}
+            px={2}
             _hover={{ color: kebabHoverColour }}
           >
             <KebabVertical />

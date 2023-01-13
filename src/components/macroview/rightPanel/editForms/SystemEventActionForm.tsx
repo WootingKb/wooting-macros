@@ -1,34 +1,35 @@
 import { useMemo } from 'react'
-import { SystemAction } from '../../../../types'
+import { SystemEventAction } from '../../../../types'
 import ClipboardForm from './ClipboardForm'
 import EmptyForm from './EmptyForm'
 import OpenEventForm from './OpenEventForm'
-import ScreenBrightnessForm from './ScreenBrightnessForm'
-import VolumeControlForm from './VolumeControlForm'
 
 interface Props {
-  item: SystemAction
+  selectedElement: SystemEventAction
   selectedElementId: number
 }
 
-export default function SystemEventActionForm({ item, selectedElementId }: Props) {
+export default function SystemEventActionForm({ selectedElement, selectedElementId }: Props) {
   const SelectedElementFormComponent = useMemo(() => {
-    switch (item.type) {
+    switch (selectedElement.data.type) {
       case 'Open':
-        return <OpenEventForm selectedElementId={selectedElementId}/>
+        return <OpenEventForm selectedElementId={selectedElementId} selectedElement={selectedElement}/>
       case 'Volume':
         return <EmptyForm />
       case 'Clipboard':
-        if (item.action.type === 'PasteUserDefinedString') {
-          return <ClipboardForm selectedElementId={selectedElementId}/>
+        if (selectedElement.data.action.type === 'PasteUserDefinedString') {
+          return (
+            <ClipboardForm
+              selectedElementId={selectedElementId}
+              selectedElement={selectedElement}
+            />
+          )
         } else {
           return <EmptyForm />
         }
-      case 'Brightness':
-        return <ScreenBrightnessForm />
       default:
         return <EmptyForm />
     }
-  }, [item.action.type, item.type, selectedElementId])
+  }, [selectedElement, selectedElementId])
   return SelectedElementFormComponent
 }
