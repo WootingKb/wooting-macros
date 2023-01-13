@@ -324,14 +324,18 @@ fn check_macro_execution_efficiently(
                     let pressed_events2 = pressed_events.clone();
                     // let macro_clone2 = macros.clone();
 
+                    // This should fix the Darrel issue. Makes sure keys are released properly before returning grabbing. May need more optimizing but doesn't lag.
                     task::spawn(async move {
+                        
+                        lift_keys(pressed_events2, channel_clone2).await;
+                    });
+
+                    task::spawn(async move {
+                        tokio::time::sleep(time::Duration::from_millis(3)).await;
                         execute_macro(macro_clone, channel_clone).await;
                     });
 
-                    // This should fix the Darrel issue. Makes sure keys are released properly before returning grabbing. May need more optimizing but doesn't lag.
-                    task::spawn(async move {
-                        lift_keys(pressed_events2, channel_clone2).await;
-                    });
+                    
                     output = true;
                 }
             }
