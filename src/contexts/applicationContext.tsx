@@ -9,11 +9,13 @@ import {
   useCallback
 } from 'react'
 import { useToast } from '@chakra-ui/react'
-import { ViewState } from '../enums'
+import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
-import { updateBackendConfig } from '../utils'
+import { updateBackendConfig } from '../constants/utils'
 
-type ApplicationProviderProps = { children: ReactNode }
+interface ApplicationProviderProps {
+  children: ReactNode
+}
 
 const ApplicationContext = createContext<AppState | undefined>(undefined)
 
@@ -29,13 +31,12 @@ function useApplicationContext() {
 
 function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [viewState, setViewState] = useState<ViewState>(ViewState.Overview)
-  const [initComplete, setInitComplete] = useState<boolean>(false)
+  const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
     macroIndex: undefined
   })
-  const [isUpdatingCollection, setIsUpdatingCollection] = useState(false)
   const toast = useToast()
 
   useEffect(() => {
@@ -48,7 +49,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         console.error(e)
         toast({
           title: 'Error loading macros',
-          description: "Unable to load macros, please re-open the app.",
+          description:
+            'Unable to load macros, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
           duration: 2000,
           isClosable: true
@@ -57,8 +59,19 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   }, [toast])
 
   useEffect(() => {
-    if (initComplete) updateBackendConfig(collections)
-  }, [collections, initComplete])
+    if (initComplete)
+      updateBackendConfig(collections).catch((e) => {
+        console.error(e)
+        toast({
+          title: 'Error updating macro data',
+          description:
+            'Unable to update macro data, please re-open the app. If that does not work, please contact us on Discord.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
+      })
+  }, [collections, initComplete, toast])
 
   const changeViewState = useCallback(
     (newState: ViewState) => {
@@ -93,9 +106,13 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       let newIndex = 0
+      let itemToAdd = newCollection
       setCollections((collections) => {
         newIndex = collections.length
-        return [...collections, newCollection]
+        if (itemToAdd.name === '') {
+          itemToAdd = { ...itemToAdd, name: `Collection ${newIndex + 1}` }
+        }
+        return [...collections, itemToAdd]
       })
       changeSelectedCollectionIndex(newIndex)
     },
@@ -107,7 +124,9 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       (_, i) => i !== selection.collectionIndex
     )
     setCollections(newCollections)
-    changeSelectedCollectionIndex(0)
+    changeSelectedCollectionIndex(
+      Math.min(selection.collectionIndex, newCollections.length - 1)
+    )
   }, [changeSelectedCollectionIndex, collections, selection.collectionIndex])
 
   const onCollectionUpdate = useCallback(
@@ -120,41 +139,30 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [collections]
   )
 
-  const changeIsUpdatingCollection = useCallback(
-    (newVal: boolean) => {
-      setIsUpdatingCollection(newVal)
-    },
-    [setIsUpdatingCollection]
-  )
-
   const value = useMemo<AppState>(
     () => ({
       viewState,
       collections,
       initComplete,
       selection,
-      isUpdatingCollection: isUpdatingCollection,
       changeViewState,
       onSelectedCollectionDelete,
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex,
-      changeIsUpdatingCollection
+      changeSelectedMacroIndex
     }),
     [
       viewState,
       collections,
       initComplete,
       selection,
-      isUpdatingCollection,
       changeViewState,
       onSelectedCollectionDelete,
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex,
-      changeIsUpdatingCollection
+      changeSelectedMacroIndex
     ]
   )
 

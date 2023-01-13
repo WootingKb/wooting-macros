@@ -11,15 +11,16 @@ import {
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { ViewState } from '../../enums'
-import { Collection, Macro } from '../../types'
+import { ViewState } from '../../constants/enums'
+import { Macro } from '../../types'
 import MacroCard from './MacroCard'
+import useScrollbarStyles from '../../hooks/useScrollbarStyles'
+import useMainBgColour from '../../hooks/useMainBgColour'
 
 export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
     useApplicationContext()
-  const currentCollection: Collection = useSelectedCollection()
-  const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
+  const currentCollection = useSelectedCollection()
   const shadowColour = useColorModeValue('md', 'white-md')
 
   const onMacroDelete = useCallback(
@@ -35,91 +36,49 @@ export default function MacroList() {
 
   return (
     <Box
-      w="100%"
-      h="100%"
-      p={['2', '3', '4']}
+      w="full"
+      h="full"
+      p='25px'
       overflow="hidden"
       overflowY="auto"
-      css={{
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
-      }}
-      // css={{
-      //   '&::-webkit-scrollbar': {
-      //     width: '10px'
-      //   },
-      //   '&::-webkit-scrollbar-track': {
-      //     background: '#f1f1f1',
-      //     borderRadius: '10px'
-      //   },
-      //   '&::-webkit-scrollbar-thumb': {
-      //     background: '#888',
-      //     borderRadius: '10px'
-      //   },
-      //   '&::-webkit-scrollbar-thumb:hover': {
-      //     background: '#555',
-      //     borderRadius: '10px'
-      //   }
-      // }}
+      sx={useScrollbarStyles()}
     >
-      {currentCollection.macros.length === 0 ? (
-        <Flex h="100%" justifyContent="center" alignItems="center">
-          <Button
-            variant="yellowGradient"
-            _hover={{
-              transform: 'scale(110%)'
-            }}
-            leftIcon={<AddIcon />}
-            size={['sm', 'md', 'lg']}
-            maxW="50%"
-            onClick={() => {
-              changeViewState(ViewState.Addview)
-            }}
+      <Grid
+        w="full"
+        templateColumns={['repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}
+        gap={'25px'}
+      >
+        <Flex h="full" justifyContent="center" alignItems="center">
+          <VStack
+            w="full"
+            minH="202px"
+            h="full"
+            bg={useMainBgColour()}
+            boxShadow={shadowColour}
+            rounded="2xl"
+            p={3}
+            m="auto"
+            justifyContent="center"
+            spacing={2}
           >
-            Add Macro
-          </Button>
-        </Flex>
-      ) : (
-        <Grid
-          w="100%"
-          templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']}
-          gap={['2', '3', '4']}
-        >
-          <Flex h="163px" justifyContent="center" alignItems="center">
-            <VStack
-              w="100%"
-              h="full"
-              bg={bg}
-              boxShadow={shadowColour}
-              rounded="md"
-              p="3"
-              m="auto"
-              justifyContent="center"
-              spacing="8px"
+            <Button
+              variant="yellowGradient"
+              leftIcon={<AddIcon />}
+              size={['sm', 'md', 'lg']}
+              onClick={() => {
+                changeViewState(ViewState.Addview)
+              }}
             >
-              <Button
-                variant="yellowGradient"
-                _hover={{
-                  transform: 'scale(110%)'
-                }}
-                leftIcon={<AddIcon />}
-                size={['sm', 'md', 'lg']}
-                onClick={() => {
-                  changeViewState(ViewState.Addview)
-                }}
-              >
-                Add Macro
-              </Button>
-            </VStack>
-          </Flex>
-          {currentCollection.macros.map((macro: Macro, index: number) => (
-            <GridItem w="100%" h="163px" key={macro.name}>
-              <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
-            </GridItem>
-          ))}
-        </Grid>
-      )}
+              Add Macro
+            </Button>
+          </VStack>
+        </Flex>
+        {currentCollection.macros.map((macro: Macro, index: number) => (
+          <GridItem w="full" h="fit-content" key={`${macro.name} + ${index}`}>
+            <MacroCard macro={macro} index={index} onDelete={onMacroDelete} />
+          </GridItem>
+        ))}
+      </Grid>
     </Box>
   )
 }

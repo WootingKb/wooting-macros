@@ -12,9 +12,16 @@ export const Switch = helpers.defineMultiStyleConfig({
       container: {},
       thumb: {},
       track: {
-        bg: mode('primary-light.500', 'primary-dark.500')(props),
+        bg: mode('primary-light.600', 'primary-dark.700')(props),
         _checked: {
-          bg: mode('primary-accent.600', 'primary-accent.500')(props)
+          bg: 'primary-accent.500'
+        },
+        _disabled: {
+          bg: mode('primary-light.600', 'primary-dark.700')(props),
+          opacity: 0.5,
+          _checked: {
+            bg: mode('primary-light.600', 'primary-dark.700')(props),
+          }
         }
       }
     })

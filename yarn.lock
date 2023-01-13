@@ -621,7 +621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/icons@npm:^2.0.11":
+"@chakra-ui/icons@npm:^2.0.15":
   version: 2.0.15
   resolution: "@chakra-ui/icons@npm:2.0.15"
   dependencies:
@@ -1137,7 +1137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/react@npm:^2.3.7":
+"@chakra-ui/react@npm:^2.4.6":
   version: 2.4.6
   resolution: "@chakra-ui/react@npm:2.4.6"
   dependencies:
@@ -1307,7 +1307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/system@npm:2.3.7":
+"@chakra-ui/system@npm:2.3.7, @chakra-ui/system@npm:^2.3.7":
   version: 2.3.7
   resolution: "@chakra-ui/system@npm:2.3.7"
   dependencies:
@@ -1508,7 +1508,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/core@npm:^6.0.5":
+"@dnd-kit/core@npm:^6.0.7":
   version: 6.0.7
   resolution: "@dnd-kit/core@npm:6.0.7"
   dependencies:
@@ -1522,7 +1522,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/modifiers@npm:^6.0.0":
+"@dnd-kit/modifiers@npm:^6.0.1":
   version: 6.0.1
   resolution: "@dnd-kit/modifiers@npm:6.0.1"
   dependencies:
@@ -1535,7 +1535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/sortable@npm:^7.0.1":
+"@dnd-kit/sortable@npm:^7.0.2":
   version: 7.0.2
   resolution: "@dnd-kit/sortable@npm:7.0.2"
   dependencies:
@@ -1559,20 +1559,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emoji-mart/data@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "@emoji-mart/data@npm:1.1.1"
-  checksum: 705d8021c62f8d22f8ed3fa2a106b11eea58610cb8899a401a104be59e83e4ba18e57b06e34d0b3a967fa8e5fbee5f6646162c2ee540db06cb757a5e4370e92e
+"@emoji-mart/data@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@emoji-mart/data@npm:1.1.0"
+  checksum: 6adf2bf746a7b46de31ac0f6f5b80b9beef8b9d75f22396730f57ba3edd02bdbaccccb970fa3af4dba78c34c517e6403b401ab23a17227f15ffa3e7274a149f4
   languageName: node
   linkType: hard
 
-"@emoji-mart/react@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "@emoji-mart/react@npm:1.1.1"
+"@emoji-mart/react@npm:1.1.0":
+  version: 1.1.0
+  resolution: "@emoji-mart/react@npm:1.1.0"
   peerDependencies:
     emoji-mart: ^5.2
     react: ^16.8 || ^17 || ^18
-  checksum: def4dddaa01ce88c396510d84d1878b881fe0f9c484a836a50e3db784a91ab98edf94816cff503b4d1cab7b00400a01c87e32d19dee2d950f64ef9243f79101e
+  checksum: 7ac5f13ce2adb3363af624d3d51896c36ac46237113ec1d0ec3833188ce2926311c946df8fd877aa53451b97d6a5ee006baf165a1334468c64571cf7a664d165
   languageName: node
   linkType: hard
 
@@ -1778,7 +1778,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formkit/auto-animate@npm:^1.0.0-beta.5":
+"@fontsource/montserrat@npm:^4.5.13":
+  version: 4.5.13
+  resolution: "@fontsource/montserrat@npm:4.5.13"
+  checksum: 89bbb4d82ee54ba66538c266a44076603963e5dd9ce514a9ffb664b69902fbe521fe15e2d45d13767032ac5962535a2205ba70b3b479c71de249d6d6e9521d75
+  languageName: node
+  linkType: hard
+
+"@formkit/auto-animate@npm:1.0.0-beta.5":
   version: 1.0.0-beta.5
   resolution: "@formkit/auto-animate@npm:1.0.0-beta.5"
   checksum: 479a4f694d91e7272b2d8bdf2051fd1ae2dd5fbb522612406eaef55d88b7131402a7d5f683df8eb4e7c00810ebec8d3048483a774b0864c299d2d7af81262eb2
@@ -1988,15 +1995,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-icons@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@radix-ui/react-icons@npm:1.1.1"
-  peerDependencies:
-    react: ^16.x || ^17.x || ^18.x
-  checksum: fc64cd763994e035fe7a4898c0710793aebc2689d56dcc8a2fd76c334a424c48a1aa2fbcccc2bd1c0990d731f27090fc0ddf6859af32c5aa217bd75a10cb3e34
-  languageName: node
-  linkType: hard
-
 "@tauri-apps/api@npm:^1.1.0":
   version: 1.2.0
   resolution: "@tauri-apps/api@npm:1.2.0"
@@ -2112,7 +2110,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:^7.0.9":
+"@types/eslint@npm:^8":
+  version: 8.4.10
+  resolution: "@types/eslint@npm:8.4.10"
+  dependencies:
+    "@types/estree": "*"
+    "@types/json-schema": "*"
+  checksum: 21e009ed9ed9bc8920fdafc6e11ff321c4538b4cc18a56fdd59dc5184ea7bbf363c71638c9bdb59fc1254dddcdd567485136ed68b0ee4750948d4e32cb79c689
+  languageName: node
+  linkType: hard
+
+"@types/estree@npm:*":
+  version: 1.0.0
+  resolution: "@types/estree@npm:1.0.0"
+  checksum: 910d97fb7092c6738d30a7430ae4786a38542023c6302b95d46f49420b797f21619cdde11fa92b338366268795884111c2eb10356e4bd2c8ad5b92941e9e6443
+  languageName: node
+  linkType: hard
+
+"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.9":
   version: 7.0.11
   resolution: "@types/json-schema@npm:7.0.11"
   checksum: 527bddfe62db9012fccd7627794bd4c71beb77601861055d87e3ee464f2217c85fca7a4b56ae677478367bbd248dbde13553312b7d4dbc702a2f2bbf60c4018d
@@ -2146,6 +2161,13 @@ __metadata:
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
   checksum: fd6bce2b674b6efc3db4c7c3d336bd70c90838e8439de639b909ce22f3720d21344f52427f1d9e57b265fcb7f6c018699b99e5e0c208a1a4823014269a6bf35b
+  languageName: node
+  linkType: hard
+
+"@types/prettier@npm:^2":
+  version: 2.7.2
+  resolution: "@types/prettier@npm:2.7.2"
+  checksum: b47d76a5252265f8d25dd2fe2a5a61dc43ba0e6a96ffdd00c594cb4fd74c1982c2e346497e3472805d97915407a09423804cc2110a0b8e1b22cffcab246479b7
   languageName: node
   linkType: hard
 
@@ -2190,7 +2212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.42.1":
+"@typescript-eslint/eslint-plugin@npm:^5.48.0":
   version: 5.48.1
   resolution: "@typescript-eslint/eslint-plugin@npm:5.48.1"
   dependencies:
@@ -2213,7 +2235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.42.1":
+"@typescript-eslint/parser@npm:^5.48.0":
   version: 5.48.1
   resolution: "@typescript-eslint/parser@npm:5.48.1"
   dependencies:
@@ -2542,13 +2564,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.3.1":
-  version: 1.5.1
-  resolution: "base64-js@npm:1.5.1"
-  checksum: 669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
-  languageName: node
-  linkType: hard
-
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -2588,16 +2603,6 @@ __metadata:
   bin:
     browserslist: cli.js
   checksum: 4af3793704dbb4615bcd29059ab472344dc7961c8680aa6c4bb84f05340e14038d06a5aead58724eae69455b8fade8b8c69f1638016e87e5578969d74c078b79
-  languageName: node
-  linkType: hard
-
-"buffer@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "buffer@npm:6.0.3"
-  dependencies:
-    base64-js: ^1.3.1
-    ieee754: ^1.2.1
-  checksum: 5ad23293d9a731e4318e420025800b42bf0d264004c0286c8cc010af7a270c7a0f6522e84f54b9ad65cbd6db20b8badbfd8d2ebf4f80fa03dab093b89e68c3f9
   languageName: node
   linkType: hard
 
@@ -3250,7 +3255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^8.5.0":
+"eslint-config-prettier@npm:^8.6.0":
   version: 8.6.0
   resolution: "eslint-config-prettier@npm:8.6.0"
   peerDependencies:
@@ -3340,7 +3345,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.27.0":
+"eslint@npm:^8.31.0":
   version: 8.31.0
   resolution: "eslint@npm:8.31.0"
   dependencies:
@@ -3926,13 +3931,6 @@ __metadata:
   dependencies:
     safer-buffer: ">= 2.1.2 < 3.0.0"
   checksum: 3f60d47a5c8fc3313317edfd29a00a692cc87a19cac0159e2ce711d0ebc9019064108323b5e493625e25594f11c6236647d8e256fbe7a58f4a3b33b89e6d30bf
-  languageName: node
-  linkType: hard
-
-"ieee754@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "ieee754@npm:1.2.1"
-  checksum: 5144c0c9815e54ada181d80a0b810221a253562422e7c6c3a60b1901154184f49326ec239d618c416c1c5945a2e197107aee8d986a3dd836b53dffefd99b5e7e
   languageName: node
   linkType: hard
 
@@ -4820,7 +4818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.7.1":
+"prettier@npm:^2.8.1":
   version: 2.8.2
   resolution: "prettier@npm:2.8.2"
   bin:
@@ -4858,9 +4856,9 @@ __metadata:
   linkType: hard
 
 "punycode@npm:^2.1.0":
-  version: 2.1.1
-  resolution: "punycode@npm:2.1.1"
-  checksum: 823bf443c6dd14f669984dea25757b37993f67e8d94698996064035edd43bed8a5a17a9f12e439c2b35df1078c6bec05a6c86e336209eb1061e8025c481168e8
+  version: 2.2.0
+  resolution: "punycode@npm:2.2.0"
+  checksum: 32f291c1b1e8bef8a7d351a369579565bc17530ee5224d2f2b5c37b2647aa0ec7f1972294e2de1b632812f90c8080a7c0c5645c14758aadc0f27b35dd4906d89
   languageName: node
   linkType: hard
 
@@ -4918,6 +4916,15 @@ __metadata:
     "@types/react":
       optional: true
   checksum: f8db4d64aa5c983d15e80d0fd86d1d649e33744e7b6b70babb08c95f7828e38c2cce7068c0007cf3263eec8b738ebd317d24a613df7f75b472bad6529cf8d6b6
+  languageName: node
+  linkType: hard
+
+"react-icons@npm:^4.7.1":
+  version: 4.7.1
+  resolution: "react-icons@npm:4.7.1"
+  peerDependencies:
+    react: "*"
+  checksum: ed3cbdc5fc0c4d7d2debf78fdc8c4c80aeacf85a506a9a3c11b1d5922de393ac0a6542012b7fb81761e9280c54d0f26827d50a92b54ec8f0c8e52364d89970b5
   languageName: node
   linkType: hard
 
@@ -5715,36 +5722,39 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wooting-macros@workspace:."
   dependencies:
-    "@chakra-ui/icons": ^2.0.11
-    "@chakra-ui/react": ^2.3.7
-    "@dnd-kit/core": ^6.0.5
-    "@dnd-kit/modifiers": ^6.0.0
-    "@dnd-kit/sortable": ^7.0.1
-    "@dnd-kit/utilities": ^3.2.0
-    "@emoji-mart/data": ^1.1.0
-    "@emoji-mart/react": ^1.1.0
+    "@chakra-ui/icons": ^2.0.15
+    "@chakra-ui/react": ^2.4.6
+    "@chakra-ui/system": ^2.3.7
+    "@dnd-kit/core": ^6.0.7
+    "@dnd-kit/modifiers": ^6.0.1
+    "@dnd-kit/sortable": ^7.0.2
+    "@dnd-kit/utilities": ^3.2.1
+    "@emoji-mart/data": 1.1.0
+    "@emoji-mart/react": 1.1.0
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
-    "@formkit/auto-animate": ^1.0.0-beta.5
-    "@radix-ui/react-icons": ^1.1.1
+    "@fontsource/montserrat": ^4.5.13
+    "@formkit/auto-animate": 1.0.0-beta.5
     "@tauri-apps/api": ^1.1.0
     "@tauri-apps/cli": ^1.2.2
+    "@types/eslint": ^8
     "@types/node": ^18.7.10
+    "@types/prettier": ^2
     "@types/react": ^18.0.15
     "@types/react-dom": ^18.0.6
-    "@typescript-eslint/eslint-plugin": ^5.42.1
-    "@typescript-eslint/parser": ^5.42.1
+    "@typescript-eslint/eslint-plugin": ^5.48.0
+    "@typescript-eslint/parser": ^5.48.0
     "@vitejs/plugin-react": ^2.0.0
-    buffer: ^6.0.3
     emoji-mart: ^5.4.0
-    eslint: ^8.27.0
-    eslint-config-prettier: ^8.5.0
+    eslint: ^8.31.0
+    eslint-config-prettier: ^8.6.0
     eslint-plugin-react: ^7.31.11
     eslint-plugin-react-hooks: ^4.6.0
     framer-motion: ^7.6.4
-    prettier: ^2.7.1
+    prettier: ^2.8.1
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-icons: ^4.7.1
     typescript: ^4.8.4
     vite: ^3.0.2
     yarn: ^1.22.19

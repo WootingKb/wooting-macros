@@ -7,14 +7,22 @@ import {
   useCallback,
   useEffect
 } from 'react'
-import { MacroType, ViewState } from '../enums'
-import { MacroState, ActionEventType, Macro, TriggerEventType } from '../types'
-import { maxNameLength } from '../utils'
+import { MacroType, ViewState } from '../constants/enums'
+import {
+  MacroState,
+  ActionEventType,
+  Macro,
+  TriggerEventType,
+  KeyPressEventAction,
+  MouseEventAction
+} from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
 
-type MacroProviderProps = { children: ReactNode }
+interface MacroProviderProps {
+  children: ReactNode
+}
 
 const MacroContext = createContext<MacroState | undefined>(undefined)
 
@@ -37,8 +45,7 @@ const macroDefault: Macro = {
 
 function MacroProvider({ children }: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>(macroDefault)
-  const [oldMacroName, setOldMacroName] = useState('')
-  const [sequence, setSequence] = useState<ActionEventType[]>([]) // still needed because of how the sortable list works
+  const [sequence, setSequence] = useState<ActionEventType[]>([])
   const [ids, setIds] = useState<number[]>([])
   const [selectedElementId, setSelectedElementId] = useState<
     number | undefined
@@ -46,9 +53,104 @@ function MacroProvider({ children }: MacroProviderProps) {
   const [isUpdatingMacro, setIsUpdatingMacro] = useState(false)
   const currentMacro = useSelectedMacro()
   const currentCollection = useSelectedCollection()
-  const { viewState, selection, onCollectionUpdate, changeSelectedMacroIndex } =
-    useApplicationContext()
+  const {
+    collections,
+    viewState,
+    selection,
+    onCollectionUpdate,
+    changeSelectedMacroIndex
+  } = useApplicationContext()
   const { config } = useSettingsContext()
+
+  const keypressesInSequence = useMemo(() => {
+    return sequence
+      .filter(
+        (element): element is KeyPressEventAction =>
+          element.type === 'KeyPressEventAction'
+      )
+      .map((element: KeyPressEventAction) => element.data.keypress)
+  }, [sequence])
+
+  const mousepressesInSequence = useMemo(() => {
+    return sequence
+      .filter(
+        (element): element is MouseEventAction =>
+          element.type === 'MouseEventAction'
+      )
+      .map((element: MouseEventAction) => element.data.data.button)
+  }, [sequence])
+
+  const willCauseTriggerLooping = useMemo(() => {
+    let willTriggerAnotherMacro = false
+
+    for (const collection of collections) {
+      for (let index = 0; index < collection.macros.length; index++) {
+        if (index === selection.macroIndex) {
+          continue
+        }
+
+        const macroToCheck = collection.macros[index]
+
+        if (macroToCheck.trigger.type === 'KeyPressEvent') {
+          willTriggerAnotherMacro = macroToCheck.trigger.data.every(
+            (triggerKey) => keypressesInSequence.includes(triggerKey)
+          )
+          if (willTriggerAnotherMacro) {
+            break
+          }
+        } else {
+          willTriggerAnotherMacro = mousepressesInSequence.includes(
+            macroToCheck.trigger.data
+          )
+          if (willTriggerAnotherMacro) {
+            break
+          }
+        }
+      }
+    }
+
+    // Check the data for the currently editing macro, as the user may have changed the trigger but not saved yet
+    if (macro.trigger.type === 'KeyPressEvent') {
+      if (macro.trigger.data.length > 0) {
+        willTriggerAnotherMacro = macro.trigger.data.every((triggerKey) =>
+          keypressesInSequence.includes(triggerKey)
+        )
+      }
+    } else {
+      if (macro.trigger.data !== undefined) {
+        willTriggerAnotherMacro = mousepressesInSequence.includes(
+          macro.trigger.data
+        )
+      }
+    }
+    return willTriggerAnotherMacro
+  }, [
+    collections,
+    macro.trigger.data,
+    macro.trigger.type,
+    keypressesInSequence,
+    mousepressesInSequence,
+    selection.macroIndex
+  ])
+  const canSaveMacro = useMemo(() => {
+    if (
+      (macro.trigger.type === 'KeyPressEvent' &&
+        macro.trigger.data.length === 0) ||
+      (macro.trigger.type === 'MouseEvent' &&
+        macro.trigger.data === undefined) ||
+      sequence.length === 0 ||
+      willCauseTriggerLooping
+    ) {
+      return false
+    }
+
+    return true
+  }, [
+    macro.trigger.data,
+    macro.trigger.type,
+    sequence.length,
+    willCauseTriggerLooping
+  ])
 
   useEffect(() => {
     if (currentMacro === undefined) {
@@ -57,14 +159,10 @@ function MacroProvider({ children }: MacroProviderProps) {
     setIds(currentMacro.sequence.map((_, i) => i + 1))
     setSequence(currentMacro.sequence)
     setMacro(currentMacro)
-    setOldMacroName(currentMacro.name)
   }, [currentMacro])
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      if (newName.length > maxNameLength) {
-        return
-      }
       setMacro({ ...macro, name: newName })
     },
     [macro, setMacro]
@@ -151,20 +249,10 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdAdd(newSequence.length)
       setSequence(newSequence)
       if (config.AutoSelectElement) {
-        if (newElement.type === 'SystemEventAction') {
-          if (newElement.data.type === 'Volume') {
-            return
-          } else if (
-            newElement.data.type === 'Clipboard' &&
-            newElement.data.action.type === 'Sarcasm'
-          ) {
-            return
-          }
-        }
         updateSelectedElementId(newSequence.length - 1)
       }
     },
-    [config.AutoSelectElement, onIdAdd, sequence, updateSelectedElementId]
+    [config, onIdAdd, sequence, updateSelectedElementId]
   )
   const onElementsAdd = useCallback(
     (newElements: ActionEventType[]) => {
@@ -175,20 +263,10 @@ function MacroProvider({ children }: MacroProviderProps) {
       onIdsAdd(newIds.map((i) => i + 1))
       setSequence(newSequence)
       if (config.AutoSelectElement) {
-        if (newElements[1].type === 'SystemEventAction') {
-          if (newElements[1].data.type === 'Volume') {
-            return
-          } else if (
-            newElements[1].data.type === 'Clipboard' &&
-            newElements[1].data.action.type === 'Sarcasm'
-          ) {
-            return
-          }
-        }
         updateSelectedElementId(newSequence.length - 1)
       }
     },
-    [config.AutoSelectElement, onIdsAdd, sequence, updateSelectedElementId]
+    [config, onIdsAdd, sequence, updateSelectedElementId]
   )
 
   const updateElement = useCallback(
@@ -219,9 +297,16 @@ function MacroProvider({ children }: MacroProviderProps) {
   )
 
   const updateMacro = useCallback(() => {
-    const itemToAdd = {
+    let itemToAdd = {
       ...macro,
-      sequence: ids.map((id) => sequence[id - 1]) // set sequence in order that the user set
+      sequence: ids.map((id) => sequence[id - 1])
+    }
+
+    if (macro.name === '') {
+      itemToAdd = {
+        ...itemToAdd,
+        name: `Macro ${currentCollection.macros.length}`
+      }
     }
 
     const newCollection = { ...currentCollection }
@@ -258,11 +343,12 @@ function MacroProvider({ children }: MacroProviderProps) {
   const value = useMemo<MacroState>(
     () => ({
       macro,
-      oldMacroName,
       sequence,
       ids,
       selectedElementId,
       isUpdatingMacro,
+      canSaveMacro,
+      willCauseTriggerLooping,
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
@@ -283,11 +369,12 @@ function MacroProvider({ children }: MacroProviderProps) {
     }),
     [
       macro,
-      oldMacroName,
       sequence,
       ids,
       selectedElementId,
       isUpdatingMacro,
+      canSaveMacro,
+      willCauseTriggerLooping,
       updateMacroName,
       updateMacroIcon,
       updateMacroType,

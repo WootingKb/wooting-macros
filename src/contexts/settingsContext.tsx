@@ -1,4 +1,4 @@
-import { useColorMode } from '@chakra-ui/react'
+import { useColorMode, useToast } from '@chakra-ui/react'
 import { invoke } from '@tauri-apps/api'
 import {
   createContext,
@@ -10,7 +10,7 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { updateSettings } from '../utils'
+import { updateSettings } from '../constants/utils'
 
 type SettingsProviderProps = { children: ReactNode }
 
@@ -25,15 +25,17 @@ function useSettingsContext() {
 }
 
 function SettingsProvider({ children }: SettingsProviderProps) {
+  const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
     DefaultDelayValue: 20,
-    AutoAddDelay: true,
+    AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,
     Theme: 'light',
     MinimizeToTray: true
   })
+  const toast = useToast()
 
   const { setColorMode } = useColorMode()
 
@@ -41,15 +43,35 @@ function SettingsProvider({ children }: SettingsProviderProps) {
     invoke<ApplicationConfig>('get_config')
       .then((res) => {
         setConfig(res)
+        setInitComplete(true)
       })
       .catch((e) => {
         console.error(e)
+        toast({
+          title: 'Error loading settings',
+          description:
+            'Unable to load settings, please re-open the app. If that does not work, please contact us on Discord.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
       })
-  }, [])
+  }, [toast])
 
   useEffect(() => {
-    updateSettings(config)
-  }, [config])
+    if (initComplete)
+      updateSettings(config).catch((e) => {
+        console.error(e)
+        toast({
+          title: 'Error updating settings',
+          description:
+            'Unable to update settings, please re-open the app. If that does not work, please contact us on Discord.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true
+        })
+      })
+  }, [config, initComplete, toast])
 
   const updateLaunchOnStartup = useCallback((value: boolean) => {
     setConfig((config) => {

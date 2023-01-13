@@ -2,7 +2,6 @@ import {
   Button,
   Flex,
   Text,
-  IconButton,
   Switch,
   Divider,
   VStack,
@@ -14,18 +13,19 @@ import {
   useColorModeValue,
   Box,
   HStack,
-  Icon,
   Tooltip
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
-import { HIDLookup } from '../../maps/HIDmap'
+import { HIDLookup } from '../../constants/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
-import { mouseEnumLookup } from '../../maps/MouseMap'
+import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback } from 'react'
+import { KebabVertical } from '../icons'
+import useMainBgColour from '../../hooks/useMainBgColour'
 
-type Props = {
+interface Props {
   macro: Macro
   index: number
   onDelete: (index: number) => void
@@ -35,18 +35,17 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
-  const bg = useColorModeValue('primary-light.200', 'primary-dark.900')
-  const secondBg = useColorModeValue('primary-light.300', 'primary-dark.800')
+  const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('md', 'white-md')
   const subtextColour = useColorModeValue(
     'primary-light.600',
     'primary-dark.400'
   )
-  const borderColour = useColorModeValue(
-    'primary-light.300',
-    'primary-dark.700'
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const kebabHoverColour = useColorModeValue(
+    'primary-light.900',
+    'primary-dark.400'
   )
-  const kebabColour = useColorModeValue('yellow.600', 'yellow.400')
 
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,45 +64,49 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
 
   return (
     <VStack
-      w="100%"
+      w="full"
       h="full"
-      bg={bg}
+      bg={useMainBgColour()}
       boxShadow={shadowColour}
-      rounded="md"
-      p="3"
+      rounded="2xl"
+      p={5}
       m="auto"
       justifyContent="space-between"
-      spacing="8px"
+      spacing={4}
     >
       {/** Top Row */}
-      <HStack w="100%" justifyContent="space-between">
-        <Flex w="100%" gap="8px" alignItems="center">
-          <Box maxHeight="32px">
+      <HStack
+        w="full"
+        justifyContent="space-between"
+        alignItems="flex-end"
+        spacing={0}
+      >
+        <Flex w="full" gap={2} alignItems="center">
+          <Box
+            maxHeight="32px"
+            cursor="default"
+            opacity={macro.active ? 1 : 0.5}
+          >
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
-          <Text fontWeight="semibold">{macro.name}</Text>
+          <Text
+            textStyle="name"
+            fontWeight="semibold"
+            fontSize="2xl"
+            opacity={macro.active ? 1 : 0.5}
+          >
+            {macro.name}
+          </Text>
         </Flex>
         <Menu variant="brand">
           <MenuButton
-            as={IconButton}
-            aria-label="Kebab Menu Button"
-            m="0"
-            icon={
-              <Icon
-                boxSize={6}
-                viewBox="0 0 20 20"
-                strokeWidth="1.5"
-                stroke={kebabColour}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                />
-              </Icon>
-            }
-            variant="link"
-          />
+            h="24px"
+            aria-label="macro options"
+            color={kebabColour}
+            _hover={{ color: kebabHoverColour }}
+          >
+            <KebabVertical />
+          </MenuButton>
           <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
@@ -116,11 +119,18 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <VStack w="100%" spacing={1}>
+      <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
           Trigger Keys:
         </Text>
-        <Flex w="100%" gap="4px" bg={secondBg} rounded="md" py="1" px="2">
+        <Flex
+          w="full"
+          gap="4px"
+          bg={secondBg}
+          rounded="md"
+          p="9px"
+          shadow="inner"
+        >
           {macro.trigger.type === 'KeyPressEvent' &&
             macro.trigger.data.map((HIDcode) => (
               <Kbd variant="brand" key={HIDcode}>
@@ -128,16 +138,17 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
               </Kbd>
             ))}
           {macro.trigger.type === 'MouseEvent' && (
-            <Box>{mouseEnumLookup.get(macro.trigger.data)?.displayString}</Box>
+            <Kbd variant="brand">
+              {mouseEnumLookup.get(macro.trigger.data)?.displayString}
+            </Kbd>
           )}
         </Flex>
       </VStack>
-      <Divider borderColor={borderColour} />
       {/** Buttons */}
-      <Flex w="100%" alignItems="center" justifyContent="space-between">
+      <Flex w="full" alignItems="center" justifyContent="space-between">
         <Button
           size="sm"
-          variant="brand"
+          variant="yellowGradient"
           leftIcon={<EditIcon />}
           onClick={() => {
             changeSelectedMacroIndex(index)
@@ -149,13 +160,21 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           variant="brand"
           placement="bottom"
           hasArrow
-          aria-label="Toggle Macro Switch"
-          label={macro.active ? 'Disable Macro' : 'Enable Macro'}
+          label={
+            currentCollection.active
+              ? macro.active
+                ? 'Disable Macro'
+                : 'Enable Macro'
+              : 'Re-enable Collection!'
+          }
         >
           <Box>
             <Switch
               variant="brand"
               defaultChecked={macro.active}
+              isChecked={currentCollection.active ? macro.active : false}
+              isDisabled={!currentCollection.active}
+              aria-label="Macro Toggle"
               onChange={onToggle}
             />
           </Box>

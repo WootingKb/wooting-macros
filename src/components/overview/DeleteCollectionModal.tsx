@@ -3,7 +3,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
   Button,
@@ -12,7 +11,10 @@ import {
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 
-type Props = { isOpen: boolean; onClose: () => void }
+interface Props {
+  isOpen: boolean
+  onClose: () => void
+}
 
 export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
   const { onSelectedCollectionDelete } = useApplicationContext()
@@ -25,9 +27,8 @@ export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
   return (
     <Modal variant="brand" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent p={2}>
         <ModalHeader>Delete this collection?</ModalHeader>
-        <ModalCloseButton />
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           This action is irreversible! Any macros within this collection will be
@@ -37,8 +38,8 @@ export default function DeleteCollectionModal({ isOpen, onClose }: Props) {
           <Button mr={3} onClick={onClose}>
             Close
           </Button>
-          <Button colorScheme="red" onClick={onModalSuccessClose}>
-            Delete
+          <Button variant="brandWarning" onClick={onModalSuccessClose}>
+            Yes, delete it
           </Button>
         </ModalFooter>
       </ModalContent>

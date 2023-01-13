@@ -8,10 +8,11 @@ import {
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 
-type Props = {
+interface Props {
   collection: Collection
   index: number
   isFocused: boolean
+  isMacroOutputEnabled: boolean
   setFocus: (index: number) => void
   toggleCollection: (index: number) => void
 }
@@ -20,22 +21,34 @@ export default function CollectionButton({
   collection,
   index,
   isFocused,
+  isMacroOutputEnabled,
   setFocus,
   toggleCollection
 }: Props) {
-  const buttonBg = useColorModeValue('primary-light.300', 'primary-dark.800')
-  const selectedTextColour = useColorModeValue('primary-accent.700', 'primary-accent.400')
+  const buttonBg = useColorModeValue('primary-accent.50', 'primary-accent.800')
+  const selectedTextColour = useColorModeValue(
+    'primary-accent.700',
+    'primary-accent.200'
+  )
 
   return (
     <Box
       pos="relative"
-      w="100%"
+      w="full"
       bg={isFocused ? buttonBg : ''}
       p="2"
       rounded="md"
       _hover={{ bg: buttonBg }}
+      transition="ease-out 150ms"
     >
-      <HStack justifyContent="space-between">
+      <HStack
+        pos="relative"
+        w="full"
+        justifyContent="space-between"
+        textAlign="left"
+        gap={2}
+        spacing={0}
+      >
         <Box
           as="button"
           pos="absolute"
@@ -44,16 +57,11 @@ export default function CollectionButton({
           zIndex={10}
           onClick={() => setFocus(index)}
         ></Box>
-        {index === 0 ? (
-          <Box maxHeight="32px">
-            <em-emoji shortcodes=":smile:" size="32px" />
-          </Box>
-        ) : (
-          <Box maxHeight="32px">
-            <em-emoji shortcodes={collection.icon} size="32px" />
-          </Box>
-        )}
+        <Box maxHeight="32px" m={0}>
+          <em-emoji shortcodes={collection.icon} size="32px" />
+        </Box>
         <Text
+          w="full"
           noOfLines={1}
           fontWeight="semibold"
           textColor={isFocused ? selectedTextColour : ''}
@@ -64,8 +72,13 @@ export default function CollectionButton({
           variant="brand"
           placement="bottom"
           hasArrow
-          aria-label="Toggle Collection Switch"
-          label={collection.active ? 'Disable Collection' : 'Enable Collection'}
+          label={
+            isMacroOutputEnabled
+              ? collection.active
+                ? 'Disable Collection'
+                : 'Enable Collection'
+              : 'Re-enable Macro Output!'
+          }
         >
           <Box>
             <Switch
@@ -73,8 +86,10 @@ export default function CollectionButton({
               variant="brand"
               zIndex={10}
               defaultChecked={collection.active}
-              isChecked={collection.active}
+              isChecked={isMacroOutputEnabled ? collection.active : false}
+              isDisabled={!isMacroOutputEnabled}
               onChange={() => toggleCollection(index)}
+              aria-label="Collection Toggle"
             />
           </Box>
         </Tooltip>

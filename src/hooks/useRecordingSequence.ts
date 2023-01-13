@@ -1,11 +1,18 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
-import { KeyType } from '../enums'
-import { webCodeHIDLookup } from '../maps/HIDmap'
-import { webButtonLookup } from '../maps/MouseMap'
+import { KeyType } from '../constants/enums'
+import { webCodeHIDLookup } from '../constants/HIDmap'
+import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
 
-export default function useRecordingSequence() {
+export default function useRecordingSequence(
+  onItemChanged: (
+    item: Keypress | MousePressAction | undefined,
+    prevItem: Keypress | MousePressAction | undefined,
+    timeDiff: number,
+    isUpEvent: boolean
+  ) => void
+) {
   const [recording, setRecording] = useState(false)
   const [item, setItem] = useState<Keypress | MousePressAction | undefined>(
     undefined
@@ -15,15 +22,14 @@ export default function useRecordingSequence() {
   >(undefined)
   const [eventType, setEventType] = useState<'Down' | 'Up'>('Down')
   const [prevEventType, setPrevEventType] = useState<'Down' | 'Up'>('Down')
-  const [timeDiff, setTimeDiff] = useState(0)
+
   const [prevTimestamp, setPrevTimestamp] = useState(0)
 
   const startRecording = useCallback(() => {
-    setTimeDiff(0)
     setItem(undefined)
     setPrevItem(undefined)
     setRecording(true)
-  }, [setTimeDiff, setItem, setRecording])
+  }, [setItem, setRecording])
 
   const stopRecording = useCallback(() => {
     setRecording(false)
@@ -42,8 +48,8 @@ export default function useRecordingSequence() {
       if (HIDcode === undefined) {
         return
       }
+      const timeDiff = Math.round(event.timeStamp - prevTimestamp)
 
-      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
       setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
       setPrevItem(item)
@@ -56,6 +62,7 @@ export default function useRecordingSequence() {
           keytype: KeyType[KeyType.Up]
         }
         setItem(keyup)
+        onItemChanged(keyup, item, timeDiff, true)
         return
       }
 
@@ -66,8 +73,9 @@ export default function useRecordingSequence() {
         keytype: KeyType[KeyType.Down]
       }
       setItem(keydown)
+      onItemChanged(keydown, item, timeDiff, false)
     },
-    [eventType, item, prevTimestamp]
+    [eventType, item, onItemChanged, prevTimestamp]
   )
 
   const addMousepress = useCallback(
@@ -88,7 +96,7 @@ export default function useRecordingSequence() {
         return
       }
 
-      setTimeDiff(Math.round(event.timeStamp - prevTimestamp))
+      const timeDiff = Math.round(event.timeStamp - prevTimestamp)
       setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
       setPrevItem(item)
@@ -100,6 +108,7 @@ export default function useRecordingSequence() {
           button: enumVal
         }
         setItem(mouseup)
+        onItemChanged(mouseup, item, timeDiff, true)
         return
       }
 
@@ -110,8 +119,9 @@ export default function useRecordingSequence() {
       }
 
       setItem(mousedown)
+      onItemChanged(mousedown, item, timeDiff, false)
     },
-    [eventType, item, prevTimestamp]
+    [eventType, item, onItemChanged, prevTimestamp]
   )
 
   useEffect(() => {
@@ -144,7 +154,6 @@ export default function useRecordingSequence() {
     stopRecording,
     item,
     eventType,
-    timeDiff,
     prevEventType,
     prevItem
   }

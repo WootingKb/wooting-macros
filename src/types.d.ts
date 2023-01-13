@@ -1,4 +1,6 @@
-import { MacroType, ViewState, MouseButton } from './enums'
+import { MacroType, ViewState, MouseButton } from './constants/enums'
+import { HidInfo } from './constants/HIDmap'
+import { PluginEventInfo } from './constants/PluginsEventMap'
 
 // Contexts
 export interface CurrentSelection {
@@ -11,7 +13,6 @@ export type AppState = {
   collections: Collection[]
   initComplete: boolean
   selection: CurrentSelection
-  isUpdatingCollection: boolean
   changeViewState: (newState: ViewState) => void
   onCollectionAdd: (newCollection: Collection) => void
   onSelectedCollectionDelete: () => void
@@ -21,16 +22,16 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
-  changeIsUpdatingCollection: (newVal: boolean) => void
 }
 
 export type MacroState = {
   macro: Macro
-  oldMacroName: string
   sequence: ActionEventType[]
   ids: number[]
   selectedElementId: number | undefined
   isUpdatingMacro: boolean
+  canSaveMacro: boolean
+  willCauseTriggerLooping: boolean
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
   updateMacroType: (newType: MacroType) => void
@@ -61,56 +62,6 @@ export type SettingsState = {
   updateTheme: (value: string) => void
 }
 
-// Action Event Structs
-export interface Keypress {
-  keypress: number
-  press_duration: number
-  keytype: string
-}
-
-export interface Monitor {
-  device_id: string
-  brightness: number
-  display_name: string
-}
-
-export type MousePressAction =
-  | { type: 'Down'; button: MouseButton }
-  | { type: 'Up'; button: MouseButton }
-  | { type: 'DownUp'; button: MouseButton; duration: number }
-
-export type MouseAction = { type: 'Press'; data: MousePressAction }
-
-export type SystemAction =
-  | { type: 'Open'; action: DirectoryAction }
-  | { type: 'Volume'; action: VolumeAction }
-  | { type: 'Clipboard'; action: ClipboardAction }
-  | { type: 'Brightness'; action: MonitorBrightnessAction }
-
-export type DirectoryAction =
-  | { type: 'Directory'; data: string }
-  | { type: 'File'; data: string }
-  | { type: 'Website'; data: string }
-
-export type ClipboardAction =
-  | { type: 'SetClipboard'; data: string }
-  | { type: 'Copy' }
-  | { type: 'GetClipboard' }
-  | { type: 'Paste' }
-  | { type: 'PasteUserDefinedString'; data: string }
-  | { type: 'Sarcasm' }
-
-export type VolumeAction =
-  | { type: 'LowerVolume' }
-  | { type: 'IncreaseVolume' }
-  | { type: 'ToggleMute' }
-
-export type MonitorBrightnessAction =
-  | { type: 'SetAll'; level: number }
-  | { type: 'SetSpecific'; level: number; name: string }
-  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
-  | { type: 'ChangeAll'; by_how_much: number }
-
 // Input Event Types
 export type TriggerEventType =
   | {
@@ -120,12 +71,23 @@ export type TriggerEventType =
     }
   | { type: 'MouseEvent'; data: MouseButton }
 
+export type KeyPressEventAction = {
+  type: 'KeyPressEventAction'
+  data: Keypress
+}
+export type DelayEventAction = { type: 'DelayEventAction'; data: number }
+export type SystemEventAction = {
+  type: 'SystemEventAction'
+  data: SystemAction
+}
+export type MouseEventAction = { type: 'MouseEventAction'; data: MouseAction }
+
+/** To be Extended */
 export type ActionEventType =
-  | { type: 'KeyPressEventAction'; data: Keypress }
-  | { type: 'DelayEventAction'; data: number }
-  | { type: 'SystemEventAction'; data: SystemAction }
-  | { type: 'MouseEventAction'; data: MouseAction }
-  | { type: 'PhillipsHueEventAction'; data: undefined }
+  | KeyPressEventAction
+  | DelayEventAction
+  | SystemEventAction
+  | MouseEventAction
 
 // Main Data Structures
 export interface MacroData {
@@ -161,18 +123,78 @@ export interface Collection {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "em-emoji": React.DetailedHTMLProps<
+      'em-emoji': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > & {
-        id?: string;
-        shortcodes?: string;
-        native?: string;
-        size?: string | number;
-        fallback?: string;
-        set?: "native" | "apple" | "facebook" | "google" | "twitter";
-        skin?: string | number;
-      };
+        id?: string
+        shortcodes?: string
+        native?: string
+        size?: string | number
+        fallback?: string
+        set?: 'native' | 'apple' | 'facebook' | 'google' | 'twitter'
+        skin?: string | number
+      }
     }
   }
+}
+
+// Action Event Structs - To be Extended
+export interface Keypress {
+  keypress: number
+  press_duration: number
+  keytype: string
+}
+
+export interface Monitor {
+  device_id: string
+  brightness: number
+  display_name: string
+}
+
+export type MousePressAction =
+  | { type: 'Down'; button: MouseButton }
+  | { type: 'Up'; button: MouseButton }
+  | { type: 'DownUp'; button: MouseButton; duration: number }
+
+export type MouseAction = { type: 'Press'; data: MousePressAction }
+
+export type SystemAction =
+  | { type: 'Open'; action: DirectoryAction }
+  | { type: 'Volume'; action: VolumeAction }
+  | { type: 'Clipboard'; action: ClipboardAction }
+  // | { type: 'Brightness'; action: MonitorBrightnessAction }
+
+export type DirectoryAction =
+  | { type: 'Directory'; data: string }
+  | { type: 'File'; data: string }
+  | { type: 'Website'; data: string }
+
+export type ClipboardAction =
+  | { type: 'SetClipboard'; data: string }
+  | { type: 'Copy' }
+  | { type: 'GetClipboard' }
+  | { type: 'Paste' }
+  | { type: 'PasteUserDefinedString'; data: string }
+  | { type: 'Sarcasm' }
+
+export type VolumeAction =
+  | { type: 'LowerVolume' }
+  | { type: 'IncreaseVolume' }
+  | { type: 'ToggleMute' }
+
+export type MonitorBrightnessAction =
+  | { type: 'SetAll'; level: number }
+  | { type: 'SetSpecific'; level: number; name: string }
+  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
+  | { type: 'ChangeAll'; by_how_much: number }
+
+/** Misc */
+export interface KeyboardKeyCategory {
+  name: string
+  elements: HidInfo[]
+}
+export interface PluginCategory {
+  name: string
+  elements: PluginEventInfo[]
 }
