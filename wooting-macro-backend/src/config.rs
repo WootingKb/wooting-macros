@@ -158,7 +158,7 @@ pub struct LogFilePath {
 impl Default for LogFilePath {
     fn default() -> Self {
         LogFilePath {
-            file_name: "application_logfile.log".to_string(),
+            file_name: LOG_FILE.to_string(),
         }
     }
 }
