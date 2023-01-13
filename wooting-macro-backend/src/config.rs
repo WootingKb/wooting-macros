@@ -151,14 +151,10 @@ pub struct ApplicationConfig {
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct LogFilePath {
-    pub file_name: String,
-}
+pub struct LogFilePath {}
 
 impl Default for LogFilePath {
     fn default() -> Self {
-        LogFilePath {
-            file_name: LOG_FILE.to_string(),
-        }
+        LogFilePath {}
     }
 }
