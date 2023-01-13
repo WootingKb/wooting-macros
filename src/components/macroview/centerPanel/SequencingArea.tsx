@@ -173,7 +173,7 @@ export default function SequencingArea() {
           onClick={onOpen}
           isDisabled={sequence.length === 0}
         >
-          Clear
+          Clear All
         </Button>
         <Button
           variant="brandAccent"

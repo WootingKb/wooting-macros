@@ -1,5 +1,6 @@
 import { TimeIcon, EditIcon } from '@chakra-ui/icons'
 import {
+  Box,
   Divider,
   HStack,
   IconButton,
@@ -10,11 +11,8 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { HIDLookup } from '../../../../constants/HIDmap'
-import { mouseEnumLookup } from '../../../../constants/MouseMap'
-import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { ActionEventType } from '../../../../types'
 import {
   DownArrowIcon,
@@ -22,6 +20,11 @@ import {
   KebabVertical,
   UpArrowIcon
 } from '../../../icons'
+import {
+  checkIfElementIsEditable,
+  getElementDisplayString
+} from '../../../../constants/utils'
+import { KeyType } from '../../../../constants/enums'
 
 interface Props {
   id: number
@@ -36,8 +39,8 @@ export default function SortableItem({
   recording,
   stopRecording
 }: Props) {
-  const [isEditable, setIsEditable] = useState(true)
-  const [displayText, setDisplayText] = useState<string | undefined>('')
+  const isEditable = checkIfElementIsEditable(element)
+  const displayText = getElementDisplayString(element)
   const {
     selectedElementId,
     onElementAdd,
@@ -50,6 +53,7 @@ export default function SortableItem({
     'primary-light.900',
     'primary-dark.400'
   )
+  const deleteTextColour = useColorModeValue('red.500', 'red.200')
   const isKeyboardKey = useMemo(() => {
     return element.type === 'KeyPressEventAction'
   }, [element.type])
@@ -59,63 +63,6 @@ export default function SortableItem({
     const newElement = { ...element }
     onElementAdd(newElement)
   }, [element, onElementAdd])
-
-  useEffect(() => {
-    switch (element.type) {
-      case 'KeyPressEventAction':
-        setDisplayText(HIDLookup.get(element.data.keypress)?.displayString)
-        setIsEditable(true)
-        break
-      case 'DelayEventAction':
-        setDisplayText(element.data.toString() + ' ms')
-        setIsEditable(true)
-        break
-      case 'MouseEventAction':
-        setDisplayText(
-          mouseEnumLookup.get(element.data.data.button)?.displayString
-        )
-        setIsEditable(true)
-        break
-      case 'SystemEventAction':
-        switch (element.data.type) {
-          case 'Open':
-            setDisplayText(
-              sysEventLookup.get(element.data.action.type)?.displayString
-            )
-            setIsEditable(true)
-            break
-          case 'Volume':
-            setDisplayText(
-              sysEventLookup.get(element.data.action.type)?.displayString
-            )
-            setIsEditable(false)
-            break
-          case 'Clipboard':
-            setDisplayText(
-              sysEventLookup.get(element.data.action.type)?.displayString
-            )
-            switch (element.data.action.type) {
-              case 'PasteUserDefinedString':
-                setIsEditable(true)
-                break
-              case 'Sarcasm':
-                setIsEditable(false)
-                break
-              default:
-                setIsEditable(false)
-                break
-            }
-            break
-          default:
-            setDisplayText('err')
-            setIsEditable(false)
-            break
-        }
-        break
-      default:
-        break
-    }
-  }, [element.data, element.type, id])
 
   const iconToDisplay = useMemo(() => {
     switch (element.type) {
@@ -150,8 +97,8 @@ export default function SortableItem({
     if (isSelected) {
       return
     }
-    updateSelectedElementId(id - 1)
-  }, [id, isSelected, recording, updateSelectedElementId])
+    if (checkIfElementIsEditable(element)) updateSelectedElementId(id - 1)
+  }, [element, id, isSelected, recording, updateSelectedElementId])
 
   const onEditButtonPress = useCallback(() => {
     stopRecording()
@@ -174,6 +121,7 @@ export default function SortableItem({
       h="full"
       justifyContent="space-around"
       spacing="0px"
+      cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >
       <HStack p={1} px={2} w="full" spacing={0} gap={4}>
@@ -199,6 +147,51 @@ export default function SortableItem({
         </Text>
       </HStack>
       <HStack py={2} pr={2} h="full" spacing={0} gap={2} alignItems="flex-end">
+        {element.type === 'KeyPressEventAction' &&
+          element.data.keytype === KeyType[KeyType.DownUp] && (
+            <Box
+              h="32px"
+              w="fit-content"
+              bg={bg}
+              border="1px solid"
+              py={1}
+              px={3}
+              borderColor={kebabColour}
+              rounded="md"
+            >
+              <Text
+                w="fit-content"
+                fontWeight={
+                  selectedElementId !== undefined &&
+                  id === selectedElementId + 1
+                    ? 'bold'
+                    : 'normal'
+                }
+                fontSize="sm"
+                whiteSpace="nowrap"
+              >
+                {element.data.press_duration + ' ms'}
+              </Text>
+            </Box>
+          )}
+        {element.type === 'MouseEventAction' &&
+          element.data.data.type === 'DownUp' && (
+            <Text
+              bg={bg}
+              border="1px solid"
+              py={1}
+              px={3}
+              borderColor={kebabColour}
+              fontWeight={
+                selectedElementId !== undefined && id === selectedElementId + 1
+                  ? 'bold'
+                  : 'normal'
+              }
+              rounded="md"
+            >
+              {element.data.data.duration + ' ms'}
+            </Text>
+          )}
         {isEditable && (
           <IconButton
             variant="brandSecondary"
@@ -221,7 +214,10 @@ export default function SortableItem({
           <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             <Divider />
-            <MenuItem onClick={onDeleteButtonPress} textColor="red.500">
+            <MenuItem
+              onClick={onDeleteButtonPress}
+              textColor={deleteTextColour}
+            >
               Delete
             </MenuItem>
           </MenuList>

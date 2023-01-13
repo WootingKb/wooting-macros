@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/tauri'
 import { HIDCategory, MouseButton } from './enums'
 import {
+  ActionEventType,
   ApplicationConfig,
   Collection,
   Keypress,
@@ -8,6 +9,8 @@ import {
   MousePressAction
 } from '../types'
 import { HIDLookup } from './HIDmap'
+import { mouseEnumLookup } from './MouseMap'
+import { sysEventLookup } from './SystemEventMap'
 
 export const updateBackendConfig = (
   collections: Collection[]
@@ -53,6 +56,43 @@ export const checkIfStringIsNonNumeric = (value: string): boolean => {
 
 export const checkIfModifierKey = (hid: number): boolean => {
   return HIDLookup.get(hid)?.category === HIDCategory.Modifier
+}
+
+export const checkIfElementIsEditable = (element: ActionEventType): boolean => {
+  if (element.type === 'SystemEventAction') {
+    switch (element.data.type) {
+      case 'Open':
+        return true
+      case 'Clipboard':
+        if (element.data.action.type === 'PasteUserDefinedString') {
+          return true
+        }
+        return false
+      default:
+        return false
+    }
+  } else {
+    return true
+  }
+}
+
+export const getElementDisplayString = (element: ActionEventType): string => {
+  switch (element.type) {
+    case 'KeyPressEventAction':
+      return HIDLookup.get(element.data.keypress)?.displayString || 'error'
+    case 'DelayEventAction':
+      return element.data.toString() + ' ms'
+    case 'MouseEventAction':
+      return (
+        mouseEnumLookup.get(element.data.data.button)?.displayString || 'error'
+      )
+    case 'SystemEventAction':
+      return (
+        sysEventLookup.get(element.data.action.type)?.displayString || 'error'
+      )
+    default:
+      return 'error'
+  }
 }
 
 export const scrollbarStylesLight = {

@@ -8,6 +8,7 @@ import {
   useEffect
 } from 'react'
 import { MacroType, ViewState } from '../constants/enums'
+import { checkIfElementIsEditable } from '../constants/utils'
 import {
   MacroState,
   ActionEventType,
@@ -248,7 +249,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       const newSequence = [...sequence, newElement]
       onIdAdd(newSequence.length)
       setSequence(newSequence)
-      if (config.AutoSelectElement) {
+      if (config.AutoSelectElement && checkIfElementIsEditable(newElement)) {
         updateSelectedElementId(newSequence.length - 1)
       }
     },
@@ -262,7 +263,10 @@ function MacroProvider({ children }: MacroProviderProps) {
       )
       onIdsAdd(newIds.map((i) => i + 1))
       setSequence(newSequence)
-      if (config.AutoSelectElement) {
+      if (
+        config.AutoSelectElement &&
+        checkIfElementIsEditable(newElements[newElements.length - 1])
+      ) {
         updateSelectedElementId(newSequence.length - 1)
       }
     },
