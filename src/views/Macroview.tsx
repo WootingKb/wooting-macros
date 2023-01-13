@@ -8,10 +8,11 @@ import { useEffect } from 'react'
 
 type Props = {
   isEditing: boolean
+  onOpenSettingsModal: () => void
 }
 
-export default function Macroview({ isEditing }: Props) {
-  const {changeIsUpdatingMacro} = useMacroContext()
+export default function Macroview({ isEditing, onOpenSettingsModal }: Props) {
+  const { changeIsUpdatingMacro } = useMacroContext()
 
   useEffect(() => {
     changeIsUpdatingMacro(isEditing)
@@ -31,7 +32,7 @@ export default function Macroview({ isEditing }: Props) {
       >
         {/** Bottom Panels */}
         <SelectElementArea />
-        <SequencingArea />
+        <SequencingArea onOpenSettingsModal={onOpenSettingsModal} />
         <EditArea />
       </HStack>
     </VStack>

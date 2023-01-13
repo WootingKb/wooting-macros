@@ -55,12 +55,12 @@ function App() {
       )}
       {viewState === ViewState.Addview && (
         <MacroProvider>
-          <Macroview isEditing={false} />
+          <Macroview isEditing={false} onOpenSettingsModal={onOpen} />
         </MacroProvider>
       )}
       {viewState === ViewState.Editview && (
         <MacroProvider>
-          <Macroview isEditing={true} />
+          <Macroview isEditing={true} onOpenSettingsModal={onOpen} />
         </MacroProvider>
       )}
       <SettingsModal isOpen={isOpen} onClose={onClose} />

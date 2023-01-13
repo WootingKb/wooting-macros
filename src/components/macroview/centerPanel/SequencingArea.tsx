@@ -8,9 +8,11 @@ import {
   AlertIcon,
   AlertDescription,
   Stack,
-  useDisclosure
+  useDisclosure,
+  IconButton,
+  Tooltip
 } from '@chakra-ui/react'
-import { DeleteIcon, TimeIcon } from '@chakra-ui/icons'
+import { DeleteIcon, SettingsIcon, TimeIcon } from '@chakra-ui/icons'
 import { useCallback } from 'react'
 import { Keypress, MousePressAction } from '../../../types'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -22,7 +24,11 @@ import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
 
-export default function SequencingArea() {
+interface Props {
+  onOpenSettingsModal: () => void
+}
+
+export default function SequencingArea({ onOpenSettingsModal }: Props) {
   const {
     sequence,
     willCauseTriggerLooping,
@@ -188,6 +194,15 @@ export default function SequencingArea() {
         >
           Add Delay
         </Button>
+        <Tooltip label="Settings Button" hasArrow variant="brand">
+          <IconButton
+            variant="brand"
+            aria-label="Settings"
+            icon={<SettingsIcon />}
+            size={['xs', 'sm', 'md']}
+            onClick={onOpenSettingsModal}
+          />
+        </Tooltip>
       </HStack>
       {/** Header End */}
       <ClearSequenceModal
