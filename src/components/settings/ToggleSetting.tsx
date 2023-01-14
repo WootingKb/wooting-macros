@@ -1,4 +1,6 @@
 import { HStack, VStack, Text, Switch } from '@chakra-ui/react'
+import { useEffect } from 'react'
+import { useSettingsContext } from '../../contexts/settingsContext'
 
 interface Props {
   title: string
@@ -13,6 +15,8 @@ export default function ToggleSetting({
   value,
   onChange
 }: Props) {
+  const { config } = useSettingsContext()
+
   return (
     <HStack w="full" justifyContent="space-between" spacing={16}>
       <VStack spacing={0} textAlign="left">
@@ -26,7 +30,8 @@ export default function ToggleSetting({
       <Switch
         variant="brand"
         defaultChecked={value}
-        isChecked={value}
+        isDisabled={!config.AutoStart && title === 'Minimize on startup'}
+        isChecked={!config.AutoStart && title === 'Minimize on startup' ? false : value}
         onChange={() => onChange(!value)}
       />
     </HStack>
