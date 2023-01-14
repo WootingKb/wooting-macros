@@ -1,5 +1,4 @@
 import { HStack, VStack, Text, Switch } from '@chakra-ui/react'
-import { useEffect } from 'react'
 import { useSettingsContext } from '../../contexts/settingsContext'
 
 interface Props {
