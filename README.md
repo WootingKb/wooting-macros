@@ -35,9 +35,9 @@ Interested in contributing? We have some [contributing guidelines](./CONTRIBUTIN
 ## Screenshots
 
 <p align="center">
-  <img alt="Initial view of the application" src=".github/assets/1.png">
-  <img alt="View of creating a macro" src=".github/assets/2.png">
-  <img alt="An example macro that opens up several applications and a website" src=".github/assets/5.png">
+  <img width="200" alt="Initial view of the application" src=".github/assets/1.png">
+  <img width="200" alt="View of creating a macro" src=".github/assets/2.png">
+  <img width="200" alt="An example macro that opens up several applications and a website" src=".github/assets/5.png">
 </p>
 
 ## License
