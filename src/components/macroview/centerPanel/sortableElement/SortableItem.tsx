@@ -2,6 +2,7 @@ import { TimeIcon, EditIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
+  Flex,
   HStack,
   IconButton,
   Menu,
@@ -126,25 +127,34 @@ export default function SortableItem({
     >
       <HStack p={1} px={2} w="full" spacing={0} gap={4}>
         {iconToDisplay}
-        <Text
+        <Flex
+          minW="40px"
+          maxW={['150px', '240px', '400px', '620px']}
+          h="32px"
           {...(isKeyboardKey
             ? {
                 bg: bg,
                 border: '1px solid',
-                py: 1,
                 px: 3
               }
             : {})}
           borderColor={kebabColour}
-          fontWeight={
-            selectedElementId !== undefined && id === selectedElementId + 1
-              ? 'bold'
-              : 'normal'
-          }
+          alignItems="center"
+          justifyContent="center"
           rounded="md"
         >
-          {displayText}
-        </Text>
+          <Text
+            h="fit-content"
+            fontWeight={
+              selectedElementId !== undefined && id === selectedElementId + 1
+                ? 'bold'
+                : 'normal'
+            }
+            noOfLines={1}
+          >
+            {displayText}
+          </Text>
+        </Flex>
       </HStack>
       <HStack py={2} pr={2} h="full" spacing={0} gap={2} alignItems="flex-end">
         {element.type === 'KeyPressEventAction' &&
@@ -176,21 +186,30 @@ export default function SortableItem({
           )}
         {element.type === 'MouseEventAction' &&
           element.data.data.type === 'DownUp' && (
-            <Text
+            <Box
+              h="32px"
+              w="fit-content"
               bg={bg}
               border="1px solid"
               py={1}
               px={3}
               borderColor={kebabColour}
-              fontWeight={
-                selectedElementId !== undefined && id === selectedElementId + 1
-                  ? 'bold'
-                  : 'normal'
-              }
               rounded="md"
             >
-              {element.data.data.duration + ' ms'}
-            </Text>
+              <Text
+                w="fit-content"
+                fontWeight={
+                  selectedElementId !== undefined &&
+                  id === selectedElementId + 1
+                    ? 'bold'
+                    : 'normal'
+                }
+                fontSize="sm"
+                whiteSpace="nowrap"
+              >
+                {element.data.data.duration + ' ms'}
+              </Text>
+            </Box>
           )}
         {isEditable && (
           <IconButton

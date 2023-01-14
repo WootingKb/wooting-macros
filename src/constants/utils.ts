@@ -87,11 +87,36 @@ export const getElementDisplayString = (element: ActionEventType): string => {
         mouseEnumLookup.get(element.data.data.button)?.displayString || 'error'
       )
     case 'SystemEventAction':
-      return (
-        sysEventLookup.get(element.data.action.type)?.displayString || 'error'
-      )
-    default:
-      return 'error'
+      switch (element.data.type) {
+        case 'Open':
+          if (element.data.action.data !== '') {
+            return `Open ${element.data.action.type.toString()}: ${
+              element.data.action.data
+            }`
+          }
+          return (
+            sysEventLookup.get(element.data.action.type)?.displayString ||
+            'error'
+          )
+        case 'Volume':
+          return (
+            sysEventLookup.get(element.data.action.type)?.displayString ||
+            'error'
+          )
+        case 'Clipboard':
+          if (
+            element.data.action.type === 'PasteUserDefinedString' &&
+            element.data.action.data !== ''
+          ) {
+            return 'Paste Text: ' + element.data.action.data
+          }
+          return (
+            sysEventLookup.get(element.data.action.type)?.displayString ||
+            'error'
+          )
+        default:
+          return 'error'
+      }
   }
 }
 
