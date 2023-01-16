@@ -16,7 +16,7 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
-    appWindow.setMinSize(new PhysicalSize(800, 600))
+    appWindow.setMinSize(new PhysicalSize(930, 600))
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
     // TODO: Figure out how to disable other keyboard shortcuts like CTRL-F
     init({ data })
