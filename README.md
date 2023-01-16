@@ -26,7 +26,7 @@ Download the [Latest Release here](https://github.com/WootingKb/wooting-macros/r
 
 For MS Windows, download the MSI and then run it to install the application.
 
-For Linux, download the AppImage or .deb and install the application.
+For Linux, download the AppImage or .deb and install the application. You might also need to add yourself to the ``input`` group.
 
 ## Contributing
 
