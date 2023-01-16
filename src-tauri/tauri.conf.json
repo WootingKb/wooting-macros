@@ -58,10 +58,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 768,
         "resizable": true,
         "title": "Wootomation",
         "width": 1024,
+        "height": 768,
+        "minWidth": 930,
+        "minHeight": 600,
         "fileDropEnabled": false,
         "focus": false
       }

@@ -1,4 +1,3 @@
-import { appWindow, PhysicalSize } from '@tauri-apps/api/window'
 import { Flex, useDisclosure, Text, Box } from '@chakra-ui/react'
 import Overview from './views/Overview'
 import { ViewState } from './constants/enums'
@@ -16,7 +15,6 @@ function App() {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
-    appWindow.setMinSize(new PhysicalSize(930, 600))
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
     // TODO: Figure out how to disable other keyboard shortcuts like CTRL-F
     init({ data })
