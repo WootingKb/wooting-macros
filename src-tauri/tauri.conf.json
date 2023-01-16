@@ -92,10 +92,6 @@
         "fileDropEnabled": false,
         "focus": false
       }
-    ],
-    "cli": {
-      "description": "A macro application by Wooting",
-      "longDescription": "A cross platform macro application made by Wooting for any keyboard or mouse."
-    }
+    ]
   }
 }
