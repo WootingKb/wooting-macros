@@ -4379,6 +4379,7 @@ dependencies = [
  "anyhow",
  "attohttpc",
  "base64",
+ "clap",
  "cocoa 0.24.1",
  "dirs-next",
  "embed_plist",

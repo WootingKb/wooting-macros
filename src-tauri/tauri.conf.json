@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Wootomation",
-    "version": "0.9.0"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -15,15 +15,19 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
+      "category": "Utility",
+      "copyright": "GPL-v3, Wooting 2023",
       "icon": ["icons/icon.png", "icons/icon.ico"],
       "deb": {
         "depends": ["xserver-xorg-input-evdev", "libevdev2"]
       },
+      "appimage": {
+        "bundleMediaFramework": false
+      },
+      "publisher": "Wooting",
       "externalBin": [],
       "identifier": "com.wooting.macros",
-      "longDescription": "",
+      "longDescription": "A cross platform macro application made by Wooting for any keyboard or mouse.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -31,14 +35,17 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
       "windows": {
-        "certificateThumbprint": "641751C7EF318C8D5F908AB7DDD34161375BB34B",
-        "digestAlgorithm": "sha256",
-        "timestampUrl": "http://timestamp.sectigo.com"
-      }
+        "wix": {
+          "bannerPath": "icons/icon.png",
+          "dialogImagePath": "icons/icon.png",
+          "license": "../LICENSE"
+        }
+        
+      },
+      "resources": [],
+      "shortDescription": "A macro application by Wooting",
+      "targets": "all"
     },
     "security": {
       "csp": null
@@ -67,6 +74,10 @@
         "fileDropEnabled": false,
         "focus": false
       }
-    ]
+    ],
+    "cli": {
+      "description": "A macro application by Wooting",
+      "longDescription": "A cross platform macro application made by Wooting for any keyboard or mouse."
+    }
   }
 }
