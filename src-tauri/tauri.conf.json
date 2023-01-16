@@ -27,7 +27,7 @@
       "publisher": "Wooting",
       "externalBin": [],
       "identifier": "com.wooting.macros",
-      "longDescription": "A cross platform macro application made by Wooting for any keyboard or mouse.",
+      "longDescription": "Wooting's cross platform macro application for any keyboard or mouse.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
