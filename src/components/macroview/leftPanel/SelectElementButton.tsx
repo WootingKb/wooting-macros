@@ -1,4 +1,4 @@
-import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react'
+import { Box, Text, Tooltip, useColorModeValue } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSettingsContext } from '../../../contexts/settingsContext'
@@ -51,43 +51,32 @@ export default function SelectElementButton({
   ])
 
   return (
-    <Box
-      w="full"
-      h="full"
-      as="button"
-      bg={bg}
-      p={2}
-      _hover={{ bg: hoverBg }}
-      color={textColor}
-      border="1px"
-      borderColor={borderColour}
-      rounded="md"
-      onClick={handleAddElement}
-      transition="ease-out 150ms"
-    >
-      <Flex direction='column' gap={2}>
-        <Text
-          w="full"
-          fontWeight="semibold"
-          fontSize={['xs', 'sm', 'md']}
-          cursor="pointer"
-          overflowWrap="normal"
-          wordBreak="break-word"
-        >
-          {nameText}
-        </Text>
-        {descText !== "" && (
+    <Tooltip label={descText === "" ? "" : descText} hasArrow variant="brandSecondary" textAlign="center">
+      <Box
+        w="full"
+        h="full"
+        as="button"
+        bg={bg}
+        p={2}
+        _hover={{ bg: hoverBg }}
+        color={textColor}
+        border="1px"
+        borderColor={borderColour}
+        rounded="md"
+        onClick={handleAddElement}
+        transition="ease-out 150ms"
+      >
           <Text
             w="full"
+            fontWeight="semibold"
             fontSize={['xs', 'sm', 'md']}
             cursor="pointer"
             overflowWrap="normal"
             wordBreak="break-word"
           >
-            {descText}
+            {nameText}
           </Text>
-        )}
-      </Flex>
-    </Box>
+      </Box>
+    </Tooltip>
   )
 }

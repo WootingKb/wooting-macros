@@ -45,7 +45,7 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
           spacing={2}
         >
           {elementsToRender.map((info: MouseInputInfo) => (
-            <AspectRatio ratio={2 / 1} key={info.webButtonVal}>
+            <AspectRatio ratio={2 / 0.75} key={info.webButtonVal}>
               <SelectElementButton
                 nameText={info.displayString}
                 properties={{

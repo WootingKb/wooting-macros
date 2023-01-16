@@ -37,8 +37,9 @@ export default function SystemEventsSection({ elementsToRender }: Props) {
         <SimpleGrid
           h="fit"
           columns={{
-            base: 1,
-            lg: 2
+            base: 2,
+            md: 3,
+            xl: 4
           }}
           px={4}
           spacing={2}
