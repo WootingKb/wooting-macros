@@ -58,7 +58,13 @@ For development we recommend using Visual Studio Code with the ``rust-analyzer``
 
 Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``log`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in [Devving](#devving).
 
-For frontend, we recommend using ESlint and Prettier. This will ensure that any contribution is consistent with the rest of the codebase.
+For frontend, we recommend having ESlint and Prettier, and using the command
+
+```
+yarn lint
+```
+
+This will ensure that any contribution is consistent with the rest of the codebase.
 
 ### Devving
 
@@ -68,9 +74,7 @@ To start the development server, run:
 yarn tauri dev
 ```
 
-Notes:
-- The development server might take a long time to initialize the frontend - this will not be the case when the application is built in release mode.
-- It may take some time to compile the backend and frontend for the first time.
+Note: The development server might take a long time to initialize the frontend - this will not be the case when the application is built in release mode.
 
 In order to see the logging in the terminal, you should set your environmental variables like so:
 
