@@ -50,6 +50,7 @@ yarn
 yarn install
 ```
 
+[**Linux Only**]
 When you have the setup ready there is additional dependencies you must install on Linux to make the grabbing work, namely the ``xserver-xorg-input-evdev`` and ``libevdev2`` libraries. You might also need to add yourself to the ``input`` group. For more information, please look at the https://github.com/Narsil/rdev library instructions.
 
 ### Good practices
