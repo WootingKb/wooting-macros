@@ -194,7 +194,7 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
         >
           Add Delay
         </Button>
-        <Tooltip label="Settings Button" hasArrow variant="brand">
+        <Tooltip label="Open Application Settings" hasArrow variant="brand">
           <IconButton
             variant="brand"
             aria-label="Settings"
