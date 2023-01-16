@@ -40,8 +40,10 @@
           "bannerPath": "icons/icon.png",
           "dialogImagePath": "icons/icon.png",
           "license": "../LICENSE"
-        }
-        
+        },
+        "certificateThumbprint": "641751C7EF318C8D5F908AB7DDD34161375BB34B",
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "http://timestamp.sectigo.com"
       },
       "resources": [],
       "shortDescription": "A macro application by Wooting",
