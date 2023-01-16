@@ -20,91 +20,13 @@
         "writeText": true
       },
       "dialog": {
-        "ask": false,
-        "confirm": false,
-        "message": false,
-        "open": true,
-        "save": false
-      },
-      "fs": {
-        "all": false,
-        "copyFile": false,
-        "createDir": false,
-        "exists": false,
-        "readDir": false,
-        "readFile": false,
-        "removeDir": false,
-        "removeFile": false,
-        "renameFile": false,
-        "scope": [],
-        "writeFile": false
-      },
-      "globalShortcut": {
-        "all": false
-      },
-      "http": {
-        "all": false,
-        "request": false,
-        "scope": []
-      },
-      "notification": {
-        "all": false
+        "open": true
       },
       "os": {
-        "all": false
-      },
-      "path": {
-        "all": false
-      },
-      "process": {
-        "all": false,
-        "exit": false,
-        "relaunch": false,
-        "relaunchDangerousAllowSymlinkMacos": false
-      },
-      "protocol": {
-        "all": false,
-        "asset": false,
-        "assetScope": []
+        "all": true
       },
       "shell": {
-        "all": false,
-        "execute": false,
-        "open": false,
-        "scope": [],
-        "sidecar": false
-      },
-      "window": {
-        "all": false,
-        "center": false,
-        "close": false,
-        "create": false,
-        "hide": false,
-        "maximize": false,
-        "minimize": false,
-        "print": false,
-        "requestUserAttention": false,
-        "setAlwaysOnTop": false,
-        "setCursorGrab": false,
-        "setCursorIcon": false,
-        "setCursorPosition": false,
-        "setCursorVisible": false,
-        "setDecorations": false,
-        "setFocus": false,
-        "setFullscreen": false,
-        "setIcon": false,
-        "setIgnoreCursorEvents": false,
-        "setMaxSize": false,
-        "setMinSize": false,
-        "setPosition": false,
-        "setResizable": false,
-        "setSize": false,
-        "setSkipTaskbar": false,
-        "setTitle": false,
-        "show": false,
-        "startDragging": false,
-        "unmaximize": false,
-        "unminimize": false
+        "open": true
       }
     },
     "bundle": {
