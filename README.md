@@ -1,7 +1,7 @@
 # Wootomation
 
 <p align="center">
-  <img alt="Wootomation* – Create macros to use with any keyboard and any mouse" src=".github/assets/app-hero-banner.svg">
+  <img alt="Wootomation* – Create macros to use with any keyboard and any mouse" src=".github/assets/app-hero-banner.jpg">
 </p>
 
 ## Features
@@ -20,18 +20,26 @@
 
 **Please do be aware that this application does grab and analyze keystrokes. While you are able to disable this temporarily using an appropriate function, you should still not have this application running alongside games (use at your own risk!). Macros (depending on how you configure them) are considered cheating.**
 
-
 ## Installing the App
+
 Download the [Latest Release here](https://github.com/WootingKb/wooting-macros/releases/latest)
 
 For MS Windows, download the MSI and then run it to install the application.
 
-For Linux, download the AppImage or .deb and install the application.
+For Linux, download the AppImage or .deb and install the application. You might also need to add yourself to the ``input`` group.
 
 ## Contributing
 
 Interested in contributing? We have some [contributing guidelines](./CONTRIBUTING.md) to help you out.
 
+## Screenshots
+
+<p align="center">
+  <img width="33%" alt="Initial view of the application" src=".github/assets/1.png">
+  <img width="33%" alt="View of creating a macro" src=".github/assets/2.png">
+  <img width="33%" alt="An example macro that opens up several applications and a website" src=".github/assets/5.png">
+</p>
+
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3  - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 3 - see the [LICENSE](LICENSE) file for details.

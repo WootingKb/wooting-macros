@@ -29,36 +29,43 @@ Once you submit a pull request, one of our core contributors will review it.
 
 ### Dependencies
 
-- [Rust](https://www.rust-lang.org/)
-- [Node.js](https://nodejs.org/en/)
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Node.js](https://nodejs.org/en/) (Recommended >=16.10)
 - [Yarn (latest)](https://yarnpkg.com/getting-started)
 - [Tauri's prequisites](https://tauri.app/v1/guides/getting-started/prerequisites/)
+- For windows installations, you will need to have C++ build tools - see the information on the Rust link above on how to install them.
 
 ## Building
 
-First, run yarn to install all the necessary dependencies.
+First, make sure you have corepack enabled
 
-The backend is written in Rust. You must install Rust via https://www.rust-lang.org/tools/install. For windows installations you require the C++ build tools - see the information on the Rust page on how to install them.
+```
+corepack enable
+```
 
-You then need to install Node. Install Node from the binaires available, then enable the ``corepack`` subsystem. After that run:
+Then run yarn to install all the necessary dependencies using either of the following commands:
 
 ```
 yarn
-```
-
-in the cloned repo. You might need to run the 
-
-```
 yarn install
-``` 
+```
 
-command as well to install all the dependencies if running just ``yarn`` isn't enough. When you have the setup ready there is additional dependencies you must install on Linux to make the grabbing work, namely the ``xserver-xorg-input-evdev`` and ``libevdev2`` libraries. You might also need to add yourself to the ``input`` group. For more information, please look at the https://github.com/Narsil/rdev library instructions.
+[**Linux Only**]
+When you have the setup ready there is additional dependencies you must install on Linux to make the grabbing work, namely the ``xserver-xorg-input-evdev`` and ``libevdev2`` libraries. You might also need to add yourself to the ``input`` group. For more information, please look at the https://github.com/Narsil/rdev library instructions.
 
 ### Good practices
 
 For development we recommend using Visual Studio Code with the ``rust-analyzer`` addon as well as using the ``clippy`` linter. Please, use ``cargo clippy`` and ``cargo check`` before you submit your code as we do treat warnings as hard errors on builds. 
 
 Please use the ``info!``, ``error!``, ``warn!`` and alike macros by the ``log`` library on the backend to log information, instead of ``println!`` macros. Don't forget to setup your env variables to see the logging output in stdout as menitoned in [Devving](#devving).
+
+For frontend, we recommend having ESlint and Prettier, and using the command
+
+```
+yarn lint
+```
+
+This will ensure that any contribution is consistent with the rest of the codebase.
 
 ### Devving
 
@@ -68,9 +75,9 @@ To start the development server, run:
 yarn tauri dev
 ```
 
-Note that the development server might take a long time to initialize the frontend - this will not be the case when the application is built in release mode.
+Note: The development server might take a long time to initialize the frontend - this will not be the case when the application is built in release mode.
 
-Note that in order to see the logging in the terminal, you should set your environmental variables like so:
+In order to see the logging in the terminal, you should set your environmental variables like so:
 
 ```
 RUST_LOG = info
@@ -115,6 +122,7 @@ Files to edit:
 - ```/constants/enums.ts```: You may want to add new enums to use in your newly added types.
 - ```/constants/PluginsEventMap.ts```: If you are adding a plugin, you will need to add your actions to this map so that the related PluginsSection.tsx can render out buttons for the user to press to add your actions.
 - ```/constants/SystemEventMap.ts```: If you are adding a new system event, you will need to extend this file.
+- ```/constants/utils.ts```: If you are adding a new system event or plugin, you will need to extend the checkIfElementIsEditable and getElementDisplayString functions.
 
 ## License
 By contributing your code to the Wootomation GitHub repository, you agree to license your contribution under the --- license.
