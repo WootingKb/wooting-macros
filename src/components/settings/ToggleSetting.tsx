@@ -1,20 +1,20 @@
 import { HStack, VStack, Text, Switch } from '@chakra-ui/react'
-import { useSettingsContext } from '../../contexts/settingsContext'
 
 interface Props {
   title: string
   description: string
   value: boolean
   onChange: (value: boolean) => void
+  didDependencyCheckFail?: boolean
 }
 
 export default function ToggleSetting({
   title,
   description,
   value,
-  onChange
+  onChange,
+  didDependencyCheckFail
 }: Props) {
-  const { config } = useSettingsContext()
 
   return (
     <HStack w="full" justifyContent="space-between" spacing={16}>
@@ -29,10 +29,14 @@ export default function ToggleSetting({
       <Switch
         variant="brand"
         defaultChecked={value}
-        isDisabled={!config.AutoStart && title === 'Minimize on startup'}
-        isChecked={!config.AutoStart && title === 'Minimize on startup' ? false : value}
+        isDisabled={didDependencyCheckFail}
+        isChecked={didDependencyCheckFail ? false : value}
         onChange={() => onChange(!value)}
       />
     </HStack>
   )
+}
+
+ToggleSetting.defaultProps = {
+  didDependencyCheckFail: false
 }

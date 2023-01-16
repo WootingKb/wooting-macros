@@ -34,6 +34,7 @@ export default function ApplicationSettingsPanel() {
           description="The app will open quietly in the background on startup. Requires 'Launch on Startup' to be enabled."
           value={config.MinimizeAtLaunch}
           onChange={updateMinimizeOnStartup}
+          didDependencyCheckFail={!config.AutoStart}
         />
         <Divider />
         <ToggleSetting
