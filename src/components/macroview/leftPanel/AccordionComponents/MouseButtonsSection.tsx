@@ -47,7 +47,7 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
           {elementsToRender.map((info: MouseInputInfo) => (
             <AspectRatio ratio={2 / 1} key={info.webButtonVal}>
               <SelectElementButton
-                displayText={info.displayString}
+                nameText={info.displayString}
                 properties={{
                   type: 'MouseEventAction',
                   data: {

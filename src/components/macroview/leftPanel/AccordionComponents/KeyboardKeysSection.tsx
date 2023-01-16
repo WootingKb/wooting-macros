@@ -60,7 +60,7 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                     }
                   >
                     <SelectElementButton
-                      displayText={HIDinfo.displayString}
+                      nameText={HIDinfo.displayString}
                       properties={{
                         type: 'KeyPressEventAction',
                         data: {

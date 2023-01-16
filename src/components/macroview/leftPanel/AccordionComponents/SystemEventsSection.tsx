@@ -37,17 +37,18 @@ export default function SystemEventsSection({ elementsToRender }: Props) {
         <SimpleGrid
           h="fit"
           columns={{
-            base: 2,
-            md: 3,
-            xl: 4
+            base: 1,
+            lg: 2
           }}
           px={4}
           spacing={2}
         >
           {elementsToRender.map((info: SystemEventInfo) => (
-            <AspectRatio ratio={2 / 1} key={info.displayString}>
+            <AspectRatio ratio={2 / 0.75} key={info.displayString}>
               <SelectElementButton
-                displayText={info.displayString}
+              key={info.displayString}
+                nameText={info.displayString}
+                descText={info.description}
                 properties={{
                   type: 'SystemEventAction',
                   data: info.defaultData

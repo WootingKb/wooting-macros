@@ -13,7 +13,7 @@ export default function ToggleSetting({
   description,
   value,
   onChange,
-  didDependencyCheckFail
+  didDependencyCheckFail = false
 }: Props) {
 
   return (
@@ -35,8 +35,4 @@ export default function ToggleSetting({
       />
     </HStack>
   )
-}
-
-ToggleSetting.defaultProps = {
-  didDependencyCheckFail: false
 }

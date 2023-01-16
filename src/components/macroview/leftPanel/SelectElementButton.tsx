@@ -1,4 +1,4 @@
-import { Box, Text, useColorModeValue } from '@chakra-ui/react'
+import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSettingsContext } from '../../../contexts/settingsContext'
@@ -6,12 +6,14 @@ import { ActionEventType } from '../../../types'
 
 interface Props {
   properties: ActionEventType
-  displayText: string
+  nameText: string,
+  descText?: string,
 }
 
 export default function SelectElementButton({
   properties,
-  displayText
+  nameText,
+  descText = ''
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
@@ -63,17 +65,29 @@ export default function SelectElementButton({
       onClick={handleAddElement}
       transition="ease-out 150ms"
     >
-      <Text
-        w="full"
-        fontWeight="semibold"
-        fontSize={['xs', 'sm', 'md']}
-        cursor="pointer"
-        textAlign="center"
-        overflowWrap="normal"
-        wordBreak="break-word"
-      >
-        {displayText}
-      </Text>
+      <Flex direction='column' gap={2}>
+        <Text
+          w="full"
+          fontWeight="semibold"
+          fontSize={['xs', 'sm', 'md']}
+          cursor="pointer"
+          overflowWrap="normal"
+          wordBreak="break-word"
+        >
+          {nameText}
+        </Text>
+        {descText !== "" && (
+          <Text
+            w="full"
+            fontSize={['xs', 'sm', 'md']}
+            cursor="pointer"
+            overflowWrap="normal"
+            wordBreak="break-word"
+          >
+            {descText}
+          </Text>
+        )}
+      </Flex>
     </Box>
   )
 }
