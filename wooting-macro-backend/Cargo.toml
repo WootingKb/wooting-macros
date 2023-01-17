@@ -48,11 +48,3 @@ futures = "0.3"
 
 [profile.release]
 lto = true
-
-[lib]
-bench = false
-
-[[bin]]
-name = "my-binary"
-path = "C:/Users/medze/Programming/wooting-macros/wooting-macro-backend/src/bin/main.rs"
-bench = false
