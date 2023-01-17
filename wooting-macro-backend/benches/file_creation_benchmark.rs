@@ -26,13 +26,23 @@ fn data_creation_time(c: &mut Criterion) {
     c.bench_function("backend create", |b| b.iter(|| MacroBackend::default()));
 }
 
+// Async
+// b.to_async(&rt).iter(|| macros_data)
+
 fn key_to_key(c: &mut Criterion) {
     let backend_data = MacroBackend::default();
     let (send_channel, _) = tokio::sync::mpsc::channel::<Sender<EventType>>(1);
     let rt = tokio::runtime::Runtime::new().unwrap();
+    
+    let macros_data = backend_data.data.blocking_read().data.clone();
+
+    //TODO: Get a custom macro data here
+    //TODO: Simulate the input by running the grabber?
+    //TODO: Stop at the first key send being finished.
+    
 
     c.bench_function("key_to_key", |b| {
-        b.to_async(&rt).iter(|| backend_data.data.read())
+        b.iter(|| macros_data.first().unwrap().macros.first().unwrap())
     });
 }
 
