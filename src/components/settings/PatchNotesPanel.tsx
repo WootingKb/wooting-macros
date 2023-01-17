@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 
 export default function PatchNotesPanel() {
-  const whatsNewTextColour = useColorModeValue('green.700', 'green.300')
+  const whatsNewTextColour = useColorModeValue('green.600', 'green.300')
   const textColour = useColorModeValue('primary-light.900', 'primary-dark.100')
   const highlightedTextColour = useColorModeValue(
     'primary-accent.800',

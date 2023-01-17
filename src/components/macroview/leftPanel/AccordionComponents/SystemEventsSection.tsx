@@ -45,9 +45,11 @@ export default function SystemEventsSection({ elementsToRender }: Props) {
           spacing={2}
         >
           {elementsToRender.map((info: SystemEventInfo) => (
-            <AspectRatio ratio={2 / 1} key={info.displayString}>
+            <AspectRatio ratio={2 / 0.75} key={info.displayString}>
               <SelectElementButton
-                displayText={info.displayString}
+              key={info.displayString}
+                nameText={info.displayString}
+                descText={info.description}
                 properties={{
                   type: 'SystemEventAction',
                   data: info.defaultData

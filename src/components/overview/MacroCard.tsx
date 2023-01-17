@@ -46,6 +46,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
     'primary-light.900',
     'primary-dark.400'
   )
+  const deleteTextColour = useColorModeValue('red.600', 'red.200')
 
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +113,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
             <Divider />
-            <MenuItem onClick={() => onDelete(index)} textColor="red.500">
+            <MenuItem onClick={() => onDelete(index)} textColor={deleteTextColour}>
               Delete
             </MenuItem>
           </MenuList>

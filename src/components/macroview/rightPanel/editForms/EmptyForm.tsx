@@ -9,7 +9,7 @@ export default function EmptyForm() {
         w="75%"
         textAlign="center"
       >
-        Select an Element to edit
+        Press on an element to edit it
       </Text>
     </Flex>
   )

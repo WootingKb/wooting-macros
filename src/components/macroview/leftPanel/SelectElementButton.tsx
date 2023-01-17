@@ -1,4 +1,4 @@
-import { Box, Text, useColorModeValue } from '@chakra-ui/react'
+import { Box, Text, Tooltip, useColorModeValue } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSettingsContext } from '../../../contexts/settingsContext'
@@ -6,12 +6,14 @@ import { ActionEventType } from '../../../types'
 
 interface Props {
   properties: ActionEventType
-  displayText: string
+  nameText: string,
+  descText?: string,
 }
 
 export default function SelectElementButton({
   properties,
-  displayText
+  nameText,
+  descText = ''
 }: Props) {
   const { sequence, onElementAdd, onElementsAdd } = useMacroContext()
   const { config } = useSettingsContext()
@@ -49,31 +51,32 @@ export default function SelectElementButton({
   ])
 
   return (
-    <Box
-      w="full"
-      h="full"
-      as="button"
-      bg={bg}
-      p={2}
-      _hover={{ bg: hoverBg }}
-      color={textColor}
-      border="1px"
-      borderColor={borderColour}
-      rounded="md"
-      onClick={handleAddElement}
-      transition="ease-out 150ms"
-    >
-      <Text
+    <Tooltip label={descText === "" ? "" : descText} hasArrow variant="brandSecondary" textAlign="center">
+      <Box
         w="full"
-        fontWeight="semibold"
-        fontSize={['xs', 'sm', 'md']}
-        cursor="pointer"
-        textAlign="center"
-        overflowWrap="normal"
-        wordBreak="break-word"
+        h="full"
+        as="button"
+        bg={bg}
+        p={2}
+        _hover={{ bg: hoverBg }}
+        color={textColor}
+        border="1px"
+        borderColor={borderColour}
+        rounded="md"
+        onClick={handleAddElement}
+        transition="ease-out 150ms"
       >
-        {displayText}
-      </Text>
-    </Box>
+          <Text
+            w="full"
+            fontWeight="semibold"
+            fontSize={['xs', 'sm', 'md']}
+            cursor="pointer"
+            overflowWrap="normal"
+            wordBreak="break-word"
+          >
+            {nameText}
+          </Text>
+      </Box>
+    </Tooltip>
   )
 }

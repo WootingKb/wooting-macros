@@ -67,7 +67,8 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
       borderColor={useBorderColour()}
       justifyContent="space-between"
     >
-      <VStack w="full" p={4} overflow="hidden" gap={2}>
+      <VStack w="full" h="full" overflowY="auto">
+      <VStack w="full" h="fit-content" p={4} gap={2}>
         <HStack w="full" justifyContent="space-between" px={1}>
           <Text w="full" fontWeight="bold" fontSize="28px">
             Collections
@@ -153,6 +154,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
             }
           />
         ))}
+      </VStack>
       </VStack>
       <HStack w="full" px={4} pb={4}>
         <Button

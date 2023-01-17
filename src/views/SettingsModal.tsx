@@ -62,6 +62,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
       variant="brand"
       onClose={onClose}
       scrollBehavior="inside"
+      returnFocusOnClose={false}
     >
       <ModalOverlay />
       <ModalContent>

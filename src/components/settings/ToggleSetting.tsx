@@ -5,14 +5,17 @@ interface Props {
   description: string
   value: boolean
   onChange: (value: boolean) => void
+  didDependencyCheckFail?: boolean
 }
 
 export default function ToggleSetting({
   title,
   description,
   value,
-  onChange
+  onChange,
+  didDependencyCheckFail = false
 }: Props) {
+
   return (
     <HStack w="full" justifyContent="space-between" spacing={16}>
       <VStack spacing={0} textAlign="left">
@@ -26,7 +29,8 @@ export default function ToggleSetting({
       <Switch
         variant="brand"
         defaultChecked={value}
-        isChecked={value}
+        isDisabled={didDependencyCheckFail}
+        isChecked={didDependencyCheckFail ? false : value}
         onChange={() => onChange(!value)}
       />
     </HStack>

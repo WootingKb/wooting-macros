@@ -5,6 +5,7 @@ export interface SystemEventInfo {
   subtype: string
   displayString: string
   defaultData: SystemAction
+  description: string
 }
 
 export class SystemEvent {
@@ -13,7 +14,8 @@ export class SystemEvent {
       type: 'Open',
       subtype: 'File',
       displayString: 'Open File',
-      defaultData: { type: 'Open', action: { type: 'File', data: '' } }
+      defaultData: { type: 'Open', action: { type: 'File', data: '' } },
+      description: "Opens any file on your computer."
     }
   }
   static get OpenFolder(): SystemEventInfo {
@@ -21,7 +23,8 @@ export class SystemEvent {
       type: 'Open',
       subtype: 'Directory',
       displayString: 'Open Folder',
-      defaultData: { type: 'Open', action: { type: 'Directory', data: '' } }
+      defaultData: { type: 'Open', action: { type: 'Directory', data: '' } },
+      description: "Opens up a file explorer window to the specified folder."
     }
   }
   static get OpenWebsite(): SystemEventInfo {
@@ -29,7 +32,8 @@ export class SystemEvent {
       type: 'Open',
       subtype: 'Website',
       displayString: 'Open Website',
-      defaultData: { type: 'Open', action: { type: 'Website', data: '' } }
+      defaultData: { type: 'Open', action: { type: 'Website', data: '' } },
+      description: "Opens up a website in your default browser."
     }
   }
 
@@ -41,7 +45,8 @@ export class SystemEvent {
       defaultData: {
         type: 'Clipboard',
         action: { type: 'PasteUserDefinedString', data: '' }
-      }
+      },
+      description: "Pastes the specified text into a currently selected text input area."
     }
   }
   static get Sarcasm(): SystemEventInfo {
@@ -52,7 +57,8 @@ export class SystemEvent {
       defaultData: {
         type: 'Clipboard',
         action: { type: 'Sarcasm' }
-      }
+      },
+      description: "Randomly capitalizes some letters in the currently highlighted text."
     }
   }
   static get IncreaseVolume(): SystemEventInfo {
@@ -60,7 +66,8 @@ export class SystemEvent {
       type: 'Volume',
       subtype: 'IncreaseVolume',
       displayString: 'Increase Volume',
-      defaultData: { type: 'Volume', action: { type: 'IncreaseVolume' } }
+      defaultData: { type: 'Volume', action: { type: 'IncreaseVolume' } },
+      description: "Increases volume by an OS-specific amount."
     }
   }
   static get DecreaseVolume(): SystemEventInfo {
@@ -68,7 +75,8 @@ export class SystemEvent {
       type: 'Volume',
       subtype: 'LowerVolume',
       displayString: 'Decrease Volume',
-      defaultData: { type: 'Volume', action: { type: 'LowerVolume' } }
+      defaultData: { type: 'Volume', action: { type: 'LowerVolume' } },
+      description: "Decreases volume by an OS-specific amount."
     }
   }
   static get ToggleMuteVolume(): SystemEventInfo {
@@ -76,7 +84,8 @@ export class SystemEvent {
       type: 'Volume',
       subtype: 'ToggleMute',
       displayString: 'Toggle Mute Volume',
-      defaultData: { type: 'Volume', action: { type: 'ToggleMute' } }
+      defaultData: { type: 'Volume', action: { type: 'ToggleMute' } },
+      description: "Mutes or unmutes the system audio output."
     }
   }
   // static get SetBrightness(): SystemEventInfo {

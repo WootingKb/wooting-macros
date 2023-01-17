@@ -105,7 +105,7 @@ export default function OpenEventForm({
 
   return (
     <VStack textAlign="left" w="full">
-      <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headerText}
       </Text>
       <Divider />
