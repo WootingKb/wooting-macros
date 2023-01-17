@@ -1,5 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use rdev::EventType;
+use rdev;
+use std::thread;
 use tokio::runtime::Runtime;
 use tokio::sync::mpsc::*;
 
@@ -31,18 +32,39 @@ fn data_creation_time(c: &mut Criterion) {
 
 fn key_to_key(c: &mut Criterion) {
     let backend_data = MacroBackend::default();
-    let (send_channel, _) = tokio::sync::mpsc::channel::<Sender<EventType>>(1);
+    let (send_channel, receive_channel) = tokio::sync::mpsc::channel::<rdev::EventType>(1);
     let rt = tokio::runtime::Runtime::new().unwrap();
-    
-    let macros_data = backend_data.data.blocking_read().data.clone();
+
+
+    thread::spawn(move || {
+        keypress_executor_sender(receive_channel);
+    });
+
+
+    let macros_data: Macro = Macro {
+        name: "bench01".to_string(),
+        icon: ":smile:".to_string(),
+        sequence: vec![ActionEventType::KeyPressEventAction {
+            data: plugin::key_press::KeyPress {
+                keypress: 0x04,
+                press_duration: 1,
+                keytype: plugin::key_press::KeyType::DownUp,
+            },
+        }],
+        macro_type: MacroType::Single,
+        trigger: TriggerEventType::KeyPressEvent {
+            data: vec![0x05],
+            allow_while_other_keys: true,
+        },
+        active: true,
+    };
 
     //TODO: Get a custom macro data here
     //TODO: Simulate the input by running the grabber?
     //TODO: Stop at the first key send being finished.
-    
 
     c.bench_function("key_to_key", |b| {
-        b.iter(|| macros_data.first().unwrap().macros.first().unwrap())
+        b.to_async(&rt).iter(|| macros_data.execute(send_channel.clone()))
     });
 }
 
