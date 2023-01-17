@@ -30,7 +30,7 @@ fn data_creation_time(c: &mut Criterion) {
 // Async
 // b.to_async(&rt).iter(|| macros_data)
 
-fn key_to_key(c: &mut Criterion) {
+fn execute_macro_bench(c: &mut Criterion) {
     let backend_data = MacroBackend::default();
     let (send_channel, receive_channel) = tokio::sync::mpsc::channel::<rdev::EventType>(1);
     let rt = tokio::runtime::Runtime::new().unwrap();
@@ -42,7 +42,7 @@ fn key_to_key(c: &mut Criterion) {
 
 
     let macros_data: Macro = Macro {
-        name: "bench01".to_string(),
+        name: "execute_macro_bench".to_string(),
         icon: ":smile:".to_string(),
         sequence: vec![ActionEventType::KeyPressEventAction {
             data: plugin::key_press::KeyPress {
@@ -68,5 +68,50 @@ fn key_to_key(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, key_to_key);
+
+fn find_execute_macro_bench(c: &mut Criterion) {
+    let backend_data = MacroBackend::default();
+    let (send_channel, receive_channel) = tokio::sync::mpsc::channel::<rdev::EventType>(1);
+    let rt = tokio::runtime::Runtime::new().unwrap();
+
+
+    thread::spawn(move || {
+        keypress_executor_sender(receive_channel);
+    });
+
+
+    let macros_data: Macro = Macro {
+        name: "find_execute_macro_bench".to_string(),
+        icon: ":smile:".to_string(),
+        sequence: vec![ActionEventType::KeyPressEventAction {
+            data: plugin::key_press::KeyPress {
+                keypress: 0x04,
+                press_duration: 1,
+                keytype: plugin::key_press::KeyType::DownUp,
+            },
+        }],
+        macro_type: MacroType::Single,
+        trigger: TriggerEventType::KeyPressEvent {
+            data: vec![0x05],
+            allow_while_other_keys: true,
+        },
+        active: true,
+    };
+
+    
+
+    //TODO: Get a custom macro data here
+    //TODO: Simulate the input by running the grabber?
+    //TODO: Stop at the first key send being finished.
+
+    c.bench_function("key_to_key", |b| {
+        b.iter(|| check_macro_execution_efficiently(
+            vec![0x05],
+            vec![macros_data.clone()],
+            send_channel.clone(),
+        ))
+    });
+}
+
+criterion_group!(benches, execute_macro_bench);
 criterion_main!(benches);
