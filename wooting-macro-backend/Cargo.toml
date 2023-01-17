@@ -32,6 +32,7 @@ anyhow = "1.0.66"
 log = "0.4.17"
 env_logger = "0.10.0"
 rayon = "1.6.1"
+plotters = "0.3.4"
 
 [dev-dependencies]
 criterion = {version = "0.4.0", features=["async_tokio"]}
@@ -48,3 +49,10 @@ futures = "0.3"
 [profile.release]
 lto = true
 
+[lib]
+bench = false
+
+[[bin]]
+name = "my-binary"
+path = "C:/Users/medze/Programming/wooting-macros/wooting-macro-backend/src/bin/main.rs"
+bench = false
