@@ -104,8 +104,8 @@ fn find_execute_macro_bench(c: &mut Criterion) {
     //TODO: Simulate the input by running the grabber?
     //TODO: Stop at the first key send being finished.
 
-    c.bench_function("key_to_key", |b| {
-        b.iter(|| check_macro_execution_efficiently(
+    c.bench_function("find_execute_macro_bench", |b| {
+        b.to_async(&rt).iter(|| async_check_macro_execution_efficiently(
             vec![0x05],
             vec![macros_data.clone()],
             send_channel.clone(),
@@ -113,5 +113,5 @@ fn find_execute_macro_bench(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, execute_macro_bench);
+criterion_group!(benches, execute_macro_bench, find_execute_macro_bench);
 criterion_main!(benches);

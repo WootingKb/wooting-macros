@@ -375,6 +375,84 @@ fn check_macro_execution_efficiently(
     output
 }
 
+/// This funciton is only for benchmarking (fully async)
+pub async fn async_check_macro_execution_efficiently(
+    pressed_events: Vec<u32>,
+    trigger_overview: Vec<Macro>,
+    channel_sender: Sender<rdev::EventType>,
+) -> bool {
+    let trigger_overview_print = trigger_overview.clone();
+
+    debug!("Got data: {:?}", trigger_overview_print);
+    debug!("Got keys: {:?}", pressed_events);
+
+    let mut output = false;
+    for macros in &trigger_overview {
+        match &macros.trigger {
+            TriggerEventType::KeyPressEvent { data, .. } => {
+                match data.len() {
+                    1 => {
+                        if pressed_events == *data {
+                            debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
+
+                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
+
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    2..=4 => {
+                        // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
+                        if data[..(data.len() - 1)]
+                            .iter()
+                            .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
+                            && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
+                        {
+                            debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
+
+                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
+
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    _ => (),
+                }
+            }
+            TriggerEventType::MouseEvent { data } => {
+                let event_to_check: Vec<u32> = vec![data.into()];
+
+                debug!(
+                    "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
+                    event_to_check
+                );
+
+                if event_to_check == pressed_events {
+                    let channel_clone = channel_sender.clone();
+                    let macro_clone = macros.clone();
+
+                    task::spawn(async move {
+                        execute_macro(macro_clone, channel_clone).await;
+                    });
+                    output = true;
+                }
+            }
+        }
+    }
+
+    output
+}
+
 impl MacroBackend {
     #[cfg(not(debug_assertions))]
     /// Creates the data directory if not present in %appdata% (only in release build).
