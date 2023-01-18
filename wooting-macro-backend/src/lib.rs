@@ -21,7 +21,6 @@ use halfbrown::HashMap;
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
-use tauri::State;
 
 // This has to be imported for release build
 #[allow(unused_imports)]
@@ -596,10 +595,6 @@ impl Default for MacroBackend {
     }
 }
 
-// /// Sets whether the macro listening processing is happening.
-// pub fn set_macro_listening(state: State<MacroBackend>, frontend_bool: bool) {
-//     state.is_listening.store(frontend_bool, Ordering::Relaxed);
-// }
 
 #[cfg(test)]
 mod tests {
