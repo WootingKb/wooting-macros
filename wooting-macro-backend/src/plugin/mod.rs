@@ -1,3 +1,4 @@
+// All the plugin files are modules and have to be loaded here in order to use them in the rest of the app.
 pub mod delay;
 pub mod discord;
 pub mod key_press;

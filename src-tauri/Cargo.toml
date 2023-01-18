@@ -1,8 +1,8 @@
 [package]
 name = "wooting-macros"
-version = "0.9.0"
+version = "1.0.0"
 description = "Macro software made by Wooting."
-authors = ["Jeroen N, Erik S, Simon W, David M, Khang N"]
+authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N"]
 license = "GPL-3.0-only"
 repository = "https://github.com/WootingKb/wooting-macros"
 edition = "2021"
@@ -15,7 +15,7 @@ tauri-build = { version = "1.2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
-tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray", "updater"] }
+tauri = { version = "1.2", features = ["app-hide", "app-show", "clipboard-read-text", "clipboard-write-text", "dialog-open", "icon-png", "os-all", "shell-open", "system-tray", "updater"] }
 tokio = { version = "1.23", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }

@@ -2,7 +2,7 @@ use log::*;
 use rdev;
 use tokio::sync::mpsc::Sender;
 
-/// Sends an event to the library to Execute on an OS level.
+/// Sends an event to the library to Execute on an OS level. This makes it easier to implement keypresses in custom code.
 pub fn send(event_type: &rdev::EventType) {
     info!("Sending event: {:?}", event_type);
     match rdev::simulate(event_type) {

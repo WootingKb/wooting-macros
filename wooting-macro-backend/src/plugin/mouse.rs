@@ -10,6 +10,8 @@ use std::time;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 /// Mouse action: Press presses a defined button. Move moves to absolute coordinates X and Y.
+///
+/// ! **UNIMPLEMENTED** - Moving a mouse is only implemented on the backend and no frontend implementation exists yet. Feel free to contribute.
 pub enum MouseAction {
     Press { data: MousePressAction },
     Move { x: i32, y: i32 },
