@@ -1,5 +1,5 @@
 pub mod config;
-mod hid_table;
+pub mod hid_table;
 pub mod plugin;
 
 use rayon::prelude::*;
