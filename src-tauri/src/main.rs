@@ -67,7 +67,8 @@ async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
     frontend_bool: bool,
 ) -> Result<(), ()> {
-    set_macro_listening(state, frontend_bool);
+    state.set_is_listening(frontend_bool);
+    // set_macro_listening(state, frontend_bool);
     Ok(())
 }
 

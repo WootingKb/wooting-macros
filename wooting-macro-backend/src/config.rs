@@ -9,7 +9,8 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     fn file_name() -> PathBuf;
 
     /// Reads the data from the file and returns it.
-    /// If it errors out, it replaces and writes a default config
+    ///
+    /// If it errors out, it replaces and writes a default config.
     fn read_data() -> Self {
         let default = Self::default();
 
@@ -35,6 +36,8 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     }
 
     /// Writes the config file to the config directory.
+    ///
+    /// If it fails, it uses only in-memory defaults and won't save anything to disk.
     fn write_to_file(&self) {
         match std::fs::write(
             Self::file_name().as_path(),
@@ -99,15 +102,20 @@ impl Default for ApplicationConfig {
     }
 }
 
-//Has to be allowed to suppress warnings. Required for release builds.
 #[cfg(not(debug_assertions))]
+/// Has to be allowed to suppress warnings.
+///
+/// Required for release builds which save configs to %appdata%
 pub const CONFIG_DIR: &str = "wooting-macro-app";
 
 #[cfg(debug_assertions)]
+/// Debug builds save configs to the working parent directory.
 pub const CONFIG_DIR: &str = "..";
 
+/// Config file name
 const CONFIG_FILE: &str = "config.json";
 
+/// Macro data file name
 const DATA_FILE: &str = "data_json.json";
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]

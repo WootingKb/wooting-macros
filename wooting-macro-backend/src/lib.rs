@@ -12,22 +12,20 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
 
-use tokio::sync::RwLock;
-
-use halfbrown::HashMap;
-
 use tokio::sync::mpsc::{Receiver, Sender};
+use tokio::sync::RwLock;
 use tokio::task;
 
-//This has to be imported for release build
-#[allow(unused_imports)]
-use crate::config::CONFIG_DIR;
+use halfbrown::HashMap;
 
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
 use tauri::State;
 
+// This has to be imported for release build
+#[allow(unused_imports)]
+use crate::config::CONFIG_DIR;
 use crate::hid_table::*;
 
 //Plugin imports
@@ -42,7 +40,9 @@ use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-///Type of a macro. Currently only Single is implemented. Others have been postponed for now.
+/// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
+///
+/// ! **UNIMPLEMENTED** - Only the `Single` macro type is implemented for now. Feel free to contribute ideas.
 pub enum MacroType {
     Single,
     // Single macro fire
@@ -53,7 +53,7 @@ pub enum MacroType {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
-///This enum is the registry for all actions that can be executed
+/// This enum is the registry for all actions that can be executed.
 pub enum ActionEventType {
     KeyPressEventAction {
         data: key_press::KeyPress,
@@ -84,7 +84,8 @@ pub enum ActionEventType {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution.
-/// Allow while other keys has not been implemented yet.
+///
+/// ! **UNIMPLEMENTED** - Allow while other keys has not been implemented yet. This is WIP already.
 pub enum TriggerEventType {
     KeyPressEvent {
         data: Vec<u32>,
@@ -98,7 +99,7 @@ pub enum TriggerEventType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-///This is a macro struct. Includes all information a macro needs to run
+/// This is a macro struct. Includes all information a macro needs to run.
 pub struct Macro {
     pub name: String,
     pub icon: String,
@@ -111,6 +112,7 @@ pub struct Macro {
 impl Macro {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
+    /// Make sure to expand this if you implement new action types.
     async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         for action in &self.sequence {
             match action {
@@ -173,7 +175,7 @@ type Collections = Vec<Collection>;
 /// Hashmap to check the first trigger key of each macro.
 type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 
-/// State of the application in RAM (rwlock).
+/// State of the application in RAM (RWlock).
 #[derive(Debug)]
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
@@ -242,8 +244,6 @@ impl MacroData {
             }
         }
 
-        
-
         output_hashmap
     }
 }
@@ -257,7 +257,9 @@ pub struct Collection {
     pub active: bool,
 }
 
-///Executes a given macro (according to its type).
+/// Executes a given macro (according to its type).
+///
+/// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
 async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
@@ -297,6 +299,12 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
 }
 
 /// A more efficient way using hashtable to check whether the trigger keys match the macro.
+///
+/// `pressed_events` - the keys pressed in HID format (use the conversion HID hashtable to get the number).
+///
+/// `trigger_overview` - Macros that need to be checked. Should be picked by matching the hashtable of triggers, and those should be checked here.
+///
+/// `channel_sender` - a copy of the channel sender to use later when executing various macros.
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
@@ -376,7 +384,7 @@ fn check_macro_execution_efficiently(
 
 impl MacroBackend {
     #[cfg(not(debug_assertions))]
-    /// Creates the data directory if not present. (only in release)
+    /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
@@ -384,33 +392,29 @@ impl MacroBackend {
         };
     }
 
+    /// Sets whether the backend should process keys that it listens to. Disabling disables the processing logic, but the app still grabs the keys.
     pub fn set_is_listening(&self, is_listening: bool) {
         self.is_listening.store(is_listening, Ordering::Relaxed);
     }
-
+    /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_macros(&self, macros: MacroData) {
         macros.write_to_file();
         *self.triggers.write().await = macros.extract_triggers();
         *self.data.write().await = macros;
     }
 
+    /// Sets the config from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_config(&self, config: ApplicationConfig) {
         config.write_to_file();
         *self.config.write().await = config;
     }
 
-    #[inline(always)]
+    /// Initializes the entire backend and gets the whole grabbing system running.
     pub async fn init(&self) {
-        //let config = ApplicationConfig::read_data().minimize_to_tray;
-
         //? : io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
         //==================================================
-
-        // Spawn the grabbing. Deactivate the grabbing on macOS by keeping the thread busy for now
-        // #[cfg(target_os = "macos")]
-        // loop{}
 
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
@@ -485,7 +489,6 @@ impl MacroBackend {
                                         }
                                         Some(data_found) => data_found.to_vec(),
                                     };
-
 
                                     // ? up the pressed keys here immidiately?
 
@@ -593,9 +596,10 @@ impl Default for MacroBackend {
     }
 }
 
-pub fn set_macro_listening(state: State<MacroBackend>, frontend_bool: bool) {
-    state.is_listening.store(frontend_bool, Ordering::Relaxed);
-}
+// /// Sets whether the macro listening processing is happening.
+// pub fn set_macro_listening(state: State<MacroBackend>, frontend_bool: bool) {
+//     state.is_listening.store(frontend_bool, Ordering::Relaxed);
+// }
 
 #[cfg(test)]
 mod tests {

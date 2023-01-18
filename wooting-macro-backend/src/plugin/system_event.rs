@@ -8,6 +8,7 @@ use tokio::sync::mpsc::Sender;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 
+// The Brightness of monitors is not implemented for macOS, so we have to condition the code.
 #[cfg(target_os = "windows")]
 use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
 #[cfg(target_os = "linux")]
@@ -39,7 +40,7 @@ pub enum SystemAction {
 }
 
 impl SystemAction {
-    /// Execute the keys themselves
+    /// Execute the keys themselves.
 
     pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
         match &self {
@@ -79,6 +80,8 @@ impl SystemAction {
             },
 
             SystemAction::Brightness { action } => {
+                // This is split for windows/linux and macOS.
+                // macOS cannot implement this feature, so due to language limitations we have to make two separate matches.
                 #[cfg(any(target_os = "windows", target_os = "linux"))]
                 match action {
                     MonitorBrightnessAction::SetAll { level } => {
@@ -106,6 +109,7 @@ impl SystemAction {
                         error!("Not supported on macOS");
                     }
                 }
+                // Second match for macOS
                 #[cfg(target_os = "macos")]
                 match action {
                     _ => {
@@ -165,7 +169,7 @@ pub struct Monitor {
     pub display_name: String,
 }
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Loads the monitors and sends them to the frontend
+/// Loads the monitors and sends them to the frontend.
 pub async fn backend_load_monitors() -> Vec<Monitor> {
     let mut monitors = Vec::new();
 
@@ -221,7 +225,7 @@ async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Decreases brightness of specific devices by 2%
+/// Decreases brightness of specific devices by 2%.
 async fn brightness_change_specific(by_how_much: i32, name: &str) {
     if let Ok(mut devices) = brightness::brightness_devices()
         .into_future()
@@ -243,7 +247,7 @@ async fn brightness_change_specific(by_how_much: i32, name: &str) {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Decrements brightness of all devices by 2%
+/// Decrements brightness of all devices by 2%.
 async fn brightness_change_all(by_how_much: i32) {
     if let Ok(mut devices) = brightness::brightness_devices()
         .into_future()
@@ -263,7 +267,7 @@ async fn brightness_change_all(by_how_much: i32) {
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Sets brightness for a device
+/// Sets brightness for a device.
 async fn set_brightness(
     dev: &mut BrightnessDevice,
     percentage_level: u32,
@@ -304,7 +308,9 @@ pub enum ClipboardAction {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
-/// Monitor get, set brightness (currently Get is unused).
+/// Monitor get, set brightness of any screen.
+///
+/// ! **UNIMPLEMENTED** - The brightness is currently not implemented and tested on frontend. Backend needs testing. You are welcome to contribute.
 pub enum MonitorBrightnessAction {
     SetAll { level: u32 },
     SetSpecific { level: u32, name: String },
