@@ -798,7 +798,7 @@ export class Hid {
   }
   static get NUMDECIMAL(): HidInfo {
     return {
-      HIDcode: 99,
+      HIDcode: 133,
       category: HIDCategory.Numpad,
       displayString: 'Numpad Decimal',
       webKeyId: 'NumpadDecimal',

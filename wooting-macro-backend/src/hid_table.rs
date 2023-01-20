@@ -176,7 +176,7 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
         scancode.insert(0x60, Key::Kp8); //NUMPAD8
         scancode.insert(0x61, Key::Kp9); //NUMPAD9
         scancode.insert(0x62, Key::Kp0); //NUMPAD0
-        scancode.insert(0x63, Key::Dot); //NUMPAD_DECIMAL
+        scancode.insert(0x85, Key::KpDelete); //NUMPAD_COMMA (KP_DELETE)
 
         scancode.insert(0x64, Key::IntlBackslash); //INTL_BACKSLASH
         scancode.insert(0x65, Key::Function); //CONTEXT_MENU
@@ -198,7 +198,7 @@ pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
 
 
 
-        // scancode.insert(0x85, Key::Key); //NUMPAD_COMMA
+        // scancode.insert(0x85, Key::Key); //NUMPAD_COMMA (KP_DELETE)
         //
         // scancode.insert(0x87, Key::Key); //INTL_RO
         // scancode.insert(0x88, Key::Key); //KANA_MODE
@@ -382,7 +382,7 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::Kp8, 0x60); //NUMPAD8
         scancode.insert(Key::Kp9, 0x61); //NUMPAD9
         scancode.insert(Key::Kp0, 0x62); //NUMPAD0
-        scancode.insert(Key::Dot, 0x63); //NUMPAD_DECIMAL
+        scancode.insert(Key::KpDelete, 0x85); //NUMPAD_COMMA (KP_DELETE)
 
         scancode.insert(Key::IntlBackslash, 0x64); //INTL_BACKSLASH
         scancode.insert(Key::Function, 0x65); //CONTEXT_MENU
