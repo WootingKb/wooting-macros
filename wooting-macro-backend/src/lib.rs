@@ -479,8 +479,6 @@ impl MacroBackend {
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
-                                    debug!("TRIGGER LIST: {:#?}", trigger_list);
-
                                     let check_these_macros = match trigger_list.get(&first_key) {
                                         None => {
                                             vec![]

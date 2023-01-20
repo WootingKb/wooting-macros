@@ -81,19 +81,25 @@ async fn control_grabbing(
     Ok(())
 }
 
+/// Engages the logger.
 fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
-    #[cfg(debug_assertions)]
-    let level = log::LevelFilter::Debug;
+    let log_level_envvar = option_env!("RUST_LOG");
 
-    #[cfg(not(debug_assertions))]
-    let level = log::LevelFilter::Warn;
+    let level = match log_level_envvar {
+        Some("trace") => log::LevelFilter::Trace,
+        Some("debug") => log::LevelFilter::Debug,
+        Some("info") => log::LevelFilter::Info,
+        Some("warn") => log::LevelFilter::Warn,
+        Some("error") => log::LevelFilter::Error,
+        _ => log::LevelFilter::Error,
+    };
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
     // Build a stderr logger.
     let stderr = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(
-            "{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}",
+            "{d(%Y-%m-%d %H:%M:%S:%f)} | {h({({l}):5.5})} | {m}{n}",
         )))
         .target(Target::Stderr)
         .build();
@@ -102,7 +108,7 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
     let logfile = FileAppender::builder()
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
         .encoder(Box::new(PatternEncoder::new(
-            "{h({d(%Y-%m-%d %H:%M:%S:%f)} - {l}: {m}{n})}",
+            "{d(%Y-%m-%d %H:%M:%S:%f)} | {h({({l}):5.5})} | {m}{n}",
         )))
         .build(file_path)
         .unwrap();
