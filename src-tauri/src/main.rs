@@ -16,7 +16,7 @@ use log4rs::{
     filter::threshold::ThresholdFilter,
 };
 
-use std::env::current_exe;
+use std::{env::current_exe, str::FromStr};
 
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
@@ -83,16 +83,8 @@ async fn control_grabbing(
 
 /// Engages the logger.
 fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
-    let log_level_envvar = option_env!("RUST_LOG");
-
-    let level = match log_level_envvar {
-        Some("trace") => log::LevelFilter::Trace,
-        Some("debug") => log::LevelFilter::Debug,
-        Some("info") => log::LevelFilter::Info,
-        Some("warn") => log::LevelFilter::Warn,
-        Some("error") => log::LevelFilter::Error,
-        _ => log::LevelFilter::Error,
-    };
+    let level = log::LevelFilter::from_str(option_env!("RUST_LOG").unwrap_or("error"))
+        .unwrap_or(log::LevelFilter::Error);
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
