@@ -437,7 +437,7 @@ export class Hid {
   static get CAPSLOCK(): HidInfo {
     return {
       HIDcode: 57,
-      category: HIDCategory.Alphanumeric,
+      category: HIDCategory.Modifier,
       displayString: 'Caps Lock',
       webKeyId: 'CapsLock',
       colSpan: 2
