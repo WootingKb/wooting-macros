@@ -83,8 +83,9 @@ async fn control_grabbing(
 
 /// Engages the logger.
 fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
-    let level = log::LevelFilter::from_str(option_env!("RUST_LOG").map_or("error", |x: &str| x))
-        .unwrap_or(log::LevelFilter::Error);
+    let level: log::LevelFilter = option_env!("RUST_LOG")
+        .and_then(|s| log::LevelFilter::from_str(s).ok())
+        .unwrap_or(log::LevelFilter::Info);
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
