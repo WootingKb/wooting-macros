@@ -85,7 +85,7 @@ async fn control_grabbing(
 fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
     let level: log::LevelFilter = option_env!("RUST_LOG")
         .and_then(|s| log::LevelFilter::from_str(s).ok())
-        .unwrap_or(log::LevelFilter::Info);
+        .unwrap_or(log::LevelFilter::Warn);
 
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
@@ -303,4 +303,35 @@ async fn main() {
     //     }
     //     _ => {}
     // });
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        let result = 2 + 2;
+        assert_eq!(result, 4);
+    }
+
+    #[test]
+    fn log_config_set() {
+        use log;
+        use std::str::FromStr;
+
+        let level_user_set: log::LevelFilter = Some("info")
+            .and_then(|s| log::LevelFilter::from_str(s).ok())
+            .unwrap_or(log::LevelFilter::Info);
+
+        let level_user_unset: log::LevelFilter = None
+            .and_then(|s| log::LevelFilter::from_str(s).ok())
+            .unwrap_or(log::LevelFilter::Warn);
+
+        let level_user_wrong: log::LevelFilter = Some("lol")
+            .and_then(|s| log::LevelFilter::from_str(s).ok())
+            .unwrap_or(log::LevelFilter::Warn);
+
+        assert_eq!(level_user_set, log::LevelFilter::Info);
+        assert_eq!(level_user_unset, log::LevelFilter::Warn);
+        assert_eq!(level_user_wrong, log::LevelFilter::Warn);
+    }
 }
