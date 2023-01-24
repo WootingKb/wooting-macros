@@ -58,6 +58,15 @@ export const checkIfModifierKey = (hid: number): boolean => {
   return HIDLookup.get(hid)?.category === HIDCategory.Modifier
 }
 
+export function checkIfKeyShouldContinueTriggerRecording(hid: number): boolean {
+  const hidEntry = HIDLookup.get(hid)
+  if (!hidEntry) return false
+  return (
+    hidEntry.category === HIDCategory.Modifier ||
+    hidEntry.allowAtStartOfTrigger === true
+  )
+}
+
 export const checkIfElementIsEditable = (element: ActionEventType): boolean => {
   if (element.type === 'SystemEventAction') {
     switch (element.data.type) {

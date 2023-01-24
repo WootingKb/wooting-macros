@@ -6,6 +6,7 @@ export interface HidInfo {
   displayString: string
   webKeyId: string
   colSpan?: number
+  allowAtStartOfTrigger?: boolean
 }
 
 export class Hid {
@@ -437,10 +438,11 @@ export class Hid {
   static get CAPSLOCK(): HidInfo {
     return {
       HIDcode: 57,
-      category: HIDCategory.Modifier,
+      category: HIDCategory.Alphanumeric,
       displayString: 'Caps Lock',
       webKeyId: 'CapsLock',
-      colSpan: 2
+      colSpan: 2,
+      allowAtStartOfTrigger: true
     }
   }
   static get F1(): HidInfo {
