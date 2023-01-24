@@ -90,7 +90,7 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
     let file_path = wooting_macro_backend::config::LogFilePath::file_name();
 
     // Build a stderr logger.
-    let stderr = ConsoleAppender::builder()
+    let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(
             "{d(%Y-%m-%d %H:%M:%S:%f)} | {h({({l}):5.5})} | {m}{n}",
         )))
@@ -113,12 +113,12 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
         .appender(
             Appender::builder()
                 .filter(Box::new(ThresholdFilter::new(level)))
-                .build("stderr", Box::new(stderr)),
+                .build("stdout", Box::new(stdout)),
         )
         .build(
             Root::builder()
                 .appender("logfile")
-                .appender("stderr")
+                .appender("stdout")
                 .build(level),
         )
         .unwrap();
