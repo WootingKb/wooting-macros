@@ -4,7 +4,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
-import { checkIfModifierKey } from '../constants/utils'
+import {
+  checkIfModifierKey,
+  checkIfKeyShouldContinueTriggerRecording
+} from '../constants/utils'
 
 export default function useRecordingTrigger(
   initialItems: MouseButton | number[]
@@ -55,7 +58,7 @@ export default function useRecordingTrigger(
         return newItems
       })
 
-      if (!checkIfModifierKey(HIDcode)) stopRecording()
+      if (!checkIfKeyShouldContinueTriggerRecording(HIDcode)) stopRecording()
     },
     [stopRecording]
   )
