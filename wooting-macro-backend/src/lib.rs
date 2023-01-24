@@ -12,7 +12,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
 
-use tokio::sync::mpsc::{Receiver, Sender};
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::RwLock;
 use tokio::task;
 
@@ -112,14 +112,13 @@ impl Macro {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
     /// Make sure to expand this if you implement new action types.
-    async fn execute(&self, send_channel: Sender<rdev::EventType>) {
+    async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
         for action in &self.sequence {
             match action {
                 ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .await
                             .unwrap();
                     }
                     key_press::KeyType::Up => {
@@ -127,13 +126,13 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            .await
+                            
                             .unwrap();
                     }
                     key_press::KeyType::DownUp => {
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .await
+                            
                             .unwrap();
 
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
@@ -142,7 +141,7 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            .await
+                            
                             .unwrap();
                     }
                 },
@@ -259,7 +258,7 @@ pub struct Collection {
 /// Executes a given macro (according to its type).
 ///
 /// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
-async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
+async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
             info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
@@ -283,7 +282,7 @@ async fn execute_macro(macros: Macro, channel: Sender<rdev::EventType>) {
 
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
-fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
+fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
@@ -307,7 +306,7 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
-    channel_sender: Sender<rdev::EventType>,
+    channel_sender: UnboundedSender<rdev::EventType>,
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
@@ -419,7 +418,7 @@ impl MacroBackend {
         let inner_is_listening = self.is_listening.clone();
 
         // Spawn the channels
-        let (schan_execute, rchan_execute) = tokio::sync::mpsc::channel(1);
+        let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
 
         //Create the executor
         thread::spawn(move || {

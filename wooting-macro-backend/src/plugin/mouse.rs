@@ -1,7 +1,7 @@
 use log::*;
 use rdev::EventType;
 use serde_repr;
-use tokio::sync::mpsc::Sender;
+use tokio::sync::mpsc::UnboundedSender;
 
 pub use rdev;
 
@@ -80,32 +80,28 @@ pub enum MousePressAction {
 
 impl MouseAction {
     /// Creates a new MouseAction from a rdev event and sends it to the channel for async execution.
-    pub async fn execute(&self, send_channel: Sender<EventType>) {
+    pub async fn execute(&self, send_channel: UnboundedSender<EventType>) {
         match &self {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {
                     send_channel
                         .send(rdev::EventType::ButtonPress(button.into()))
-                        .await
                         .unwrap();
                 }
                 MousePressAction::Up { button } => {
                     send_channel
                         .send(rdev::EventType::ButtonRelease(button.into()))
-                        .await
                         .unwrap();
                 }
                 MousePressAction::DownUp { button, duration } => {
                     send_channel
                         .send(rdev::EventType::ButtonPress(button.into()))
-                        .await
                         .unwrap();
 
                     tokio::time::sleep(time::Duration::from_millis(*duration as u64)).await;
 
                     send_channel
                         .send(rdev::EventType::ButtonRelease(button.into()))
-                        .await
                         .unwrap();
                 }
             },
@@ -119,7 +115,6 @@ impl MouseAction {
                         x: *x as f64,
                         y: *y as f64,
                     })
-                    .await
                     .unwrap();
             }
         }
