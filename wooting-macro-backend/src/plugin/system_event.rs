@@ -4,7 +4,7 @@ use fastrand;
 use log::*;
 use rdev;
 use std::vec;
-use tokio::sync::mpsc::Sender;
+use tokio::sync::mpsc::UnboundedSender;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 
@@ -42,7 +42,7 @@ pub enum SystemAction {
 impl SystemAction {
     /// Execute the keys themselves.
 
-    pub async fn execute(&self, send_channel: Sender<rdev::EventType>) {
+    pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
         match &self {
             SystemAction::Open { action } => match action {
                 DirectoryAction::Directory { data } => {
