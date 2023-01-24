@@ -132,8 +132,8 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    //This is here for possible future logging configuration from the frontend
-    let _log_config_var = engage_logger().unwrap();
+    //This is here for possible future logging configuration from the frontend. Use result as a variable for on-the-fly changes.
+    engage_logger().unwrap();
 
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
