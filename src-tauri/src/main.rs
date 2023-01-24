@@ -94,7 +94,7 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
         .encoder(Box::new(PatternEncoder::new(
             "{d(%Y-%m-%d %H:%M:%S:%f)} | {h({({l}):5.5})} | {m}{n}",
         )))
-        .target(Target::Stderr)
+        .target(Target::Stdout)
         .build();
 
     // Logging to log file.
