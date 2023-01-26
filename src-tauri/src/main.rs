@@ -94,18 +94,15 @@ async fn main() {
 
     // Begin the main event loop. This loop cannot run on another thread on MacOS.
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let show = CustomMenuItem::new("show".to_string(), "Show");
+    let hide_show = CustomMenuItem::new("hide_show".to_string(), "Hide");
 
     let tray_menu = SystemTrayMenu::new()
-        .add_item(hide)
+        .add_item(hide_show)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit)
-        .add_item(show);
+        .add_item(quit);
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
-    // let app =
     tauri::Builder::default()
         // This is where you pass in your commands
         .manage(backend)
@@ -156,26 +153,42 @@ async fn main() {
                 // and move it to another function or thread
                 let item_handle = app.tray_handle().get_item(&id);
                 match id.as_str() {
-                    "hide" => {
+                    "hide_show" => {
                         let window = app.get_window("main").unwrap();
-                        window.hide().unwrap();
+
                         // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
-                        item_handle.set_title("Show").unwrap();
+                        match window.is_visible().unwrap() {
+                            true => {
+                                window.hide().unwrap();
+                                item_handle.set_title("Show").unwrap()
+                            }
+                            false => {
+                                window.show().unwrap();
+                                item_handle.set_title("Hide").unwrap()
+                            }
+                        }
+
+                        window.clone().on_window_event(move |window_event| {
+                            if let WindowEvent::CloseRequested { .. } = window_event {
+                                window.hide().unwrap();
+                                item_handle.set_title("Show").unwrap();
+                            }
+                        })
                     }
                     "quit" => {
                         app.exit(0);
                     }
-                    "show" => {
-                        let window = app.get_window("main").unwrap();
-                        window.show().unwrap();
-                        // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
-                    }
+
                     _ => {}
                 }
             }
             SystemTrayEvent::LeftClick { .. } => {
                 let window = app.get_window("main").unwrap();
                 window.show().unwrap();
+                app.tray_handle()
+                    .get_item("hide_show")
+                    .set_title("Hide")
+                    .unwrap();
             }
             _ => {}
         })
