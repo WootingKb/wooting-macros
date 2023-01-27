@@ -154,24 +154,24 @@ async fn main() {
                 let item_handle = app.tray_handle().get_item(&id);
                 match id.as_str() {
                     "hide_show" => {
-                        let window = app.get_window("main").unwrap();
+                        let window = app.get_window("main").expect("Couldn't fetch window");;
 
                         // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
-                        match window.is_visible().unwrap() {
+                        match window.is_visible().expect("Couldn't get window visibility") {
                             true => {
-                                window.hide().unwrap();
-                                item_handle.set_title("Show").unwrap()
+                                window.hide().expect("Couldn't hide window");
+                                item_handle.set_title("Show").expect("Couldn't change system tray item to show")
                             }
                             false => {
-                                window.show().unwrap();
-                                item_handle.set_title("Hide").unwrap()
+                                window.show().expect("Couldn't show window");
+                                item_handle.set_title("Hide").expect("Couldn't change system tray item to hide")
                             }
                         }
 
                         window.clone().on_window_event(move |window_event| {
                             if let WindowEvent::CloseRequested { .. } = window_event {
-                                window.hide().unwrap();
-                                item_handle.set_title("Show").unwrap();
+                                window.hide().expect("Couldn't hide window");
+                                item_handle.set_title("Show").expect("Couldn't change system tray item to show");
                             }
                         })
                     }
