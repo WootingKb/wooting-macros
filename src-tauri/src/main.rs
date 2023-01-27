@@ -133,7 +133,7 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
 /// (will crash on key grab/listen)
 async fn main() {
     //This is here for possible future logging configuration from the frontend. Use result as a variable for on-the-fly changes.
-    engage_logger().unwrap();
+    engage_logger().expect("Failed to engage logger");
 
     #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
