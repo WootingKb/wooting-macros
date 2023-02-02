@@ -359,7 +359,7 @@ fn check_macro_execution_efficiently(
             TriggerEventType::MouseEvent { data } => {
                 let event_to_check: Vec<u32> = vec![data.into()];
 
-                debug!(
+                trace!(
                     "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
                     event_to_check
                 );
@@ -545,7 +545,7 @@ impl MacroBackend {
                                 rdev::EventType::Wheel { .. } => Some(event),
                             }
                         } else {
-                            debug!(
+                            trace!(
                                 "Passing event through... macro recording disabled: {:?}",
                                 event
                             );
