@@ -177,7 +177,6 @@ impl Default for LogFilePath {
     }
 }
 
-
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct LogArchivePath {}
