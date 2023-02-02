@@ -320,7 +320,7 @@ fn check_macro_execution_efficiently(
                 match data.len() {
                     1 => {
                         if pressed_events == *data {
-                            debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
+                            info!("MATCHED MACRO singlekey: {:#?}", pressed_events);
 
                             // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
@@ -340,7 +340,7 @@ fn check_macro_execution_efficiently(
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
                             && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
-                            debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
+                            info!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
                             // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
