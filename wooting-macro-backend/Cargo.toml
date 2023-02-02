@@ -28,10 +28,11 @@ serde_repr = "0.1"
 fastrand = "1.8"
 dirs = "4.0"
 itertools = "0.10"
-anyhow = "1.0.66"
-log = "0.4.17"
-rayon = "1.6.1"
-log4rs = "1.2.0"
+anyhow = "1.0"
+log = "0.4"
+rayon = "1.6"
+log4rs = "1.2"
+log-panics = {version = "2.1", features = ["backtrace", "with-backtrace"]}
 
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]

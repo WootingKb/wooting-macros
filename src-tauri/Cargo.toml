@@ -22,6 +22,7 @@ wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.4"
 log = "0.4"
 log4rs = {version = "1.2", features= ["file_appender", "console_appender","rolling_file_appender", "gzip"] }
+log-panics = {version = "2.1", features = ["backtrace", "with-backtrace"] }
 
 
 
