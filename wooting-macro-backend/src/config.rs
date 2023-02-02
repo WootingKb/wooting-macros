@@ -167,22 +167,12 @@ pub struct ApplicationConfig {
     pub minimize_to_tray: bool,
 }
 
-#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Default)]
 #[serde(rename_all = "PascalCase")]
 pub struct LogFilePath {}
 
-impl Default for LogFilePath {
-    fn default() -> Self {
-        LogFilePath {}
-    }
-}
-
-#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Default)]
 #[serde(rename_all = "PascalCase")]
 pub struct LogArchivePath {}
 
-impl Default for LogArchivePath {
-    fn default() -> Self {
-        LogArchivePath {}
-    }
-}
+
