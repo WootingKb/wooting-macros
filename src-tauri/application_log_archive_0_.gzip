@@ -1,0 +1,884 @@
+2023-02-02 15:36:51:295760000 | DEBUG | Key state: []
+2023-02-02 15:36:52:075476200 | DEBUG | Button pressed: Left
+2023-02-02 15:36:52:075753600 | DEBUG | Pressed button: []
+2023-02-02 15:36:52:075964500 | DEBUG | Got data: []
+2023-02-02 15:36:52:076370800 | DEBUG | Got keys: [257]
+2023-02-02 15:36:52:144619200 | DEBUG | Button released: Left
+2023-02-02 15:36:52:173082300 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:52:173365900 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:52:173533800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:52:173699900 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:52:237010800 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:52:237308200 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:52:237607200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:52:237849700 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:52:293458400 | DEBUG | Key state: [KeyC]
+2023-02-02 15:36:52:312477300 | DEBUG | Key state: []
+2023-02-02 15:36:52:433891500 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:52:434125200 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:52:434280600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:52:434419400 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:52:525889500 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:52:526125300 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:52:526353000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:52:526553500 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:52:588464400 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:36:52:615459300 | DEBUG | Key state: []
+2023-02-02 15:36:52:668816500 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:52:669043800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:52:669203900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:52:669342500 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:52:712874900 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:52:713091400 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:52:713315400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:52:713531500 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:52:765459300 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:36:52:854912200 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:52:855163500 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:52:855400500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:52:855600900 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:52:910462200 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:36:53:007064200 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:53:007358300 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:53:007617300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:53:007849000 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:53:048449700 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:36:53:110456200 | DEBUG | Key state: []
+2023-02-02 15:36:53:350943700 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:53:351221100 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:53:351398700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:53:351572300 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:53:407901300 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:53:408129500 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:53:408373600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:53:408581300 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:53:456426200 | DEBUG | Key state: [KeyC]
+2023-02-02 15:36:53:467463500 | DEBUG | Key state: []
+2023-02-02 15:36:53:664873400 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:53:665152000 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:53:665319500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:53:665474000 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:53:742885300 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:53:743111100 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:53:743343200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:53:743540900 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:53:792481900 | DEBUG | Key state: [KeyC]
+2023-02-02 15:36:53:829466100 | DEBUG | Key state: []
+2023-02-02 15:36:54:337507700 | DEBUG | Button pressed: Left
+2023-02-02 15:36:54:337746700 | DEBUG | Pressed button: []
+2023-02-02 15:36:54:337931100 | DEBUG | Got data: []
+2023-02-02 15:36:54:338101300 | DEBUG | Got keys: [257]
+2023-02-02 15:36:54:400546800 | DEBUG | Button released: Left
+2023-02-02 15:36:54:447938900 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:54:448216600 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:54:448423300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:54:448602900 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:54:511863200 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:54:512091100 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:54:512319600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:54:512524100 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:36:54:564462000 | DEBUG | Key state: [KeyC]
+2023-02-02 15:36:54:587471900 | DEBUG | Key state: []
+2023-02-02 15:36:54:766486000 | DEBUG | Button pressed: Left
+2023-02-02 15:36:54:766730600 | DEBUG | Pressed button: []
+2023-02-02 15:36:54:766899500 | DEBUG | Got data: []
+2023-02-02 15:36:54:767013400 | DEBUG | Got keys: [257]
+2023-02-02 15:36:54:838545700 | DEBUG | Button released: Left
+2023-02-02 15:36:54:892017800 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:36:54:892247000 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:36:54:892404800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:36:54:892546500 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:36:54:946908800 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:36:54:947136400 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:36:54:947364000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:36:54:947581400 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:00:356623800 | INFO  | Running the macro backend
+2023-02-02 15:37:00:778917300 | INFO  | Autostart is already removed, finished checking.
+2023-02-02 15:37:00:781224300 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:37:00:789913600 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:37:00:848871600 | DEBUG | GET /WootingKb/wooting-macros/releases/latest/download/latest.json HTTP/1.1
+2023-02-02 15:37:01:012775200 | DEBUG | creating a length body reader
+2023-02-02 15:37:01:012991100 | DEBUG | creating plain reader
+2023-02-02 15:37:01:013124200 | DEBUG | status code 302
+2023-02-02 15:37:01:013321500 | DEBUG | redirected to https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json giving url https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json
+2023-02-02 15:37:01:013718500 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:37:01:014083500 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:37:01:059721000 | DEBUG | GET /WootingKb/wooting-macros/releases/download/v1.0.0/latest.json HTTP/1.1
+2023-02-02 15:37:01:073415900 | DEBUG | creating a length body reader
+2023-02-02 15:37:01:073608900 | DEBUG | creating plain reader
+2023-02-02 15:37:01:073768500 | DEBUG | status code 302
+2023-02-02 15:37:01:074013000 | DEBUG | redirected to https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143518Z&X-Amz-Expires=300&X-Amz-Signature=adb3e1b0cdbb14121e9a11da0c3b17114fa4c03745b1419795dfab3b724b43e9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream giving url https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143518Z&X-Amz-Expires=300&X-Amz-Signature=adb3e1b0cdbb14121e9a11da0c3b17114fa4c03745b1419795dfab3b724b43e9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream
+2023-02-02 15:37:01:074773800 | DEBUG | trying to connect to objects.githubusercontent.com:443
+2023-02-02 15:37:01:075621900 | DEBUG | trying to connect to 185.199.108.133:443
+2023-02-02 15:37:01:085924900 | DEBUG | successfully connected to 185.199.108.133:443, took 10ms
+2023-02-02 15:37:01:233701300 | DEBUG | GET /github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143518Z&X-Amz-Expires=300&X-Amz-Signature=adb3e1b0cdbb14121e9a11da0c3b17114fa4c03745b1419795dfab3b724b43e9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream HTTP/1.1
+2023-02-02 15:37:01:360771000 | DEBUG | creating a length body reader
+2023-02-02 15:37:01:361680800 | DEBUG | creating plain reader
+2023-02-02 15:37:01:362410100 | DEBUG | status code 200
+2023-02-02 15:37:04:969663500 | DEBUG | Button pressed: Left
+2023-02-02 15:37:04:970912500 | DEBUG | Pressed button: []
+2023-02-02 15:37:04:971847300 | DEBUG | Got data: []
+2023-02-02 15:37:04:972617000 | DEBUG | Got keys: [257]
+2023-02-02 15:37:05:017771800 | DEBUG | Button released: Left
+2023-02-02 15:37:05:342202400 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:37:05:343399800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:37:05:345021400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:37:05:345840900 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:37:05:450982900 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:05:451830300 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:05:452674800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:05:453400300 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:05:535583200 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:37:05:649161300 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:05:650142500 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:05:651072800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:05:651850100 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:05:716639600 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:37:05:802050400 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:05:802941800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:05:803730100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:05:804489800 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:05:875637200 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:37:05:962021500 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:05:962897800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:05:963788300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:05:964635800 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:06:017669500 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:37:06:104193500 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:06:105039200 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:06:105912100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:06:106769100 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:06:156623500 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:37:06:246022400 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:06:246886100 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:06:247705000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:06:248579200 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:06:319630400 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:37:06:356621600 | DEBUG | Key state: []
+2023-02-02 15:37:06:421654800 | DEBUG | Button pressed: Left
+2023-02-02 15:37:06:422486500 | DEBUG | Pressed button: []
+2023-02-02 15:37:06:423221300 | DEBUG | Got data: []
+2023-02-02 15:37:06:424047000 | DEBUG | Got keys: [257]
+2023-02-02 15:37:06:481680600 | DEBUG | Button released: Left
+2023-02-02 15:37:06:513072000 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:37:06:513980600 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:37:06:514765800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:37:06:515523000 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:37:06:591151300 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:06:592061700 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:06:592889500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:06:593667200 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:37:27:775022400 | INFO  | Running the macro backend
+2023-02-02 15:37:28:223096200 | INFO  | Autostart is already removed, finished checking.
+2023-02-02 15:37:28:226003200 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:37:28:234583400 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:37:28:295003700 | DEBUG | GET /WootingKb/wooting-macros/releases/latest/download/latest.json HTTP/1.1
+2023-02-02 15:37:28:312994700 | DEBUG | creating a length body reader
+2023-02-02 15:37:28:313953400 | DEBUG | creating plain reader
+2023-02-02 15:37:28:314789100 | DEBUG | status code 302
+2023-02-02 15:37:28:315714800 | DEBUG | redirected to https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json giving url https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json
+2023-02-02 15:37:28:317033900 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:37:28:318317400 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:37:28:362346700 | DEBUG | GET /WootingKb/wooting-macros/releases/download/v1.0.0/latest.json HTTP/1.1
+2023-02-02 15:37:28:379420700 | DEBUG | creating a length body reader
+2023-02-02 15:37:28:380299600 | DEBUG | creating plain reader
+2023-02-02 15:37:28:381062400 | DEBUG | status code 302
+2023-02-02 15:37:28:381894200 | DEBUG | redirected to https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143518Z&X-Amz-Expires=300&X-Amz-Signature=adb3e1b0cdbb14121e9a11da0c3b17114fa4c03745b1419795dfab3b724b43e9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream giving url https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143518Z&X-Amz-Expires=300&X-Amz-Signature=adb3e1b0cdbb14121e9a11da0c3b17114fa4c03745b1419795dfab3b724b43e9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream
+2023-02-02 15:37:28:383158400 | DEBUG | trying to connect to objects.githubusercontent.com:443
+2023-02-02 15:37:28:384366000 | DEBUG | trying to connect to 185.199.108.133:443
+2023-02-02 15:37:28:400079800 | DEBUG | successfully connected to 185.199.108.133:443, took 15ms
+2023-02-02 15:37:28:570890400 | DEBUG | GET /github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143518Z&X-Amz-Expires=300&X-Amz-Signature=adb3e1b0cdbb14121e9a11da0c3b17114fa4c03745b1419795dfab3b724b43e9&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream HTTP/1.1
+2023-02-02 15:37:28:692473200 | DEBUG | creating a length body reader
+2023-02-02 15:37:28:693369700 | DEBUG | creating plain reader
+2023-02-02 15:37:28:694110400 | DEBUG | status code 200
+2023-02-02 15:37:36:694764400 | DEBUG | Button pressed: Left
+2023-02-02 15:37:36:695755000 | DEBUG | Pressed button: []
+2023-02-02 15:37:36:696563000 | DEBUG | Got data: []
+2023-02-02 15:37:36:697362100 | DEBUG | Got keys: [257]
+2023-02-02 15:37:36:763820800 | DEBUG | Button released: Left
+2023-02-02 15:37:44:508593000 | INFO  | Success writing a new file
+2023-02-02 15:37:44:510289500 | INFO  | Success writing a new file
+2023-02-02 15:37:48:544772600 | DEBUG | Button pressed: Left
+2023-02-02 15:37:48:545712600 | DEBUG | Pressed button: []
+2023-02-02 15:37:48:546567000 | DEBUG | Got data: []
+2023-02-02 15:37:48:547377800 | DEBUG | Got keys: [257]
+2023-02-02 15:37:48:586788700 | DEBUG | Button released: Left
+2023-02-02 15:37:48:948326100 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:37:48:949553900 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:37:48:951033800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:37:48:951784600 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:37:49:051852700 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:37:49:052859900 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:37:49:053752200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:37:49:054618500 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:38:11:777386100 | INFO  | Running the macro backend
+2023-02-02 15:38:12:218409600 | INFO  | Autostart is already removed, finished checking.
+2023-02-02 15:38:12:220530700 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:38:12:232644500 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:38:12:291805600 | DEBUG | GET /WootingKb/wooting-macros/releases/latest/download/latest.json HTTP/1.1
+2023-02-02 15:38:12:314713400 | DEBUG | creating a length body reader
+2023-02-02 15:38:12:315545200 | DEBUG | creating plain reader
+2023-02-02 15:38:12:316259800 | DEBUG | status code 302
+2023-02-02 15:38:12:317053500 | DEBUG | redirected to https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json giving url https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json
+2023-02-02 15:38:12:318015300 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:38:12:318977900 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:38:12:361391500 | DEBUG | GET /WootingKb/wooting-macros/releases/download/v1.0.0/latest.json HTTP/1.1
+2023-02-02 15:38:12:376417000 | DEBUG | creating a length body reader
+2023-02-02 15:38:12:377268900 | DEBUG | creating plain reader
+2023-02-02 15:38:12:377898300 | DEBUG | status code 302
+2023-02-02 15:38:12:378691600 | DEBUG | redirected to https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143726Z&X-Amz-Expires=300&X-Amz-Signature=a8f0960c1c7d9028ba1534ec0f87603bb77b8bffc55ac8efe2a12460b04d68da&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream giving url https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143726Z&X-Amz-Expires=300&X-Amz-Signature=a8f0960c1c7d9028ba1534ec0f87603bb77b8bffc55ac8efe2a12460b04d68da&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream
+2023-02-02 15:38:12:380050000 | DEBUG | trying to connect to objects.githubusercontent.com:443
+2023-02-02 15:38:12:381380400 | DEBUG | trying to connect to 185.199.108.133:443
+2023-02-02 15:38:12:392778500 | DEBUG | successfully connected to 185.199.108.133:443, took 11ms
+2023-02-02 15:38:12:549050000 | DEBUG | GET /github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T143726Z&X-Amz-Expires=300&X-Amz-Signature=a8f0960c1c7d9028ba1534ec0f87603bb77b8bffc55ac8efe2a12460b04d68da&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream HTTP/1.1
+2023-02-02 15:38:12:670538800 | DEBUG | creating a length body reader
+2023-02-02 15:38:12:671472500 | DEBUG | creating plain reader
+2023-02-02 15:38:12:672233100 | DEBUG | status code 200
+2023-02-02 15:38:14:305783600 | DEBUG | Button pressed: Left
+2023-02-02 15:38:14:306908300 | DEBUG | Pressed button: []
+2023-02-02 15:38:14:307811100 | DEBUG | Got data: []
+2023-02-02 15:38:14:308595500 | DEBUG | Got keys: [257]
+2023-02-02 15:38:14:338827600 | DEBUG | Button released: Left
+2023-02-02 15:38:14:491431600 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:38:14:492438000 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:38:14:493851400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:38:14:495052300 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:38:14:559363700 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:38:14:560507600 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:38:14:561472900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:38:14:562326600 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:31:074958200 | INFO  | Running the macro backend
+2023-02-02 15:41:31:471645100 | INFO  | Autostart is already removed, finished checking.
+2023-02-02 15:41:31:474051600 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:41:31:479651800 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:41:31:543385100 | DEBUG | GET /WootingKb/wooting-macros/releases/latest/download/latest.json HTTP/1.1
+2023-02-02 15:41:31:700611700 | DEBUG | creating a length body reader
+2023-02-02 15:41:31:701468000 | DEBUG | creating plain reader
+2023-02-02 15:41:31:702187300 | DEBUG | status code 302
+2023-02-02 15:41:31:703054100 | DEBUG | redirected to https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json giving url https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json
+2023-02-02 15:41:31:704106300 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:41:31:705109100 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:41:31:752745500 | DEBUG | GET /WootingKb/wooting-macros/releases/download/v1.0.0/latest.json HTTP/1.1
+2023-02-02 15:41:31:950304600 | DEBUG | creating a length body reader
+2023-02-02 15:41:31:951212000 | DEBUG | creating plain reader
+2023-02-02 15:41:31:951996100 | DEBUG | status code 302
+2023-02-02 15:41:31:952820000 | DEBUG | redirected to https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T144130Z&X-Amz-Expires=300&X-Amz-Signature=671e7c53b7dd9a287712bc9131d21863f6af6fa0399112dee2742e962c463c06&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream giving url https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T144130Z&X-Amz-Expires=300&X-Amz-Signature=671e7c53b7dd9a287712bc9131d21863f6af6fa0399112dee2742e962c463c06&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream
+2023-02-02 15:41:31:953994100 | DEBUG | trying to connect to objects.githubusercontent.com:443
+2023-02-02 15:41:31:955235200 | DEBUG | trying to connect to 185.199.108.133:443
+2023-02-02 15:41:31:965365100 | DEBUG | successfully connected to 185.199.108.133:443, took 10ms
+2023-02-02 15:41:32:101870100 | DEBUG | GET /github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T144130Z&X-Amz-Expires=300&X-Amz-Signature=671e7c53b7dd9a287712bc9131d21863f6af6fa0399112dee2742e962c463c06&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream HTTP/1.1
+2023-02-02 15:41:32:329295900 | DEBUG | creating a length body reader
+2023-02-02 15:41:32:330103300 | DEBUG | creating plain reader
+2023-02-02 15:41:32:330943800 | DEBUG | status code 200
+2023-02-02 15:41:35:018009400 | DEBUG | Button pressed: Left
+2023-02-02 15:41:35:018961600 | DEBUG | Pressed button: []
+2023-02-02 15:41:35:019704500 | DEBUG | Got data: []
+2023-02-02 15:41:35:020462300 | DEBUG | Got keys: [257]
+2023-02-02 15:41:35:087195700 | DEBUG | Button released: Left
+2023-02-02 15:41:35:278520600 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:41:35:279568400 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:41:35:280948100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:41:35:281720000 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:41:35:397794400 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:35:398863000 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:35:399739600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:35:400564400 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:35:465062300 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:41:35:581576000 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:35:582662800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:35:583545800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:35:584363300 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:35:618975700 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:41:35:732684000 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:35:733761300 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:35:734601400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:35:735398300 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:35:777975000 | DEBUG | Key state: [ControlLeft]
+2023-02-02 15:41:35:870681400 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:35:871654200 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:35:872584900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:35:873371000 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:35:907999500 | DEBUG | Key state: [KeyC]
+2023-02-02 15:41:35:937962800 | DEBUG | Key state: []
+2023-02-02 15:41:36:029869200 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:41:36:030856800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:41:36:031610100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:41:36:032421900 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:41:36:118746500 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:36:119743500 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:36:120635100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:36:121445400 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:36:210006300 | DEBUG | Key state: [KeyC]
+2023-02-02 15:41:36:211460700 | DEBUG | Key state: []
+2023-02-02 15:41:36:371615100 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:41:36:372612700 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:41:36:373442300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:41:36:374341900 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:41:36:466602500 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:36:467476300 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:36:468359300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:36:469272500 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:41:36:470162700 | DEBUG | Button pressed: Left
+2023-02-02 15:41:36:470869000 | DEBUG | Pressed button: []
+2023-02-02 15:41:36:471541700 | DEBUG | Got data: []
+2023-02-02 15:41:36:472233800 | DEBUG | Got keys: [257]
+2023-02-02 15:41:36:532970700 | DEBUG | Key state: [KeyC]
+2023-02-02 15:41:36:542171300 | DEBUG | Button released: Left
+2023-02-02 15:41:36:570012200 | DEBUG | Key state: []
+2023-02-02 15:41:36:941454600 | DEBUG | Button pressed: Left
+2023-02-02 15:41:36:942325500 | DEBUG | Pressed button: []
+2023-02-02 15:41:36:943190600 | DEBUG | Got data: []
+2023-02-02 15:41:36:943950700 | DEBUG | Got keys: [257]
+2023-02-02 15:41:37:016010900 | DEBUG | Button released: Left
+2023-02-02 15:41:37:046655100 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:41:37:047589100 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:41:37:048328500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:41:37:049113000 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:41:37:080644400 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:41:37:081655600 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:41:37:083037500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:41:37:084036400 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:42:22:872128900 | ERROR | ..\application_log.log\-archive-{}.gz
+2023-02-02 15:42:22:892110400 | INFO  | Running the macro backend
+2023-02-02 15:42:23:298192600 | INFO  | Autostart is already removed, finished checking.
+2023-02-02 15:42:23:300529500 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:42:23:307067400 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:42:23:367569200 | DEBUG | GET /WootingKb/wooting-macros/releases/latest/download/latest.json HTTP/1.1
+2023-02-02 15:42:23:512667900 | DEBUG | creating a length body reader
+2023-02-02 15:42:23:513453700 | DEBUG | creating plain reader
+2023-02-02 15:42:23:514168000 | DEBUG | status code 302
+2023-02-02 15:42:23:514891100 | DEBUG | redirected to https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json giving url https://github.com/WootingKb/wooting-macros/releases/download/v1.0.0/latest.json
+2023-02-02 15:42:23:515832200 | DEBUG | trying to connect to github.com:443
+2023-02-02 15:42:23:522145600 | DEBUG | DNS returned only one address, using fast path
+2023-02-02 15:42:23:567736000 | DEBUG | GET /WootingKb/wooting-macros/releases/download/v1.0.0/latest.json HTTP/1.1
+2023-02-02 15:42:23:582327600 | DEBUG | creating a length body reader
+2023-02-02 15:42:23:583219600 | DEBUG | creating plain reader
+2023-02-02 15:42:23:583977400 | DEBUG | status code 302
+2023-02-02 15:42:23:584826800 | DEBUG | redirected to https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T144130Z&X-Amz-Expires=300&X-Amz-Signature=671e7c53b7dd9a287712bc9131d21863f6af6fa0399112dee2742e962c463c06&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream giving url https://objects.githubusercontent.com/github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T144130Z&X-Amz-Expires=300&X-Amz-Signature=671e7c53b7dd9a287712bc9131d21863f6af6fa0399112dee2742e962c463c06&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream
+2023-02-02 15:42:23:586246400 | DEBUG | trying to connect to objects.githubusercontent.com:443
+2023-02-02 15:42:23:589499400 | DEBUG | trying to connect to 185.199.108.133:443
+2023-02-02 15:42:23:606189100 | DEBUG | successfully connected to 185.199.108.133:443, took 17ms
+2023-02-02 15:42:23:756424100 | DEBUG | GET /github-production-release-asset-2e65be/551503230/44f5a800-ae60-431f-b926-36adaec5462e?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230202T144130Z&X-Amz-Expires=300&X-Amz-Signature=671e7c53b7dd9a287712bc9131d21863f6af6fa0399112dee2742e962c463c06&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=551503230&response-content-disposition=attachment%3B%20filename%3Dlatest.json&response-content-type=application%2Foctet-stream HTTP/1.1
+2023-02-02 15:42:23:877139300 | DEBUG | creating a length body reader
+2023-02-02 15:42:23:878070000 | DEBUG | creating plain reader
+2023-02-02 15:42:23:878839800 | DEBUG | status code 200
+2023-02-02 15:42:24:086071100 | DEBUG | Button pressed: Left
+2023-02-02 15:42:24:087032100 | DEBUG | Pressed button: []
+2023-02-02 15:42:24:087845700 | DEBUG | Got data: []
+2023-02-02 15:42:24:088647600 | DEBUG | Got keys: [257]
+2023-02-02 15:42:24:158077600 | DEBUG | Button released: Left
+2023-02-02 15:42:38:007354400 | INFO  | Success writing a new file
+2023-02-02 15:42:38:009447200 | INFO  | Success writing a new file
+2023-02-02 15:42:52:958101400 | DEBUG | Button pressed: Left
+2023-02-02 15:42:52:959079000 | DEBUG | Pressed button: []
+2023-02-02 15:42:52:959858300 | DEBUG | Got data: []
+2023-02-02 15:42:52:960736300 | DEBUG | Got keys: [257]
+2023-02-02 15:42:53:606152400 | DEBUG | Button released: Left
+2023-02-02 15:42:54:641089500 | DEBUG | Button pressed: Left
+2023-02-02 15:42:54:642039600 | DEBUG | Pressed button: []
+2023-02-02 15:42:54:643049200 | DEBUG | Got data: []
+2023-02-02 15:42:54:643894800 | DEBUG | Got keys: [257]
+2023-02-02 15:42:54:701213400 | DEBUG | Button released: Left
+2023-02-02 15:42:55:061196300 | DEBUG | Button pressed: Left
+2023-02-02 15:42:55:062140800 | DEBUG | Pressed button: []
+2023-02-02 15:42:55:063052600 | DEBUG | Got data: []
+2023-02-02 15:42:55:063765500 | DEBUG | Got keys: [257]
+2023-02-02 15:42:56:483152100 | DEBUG | Button released: Left
+2023-02-02 15:42:56:714121400 | DEBUG | Button pressed: Left
+2023-02-02 15:42:56:715106500 | DEBUG | Pressed button: []
+2023-02-02 15:42:56:715968700 | DEBUG | Got data: []
+2023-02-02 15:42:56:716705400 | DEBUG | Got keys: [257]
+2023-02-02 15:42:56:771196600 | DEBUG | Button released: Left
+2023-02-02 15:42:57:446117900 | DEBUG | Button pressed: Left
+2023-02-02 15:42:57:447082900 | DEBUG | Pressed button: []
+2023-02-02 15:42:57:447909100 | DEBUG | Got data: []
+2023-02-02 15:42:57:448766600 | DEBUG | Got keys: [257]
+2023-02-02 15:42:59:348160600 | DEBUG | Button released: Left
+2023-02-02 15:42:59:407684300 | DEBUG | Key Pressed RAW: Backspace
+2023-02-02 15:42:59:408844700 | DEBUG | Pressed Keys CONVERTED TO HID:  [42]
+2023-02-02 15:42:59:410345900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [Backspace]
+2023-02-02 15:42:59:411253100 | DEBUG | Pressed Keys: [Backspace]
+2023-02-02 15:42:59:485180900 | DEBUG | Key state: []
+2023-02-02 15:43:19:331637200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:19:332649100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:19:333523500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:19:334342100 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:19:437896000 | DEBUG | Key Pressed RAW: Quote
+2023-02-02 15:43:19:438888100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 52]
+2023-02-02 15:43:19:439770900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, Quote]
+2023-02-02 15:43:19:440563600 | DEBUG | Pressed Keys: [ShiftLeft, Quote]
+2023-02-02 15:43:19:505164900 | DEBUG | Key state: [ShiftLeft]
+2023-02-02 15:43:19:508060600 | DEBUG | Key state: []
+2023-02-02 15:43:19:648685800 | DEBUG | Key Pressed RAW: KeyA
+2023-02-02 15:43:19:649686300 | DEBUG | Pressed Keys CONVERTED TO HID:  [4]
+2023-02-02 15:43:19:650519400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyA]
+2023-02-02 15:43:19:651277900 | DEBUG | Pressed Keys: [KeyA]
+2023-02-02 15:43:19:754095900 | DEBUG | Key state: []
+2023-02-02 15:43:19:830724500 | DEBUG | Key Pressed RAW: KeyP
+2023-02-02 15:43:19:831734200 | DEBUG | Pressed Keys CONVERTED TO HID:  [19]
+2023-02-02 15:43:19:832589000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyP]
+2023-02-02 15:43:19:833405100 | DEBUG | Pressed Keys: [KeyP]
+2023-02-02 15:43:19:890196600 | DEBUG | Key state: []
+2023-02-02 15:43:19:978804700 | DEBUG | Key Pressed RAW: KeyP
+2023-02-02 15:43:19:979845600 | DEBUG | Pressed Keys CONVERTED TO HID:  [19]
+2023-02-02 15:43:19:980741100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyP]
+2023-02-02 15:43:19:981573300 | DEBUG | Pressed Keys: [KeyP]
+2023-02-02 15:43:20:027672400 | DEBUG | Key Pressed RAW: KeyL
+2023-02-02 15:43:20:028681400 | DEBUG | Pressed Keys CONVERTED TO HID:  [19, 15]
+2023-02-02 15:43:20:029597500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyP, KeyL]
+2023-02-02 15:43:20:030525300 | DEBUG | Pressed Keys: [KeyP, KeyL]
+2023-02-02 15:43:20:047180700 | DEBUG | Key state: [KeyL]
+2023-02-02 15:43:20:136163000 | DEBUG | Key state: []
+2023-02-02 15:43:20:238798700 | DEBUG | Key Pressed RAW: KeyI
+2023-02-02 15:43:20:239716400 | DEBUG | Pressed Keys CONVERTED TO HID:  [12]
+2023-02-02 15:43:20:240536600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyI]
+2023-02-02 15:43:20:241368700 | DEBUG | Pressed Keys: [KeyI]
+2023-02-02 15:43:20:277673500 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:43:20:278648700 | DEBUG | Pressed Keys CONVERTED TO HID:  [12, 6]
+2023-02-02 15:43:20:279677000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyI, KeyC]
+2023-02-02 15:43:20:280484600 | DEBUG | Pressed Keys: [KeyI, KeyC]
+2023-02-02 15:43:20:333145400 | DEBUG | Key state: [KeyC]
+2023-02-02 15:43:20:398173700 | DEBUG | Key state: []
+2023-02-02 15:43:20:684659000 | DEBUG | Key Pressed RAW: KeyA
+2023-02-02 15:43:20:685559900 | DEBUG | Pressed Keys CONVERTED TO HID:  [4]
+2023-02-02 15:43:20:686342000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyA]
+2023-02-02 15:43:20:687190000 | DEBUG | Pressed Keys: [KeyA]
+2023-02-02 15:43:20:758209900 | DEBUG | Key state: []
+2023-02-02 15:43:20:815716800 | DEBUG | Key Pressed RAW: KeyT
+2023-02-02 15:43:20:816689600 | DEBUG | Pressed Keys CONVERTED TO HID:  [23]
+2023-02-02 15:43:20:817623100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyT]
+2023-02-02 15:43:20:818461600 | DEBUG | Pressed Keys: [KeyT]
+2023-02-02 15:43:20:893713900 | DEBUG | Key Pressed RAW: KeyI
+2023-02-02 15:43:20:894746800 | DEBUG | Pressed Keys CONVERTED TO HID:  [23, 12]
+2023-02-02 15:43:20:895732400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyT, KeyI]
+2023-02-02 15:43:20:896602200 | DEBUG | Pressed Keys: [KeyT, KeyI]
+2023-02-02 15:43:20:921386600 | DEBUG | Key state: [KeyI]
+2023-02-02 15:43:20:969688000 | DEBUG | Key Pressed RAW: KeyO
+2023-02-02 15:43:20:970629800 | DEBUG | Pressed Keys CONVERTED TO HID:  [12, 18]
+2023-02-02 15:43:20:971441100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyI, KeyO]
+2023-02-02 15:43:20:972271700 | DEBUG | Pressed Keys: [KeyI, KeyO]
+2023-02-02 15:43:21:027732100 | DEBUG | Key Pressed RAW: KeyN
+2023-02-02 15:43:21:028664800 | DEBUG | Pressed Keys CONVERTED TO HID:  [12, 18, 17]
+2023-02-02 15:43:21:029714200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyI, KeyO, KeyN]
+2023-02-02 15:43:21:030634400 | DEBUG | Pressed Keys: [KeyI, KeyO, KeyN]
+2023-02-02 15:43:21:052168500 | DEBUG | Key state: [KeyO, KeyN]
+2023-02-02 15:43:21:130141200 | DEBUG | Key state: [KeyO]
+2023-02-02 15:43:21:131584000 | DEBUG | Key state: []
+2023-02-02 15:43:23:528670700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:23:529615300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:23:530501100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:23:531269200 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:23:714762600 | DEBUG | Key Pressed RAW: Minus
+2023-02-02 15:43:23:715620700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 45]
+2023-02-02 15:43:23:716523000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, Minus]
+2023-02-02 15:43:23:717336600 | DEBUG | Pressed Keys: [ShiftLeft, Minus]
+2023-02-02 15:43:23:814173600 | DEBUG | Key state: [ShiftLeft]
+2023-02-02 15:43:23:875172300 | DEBUG | Key state: []
+2023-02-02 15:43:25:176707200 | DEBUG | Key Pressed RAW: Backspace
+2023-02-02 15:43:25:177643800 | DEBUG | Pressed Keys CONVERTED TO HID:  [42]
+2023-02-02 15:43:25:178605000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [Backspace]
+2023-02-02 15:43:25:179541900 | DEBUG | Pressed Keys: [Backspace]
+2023-02-02 15:43:25:411121800 | DEBUG | Key state: []
+2023-02-02 15:43:25:793706800 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:25:794633000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:25:795512900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:25:796358900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:25:838645100 | DEBUG | Key Pressed RAW: Minus
+2023-02-02 15:43:25:839750300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 45]
+2023-02-02 15:43:25:840642500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, Minus]
+2023-02-02 15:43:25:841534200 | DEBUG | Pressed Keys: [ShiftLeft, Minus]
+2023-02-02 15:43:25:934174500 | DEBUG | Key state: [ShiftLeft]
+2023-02-02 15:43:25:947157500 | DEBUG | Key state: []
+2023-02-02 15:43:26:081792300 | DEBUG | Key Pressed RAW: KeyL
+2023-02-02 15:43:26:082827700 | DEBUG | Pressed Keys CONVERTED TO HID:  [15]
+2023-02-02 15:43:26:083697400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyL]
+2023-02-02 15:43:26:084448900 | DEBUG | Pressed Keys: [KeyL]
+2023-02-02 15:43:26:162125500 | DEBUG | Key state: []
+2023-02-02 15:43:26:244773400 | DEBUG | Key Pressed RAW: KeyO
+2023-02-02 15:43:26:245798900 | DEBUG | Pressed Keys CONVERTED TO HID:  [18]
+2023-02-02 15:43:26:246688700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyO]
+2023-02-02 15:43:26:247450100 | DEBUG | Pressed Keys: [KeyO]
+2023-02-02 15:43:26:326151700 | DEBUG | Key state: []
+2023-02-02 15:43:26:333711800 | DEBUG | Key Pressed RAW: KeyG
+2023-02-02 15:43:26:334692100 | DEBUG | Pressed Keys CONVERTED TO HID:  [10]
+2023-02-02 15:43:26:335703400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyG]
+2023-02-02 15:43:26:336577400 | DEBUG | Pressed Keys: [KeyG]
+2023-02-02 15:43:26:405126700 | DEBUG | Key state: []
+2023-02-02 15:43:26:431709900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:26:432686400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:26:433593000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:26:434360000 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:26:530757000 | DEBUG | Key Pressed RAW: Minus
+2023-02-02 15:43:26:531799000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 45]
+2023-02-02 15:43:26:532841600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, Minus]
+2023-02-02 15:43:26:533721800 | DEBUG | Pressed Keys: [ShiftLeft, Minus]
+2023-02-02 15:43:26:630152500 | DEBUG | Key state: [Minus]
+2023-02-02 15:43:26:638133400 | DEBUG | Key state: []
+2023-02-02 15:43:26:817774500 | DEBUG | Key Pressed RAW: KeyA
+2023-02-02 15:43:26:818766400 | DEBUG | Pressed Keys CONVERTED TO HID:  [4]
+2023-02-02 15:43:26:819689000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyA]
+2023-02-02 15:43:26:820556900 | DEBUG | Pressed Keys: [KeyA]
+2023-02-02 15:43:26:903662500 | DEBUG | Key Pressed RAW: KeyR
+2023-02-02 15:43:26:904634000 | DEBUG | Pressed Keys CONVERTED TO HID:  [4, 21]
+2023-02-02 15:43:26:905515900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyA, KeyR]
+2023-02-02 15:43:26:906393000 | DEBUG | Pressed Keys: [KeyA, KeyR]
+2023-02-02 15:43:26:934146400 | DEBUG | Key state: [KeyR]
+2023-02-02 15:43:26:982123400 | DEBUG | Key state: []
+2023-02-02 15:43:27:096768200 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:43:27:097713100 | DEBUG | Pressed Keys CONVERTED TO HID:  [6]
+2023-02-02 15:43:27:098614200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyC]
+2023-02-02 15:43:27:099504700 | DEBUG | Pressed Keys: [KeyC]
+2023-02-02 15:43:27:145751200 | DEBUG | Key Pressed RAW: KeyH
+2023-02-02 15:43:27:146681900 | DEBUG | Pressed Keys CONVERTED TO HID:  [6, 11]
+2023-02-02 15:43:27:147713900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyC, KeyH]
+2023-02-02 15:43:27:148722300 | DEBUG | Pressed Keys: [KeyC, KeyH]
+2023-02-02 15:43:27:185206300 | DEBUG | Key state: [KeyH]
+2023-02-02 15:43:27:210999800 | DEBUG | Key Pressed RAW: KeyI
+2023-02-02 15:43:27:211983200 | DEBUG | Pressed Keys CONVERTED TO HID:  [11, 12]
+2023-02-02 15:43:27:212980200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyH, KeyI]
+2023-02-02 15:43:27:213824400 | DEBUG | Pressed Keys: [KeyH, KeyI]
+2023-02-02 15:43:27:231274700 | DEBUG | Key state: [KeyI]
+2023-02-02 15:43:27:307100100 | DEBUG | Key state: []
+2023-02-02 15:43:27:935698100 | DEBUG | Key Pressed RAW: KeyV
+2023-02-02 15:43:27:936651400 | DEBUG | Pressed Keys CONVERTED TO HID:  [25]
+2023-02-02 15:43:27:937550200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyV]
+2023-02-02 15:43:27:938425300 | DEBUG | Pressed Keys: [KeyV]
+2023-02-02 15:43:28:000691400 | DEBUG | Key Pressed RAW: KeyE
+2023-02-02 15:43:28:001759600 | DEBUG | Pressed Keys CONVERTED TO HID:  [25, 8]
+2023-02-02 15:43:28:002704200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyV, KeyE]
+2023-02-02 15:43:28:003549500 | DEBUG | Pressed Keys: [KeyV, KeyE]
+2023-02-02 15:43:28:053140900 | DEBUG | Key state: [KeyE]
+2023-02-02 15:43:28:087168300 | DEBUG | Key state: []
+2023-02-02 15:43:28:388724900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:28:389609400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:28:390532900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:28:391394500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:28:894579000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:28:895565400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:28:896383700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:28:897245100 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:28:926081200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:28:927022000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:28:927904000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:28:928785500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:28:957591200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:28:958569800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:28:959658400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:28:960558600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:28:989203200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:28:990314100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:28:991184900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:28:992058000 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:020315400 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:021303000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:022044100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:022845300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:066251100 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:067204000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:068132500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:068849600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:097838300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:098769500 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:099614500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:100486500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:129504900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:130485400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:131389000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:132186800 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:160140600 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:161085200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:161907300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:162773300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:191506200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:192408100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:193410200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:194255500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:222184100 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:223097100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:224078500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:224953500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:253655500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:254573200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:255394600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:256231600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:284887500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:285803700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:286877900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:287664300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:332422600 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:333363300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:334266800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:335115900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:363958300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:364995900 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:365881200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:366694800 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:395416700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:396489000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:397451700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:398360600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:426186200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:427256700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:428113100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:428926700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:457756300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:458710700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:459615100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:460338600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:488830300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:489800700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:490640500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:491510000 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:519954400 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:520820100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:521558700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:522418900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:551374900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:552455700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:553430200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:554300800 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:582172500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:583168200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:584181900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:584992500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:628777200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:629754200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:630562800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:631454300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:659445500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:660400900 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:661235500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:662148700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:691568900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:692599000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:693511500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:694413700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:721990700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:722968600 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:723872800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:724694000 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:752688600 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:753688200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:754583200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:755359700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:783814200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:784811000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:785716200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:786487700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:815504000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:816396300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:817259600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:818098800 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:847064100 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:848020000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:848854600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:849853400 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:878149400 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:879104800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:880006100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:880833300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:924944000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:925921100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:926767000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:927488300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:956026900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:957036000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:957857500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:958649600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:29:986625300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:29:987581400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:29:988485300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:29:989310200 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:017287500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:018239800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:019154900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:020029700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:049017700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:049969000 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:050813600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:051553900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:080117500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:081251700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:082081100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:083045200 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:111371000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:112309800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:113187200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:114073100 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:142927300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:143825400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:144687900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:145517600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:189984000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:191062100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:191879400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:192833300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:221058500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:222129600 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:222982300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:223795800 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:251819100 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:252802600 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:253631000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:254424000 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:283045300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:284081300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:284937000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:285763200 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:313698700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:314757300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:315703700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:316525500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:344997900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:346001800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:346803700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:347515900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:375903300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:376875500 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:377779300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:378498700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:407515200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:408515100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:409373800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:410231300 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:454230400 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:455159400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:455973500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:456766400 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:485449800 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:486519900 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:487483600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:488425100 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:516626300 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:517745200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:518461700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:519217500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:547680700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:548657800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:549586800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:550480400 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:578014000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:578855300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:579692900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:580499500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:609463100 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:610469600 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:611289200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:612088900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:640071400 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:641219300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:642109200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:642966500 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:670977800 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:671899400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:672791300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:673570000 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:718327000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:719371300 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:720366700 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:721263100 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:749888700 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:30:750836500 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:30:751763300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:30:752588800 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:30:763132400 | DEBUG | Key state: []
+2023-02-02 15:43:31:358709500 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:31:359669700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:31:360574400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:31:361439900 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:31:517706000 | DEBUG | Key Pressed RAW: Minus
+2023-02-02 15:43:31:518678200 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 45]
+2023-02-02 15:43:31:519696400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, Minus]
+2023-02-02 15:43:31:520679300 | DEBUG | Pressed Keys: [ShiftLeft, Minus]
+2023-02-02 15:43:31:634147500 | DEBUG | Key state: [Minus]
+2023-02-02 15:43:31:635545500 | DEBUG | Key state: []
+2023-02-02 15:43:31:729730800 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:31:730698100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:31:731571800 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:31:732372400 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:32:239643000 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:32:240676500 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:32:241741300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:32:242728100 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:32:272172200 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:32:273295400 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:32:274214600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:32:274973700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:32:302963900 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:32:304031100 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:32:304838300 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:32:305556600 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:32:334189400 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:32:335114600 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:32:335882000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:32:336693700 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:32:342697000 | DEBUG | Key Pressed RAW: LeftBracket
+2023-02-02 15:43:32:343623800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 47]
+2023-02-02 15:43:32:344603900 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, LeftBracket]
+2023-02-02 15:43:32:345512900 | DEBUG | Pressed Keys: [ShiftLeft, LeftBracket]
+2023-02-02 15:43:32:389672300 | DEBUG | Key Pressed RAW: RightBracket
+2023-02-02 15:43:32:390651700 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 47, 48]
+2023-02-02 15:43:32:391545500 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, LeftBracket, RightBracket]
+2023-02-02 15:43:32:392830700 | DEBUG | Pressed Keys: [ShiftLeft, LeftBracket, RightBracket]
+2023-02-02 15:43:32:422147100 | DEBUG | Key state: [ShiftLeft, ShiftLeft, ShiftLeft, ShiftLeft, ShiftLeft, RightBracket]
+2023-02-02 15:43:32:504145400 | DEBUG | Key state: [ShiftLeft, ShiftLeft, ShiftLeft, ShiftLeft, ShiftLeft]
+2023-02-02 15:43:32:524180200 | DEBUG | Key state: []
+2023-02-02 15:43:33:225688100 | DEBUG | Key Pressed RAW: ShiftLeft
+2023-02-02 15:43:33:226656800 | DEBUG | Pressed Keys CONVERTED TO HID:  [225]
+2023-02-02 15:43:33:227589600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft]
+2023-02-02 15:43:33:228494400 | DEBUG | Pressed Keys: [ShiftLeft]
+2023-02-02 15:43:33:397611300 | DEBUG | Key Pressed RAW: Minus
+2023-02-02 15:43:33:398522900 | DEBUG | Pressed Keys CONVERTED TO HID:  [225, 45]
+2023-02-02 15:43:33:399577000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ShiftLeft, Minus]
+2023-02-02 15:43:33:400601000 | DEBUG | Pressed Keys: [ShiftLeft, Minus]
+2023-02-02 15:43:33:490240100 | DEBUG | Key state: [ShiftLeft]
+2023-02-02 15:43:33:579165200 | DEBUG | Key state: []
+2023-02-02 15:43:33:702889900 | DEBUG | Key Pressed RAW: Dot
+2023-02-02 15:43:33:703868100 | DEBUG | Pressed Keys CONVERTED TO HID:  [99]
+2023-02-02 15:43:33:704731200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [Dot]
+2023-02-02 15:43:33:705618000 | DEBUG | Pressed Keys: [Dot]
+2023-02-02 15:43:33:791163100 | DEBUG | Key state: []
+2023-02-02 15:43:34:103700600 | DEBUG | Key Pressed RAW: KeyG
+2023-02-02 15:43:34:104671000 | DEBUG | Pressed Keys CONVERTED TO HID:  [10]
+2023-02-02 15:43:34:105557100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyG]
+2023-02-02 15:43:34:106422900 | DEBUG | Pressed Keys: [KeyG]
+2023-02-02 15:43:34:195183800 | DEBUG | Key state: []
+2023-02-02 15:43:34:290770600 | DEBUG | Key Pressed RAW: KeyZ
+2023-02-02 15:43:34:291809700 | DEBUG | Pressed Keys CONVERTED TO HID:  [29]
+2023-02-02 15:43:34:292686200 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyZ]
+2023-02-02 15:43:34:293517600 | DEBUG | Pressed Keys: [KeyZ]
+2023-02-02 15:43:34:379728500 | DEBUG | Key Pressed RAW: KeyI
+2023-02-02 15:43:34:380735200 | DEBUG | Pressed Keys CONVERTED TO HID:  [29, 12]
+2023-02-02 15:43:34:381804600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyZ, KeyI]
+2023-02-02 15:43:34:382788200 | DEBUG | Pressed Keys: [KeyZ, KeyI]
+2023-02-02 15:43:34:396242400 | DEBUG | Key state: [KeyI]
+2023-02-02 15:43:34:460214500 | DEBUG | Key state: []
+2023-02-02 15:43:34:581864100 | DEBUG | Key Pressed RAW: KeyP
+2023-02-02 15:43:34:582904200 | DEBUG | Pressed Keys CONVERTED TO HID:  [19]
+2023-02-02 15:43:34:583733600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [KeyP]
+2023-02-02 15:43:34:584476900 | DEBUG | Pressed Keys: [KeyP]
+2023-02-02 15:43:34:666199400 | DEBUG | Key state: []
+2023-02-02 15:43:35:226694600 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:43:35:227563000 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:43:35:228379100 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:43:35:229283400 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:43:35:297723700 | DEBUG | Key Pressed RAW: KeyS
+2023-02-02 15:43:35:298682800 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 22]
+2023-02-02 15:43:35:299638000 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyS]
+2023-02-02 15:43:35:300556000 | DEBUG | Pressed Keys: [ControlLeft, KeyS]
+2023-02-02 15:43:35:379156600 | DEBUG | Key state: [KeyS]
+2023-02-02 15:43:35:402111700 | DEBUG | Key state: []
+2023-02-02 15:43:35:849153200 | DEBUG | Button pressed: Left
+2023-02-02 15:43:35:850123900 | DEBUG | Pressed button: []
+2023-02-02 15:43:35:850975000 | DEBUG | Got data: []
+2023-02-02 15:43:35:851791500 | DEBUG | Got keys: [257]
+2023-02-02 15:43:35:906168400 | DEBUG | Button released: Left
+2023-02-02 15:43:35:957823700 | DEBUG | Key Pressed RAW: ControlLeft
+2023-02-02 15:43:35:958889100 | DEBUG | Pressed Keys CONVERTED TO HID:  [224]
+2023-02-02 15:43:35:959684400 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft]
+2023-02-02 15:43:35:960473000 | DEBUG | Pressed Keys: [ControlLeft]
+2023-02-02 15:43:36:032789000 | DEBUG | Key Pressed RAW: KeyC
+2023-02-02 15:43:36:033751300 | DEBUG | Pressed Keys CONVERTED TO HID:  [224, 6]
+2023-02-02 15:43:36:034766600 | DEBUG | Pressed Keys CONVERTED TO RDEV: [ControlLeft, KeyC]
+2023-02-02 15:43:36:035603400 | DEBUG | Pressed Keys: [ControlLeft, KeyC]
+2023-02-02 15:43:46:919768000 | ERROR | ..\application_log.log\-archive-{}.gz

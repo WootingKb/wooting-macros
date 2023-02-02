@@ -88,6 +88,22 @@ impl ConfigFile for LogFilePath {
     }
 }
 
+impl ConfigFile for LogArchivePath {
+    fn file_name() -> PathBuf {
+        let dir = {
+            #[cfg(debug_assertions)]
+            let x = PathBuf::from("..");
+
+            #[cfg(not(debug_assertions))]
+            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+
+            x
+        };
+
+        dir.join(ARCHIVE_FILE)
+    }
+}
+
 impl ConfigFile for MacroData {
     fn file_name() -> PathBuf {
         let dir = {
@@ -130,6 +146,8 @@ pub const CONFIG_DIR: &str = "..";
 
 const LOG_FILE: &str = "application_log.log";
 
+const ARCHIVE_FILE: &str = "application_log_archive";
+
 /// Config file name
 const CONFIG_FILE: &str = "config.json";
 
@@ -156,5 +174,16 @@ pub struct LogFilePath {}
 impl Default for LogFilePath {
     fn default() -> Self {
         LogFilePath {}
+    }
+}
+
+
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct LogArchivePath {}
+
+impl Default for LogArchivePath {
+    fn default() -> Self {
+        LogArchivePath {}
     }
 }

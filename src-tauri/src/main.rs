@@ -9,7 +9,12 @@ use log::*;
 use log4rs::{
     append::{
         console::{ConsoleAppender, Target},
-        file::FileAppender,
+        rolling_file::{
+            policy::compound::{
+                roll::fixed_window::FixedWindowRoller, trigger::size::SizeTrigger, CompoundPolicy,
+            },
+            RollingFileAppender,
+        },
     },
     config::{Appender, Config, Root},
     encode::pattern::PatternEncoder,
@@ -87,7 +92,8 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Warn);
 
-    let file_path = wooting_macro_backend::config::LogFilePath::file_name();
+    let log_file_name = wooting_macro_backend::config::LogFilePath::file_name();
+    let archive_path = wooting_macro_backend::config::LogArchivePath::file_name();
 
     // Build a stderr logger.
     let stdout = ConsoleAppender::builder()
@@ -98,12 +104,32 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
         .build();
 
     // Logging to log file.
-    let logfile = FileAppender::builder()
+    let logfile = RollingFileAppender::builder()
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
         .encoder(Box::new(PatternEncoder::new(
             "{d(%Y-%m-%d %H:%M:%S:%f)} | {h({({l}):5.5})} | {m}{n}",
         )))
-        .build(file_path)
+        // .roll_on_startup(true)
+        .build(
+            log_file_name,
+            Box::new(CompoundPolicy::new(
+                Box::new(SizeTrigger::new(
+                    // Set the limit of each logfile to 128 kibibytes
+                    1024 * 128,
+                )),
+                Box::new(
+                    FixedWindowRoller::builder()
+                        .build(
+                            archive_path
+                                .join("application_log_archive_{}_.gzip")
+                                .to_str()
+                                .unwrap(),
+                            2,
+                        )
+                        .expect("Error creating the archive"),
+                ),
+            )),
+        )
         .unwrap();
 
     // Log Trace level output to file where trace is the default level
@@ -124,6 +150,7 @@ fn engage_logger() -> Result<log4rs::Handle, SetLoggerError> {
         .unwrap();
 
     let handle = log4rs::init_config(config)?;
+
     Ok(handle)
 }
 
@@ -268,7 +295,6 @@ async fn main() {
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
         .expect("error while running tauri application");
-
 }
 
 #[cfg(test)]

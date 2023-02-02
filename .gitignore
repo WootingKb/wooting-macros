@@ -42,3 +42,8 @@ dist-ssr
 /wooting-macros.key
 /wooting-macros.key.pub
 /package-lock.json
+application_log_archive/application_log_archive_0_.gzip
+application_log_archive/application_log_archive_1_.gzip
+application_log_archive/application_log_archive_2_.gzip
+application_log_archive/application_log_archive_3_.gzip
+application_log_archive/application_log_archive_4_.gzip

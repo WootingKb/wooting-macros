@@ -20,8 +20,8 @@ tokio = { version = "1.23", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.4"
-log = "0.4.17"
-log4rs = {version = "1.2.0", features= ["file_appender", "console_appender"] }
+log = "0.4"
+log4rs = {version = "1.2", features= ["file_appender", "console_appender","rolling_file_appender", "gzip"] }
 
 
 
