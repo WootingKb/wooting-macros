@@ -183,12 +183,12 @@ async fn main() {
                 }
             }
             SystemTrayEvent::LeftClick { .. } => {
-                let window = app.get_window("main").unwrap();
-                window.show().unwrap();
+                let window = app.get_window("main").expect("Couldn't fetch window");
+                window.show().expect("Couldn't show window");
                 app.tray_handle()
                     .get_item("hide_show")
                     .set_title("Hide")
-                    .unwrap();
+                    .expect("Couldn't hide window");
             }
             _ => {}
         })
