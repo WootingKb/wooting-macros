@@ -293,11 +293,11 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
     }
 }
 
-async fn lift_keys(pressed_events: Vec<u32>, channel_sender: Sender<rdev::EventType>) {
+async fn lift_keys(pressed_events: Vec<u32>, channel_sender: UnboundedSender<rdev::EventType>) {
     for x in pressed_events {
         channel_sender
             .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&x]))
-            .await
+            
             .unwrap();
     }
 }
