@@ -154,24 +154,30 @@ async fn main() {
                 let item_handle = app.tray_handle().get_item(&id);
                 match id.as_str() {
                     "hide_show" => {
-                        let window = app.get_window("main").expect("Couldn't fetch window");;
+                        let window = app.get_window("main").expect("Couldn't fetch window");
 
                         // you can also `set_selected`, `set_enabled` and `set_native_image` (macOS only).
                         match window.is_visible().expect("Couldn't get window visibility") {
                             true => {
                                 window.hide().expect("Couldn't hide window");
-                                item_handle.set_title("Show").expect("Couldn't change system tray item to show")
+                                item_handle
+                                    .set_title("Show")
+                                    .expect("Couldn't change system tray item to show")
                             }
                             false => {
                                 window.show().expect("Couldn't show window");
-                                item_handle.set_title("Hide").expect("Couldn't change system tray item to hide")
+                                item_handle
+                                    .set_title("Hide")
+                                    .expect("Couldn't change system tray item to hide")
                             }
                         }
 
                         window.clone().on_window_event(move |window_event| {
                             if let WindowEvent::CloseRequested { .. } = window_event {
                                 window.hide().expect("Couldn't hide window");
-                                item_handle.set_title("Show").expect("Couldn't change system tray item to show");
+                                item_handle
+                                    .set_title("Show")
+                                    .expect("Couldn't change system tray item to show");
                             }
                         })
                     }
@@ -208,6 +214,17 @@ async fn main() {
         })
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             info!("{}, {argv:?}, {cwd}", app.package_info().name);
+            app.emit_all("single-instance", {
+                app.get_window("main")
+                    .expect("Couldn't fetch window")
+                    .show()
+                    .expect("Couldn't show window");
+                app.get_window("main")
+                    .expect("Couldn't fetch window")
+                    .set_focus()
+                    .expect("Couldn't focus window")
+            })
+            .expect("Couldn't re-focus opened instance.");
         }))
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
