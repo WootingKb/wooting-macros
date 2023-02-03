@@ -6,6 +6,7 @@ use rayon::prelude::*;
 
 use log::*;
 
+
 use itertools::Itertools;
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -381,9 +382,17 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
-    #[cfg(not(debug_assertions))]
+    
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
+        
+        #[cfg(not(debug_assertions))]
+        match std::fs::remove_file(config::LogFileName::file_name()){
+            Ok(_) => info!("removed old log file"),
+            Err(error) => error!("Couldnt remove old log file!: {}", error),
+        }
+
+        #[cfg(not(debug_assertions))]
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
             Err(error) => error!("Directory creation failed, OS error: {}", error),
@@ -479,7 +488,7 @@ impl MacroBackend {
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
-                                    debug!("TRIGGER LIST: {:#?}", trigger_list);
+                                    
 
                                     let check_these_macros = match trigger_list.get(&first_key) {
                                         None => {
