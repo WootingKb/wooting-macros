@@ -49,7 +49,11 @@ export default function KeyPressForm({
       if (newValue === undefined) {
         return
       }
-      setKeypressDuration(newValue)
+      if (!Number.isNaN(newValue)) {
+        setKeypressDuration(newValue)
+      } else {
+        setKeypressDuration(0)
+      }
     },
     [setKeypressDuration]
   )
