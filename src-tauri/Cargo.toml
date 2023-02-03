@@ -21,7 +21,10 @@ tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.4"
 log = "0.4.17"
-env_logger = "0.10.0"
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+byte-unit = "4.0.18"
+chrono = "0.4.23"
+fern = {version= "0.6.1", features= ["colored"] }
 
 
 
@@ -37,6 +40,7 @@ custom-protocol = ["tauri/custom-protocol"]
 git = "https://github.com/tauri-apps/tauri-plugin-single-instance"
 #change this to stable release once it is available
 branch = "dev"
+
 
 [profile.release]
 lto = true

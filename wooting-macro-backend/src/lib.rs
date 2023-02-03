@@ -6,6 +6,7 @@ use rayon::prelude::*;
 
 use log::*;
 
+
 use itertools::Itertools;
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -378,9 +379,17 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
-    #[cfg(not(debug_assertions))]
+    
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
+        
+        #[cfg(not(debug_assertions))]
+        match std::fs::remove_file(config::LogFileName::file_name()){
+            Ok(_) => info!("removed old log file"),
+            Err(error) => error!("Couldnt remove old log file!: {}", error),
+        }
+
+        #[cfg(not(debug_assertions))]
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
             Err(error) => error!("Directory creation failed, OS error: {}", error),
@@ -463,15 +472,7 @@ impl MacroBackend {
                                     .collect::<Vec<rdev::Key>>()
                             );
 
-                            debug!(
-                                "Pressed Keys: {:?}",
-                                pressed_keys_copy_converted
-                                    .par_iter()
-                                    .map(|x| *SCANCODE_TO_RDEV
-                                        .get(x)
-                                        .unwrap_or(&rdev::Key::Unknown(0)))
-                                    .collect::<Vec<rdev::Key>>()
-                            );
+                                    
 
                             let first_key: u32 = match pressed_keys_copy_converted.first() {
                                 None => 0,

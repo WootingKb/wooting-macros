@@ -6,7 +6,14 @@
 extern crate core;
 
 use log::*;
+use std::str::FromStr;
 
+use tauri_plugin_log::LogTarget;
+
+use chrono;
+use fern::colors::{ColoredLevelConfig, Color};
+
+use byte_unit::{Byte, ByteUnit};
 use std::env::current_exe;
 
 use tauri::{
@@ -77,14 +84,22 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    env_logger::init();
+    
+    
 
-    #[cfg(not(debug_assertions))]
+
+    let log_level: log::LevelFilter = option_env!("RUST_LOG")
+        .and_then(|s| log::LevelFilter::from_str(s).ok())
+        .unwrap_or(log::LevelFilter::Info);
+
+
+
+    
     wooting_macro_backend::MacroBackend::generate_directories();
 
     let backend = MacroBackend::default();
 
-    info!("Running the macro backend");
+    println!("Running the macro backend");
 
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     backend.init().await;
@@ -223,6 +238,30 @@ async fn main() {
             app.emit_all("single-instance", ())
                 .expect("Couldn't re-focus opened instance.");
         }))
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .level(log_level)
+            
+                .format(|out, message, record| {
+                    let colors = ColoredLevelConfig::new()
+                    .error(Color::Red)
+                    .warn(Color::Yellow)
+                    .info(Color::Green)
+                    .debug(Color::Magenta)
+                    .trace(Color::White);
+                    
+                    out.finish(format_args!(
+                        "{} [{}] [{}] | {}\x1B[0m",
+                        chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S%f]"),
+                        record.target(),
+                        
+                        colors.color(record.level()),
+                        message
+                    ))})
+                .max_file_size(Byte::from_unit(16f64, ByteUnit::KiB).unwrap().into())
+                .targets([tauri_plugin_log::LogTarget::Folder(wooting_macro_backend::config::LogDirPath::file_name()), LogTarget::Stdout, LogTarget::Webview])
+                .build()
+        )
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
         .expect("error while running tauri application");
