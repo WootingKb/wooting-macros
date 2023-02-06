@@ -399,6 +399,12 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
+                            let channel_clone2 = channel_sender.clone();
+                            let data_clone = data.clone();
+                            task::spawn(async move {
+
+                                lift_keys(data_clone, channel_clone2).await;
+                            });
 
                             task::spawn(async move {
                                 execute_macro(macro_clone, channel_clone).await;
@@ -416,6 +422,12 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
+                            let channel_clone2 = channel_sender.clone();
+                            let data_clone = data.clone();
+                            task::spawn(async move {
+
+                                lift_keys(data_clone, channel_clone2).await;
+                            });
 
                             task::spawn(async move {
                                 execute_macro(macro_clone, channel_clone).await;
@@ -435,6 +447,12 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
+                            let channel_clone2 = channel_sender.clone();
+                            let data_clone = data.clone();
+                            task::spawn(async move {
+
+                                lift_keys(data_clone, channel_clone2).await;
+                            });
 
                             task::spawn(async move {
                                 execute_macro(macro_clone, channel_clone).await;
