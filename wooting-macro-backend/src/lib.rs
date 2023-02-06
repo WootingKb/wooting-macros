@@ -427,153 +427,143 @@ impl MacroBackend {
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
-                match Ok::<&rdev::Event, rdev::GrabError>(&event) {
-                    Ok(_data) => {
-                        if inner_is_listening.load(Ordering::Relaxed) {
-                            match event.event_type {
-                                rdev::EventType::KeyPress(key) => {
-                                    debug!("Key Pressed RAW: {:?}", key);
-                                    let key_to_push = key;
+                if inner_is_listening.load(Ordering::Relaxed) {
+                    match event.event_type {
+                        rdev::EventType::KeyPress(key) => {
+                            debug!("Key Pressed RAW: {:?}", key);
+                            let key_to_push = key;
 
-                                    let mut keys_pressed = keys_pressed.blocking_write();
+                            let mut keys_pressed = keys_pressed.blocking_write();
 
-                                    let mut temp_push = keys_pressed.clone();
-                                    temp_push.push(key_to_push);
+                            let mut temp_push = keys_pressed.clone();
+                            temp_push.push(key_to_push);
 
-                                    let temp_push: Vec<rdev::Key> =
-                                        temp_push.into_iter().unique().collect();
+                            let temp_push: Vec<rdev::Key> =
+                                temp_push.into_iter().unique().collect();
 
-                                    *keys_pressed = temp_push;
+                            *keys_pressed = temp_push;
 
-                                    let pressed_keys_copy_converted: Vec<u32> = keys_pressed
-                                        .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .into_iter()
-                                        .unique()
-                                        .collect();
-                                    debug!(
-                                        "Pressed Keys CONVERTED TO HID:  {:?}",
-                                        pressed_keys_copy_converted
-                                    );
-                                    debug!(
-                                        "Pressed Keys CONVERTED TO RDEV: {:?}",
-                                        pressed_keys_copy_converted
-                                            .par_iter()
-                                            .map(|x| *SCANCODE_TO_RDEV
-                                                .get(x)
-                                                .unwrap_or(&rdev::Key::Unknown(0)))
-                                            .collect::<Vec<rdev::Key>>()
-                                    );
-
-                                    debug!(
-                                        "Pressed Keys: {:?}",
-                                        pressed_keys_copy_converted
-                                            .par_iter()
-                                            .map(|x| *SCANCODE_TO_RDEV
-                                                .get(x)
-                                                .unwrap_or(&rdev::Key::Unknown(0)))
-                                            .collect::<Vec<rdev::Key>>()
-                                    );
-
-                                    let first_key: u32 = match pressed_keys_copy_converted.first() {
-                                        None => 0,
-                                        Some(data_first) => *data_first,
-                                    };
-
-                                    let trigger_list = inner_triggers.blocking_read().clone();
-
-                                    let check_these_macros = match trigger_list.get(&first_key) {
-                                        None => {
-                                            vec![]
-                                        }
-                                        Some(data_found) => data_found.to_vec(),
-                                    };
-
-                                    // ? up the pressed keys here immidiately?
-
-                                    let should_grab = {
-                                        if !check_these_macros.is_empty() {
-                                            let channel_copy_send = schan_execute.clone();
-                                            check_macro_execution_efficiently(
-                                                pressed_keys_copy_converted,
-                                                check_these_macros,
-                                                channel_copy_send,
-                                            )
-                                        } else {
-                                            false
-                                        }
-                                    };
-
-                                    if should_grab {
-                                        None
-                                    } else {
-                                        Some(event)
-                                    }
-                                }
-
-                                rdev::EventType::KeyRelease(key) => {
-                                    keys_pressed.blocking_write().retain(|x| *x != key);
-
-                                    debug!("Key state: {:?}", keys_pressed.blocking_read());
-
-                                    Some(event)
-                                }
-
-                                rdev::EventType::ButtonPress(button) => {
-                                    debug!("Button pressed: {:?}", button);
-
-                                    let converted_button_to_u32: u32 =
-                                        BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
-
-                                    debug!("Pressed button: {:?}", buttons_pressed.blocking_read());
-
-                                    let trigger_list = inner_triggers.blocking_read().clone();
-
-                                    let check_these_macros =
-                                        match trigger_list.get(&converted_button_to_u32) {
-                                            None => {
-                                                vec![]
-                                            }
-                                            Some(data_found) => data_found.to_vec(),
-                                        };
-
-                                    let channel_clone = schan_execute.clone();
-
-                                    let should_grab = check_macro_execution_efficiently(
-                                        vec![converted_button_to_u32],
-                                        check_these_macros,
-                                        channel_clone,
-                                    );
-
-                                    if should_grab {
-                                        None
-                                    } else {
-                                        Some(event)
-                                    }
-                                }
-                                rdev::EventType::ButtonRelease(button) => {
-                                    debug!("Button released: {:?}", button);
-
-                                    buttons_pressed.blocking_write().retain(|x| *x != button);
-
-                                    Some(event)
-                                }
-                                rdev::EventType::MouseMove { .. } => Some(event),
-                                rdev::EventType::Wheel { .. } => Some(event),
-                            }
-                        } else {
+                            let pressed_keys_copy_converted: Vec<u32> = keys_pressed
+                                .iter()
+                                .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                .collect();
                             debug!(
-                                "Passing event through... macro recording disabled: {:?}",
-                                event
+                                "Pressed Keys CONVERTED TO HID:  {:?}",
+                                pressed_keys_copy_converted
                             );
+                            debug!(
+                                "Pressed Keys CONVERTED TO RDEV: {:?}",
+                                pressed_keys_copy_converted
+                                    .par_iter()
+                                    .map(|x| *SCANCODE_TO_RDEV
+                                        .get(x)
+                                        .unwrap_or(&rdev::Key::Unknown(0)))
+                                    .collect::<Vec<rdev::Key>>()
+                            );
+
+                            debug!(
+                                "Pressed Keys: {:?}",
+                                pressed_keys_copy_converted
+                                    .par_iter()
+                                    .map(|x| *SCANCODE_TO_RDEV
+                                        .get(x)
+                                        .unwrap_or(&rdev::Key::Unknown(0)))
+                                    .collect::<Vec<rdev::Key>>()
+                            );
+
+                            let first_key: u32 = match pressed_keys_copy_converted.first() {
+                                None => 0,
+                                Some(data_first) => *data_first,
+                            };
+
+                            let trigger_list = inner_triggers.blocking_read().clone();
+
+                            let check_these_macros = match trigger_list.get(&first_key) {
+                                None => {
+                                    vec![]
+                                }
+                                Some(data_found) => data_found.to_vec(),
+                            };
+
+                            // ? up the pressed keys here immidiately?
+
+                            let should_grab = {
+                                if !check_these_macros.is_empty() {
+                                    let channel_copy_send = schan_execute.clone();
+                                    check_macro_execution_efficiently(
+                                        pressed_keys_copy_converted,
+                                        check_these_macros,
+                                        channel_copy_send,
+                                    )
+                                } else {
+                                    false
+                                }
+                            };
+
+                            if should_grab {
+                                None
+                            } else {
+                                Some(event)
+                            }
+                        }
+
+                        rdev::EventType::KeyRelease(key) => {
+                            keys_pressed.blocking_write().retain(|x| *x != key);
+
+                            debug!("Key state: {:?}", keys_pressed.blocking_read());
 
                             Some(event)
                         }
+
+                        rdev::EventType::ButtonPress(button) => {
+                            debug!("Button pressed: {:?}", button);
+
+                            let converted_button_to_u32: u32 =
+                                BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
+
+                            debug!("Pressed button: {:?}", buttons_pressed.blocking_read());
+
+                            let trigger_list = inner_triggers.blocking_read().clone();
+
+                            let check_these_macros =
+                                match trigger_list.get(&converted_button_to_u32) {
+                                    None => {
+                                        vec![]
+                                    }
+                                    Some(data_found) => data_found.to_vec(),
+                                };
+
+                            let channel_clone = schan_execute.clone();
+
+                            let should_grab = check_macro_execution_efficiently(
+                                vec![converted_button_to_u32],
+                                check_these_macros,
+                                channel_clone,
+                            );
+
+                            if should_grab {
+                                None
+                            } else {
+                                Some(event)
+                            }
+                        }
+                        rdev::EventType::ButtonRelease(button) => {
+                            debug!("Button released: {:?}", button);
+
+                            buttons_pressed.blocking_write().retain(|x| *x != button);
+
+                            Some(event)
+                        }
+                        rdev::EventType::MouseMove { .. } => Some(event),
+                        rdev::EventType::Wheel { .. } => Some(event),
                     }
-                    Err(error) => {
-                        error!("Error grabbing: {:#?}", error);
-                        None
-                    }
+                } else {
+                    debug!(
+                        "Passing event through... macro recording disabled: {:?}",
+                        event
+                    );
+
+                    Some(event)
                 }
             })
         });
