@@ -24,7 +24,7 @@ export default function MousePressForm({
   selectedElement
 }: Props) {
   const [headingText, setHeadingText] = useState('')
-  const [mousepressDuration, setMousepressDuration] = useState(1)
+  const [mousepressDuration, setMousepressDuration] = useState("1")
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
 
@@ -33,7 +33,7 @@ export default function MousePressForm({
       .type as keyof typeof KeyType
     setMousepressType(KeyType[typeString])
     if (selectedElement.data.data.type === 'DownUp') {
-      setMousepressDuration(selectedElement.data.data.duration)
+      setMousepressDuration(selectedElement.data.data.duration.toString())
     }
     setHeadingText(
       `${mouseEnumLookup.get(selectedElement.data.data.button)?.displayString}`
@@ -42,11 +42,8 @@ export default function MousePressForm({
 
   const onMousepressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = parseInt(event.target.value)
-      if (newValue === undefined) {
-        return
-      }
-      setMousepressDuration(newValue)
+
+      setMousepressDuration(event.target.value)
     },
     [setMousepressDuration]
   )
@@ -55,13 +52,24 @@ export default function MousePressForm({
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
+    let duration
+    if (mousepressDuration === '') {
+      duration = 0;
+    } else {
+
+      duration = parseInt(mousepressDuration)
+      if (Number.isNaN(duration)) {
+        return
+      }
+    }
+
     const temp: MouseEventAction = {
       ...selectedElement,
       data: {
         ...selectedElement.data,
         data: {
           ...selectedElement.data.data,
-          duration: mousepressDuration
+          duration
         }
       }
     }
@@ -177,6 +185,7 @@ export default function MousePressForm({
               value={mousepressDuration}
               onChange={onMousepressDurationChange}
               onBlur={onInputBlur}
+              isInvalid={Number.isNaN(parseInt(mousepressDuration))}
             />
           </GridItem>
         </Grid>

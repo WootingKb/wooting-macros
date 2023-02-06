@@ -13,7 +13,7 @@ export default function DelayForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [delayDuration, setDelayDuration] = useState(0)
+  const [delayDuration, setDelayDuration] = useState("0")
   const { updateElement } = useMacroContext()
   const { config } = useSettingsContext()
 
@@ -24,30 +24,38 @@ export default function DelayForm({
     )
       return
 
-    setDelayDuration(selectedElement.data)
+    setDelayDuration(selectedElement.data.toString())
   }, [selectedElement])
 
   const onDelayDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = parseInt(event.target.value)
-      if (newValue === undefined) {
-        return
-      }
-      setDelayDuration(newValue)
+
+      setDelayDuration(event.target.value)
     },
     [setDelayDuration]
   )
 
   const onInputBlur = useCallback(() => {
+    let duration
+    if (delayDuration === '') {
+      duration = 0;
+    } else {
+
+      duration = parseInt(delayDuration)
+      if (Number.isNaN(duration)) {
+        return
+      }
+    }
+    
     const temp: DelayEventAction = {
       ...selectedElement,
-      data: delayDuration
+      data: duration
     }
     updateElement(temp, selectedElementId)
   }, [delayDuration, selectedElement, selectedElementId, updateElement])
 
   const resetDuration = useCallback(() => {
-    setDelayDuration(config.DefaultDelayValue)
+    setDelayDuration(config.DefaultDelayValue.toString())
     const temp: DelayEventAction = {
       ...selectedElement,
       data: config.DefaultDelayValue
@@ -77,6 +85,7 @@ export default function DelayForm({
             value={delayDuration}
             onChange={onDelayDurationChange}
             onBlur={onInputBlur}
+            isInvalid={Number.isNaN(parseInt(delayDuration))}
           />
         </GridItem>
       </Grid>
