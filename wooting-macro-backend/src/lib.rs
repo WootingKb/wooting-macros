@@ -359,10 +359,10 @@ fn check_macro_execution_efficiently(
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
                             let channel_clone2 = channel_sender.clone();
-                            let pressed_events2 = pressed_events.clone();
+                            let pressed_data_clone = data.clone();
                             task::spawn(async move {
 
-                                lift_keys(pressed_events2, channel_clone2).await;
+                                lift_keys(pressed_data_clone, channel_clone2).await;
                             });
 
                             task::spawn(async move {
