@@ -433,20 +433,22 @@ impl MacroBackend {
                             debug!("Key Pressed RAW: {:?}", key);
                             let key_to_push = key;
 
-                            let mut keys_pressed = keys_pressed.blocking_write();
+                            // https://doc.rust-lang.org/std/collections/struct.HashSet.html
+                            // benchmark
 
-                            let mut temp_push = keys_pressed.clone();
-                            temp_push.push(key_to_push);
+                            let pressed_keys_copy_converted: Vec<u32> = {
+                                let mut keys_pressed = keys_pressed.blocking_write();
 
-                            let temp_push: Vec<rdev::Key> =
-                                temp_push.into_iter().unique().collect();
+                                keys_pressed.push(key_to_push);
 
-                            *keys_pressed = temp_push;
+                                *keys_pressed = keys_pressed.clone().into_iter().unique().collect();
 
-                            let pressed_keys_copy_converted: Vec<u32> = keys_pressed
-                                .iter()
-                                .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                .collect();
+                                keys_pressed
+                                    .iter()
+                                    .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                    .collect()
+                            };
+
                             debug!(
                                 "Pressed Keys CONVERTED TO HID:  {:?}",
                                 pressed_keys_copy_converted
