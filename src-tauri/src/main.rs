@@ -10,7 +10,6 @@ use std::str::FromStr;
 
 use tauri_plugin_log::LogTarget;
 
-use chrono;
 use fern::colors::{Color, ColoredLevelConfig};
 
 use byte_unit::{Byte, ByteUnit};
@@ -235,7 +234,7 @@ async fn main() {
                         .trace(Color::White);
 
                     out.finish(format_args!(
-                        "{} [{}] [{}] | {}\x1B[0m",
+                        "{} [{}] [{}] | {}",
                         chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S%f]"),
                         record.target(),
                         colors.color(record.level()),
