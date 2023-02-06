@@ -313,13 +313,14 @@ fn check_macro_execution_efficiently(
     let mut output = false;
     for macros in &trigger_overview {
         match &macros.trigger {
-            TriggerEventType::KeyPressEvent { data, .. } => {
-                match data.len() {
-                    1 => {
+            TriggerEventType::KeyPressEvent {
+                data,
+                allow_while_other_keys,
+            } => {
+                match (data.len(), allow_while_other_keys) {
+                    (1, _) => {
                         if pressed_events == *data {
                             debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
-
-                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
@@ -330,7 +331,8 @@ fn check_macro_execution_efficiently(
                             output = true;
                         }
                     }
-                    2..=4 => {
+
+                    (2..=4, false) => {
                         // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
                         if data[..(data.len() - 1)]
                             .iter()
@@ -339,7 +341,23 @@ fn check_macro_execution_efficiently(
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
-                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    (2..=4, true) => {
+                        // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
+                        if data[..(data.len() - 1)]
+                            .iter()
+                            .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
+                            && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
+                        {
+                            debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
@@ -463,15 +481,7 @@ impl MacroBackend {
                                     .collect::<Vec<rdev::Key>>()
                             );
 
-                            debug!(
-                                "Pressed Keys: {:?}",
-                                pressed_keys_copy_converted
-                                    .par_iter()
-                                    .map(|x| *SCANCODE_TO_RDEV
-                                        .get(x)
-                                        .unwrap_or(&rdev::Key::Unknown(0)))
-                                    .collect::<Vec<rdev::Key>>()
-                            );
+                                    
 
                             let first_key: u32 = match pressed_keys_copy_converted.first() {
                                 None => 0,
