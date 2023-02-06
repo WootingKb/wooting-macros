@@ -211,11 +211,14 @@ impl MacroData {
                     if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent {
-                                data,allow_while_other_keys
+                                data,
+                                allow_while_other_keys,
                             } => {
                                 //TODO: optimize using references
                                 match (data.len(), allow_while_other_keys) {
-                                    (0, false) => error!("A trigger key can't be zero...: {:#?}", data),
+                                    (0, false) => {
+                                        error!("A trigger key can't be zero...: {:#?}", data)
+                                    }
                                     (1, false) => output_hashmap
                                         .entry(*data.first().unwrap())
                                         .or_default()
@@ -223,7 +226,7 @@ impl MacroData {
                                     (_, false) => data[..data.len() - 1].iter().for_each(|x| {
                                         output_hashmap.entry(*x).or_default().push(macros.clone());
                                     }),
-                                    (_,true) => ()
+                                    (_, true) => (),
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
@@ -252,18 +255,16 @@ impl MacroData {
             if collections.active {
                 for macros in &collections.macros {
                     if macros.active {
-                        match &macros.trigger {
-                            TriggerEventType::KeyPressEvent {
-                                allow_while_other_keys,
-                                ..
-                            } => {
-                                //TODO: optimize using references
-                                match allow_while_other_keys {
-                                    true => output_vector.push(macros.clone()),
-                                    false => (),
-                                }
+                        if let TriggerEventType::KeyPressEvent {
+                            allow_while_other_keys,
+                            ..
+                        } = &macros.trigger
+                        {
+                            //TODO: optimize using references
+                            match allow_while_other_keys {
+                                true => output_vector.push(macros.clone()),
+                                false => (),
                             }
-                            _ => (),
                         }
                     }
                 }
@@ -328,7 +329,6 @@ async fn lift_keys(pressed_events: Vec<u32>, channel_sender: UnboundedSender<rde
     for x in pressed_events {
         channel_sender
             .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&x]))
-
             .unwrap();
     }
 }
@@ -350,8 +350,7 @@ fn check_macro_execution_efficiently(
     warn!("Got data: {:?}", trigger_overview_print);
     warn!("Got keys: {:?}", pressed_events);
 
-
-//TODO: hashmap with ID as key and macro as value (storing the macros with triggers [trigger lookup gives ID of macro -> main list gives macro by ID])
+    //TODO: hashmap with ID as key and macro as value (storing the macros with triggers [trigger lookup gives ID of macro -> main list gives macro by ID])
 
     let mut output = false;
     for macros in &trigger_overview {
@@ -366,13 +365,11 @@ fn check_macro_execution_efficiently(
                         // sorted_pressed_events.sort_unstable();
                         //error!("{:?}",sorted_pressed_events);
 
-
                         // let mut sorted_data = data.clone();
                         // sorted_data.sort_unstable();
                         // error!("SORTED DATA: {:?}",trigger_overview);
 
-                       // error!("sorted_pressed_events {:?}", sorted_pressed_events);
-                        
+                        // error!("sorted_pressed_events {:?}", sorted_pressed_events);
 
                         if data.iter().any(|x| pressed_events.contains(x)) {
                             debug!("MATCHED MACRO relaxed singlekey: {:#?}", pressed_events);
@@ -382,10 +379,8 @@ fn check_macro_execution_efficiently(
                             let channel_clone2 = channel_sender.clone();
                             let data_clone = data.clone();
                             task::spawn(async move {
-
                                 lift_keys(data_clone, channel_clone2).await;
                             });
-                            
 
                             task::spawn(async move {
                                 execute_macro(macro_clone, channel_clone).await;
@@ -402,7 +397,6 @@ fn check_macro_execution_efficiently(
                             let channel_clone2 = channel_sender.clone();
                             let data_clone = data.clone();
                             task::spawn(async move {
-
                                 lift_keys(data_clone, channel_clone2).await;
                             });
 
@@ -425,7 +419,6 @@ fn check_macro_execution_efficiently(
                             let channel_clone2 = channel_sender.clone();
                             let data_clone = data.clone();
                             task::spawn(async move {
-
                                 lift_keys(data_clone, channel_clone2).await;
                             });
 
@@ -450,7 +443,6 @@ fn check_macro_execution_efficiently(
                             let channel_clone2 = channel_sender.clone();
                             let data_clone = data.clone();
                             task::spawn(async move {
-
                                 lift_keys(data_clone, channel_clone2).await;
                             });
 
@@ -486,8 +478,6 @@ fn check_macro_execution_efficiently(
 
     output
 }
-
-
 
 impl MacroBackend {
     #[cfg(not(debug_assertions))]

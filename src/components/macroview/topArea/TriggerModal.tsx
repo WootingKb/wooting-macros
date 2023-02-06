@@ -168,11 +168,11 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </HStack>
             </VStack>
           </VStack>
-          {/* <Divider w="full" alignSelf="center" my={['4', '8']} />
+          <Divider w="full" alignSelf="center" my={['4', '8']} />
           <VStack alignItems="start">
             <HStack w="full" justifyContent="space-between" gap={4}>
               <Text fontWeight="semibold" fontSize={['xs', 'sm', 'md']}>
-                Strict Mode
+                Relaxed Mode
               </Text>
               <Switch
                 variant="brand"
@@ -184,14 +184,14 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
             </HStack>
             <VStack w="full" spacing={0}>
               <Text w="full" fontSize={['xs', 'sm', 'md']}>
-                If enabled, the macro will activate when ONLY the trigger keys
+                If enabled, the macro will activate even when pressed when other non-trigger keys
                 are pressed.
               </Text>
               <Text w="full" fontSize={['xs', 'sm', 'md']}>
                 (Only matters if the trigger is a keypress(es))
               </Text>
             </VStack>
-          </VStack> */}
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Button
