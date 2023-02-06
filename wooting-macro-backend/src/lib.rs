@@ -341,6 +341,9 @@ fn check_macro_execution_efficiently(
     debug!("Got data: {:?}", trigger_overview_print);
     debug!("Got keys: {:?}", pressed_events);
 
+
+//TODO: hashmap with ID as key and macro as value (storing the macros with triggers [trigger lookup gives ID of macro -> main list gives macro by ID])
+
     let mut output = false;
     for macros in &trigger_overview {
         match &macros.trigger {
