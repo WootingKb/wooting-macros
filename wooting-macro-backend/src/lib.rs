@@ -6,7 +6,6 @@ use rayon::prelude::*;
 
 use log::*;
 
-
 use itertools::Itertools;
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -127,13 +126,11 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            
                             .unwrap();
                     }
                     key_press::KeyType::DownUp => {
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            
                             .unwrap();
 
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
@@ -142,7 +139,6 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            
                             .unwrap();
                     }
                 },
@@ -311,8 +307,8 @@ fn check_macro_execution_efficiently(
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
-    debug!("Got data: {:?}", trigger_overview_print);
-    debug!("Got keys: {:?}", pressed_events);
+    trace!("Got data: {:?}", trigger_overview_print);
+    trace!("Got keys: {:?}", pressed_events);
 
     let mut output = false;
     for macros in &trigger_overview {
@@ -322,8 +318,6 @@ fn check_macro_execution_efficiently(
                     1 => {
                         if pressed_events == *data {
                             debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
-
-                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
@@ -360,7 +354,7 @@ fn check_macro_execution_efficiently(
             TriggerEventType::MouseEvent { data } => {
                 let event_to_check: Vec<u32> = vec![data.into()];
 
-                debug!(
+                trace!(
                     "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
                     event_to_check
                 );
@@ -382,12 +376,10 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
-    
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
-        
         #[cfg(not(debug_assertions))]
-        match std::fs::remove_file(config::LogFileName::file_name()){
+        match std::fs::remove_file(config::LogFileName::file_name()) {
             Ok(_) => info!("removed old log file"),
             Err(error) => error!("Couldnt remove old log file!: {}", error),
         }
@@ -436,7 +428,6 @@ impl MacroBackend {
 
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
-            let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
                 match Ok::<&rdev::Event, rdev::GrabError>(&event) {
@@ -472,7 +463,7 @@ impl MacroBackend {
                                     );
 
                                     debug!(
-                                        "Pressed Keys: {:?}",
+                                        "Key state: {:?}",
                                         pressed_keys_copy_converted
                                             .par_iter()
                                             .map(|x| *SCANCODE_TO_RDEV
@@ -487,8 +478,6 @@ impl MacroBackend {
                                     };
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
-
-                                    
 
                                     let check_these_macros = match trigger_list.get(&first_key) {
                                         None => {
@@ -522,6 +511,7 @@ impl MacroBackend {
                                 rdev::EventType::KeyRelease(key) => {
                                     keys_pressed.blocking_write().retain(|x| *x != key);
 
+                                    debug!("Key released: {:?}", key);
                                     debug!("Key state: {:?}", keys_pressed.blocking_read());
 
                                     Some(event)
@@ -532,8 +522,6 @@ impl MacroBackend {
 
                                     let converted_button_to_u32: u32 =
                                         BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
-
-                                    debug!("Pressed button: {:?}", buttons_pressed.blocking_read());
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
@@ -562,15 +550,13 @@ impl MacroBackend {
                                 rdev::EventType::ButtonRelease(button) => {
                                     debug!("Button released: {:?}", button);
 
-                                    buttons_pressed.blocking_write().retain(|x| *x != button);
-
                                     Some(event)
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
                                 rdev::EventType::Wheel { .. } => Some(event),
                             }
                         } else {
-                            debug!(
+                            trace!(
                                 "Passing event through... macro recording disabled: {:?}",
                                 event
                             );
@@ -602,7 +588,6 @@ impl Default for MacroBackend {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
