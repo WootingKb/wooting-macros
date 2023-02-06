@@ -11,7 +11,7 @@ use std::str::FromStr;
 use tauri_plugin_log::LogTarget;
 
 use chrono;
-use fern::colors::{ColoredLevelConfig, Color};
+use fern::colors::{Color, ColoredLevelConfig};
 
 use byte_unit::{Byte, ByteUnit};
 use std::env::current_exe;
@@ -84,17 +84,10 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    
-    
-
-
     let log_level: log::LevelFilter = option_env!("RUST_LOG")
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
-
-
-    
     wooting_macro_backend::MacroBackend::generate_directories();
 
     let backend = MacroBackend::default();
@@ -241,26 +234,31 @@ async fn main() {
         .plugin(
             tauri_plugin_log::Builder::default()
                 .level(log_level)
-            
                 .format(|out, message, record| {
                     let colors = ColoredLevelConfig::new()
-                    .error(Color::Red)
-                    .warn(Color::Yellow)
-                    .info(Color::Green)
-                    .debug(Color::Magenta)
-                    .trace(Color::White);
-                    
+                        .error(Color::Red)
+                        .warn(Color::Yellow)
+                        .info(Color::Green)
+                        .debug(Color::Magenta)
+                        .trace(Color::White);
+
                     out.finish(format_args!(
                         "{} [{}] [{}] | {}\x1B[0m",
                         chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S%f]"),
                         record.target(),
-                        
                         colors.color(record.level()),
                         message
-                    ))})
+                    ))
+                })
                 .max_file_size(Byte::from_unit(16f64, ByteUnit::KiB).unwrap().into())
-                .targets([tauri_plugin_log::LogTarget::Folder(wooting_macro_backend::config::LogDirPath::file_name()), LogTarget::Stdout, LogTarget::Webview])
-                .build()
+                .targets([
+                    tauri_plugin_log::LogTarget::Folder(
+                        wooting_macro_backend::config::LogDirPath::file_name(),
+                    ),
+                    LogTarget::Stdout,
+                    LogTarget::Webview,
+                ])
+                .build(),
         )
         .run(tauri::generate_context!())
         // .build(tauri::generate_context!())
