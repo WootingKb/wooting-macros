@@ -30,7 +30,7 @@ dirs = "4.0"
 itertools = "0.10"
 anyhow = "1.0.66"
 log = "0.4"
-env_logger = "0.10.0"
+env_logger = "0.10"
 rayon = "1.6.1"
 
 
