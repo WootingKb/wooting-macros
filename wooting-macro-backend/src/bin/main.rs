@@ -5,5 +5,8 @@ use wooting_macro_backend::MacroBackend;
 async fn main() {
     println!("Running only backend");
     let backend = MacroBackend::default();
+
+    env_logger::init();
+
     backend.init().await;
 }

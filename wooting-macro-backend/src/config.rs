@@ -74,17 +74,13 @@ impl ConfigFile for ApplicationConfig {
 
 impl ConfigFile for LogDirPath {
     fn file_name() -> PathBuf {
-        let dir = {
-            #[cfg(debug_assertions)]
-            let x = PathBuf::from("..");
+        #[cfg(debug_assertions)]
+        let x = PathBuf::from("..");
 
-            #[cfg(not(debug_assertions))]
-            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+        #[cfg(not(debug_assertions))]
+        let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
 
-            x
-        };
-
-        dir
+        x
     }
 }
 
