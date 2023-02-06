@@ -356,10 +356,10 @@ fn check_macro_execution_efficiently(
                         let mut sorted_data = data.clone();
                         sorted_data.sort_unstable();
 
-                        error!("sorted_pressed_events {:#?}", sorted_pressed_events);
-                        error!("sorted_data {:#?}", sorted_data);
+                        error!("sorted_pressed_events {:?}", sorted_pressed_events);
+                        
 
-                        if sorted_pressed_events.iter().all(|x| data.contains(x)) {
+                        if sorted_pressed_events.iter().combinations(sorted_pressed_events.len()).any(|x| sorted_data.contains(x)) {
                             debug!("MATCHED MACRO relaxed singlekey: {:#?}", pressed_events);
 
                             let channel_clone = channel_sender.clone();
@@ -446,6 +446,8 @@ fn check_macro_execution_efficiently(
 
     output
 }
+
+
 
 impl MacroBackend {
     #[cfg(not(debug_assertions))]
