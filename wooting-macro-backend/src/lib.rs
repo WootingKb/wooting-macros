@@ -126,13 +126,11 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            
                             .unwrap();
                     }
                     key_press::KeyType::DownUp => {
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            
                             .unwrap();
 
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
@@ -141,7 +139,6 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            
                             .unwrap();
                     }
                 },
@@ -440,7 +437,13 @@ impl MacroBackend {
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
 
-                                    keys_pressed.push(key_to_push);
+                                    let mut temp_push = keys_pressed.clone();
+                                    temp_push.push(key_to_push);
+
+                                    let temp_push: Vec<rdev::Key> =
+                                        temp_push.into_iter().unique().collect();
+
+                                    *keys_pressed = temp_push;
 
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
                                         .iter()
@@ -478,8 +481,6 @@ impl MacroBackend {
                                     };
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
-
-                                    debug!("TRIGGER LIST: {:#?}", trigger_list);
 
                                     let check_these_macros = match trigger_list.get(&first_key) {
                                         None => {
@@ -593,7 +594,6 @@ impl Default for MacroBackend {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

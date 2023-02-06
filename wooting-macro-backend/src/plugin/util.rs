@@ -15,9 +15,7 @@ pub fn send(event_type: &rdev::EventType) {
 /// Sends a vector of keys to get processed
 pub async fn send_key(send_channel: &UnboundedSender<rdev::EventType>, key: Vec<rdev::Key>) {
     for press in key {
-        send_channel
-            .send(rdev::EventType::KeyPress(press))
-            .unwrap();
+        send_channel.send(rdev::EventType::KeyPress(press)).unwrap();
         send_channel
             .send(rdev::EventType::KeyRelease(press))
             .unwrap();
