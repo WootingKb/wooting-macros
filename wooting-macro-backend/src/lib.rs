@@ -355,7 +355,8 @@ fn check_macro_execution_efficiently(
                         if data[..(data.len() - 1)]
                             .iter()
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
-                            && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
+                            && pressed_events.contains(&data[data.len() - 1])
+                            // [pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
