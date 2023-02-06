@@ -210,7 +210,10 @@ impl MacroData {
                 for macros in &collections.macros {
                     if macros.active {
                         match &macros.trigger {
-                            TriggerEventType::KeyPressEvent { data, allow_while_other_keys } => {
+                            TriggerEventType::KeyPressEvent {
+                                data,
+                                allow_while_other_keys,
+                            } => {
                                 //TODO: optimize using references
                                 match data.len() {
                                     0 => error!("A trigger key can't be zero...: {:#?}", data),
@@ -235,9 +238,7 @@ impl MacroData {
                                 }
                             }
                         }
-                        
                     }
-                    
                 }
             }
         }
@@ -245,25 +246,26 @@ impl MacroData {
         output_hashmap
     }
     pub fn extract_relaxed_macros(&self) -> Vec<Macro> {
-        let mut output_vector:Vec<Macro> = vec![];
+        let mut output_vector: Vec<Macro> = vec![];
 
         for collections in &self.data {
             if collections.active {
                 for macros in &collections.macros {
                     if macros.active {
                         match &macros.trigger {
-                            TriggerEventType::KeyPressEvent { allow_while_other_keys, .. } => {
+                            TriggerEventType::KeyPressEvent {
+                                allow_while_other_keys,
+                                ..
+                            } => {
                                 //TODO: optimize using references
                                 match allow_while_other_keys {
                                     true => output_vector.push(macros.clone()),
-                                    false => ()
+                                    false => (),
                                 }
                             }
-                            _ => ()
+                            _ => (),
                         }
-                        
                     }
-                    
                 }
             }
         }
@@ -347,7 +349,7 @@ fn check_macro_execution_efficiently(
                 allow_while_other_keys,
             } => {
                 match (data.len(), allow_while_other_keys) {
-                    (1, false) => {
+                    (1, true) => {
                         let mut sorted_pressed_events = pressed_events.clone();
                         sorted_pressed_events.sort_unstable();
 
@@ -369,7 +371,7 @@ fn check_macro_execution_efficiently(
                             output = true;
                         }
                     }
-                    (1, true) => {
+                    (1, false) => {
                         if pressed_events == *data {
                             debug!("MATCHED MACRO strict singlekey: {:#?}", pressed_events);
 
@@ -383,12 +385,10 @@ fn check_macro_execution_efficiently(
                         }
                     }
 
-                    (2..=4, false) => {
+                    (2..=4, true) => {
                         // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
-                        if pressed_events
-                            .iter()
-                            .all(|x| data.contains(x))
-                            // && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
+                        if pressed_events.iter().all(|x| data.contains(x))
+                        // && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
@@ -401,13 +401,13 @@ fn check_macro_execution_efficiently(
                             output = true;
                         }
                     }
-                    (2..=4, true) => {
+                    (2..=4, false) => {
                         // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
                         if data[..(data.len() - 1)]
                             .iter()
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
                             && pressed_events.contains(&data[data.len() - 1])
-                            // [pressed_events.len() - 1] == data[data.len() - 1]
+                        // [pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
@@ -485,7 +485,7 @@ impl MacroBackend {
 
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
-        let relaxed_macros:Arc<RwLock<Vec<Macro>>> = self.any_order_data.clone();
+        let relaxed_macros: Arc<RwLock<Vec<Macro>>> = self.any_order_data.clone();
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
 
@@ -497,7 +497,7 @@ impl MacroBackend {
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
-            
+
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
@@ -521,26 +521,59 @@ impl MacroBackend {
                                     .collect()
                             };
 
-                            debug!(
-                                "Pressed Keys CONVERTED TO HID:  {:?}",
-                                pressed_keys_copy_converted
-                            );
-                            debug!(
-                                "Pressed Keys CONVERTED TO RDEV: {:?}",
-                                pressed_keys_copy_converted
-                                    .par_iter()
-                                    .map(|x| *SCANCODE_TO_RDEV
-                                        .get(x)
-                                        .unwrap_or(&rdev::Key::Unknown(0)))
-                                    .collect::<Vec<rdev::Key>>()
-                            );
+                                    let pressed_keys_copy_converted: Vec<u32> = keys_pressed
+                                        .iter()
+                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .into_iter()
+                                        .unique()
+                                        .collect();
+                                    debug!(
+                                        "Pressed Keys CONVERTED TO HID:  {:?}",
+                                        pressed_keys_copy_converted
+                                    );
+                                    debug!(
+                                        "Pressed Keys CONVERTED TO RDEV: {:?}",
+                                        pressed_keys_copy_converted
+                                            .par_iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
-                                    
+                                    debug!(
+                                        "Pressed Keys: {:?}",
+                                        pressed_keys_copy_converted
+                                            .par_iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
 
-                            let first_key: u32 = match pressed_keys_copy_converted.first() {
-                                None => 0,
-                                Some(data_first) => *data_first,
-                            };
+                                    let first_key: u32 = match pressed_keys_copy_converted.first() {
+                                        None => 0,
+                                        Some(data_first) => *data_first,
+                                    };
+
+                                    let trigger_list = inner_triggers.blocking_read().clone();
+
+                                    let relaxed_list = relaxed_macros.blocking_read().clone();
+
+                                    let check_these_macros = match (
+                                        trigger_list.get(&first_key),
+                                        relaxed_list.is_empty(),
+                                    ) {
+                                        (None, true) => relaxed_list,
+
+                                        (Some(data_found), true) => {
+                                            let mut temp_vec = data_found.to_vec();
+                                            temp_vec.extend(relaxed_list);
+                                            temp_vec
+                                        }
+                                        (None, false) => vec![],
+                                        (Some(data_found), false) => data_found.to_vec(),
+                                    };
 
                             let trigger_list = inner_triggers.blocking_read().clone();
 
