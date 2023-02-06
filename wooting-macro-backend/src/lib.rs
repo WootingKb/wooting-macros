@@ -211,19 +211,19 @@ impl MacroData {
                     if macros.active {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent {
-                                data,
-                                allow_while_other_keys,
+                                data,allow_while_other_keys
                             } => {
                                 //TODO: optimize using references
-                                match data.len() {
-                                    0 => error!("A trigger key can't be zero...: {:#?}", data),
-                                    1 => output_hashmap
+                                match (data.len(), allow_while_other_keys) {
+                                    (0, false) => error!("A trigger key can't be zero...: {:#?}", data),
+                                    (1, false) => output_hashmap
                                         .entry(*data.first().unwrap())
                                         .or_default()
                                         .push(macros.clone()),
-                                    _ => data[..data.len() - 1].iter().for_each(|x| {
+                                    (_, false) => data[..data.len() - 1].iter().for_each(|x| {
                                         output_hashmap.entry(*x).or_default().push(macros.clone());
                                     }),
+                                    (_,true) => ()
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
@@ -324,6 +324,15 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
     }
 }
 
+async fn lift_keys(pressed_events: Vec<u32>, channel_sender: UnboundedSender<rdev::EventType>) {
+    for x in pressed_events {
+        channel_sender
+            .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&x]))
+
+            .unwrap();
+    }
+}
+
 /// A more efficient way using hashtable to check whether the trigger keys match the macro.
 ///
 /// `pressed_events` - the keys pressed in HID format (use the conversion HID hashtable to get the number).
@@ -338,8 +347,8 @@ fn check_macro_execution_efficiently(
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
-    debug!("Got data: {:?}", trigger_overview_print);
-    debug!("Got keys: {:?}", pressed_events);
+    warn!("Got data: {:?}", trigger_overview_print);
+    warn!("Got keys: {:?}", pressed_events);
 
 
 //TODO: hashmap with ID as key and macro as value (storing the macros with triggers [trigger lookup gives ID of macro -> main list gives macro by ID])
@@ -353,20 +362,30 @@ fn check_macro_execution_efficiently(
             } => {
                 match (data.len(), allow_while_other_keys) {
                     (1, true) => {
-                        let mut sorted_pressed_events = pressed_events.clone();
-                        sorted_pressed_events.sort_unstable();
+                        // let mut sorted_pressed_events = pressed_events.clone();
+                        // sorted_pressed_events.sort_unstable();
+                        //error!("{:?}",sorted_pressed_events);
 
-                        let mut sorted_data = data.clone();
-                        sorted_data.sort_unstable();
 
-                        error!("sorted_pressed_events {:?}", sorted_pressed_events);
+                        // let mut sorted_data = data.clone();
+                        // sorted_data.sort_unstable();
+                        // error!("SORTED DATA: {:?}",trigger_overview);
+
+                       // error!("sorted_pressed_events {:?}", sorted_pressed_events);
                         
 
-                        if sorted_pressed_events.iter().combinations(sorted_pressed_events.len()).any(|x| sorted_data.contains(x)) {
+                        if data.iter().any(|x| pressed_events.contains(x)) {
                             debug!("MATCHED MACRO relaxed singlekey: {:#?}", pressed_events);
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
+                            let channel_clone2 = channel_sender.clone();
+                            let data_clone = data.clone();
+                            task::spawn(async move {
+
+                                lift_keys(data_clone, channel_clone2).await;
+                            });
+                            
 
                             task::spawn(async move {
                                 execute_macro(macro_clone, channel_clone).await;
@@ -390,7 +409,7 @@ fn check_macro_execution_efficiently(
 
                     (2..=4, true) => {
                         // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
-                        if pressed_events.iter().all(|x| data.contains(x))
+                        if data.iter().all(|x| pressed_events.contains(x))
                         // && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
@@ -569,15 +588,15 @@ impl MacroBackend {
                                         trigger_list.get(&first_key),
                                         relaxed_list.is_empty(),
                                     ) {
-                                        (None, true) => relaxed_list,
+                                        (None, false) => relaxed_list,
 
-                                        (Some(data_found), true) => {
+                                        (Some(data_found), false) => {
                                             let mut temp_vec = data_found.to_vec();
                                             temp_vec.extend(relaxed_list);
                                             temp_vec
                                         }
-                                        (None, false) => vec![],
-                                        (Some(data_found), false) => data_found.to_vec(),
+                                        (None, true) => vec![],
+                                        (Some(data_found), true) => data_found.to_vec(),
                                     };
 
                             let trigger_list = inner_triggers.blocking_read().clone();
