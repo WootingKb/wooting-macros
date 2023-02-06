@@ -24,7 +24,7 @@ export default function KeyPressForm({
   selectedElement
 }: Props) {
   const [headingText, setHeadingText] = useState('')
-  const [keypressDuration, setKeypressDuration] = useState(1)
+  const [keypressDuration, setKeypressDuration] = useState("1")
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
 
@@ -37,7 +37,7 @@ export default function KeyPressForm({
 
     const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
-    setKeypressDuration(selectedElement.data.press_duration)
+    setKeypressDuration(selectedElement.data.press_duration.toString())
     setHeadingText(
       `Key ${HIDLookup.get(selectedElement.data.keypress)?.displayString}`
     )
@@ -45,23 +45,26 @@ export default function KeyPressForm({
 
   const onKeypressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = parseInt(event.target.value)
-      if (newValue === undefined) {
-        return
-      }
-      if (!Number.isNaN(newValue)) {
-        setKeypressDuration(newValue)
-      } else {
-        setKeypressDuration(0)
-      }
+      setKeypressDuration(event.target.value)
     },
     [setKeypressDuration]
   )
 
   const onInputBlur = useCallback(() => {
+    let duration
+    if (keypressDuration === '') {
+      duration = 0;
+    } else {
+
+      duration = parseInt(keypressDuration)
+      if (Number.isNaN(duration)) {
+        return
+      }
+    }
+
     const temp: KeyPressEventAction = {
       ...selectedElement,
-      data: { ...selectedElement.data, press_duration: keypressDuration }
+      data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
   }, [keypressDuration, selectedElement, selectedElementId, updateElement])
@@ -148,6 +151,7 @@ export default function KeyPressForm({
               value={keypressDuration}
               onChange={onKeypressDurationChange}
               onBlur={onInputBlur}
+              isInvalid={Number.isNaN(parseInt(keypressDuration))}
             />
           </GridItem>
         </Grid>
