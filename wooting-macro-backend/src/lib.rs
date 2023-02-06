@@ -174,6 +174,7 @@ type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 #[derive(Debug)]
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
+    pub any_order_data: Arc<RwLock<Vec<Macro>>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
@@ -209,7 +210,7 @@ impl MacroData {
                 for macros in &collections.macros {
                     if macros.active {
                         match &macros.trigger {
-                            TriggerEventType::KeyPressEvent { data, .. } => {
+                            TriggerEventType::KeyPressEvent { data, allow_while_other_keys } => {
                                 //TODO: optimize using references
                                 match data.len() {
                                     0 => error!("A trigger key can't be zero...: {:#?}", data),
@@ -234,12 +235,40 @@ impl MacroData {
                                 }
                             }
                         }
+                        
                     }
+                    
                 }
             }
         }
 
         output_hashmap
+    }
+    pub fn extract_relaxed_macros(&self) -> Vec<Macro> {
+        let mut output_vector:Vec<Macro> = vec![];
+
+        for collections in &self.data {
+            if collections.active {
+                for macros in &collections.macros {
+                    if macros.active {
+                        match &macros.trigger {
+                            TriggerEventType::KeyPressEvent { allow_while_other_keys, .. } => {
+                                //TODO: optimize using references
+                                match allow_while_other_keys {
+                                    true => output_vector.push(macros.clone()),
+                                    false => ()
+                                }
+                            }
+                            _ => ()
+                        }
+                        
+                    }
+                    
+                }
+            }
+        }
+
+        output_vector
     }
 }
 
@@ -318,9 +347,31 @@ fn check_macro_execution_efficiently(
                 allow_while_other_keys,
             } => {
                 match (data.len(), allow_while_other_keys) {
-                    (1, _) => {
+                    (1, false) => {
+                        let mut sorted_pressed_events = pressed_events.clone();
+                        sorted_pressed_events.sort_unstable();
+
+                        let mut sorted_data = data.clone();
+                        sorted_data.sort_unstable();
+
+                        error!("sorted_pressed_events {:#?}", sorted_pressed_events);
+                        error!("sorted_data {:#?}", sorted_data);
+
+                        if sorted_pressed_events.iter().all(|x| data.contains(x)) {
+                            debug!("MATCHED MACRO relaxed singlekey: {:#?}", pressed_events);
+
+                            let channel_clone = channel_sender.clone();
+                            let macro_clone = macros.clone();
+
+                            task::spawn(async move {
+                                execute_macro(macro_clone, channel_clone).await;
+                            });
+                            output = true;
+                        }
+                    }
+                    (1, true) => {
                         if pressed_events == *data {
-                            debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
+                            debug!("MATCHED MACRO strict singlekey: {:#?}", pressed_events);
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
@@ -334,10 +385,10 @@ fn check_macro_execution_efficiently(
 
                     (2..=4, false) => {
                         // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
-                        if data[..(data.len() - 1)]
+                        if pressed_events
                             .iter()
-                            .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
-                            && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
+                            .all(|x| data.contains(x))
+                            // && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
@@ -414,6 +465,8 @@ impl MacroBackend {
     pub async fn set_macros(&self, macros: MacroData) {
         macros.write_to_file();
         *self.triggers.write().await = macros.extract_triggers();
+        *self.any_order_data.write().await = macros.extract_relaxed_macros();
+        error!("any_order_data {:#?}", *self.any_order_data.read().await);
         *self.data.write().await = macros;
     }
 
@@ -432,7 +485,7 @@ impl MacroBackend {
 
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
-
+        let relaxed_macros:Arc<RwLock<Vec<Macro>>> = self.any_order_data.clone();
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
 
@@ -444,7 +497,7 @@ impl MacroBackend {
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
-
+            
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
@@ -588,8 +641,10 @@ impl Default for MacroBackend {
     fn default() -> Self {
         let macro_data = MacroData::read_data();
         let triggers = macro_data.extract_triggers();
+        let relaxed_macros = macro_data.extract_relaxed_macros();
         MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
+            any_order_data: Arc::new(RwLock::from(relaxed_macros)),
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
