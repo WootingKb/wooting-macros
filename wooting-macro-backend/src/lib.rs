@@ -361,16 +361,6 @@ fn check_macro_execution_efficiently(
             } => {
                 match (data.len(), allow_while_other_keys) {
                     (1, true) => {
-                        // let mut sorted_pressed_events = pressed_events.clone();
-                        // sorted_pressed_events.sort_unstable();
-                        //error!("{:?}",sorted_pressed_events);
-
-                        // let mut sorted_data = data.clone();
-                        // sorted_data.sort_unstable();
-                        // error!("SORTED DATA: {:?}",trigger_overview);
-
-                        // error!("sorted_pressed_events {:?}", sorted_pressed_events);
-
                         if data.iter().any(|x| pressed_events.contains(x)) {
                             debug!("MATCHED MACRO relaxed singlekey: {:#?}", pressed_events);
 
@@ -409,9 +399,7 @@ fn check_macro_execution_efficiently(
 
                     (2..=4, true) => {
                         // This check makes sure the modifier keys (up to 3 keys in each trigger) can be of any order, and ensures the last key must match to the proper one.
-                        if data.iter().all(|x| pressed_events.contains(x))
-                        // && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
-                        {
+                        if data.iter().all(|x| pressed_events.contains(x)) {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
                             let channel_clone = channel_sender.clone();
@@ -434,7 +422,6 @@ fn check_macro_execution_efficiently(
                             .iter()
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
                             && pressed_events.contains(&data[data.len() - 1])
-                        // [pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
@@ -598,8 +585,6 @@ impl MacroBackend {
                                     (None, true) => vec![],
                                     (Some(data_found), true) => data_found.to_vec(),
                                 };
-
-
 
                             // ? up the pressed keys here immidiately?
 
