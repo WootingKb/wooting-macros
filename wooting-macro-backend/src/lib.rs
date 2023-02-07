@@ -319,12 +319,11 @@ fn check_macro_execution_efficiently(
                         if pressed_events == *data {
                             debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
 
-                            let channel_clone_lift = channel_sender.clone();
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
                             let pressed_data_clone = data.clone();
 
-                            plugin::util::lift_keys(pressed_data_clone, channel_clone_lift);
+                            plugin::util::lift_keys(pressed_data_clone, &channel_clone_execute);
 
                             task::spawn(async move {
                                 execute_macro(macro_clone_execute, channel_clone_execute).await;
@@ -341,12 +340,11 @@ fn check_macro_execution_efficiently(
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
-                            let channel_clone_lift = channel_sender.clone();
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
                             let pressed_data_clone = data.clone();
 
-                            plugin::util::lift_keys(pressed_data_clone, channel_clone_lift);
+                            plugin::util::lift_keys(pressed_data_clone, &channel_clone_execute);
 
                             task::spawn(async move {
                                 execute_macro(macro_clone_execute, channel_clone_execute).await;
