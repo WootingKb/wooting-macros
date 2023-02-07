@@ -38,7 +38,7 @@ pub async fn send_hotkey(send_channel: &UnboundedSender<rdev::EventType>, key: V
 }
 
 /// Lifts the keys pressed
-pub async fn lift_keys(pressed_events: Vec<u32>, channel_sender: UnboundedSender<rdev::EventType>) {
+pub fn lift_keys(pressed_events: Vec<u32>, channel_sender: UnboundedSender<rdev::EventType>) {
     for x in pressed_events {
         channel_sender
             .send(rdev::EventType::KeyRelease(
