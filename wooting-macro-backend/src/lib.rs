@@ -293,15 +293,6 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
     }
 }
 
-async fn lift_keys(pressed_events: Vec<u32>, channel_sender: UnboundedSender<rdev::EventType>) {
-    for x in pressed_events {
-        channel_sender
-            .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&x]))
-            
-            .unwrap();
-    }
-}
-
 /// A more efficient way using hashtable to check whether the trigger keys match the macro.
 ///
 /// `pressed_events` - the keys pressed in HID format (use the conversion HID hashtable to get the number).
@@ -328,19 +319,18 @@ fn check_macro_execution_efficiently(
                         if pressed_events == *data {
                             debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
 
-                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
+                            let channel_clone_lift = channel_sender.clone();
+                            let channel_clone_execute = channel_sender.clone();
+                            let macro_clone_execute = macros.clone();
+                            let pressed_data_clone = data.clone();
 
-                            let channel_clone = channel_sender.clone();
-                            let macro_clone = macros.clone();
-                            let channel_clone2 = channel_sender.clone();
-                            let pressed_events2 = pressed_events.clone();
                             task::spawn(async move {
-
-                                lift_keys(pressed_events2, channel_clone2).await;
+                                plugin::util::lift_keys(pressed_data_clone, channel_clone_lift)
+                                    .await;
                             });
 
                             task::spawn(async move {
-                                execute_macro(macro_clone, channel_clone).await;
+                                execute_macro(macro_clone_execute, channel_clone_execute).await;
                             });
                             output = true;
                         }
@@ -354,20 +344,17 @@ fn check_macro_execution_efficiently(
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
-                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
-
-                            let channel_clone = channel_sender.clone();
-                            let macro_clone = macros.clone();
-                            let channel_clone2 = channel_sender.clone();
+                            let channel_clone_lift = channel_sender.clone();
+                            let channel_clone_execute = channel_sender.clone();
+                            let macro_clone_execute = macros.clone();
                             let pressed_data_clone = data.clone();
                             task::spawn(async move {
-
-                                lift_keys(pressed_data_clone, channel_clone2).await;
+                                plugin::util::lift_keys(pressed_data_clone, channel_clone_lift)
+                                    .await;
                             });
 
                             task::spawn(async move {
-                                tokio::time::sleep(time::Duration::from_millis(3)).await;
-                                execute_macro(macro_clone, channel_clone).await;
+                                execute_macro(macro_clone_execute, channel_clone_execute).await;
                             });
                             output = true;
                         }
