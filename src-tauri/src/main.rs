@@ -89,7 +89,7 @@ async fn main() {
 
     let backend = MacroBackend::default();
 
-    println!("Running the macro backend");
+    info!("Running the macro backend");
 
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     backend.init().await;
