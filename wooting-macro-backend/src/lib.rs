@@ -381,12 +381,6 @@ impl MacroBackend {
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
         #[cfg(not(debug_assertions))]
-        match std::fs::remove_file(config::LogFileName::file_name()) {
-            Ok(_) => info!("removed old log file"),
-            Err(error) => error!("Couldnt remove old log file!: {}", error),
-        }
-
-        #[cfg(not(debug_assertions))]
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
             Err(error) => error!("Directory creation failed, OS error: {}", error),
