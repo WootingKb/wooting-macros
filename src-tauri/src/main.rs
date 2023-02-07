@@ -215,14 +215,10 @@ async fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             info!("{}, {argv:?}, {cwd}", app.package_info().name);
 
-            app.get_window("main")
-                .expect("Couldn't fetch window")
-                .show()
-                .expect("Couldn't show window");
-            app.get_window("main")
-                .expect("Couldn't fetch window")
-                .set_focus()
-                .expect("Couldn't focus window");
+            let window = app.get_window("main").expect("Couldn't fetch window");
+
+            window.show().expect("Couldn't show window");
+            window.set_focus().expect("Couldn't focus window");
 
             app.emit_all("single-instance", ())
                 .expect("Couldn't re-focus opened instance.");
