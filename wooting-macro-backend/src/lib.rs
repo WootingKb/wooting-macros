@@ -553,68 +553,53 @@ impl MacroBackend {
                                     .collect()
                             };
 
-                                    let pressed_keys_copy_converted: Vec<u32> = keys_pressed
-                                        .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .into_iter()
-                                        .unique()
-                                        .collect();
-                                    debug!(
-                                        "Pressed Keys CONVERTED TO HID:  {:?}",
-                                        pressed_keys_copy_converted
-                                    );
-                                    debug!(
-                                        "Pressed Keys CONVERTED TO RDEV: {:?}",
-                                        pressed_keys_copy_converted
-                                            .par_iter()
-                                            .map(|x| *SCANCODE_TO_RDEV
-                                                .get(x)
-                                                .unwrap_or(&rdev::Key::Unknown(0)))
-                                            .collect::<Vec<rdev::Key>>()
-                                    );
+                            debug!(
+                                "Pressed Keys CONVERTED TO HID:  {:?}",
+                                pressed_keys_copy_converted
+                            );
+                            debug!(
+                                "Pressed Keys CONVERTED TO RDEV: {:?}",
+                                pressed_keys_copy_converted
+                                    .par_iter()
+                                    .map(|x| *SCANCODE_TO_RDEV
+                                        .get(x)
+                                        .unwrap_or(&rdev::Key::Unknown(0)))
+                                    .collect::<Vec<rdev::Key>>()
+                            );
 
-                                    debug!(
-                                        "Pressed Keys: {:?}",
-                                        pressed_keys_copy_converted
-                                            .par_iter()
-                                            .map(|x| *SCANCODE_TO_RDEV
-                                                .get(x)
-                                                .unwrap_or(&rdev::Key::Unknown(0)))
-                                            .collect::<Vec<rdev::Key>>()
-                                    );
+                            debug!(
+                                "Pressed Keys: {:?}",
+                                pressed_keys_copy_converted
+                                    .par_iter()
+                                    .map(|x| *SCANCODE_TO_RDEV
+                                        .get(x)
+                                        .unwrap_or(&rdev::Key::Unknown(0)))
+                                    .collect::<Vec<rdev::Key>>()
+                            );
 
-                                    let first_key: u32 = match pressed_keys_copy_converted.first() {
-                                        None => 0,
-                                        Some(data_first) => *data_first,
-                                    };
-
-                                    let trigger_list = inner_triggers.blocking_read().clone();
-
-                                    let relaxed_list = relaxed_macros.blocking_read().clone();
-
-                                    let check_these_macros = match (
-                                        trigger_list.get(&first_key),
-                                        relaxed_list.is_empty(),
-                                    ) {
-                                        (None, false) => relaxed_list,
-
-                                        (Some(data_found), false) => {
-                                            let mut temp_vec = data_found.to_vec();
-                                            temp_vec.extend(relaxed_list);
-                                            temp_vec
-                                        }
-                                        (None, true) => vec![],
-                                        (Some(data_found), true) => data_found.to_vec(),
-                                    };
+                            let first_key: u32 = match pressed_keys_copy_converted.first() {
+                                None => 0,
+                                Some(data_first) => *data_first,
+                            };
 
                             let trigger_list = inner_triggers.blocking_read().clone();
 
-                            let check_these_macros = match trigger_list.get(&first_key) {
-                                None => {
-                                    vec![]
-                                }
-                                Some(data_found) => data_found.to_vec(),
-                            };
+                            let relaxed_list = relaxed_macros.blocking_read().clone();
+
+                            let check_these_macros =
+                                match (trigger_list.get(&first_key), relaxed_list.is_empty()) {
+                                    (None, false) => relaxed_list,
+
+                                    (Some(data_found), false) => {
+                                        let mut temp_vec = data_found.to_vec();
+                                        temp_vec.extend(relaxed_list);
+                                        temp_vec
+                                    }
+                                    (None, true) => vec![],
+                                    (Some(data_found), true) => data_found.to_vec(),
+                                };
+
+
 
                             // ? up the pressed keys here immidiately?
 
