@@ -468,8 +468,6 @@ impl MacroBackend {
                                     .collect::<Vec<rdev::Key>>()
                             );
 
-                                    
-
                             let first_key: u32 = match pressed_keys_copy_converted.first() {
                                 None => 0,
                                 Some(data_first) => *data_first,
@@ -520,8 +518,6 @@ impl MacroBackend {
                             let converted_button_to_u32: u32 =
                                 BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                            debug!("Pressed button: {:?}", buttons_pressed.blocking_read());
-
                             let trigger_list = inner_triggers.blocking_read().clone();
 
                             let check_these_macros =
@@ -548,8 +544,6 @@ impl MacroBackend {
                         }
                         rdev::EventType::ButtonRelease(button) => {
                             debug!("Button released: {:?}", button);
-
-                            buttons_pressed.blocking_write().retain(|x| *x != button);
 
                             Some(event)
                         }
