@@ -4,6 +4,7 @@ import { KeyType } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
+import { trace, info, error, attachConsole } from "tauri-plugin-log"
 
 export default function useRecordingSequence(
   onItemChanged: (
@@ -134,7 +135,7 @@ export default function useRecordingSequence(
     window.addEventListener('keyup', addKeypress, false)
     window.addEventListener('mouseup', addMousepress, false)
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
-      console.error(e)
+      error(e)
     })
 
     return () => {
@@ -143,7 +144,7 @@ export default function useRecordingSequence(
       window.removeEventListener('keyup', addKeypress, false)
       window.removeEventListener('mouseup', addMousepress, false)
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
-        console.error(e)
+        error(e)
       })
     }
   }, [recording, addKeypress, addMousepress])

@@ -5,6 +5,15 @@ import { theme } from './theme/index'
 import { ApplicationProvider } from './contexts/applicationContext'
 import { SettingsProvider } from './contexts/settingsContext'
 import '@fontsource/montserrat/800.css'
+import { warn, info, error, attachConsole } from 'tauri-plugin-log';
+
+
+// with LogTarget::Webview enabled this function will print logs to the browser console
+const detach = await attachConsole();
+warn("Warn");
+info("Info");
+error("Error");
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ChakraProvider theme={theme}>

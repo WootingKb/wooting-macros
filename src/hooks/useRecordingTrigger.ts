@@ -8,6 +8,7 @@ import {
   checkIfModifierKey,
   checkIfKeyShouldContinueTriggerRecording
 } from '../constants/utils'
+import { trace, info, error, attachConsole } from "tauri-plugin-log"
 
 export default function useRecordingTrigger(
   initialItems: MouseButton | number[]
@@ -95,7 +96,7 @@ export default function useRecordingTrigger(
     window.addEventListener('keydown', addKeypress, true)
     window.addEventListener('mousedown', addMousepress, true)
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
-      console.error(e)
+      error(e)
       toast({
         title: 'Error disabling macro output',
         description:
@@ -110,7 +111,7 @@ export default function useRecordingTrigger(
       window.removeEventListener('keydown', addKeypress, true)
       window.removeEventListener('mousedown', addMousepress, true)
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
-        console.error(e)
+        error(e)
         toast({
           title: 'Error enabling macro output',
           description:

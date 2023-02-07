@@ -21,10 +21,10 @@ tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.4"
 log = "0.4"
-tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features= ["colored"] }
 byte-unit = "4.0"
-chrono = "0.4"
-fern = {version= "0.6", features= ["colored"] }
+
+
 
 
 

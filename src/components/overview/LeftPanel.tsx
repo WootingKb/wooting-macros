@@ -20,6 +20,7 @@ import data from '@emoji-mart/data'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
+import { trace, info, error, attachConsole } from "tauri-plugin-log"
 
 interface Props {
   onOpenSettingsModal: () => void
@@ -93,7 +94,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 onChange={() => {
                   setIsMacroOutputEnabled((value) => {
                     updateMacroOutput(value).catch((e) => {
-                      console.error(e)
+                      error(e)
                       toast({
                         title: `Error ${
                           !value ? 'disabling' : 'enabling'

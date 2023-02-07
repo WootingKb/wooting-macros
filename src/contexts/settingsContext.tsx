@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
 import { updateSettings } from '../constants/utils'
+import { trace, info, error, attachConsole } from "tauri-plugin-log"
 
 type SettingsProviderProps = { children: ReactNode }
 
@@ -46,7 +47,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         setInitComplete(true)
       })
       .catch((e) => {
-        console.error(e)
+        error(e)
         toast({
           title: 'Error loading settings',
           description:
@@ -61,7 +62,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   useEffect(() => {
     if (initComplete)
       updateSettings(config).catch((e) => {
-        console.error(e)
+        error(e)
         toast({
           title: 'Error updating settings',
           description:

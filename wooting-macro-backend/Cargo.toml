@@ -15,7 +15,6 @@ serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
 rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
 halfbrown = { version = "0.1", features = ["serde"] }
-idasen-cli = "0.1"
 lazy_static = "1.4"
 tokio = { version = "1.23", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }

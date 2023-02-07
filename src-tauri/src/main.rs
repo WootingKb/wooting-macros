@@ -7,10 +7,8 @@ extern crate core;
 
 use log::*;
 use std::str::FromStr;
-
-use tauri_plugin_log::LogTarget;
-
-use fern::colors::{Color, ColoredLevelConfig};
+use std::time;
+use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
 use byte_unit::{Byte, ByteUnit};
 use std::env::current_exe;
@@ -234,28 +232,29 @@ async fn main() {
             tauri_plugin_log::Builder::default()
                 .level(log_level)
                 .format(|out, message, record| {
-                    let colors = ColoredLevelConfig::new()
+                    out.finish(format_args!(
+                        "{:?} [{}] [{}] | {}",
+                        time::SystemTime::now(),
+                        record.target(),
+                        record.level(),
+                        message
+                    ))
+                })
+                .with_colors(
+                    ColoredLevelConfig::new()
                         .error(Color::Red)
                         .warn(Color::Yellow)
                         .info(Color::Green)
                         .debug(Color::Magenta)
-                        .trace(Color::White);
-
-                    out.finish(format_args!(
-                        "{} [{}] [{}] | {}",
-                        chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S%f]"),
-                        record.target(),
-                        colors.color(record.level()),
-                        message
-                    ))
-                })
+                        .trace(Color::White),
+                )
                 .max_file_size(Byte::from_unit(16f64, ByteUnit::KiB).unwrap().into())
                 .targets([
                     tauri_plugin_log::LogTarget::Folder(
                         wooting_macro_backend::config::LogDirPath::file_name(),
                     ),
-                    LogTarget::Stdout,
-                    LogTarget::Webview,
+                    tauri_plugin_log::LogTarget::Stdout,
+                    tauri_plugin_log::LogTarget::Webview,
                 ])
                 .build(),
         )
