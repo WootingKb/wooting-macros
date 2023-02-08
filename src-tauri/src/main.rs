@@ -203,7 +203,6 @@ async fn main() {
             }
             _ => {}
         })
-        //.any_thread()
         .on_page_load(move |window, _| {
             if set_launch_minimized {
                 window.hide().unwrap();
@@ -259,6 +258,5 @@ async fn main() {
                 .build(),
         )
         .run(tauri::generate_context!())
-        // .build(tauri::generate_context!())
         .expect("error while running tauri application");
 }
