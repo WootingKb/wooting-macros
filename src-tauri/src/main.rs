@@ -81,7 +81,7 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    let log_level: log::LevelFilter = option_env!("RUST_LOG")
+    let log_level: log::LevelFilter = option_env!("MACRO_LOG_LEVEL")
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
