@@ -72,6 +72,33 @@ impl ConfigFile for ApplicationConfig {
     }
 }
 
+impl ConfigFile for LogDirPath {
+    fn file_name() -> PathBuf {
+        #[cfg(debug_assertions)]
+        let x = PathBuf::from("..");
+
+        #[cfg(not(debug_assertions))]
+        let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+
+        x
+    }
+}
+
+impl ConfigFile for LogFileName {
+    fn file_name() -> PathBuf {
+        let dir = {
+            #[cfg(debug_assertions)]
+            let x = PathBuf::from("..");
+
+            #[cfg(not(debug_assertions))]
+            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+
+            x
+        };
+
+        dir.join(LOG_FILE)
+    }
+}
 impl ConfigFile for MacroData {
     fn file_name() -> PathBuf {
         let dir = {
@@ -115,6 +142,9 @@ pub const CONFIG_DIR: &str = "..";
 /// Config file name
 const CONFIG_FILE: &str = "config.json";
 
+/// Log file name
+const LOG_FILE: &str = "Wootomation.log";
+
 /// Macro data file name
 const DATA_FILE: &str = "data_json.json";
 
@@ -130,3 +160,10 @@ pub struct ApplicationConfig {
     pub theme: String,
     pub minimize_to_tray: bool,
 }
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Default)]
+#[serde(rename_all = "PascalCase")]
+pub struct LogDirPath {}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Default)]
+#[serde(rename_all = "PascalCase")]
+pub struct LogFileName {}

@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react'
 import { DiscordIcon, GithubIcon } from '../icons'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
+import {error} from "tauri-plugin-log"
 
 interface Props {
   pageIndex: number
@@ -61,9 +62,9 @@ export default function SettingsLeftPanel({
 
     getVersion()
       .then((version) => setVersionText(version))
-      .catch(console.error)
+      .catch(error)
 
-    getOSType().catch((err) => console.error(err))
+    getOSType().catch((err) => error(err))
   }, [])
 
   return (

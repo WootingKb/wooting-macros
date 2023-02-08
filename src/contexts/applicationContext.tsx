@@ -12,6 +12,7 @@ import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../constants/utils'
+import { error } from "tauri-plugin-log"
 
 interface ApplicationProviderProps {
   children: ReactNode
@@ -46,7 +47,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         setInitComplete(true)
       })
       .catch((e) => {
-        console.error(e)
+        error(e)
         toast({
           title: 'Error loading macros',
           description:
@@ -61,7 +62,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   useEffect(() => {
     if (initComplete)
       updateBackendConfig(collections).catch((e) => {
-        console.error(e)
+        error(e)
         toast({
           title: 'Error updating macro data',
           description:

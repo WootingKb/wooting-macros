@@ -6,7 +6,11 @@
 extern crate core;
 
 use log::*;
+use std::str::FromStr;
+use std::time;
+use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
+use byte_unit::{Byte, ByteUnit};
 use std::env::current_exe;
 
 use tauri::{
@@ -77,9 +81,10 @@ async fn control_grabbing(
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() {
-    env_logger::init();
+    let log_level: log::LevelFilter = option_env!("MACRO_LOG_LEVEL")
+        .and_then(|s| log::LevelFilter::from_str(s).ok())
+        .unwrap_or(log::LevelFilter::Info);
 
-    #[cfg(not(debug_assertions))]
     wooting_macro_backend::MacroBackend::generate_directories();
 
     let backend = MacroBackend::default();
@@ -198,7 +203,6 @@ async fn main() {
             }
             _ => {}
         })
-        //.any_thread()
         .on_page_load(move |window, _| {
             if set_launch_minimized {
                 window.hide().unwrap();
@@ -223,42 +227,36 @@ async fn main() {
             app.emit_all("single-instance", ())
                 .expect("Couldn't re-focus opened instance.");
         }))
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .level(log_level)
+                .format(|out, message, record| {
+                    out.finish(format_args!(
+                        "{:?} [{}] [{}] | {}",
+                        time::SystemTime::now(),
+                        record.target(),
+                        record.level(),
+                        message
+                    ))
+                })
+                .with_colors(
+                    ColoredLevelConfig::new()
+                        .error(Color::Red)
+                        .warn(Color::Yellow)
+                        .info(Color::Green)
+                        .debug(Color::Magenta)
+                        .trace(Color::White),
+                )
+                .max_file_size(Byte::from_unit(16f64, ByteUnit::KiB).unwrap().into())
+                .targets([
+                    tauri_plugin_log::LogTarget::Folder(
+                        wooting_macro_backend::config::LogDirPath::file_name(),
+                    ),
+                    tauri_plugin_log::LogTarget::Stdout,
+                    tauri_plugin_log::LogTarget::Webview,
+                ])
+                .build(),
+        )
         .run(tauri::generate_context!())
-        // .build(tauri::generate_context!())
         .expect("error while running tauri application");
-
-    // app.run(|_app_handle, event| match event {
-    //     tauri::RunEvent::Updater(updater_event) => {
-    //         match updater_event {
-    //             UpdaterEvent::UpdateAvailable { body, date, version } => {
-    //                 info!("update available {} {:?} {}", body, date, version);
-    //             }
-    //             // Emitted when the download is about to be started.
-    //             UpdaterEvent::Pending => {
-    //                 info!("update is pending!");
-    //             }
-    //             UpdaterEvent::DownloadProgress { chunk_length, content_length } => {
-    //                 info!("downloaded {} of {:?}", chunk_length, content_length);
-    //             }
-    //             // Emitted when the download has finished and the update is about to be installed.
-    //             UpdaterEvent::Downloaded => {
-    //                 info!("update has been downloaded!");
-    //             }
-    //             // Emitted when the update was installed. You can then ask to restart the app.
-    //             UpdaterEvent::Updated => {
-    //                 info!("app has been updated");
-    //             }
-    //             // Emitted when the app already has the latest version installed and an update is not needed.
-    //             UpdaterEvent::AlreadyUpToDate => {
-    //                 info!("app is already up to date");
-    //             }
-    //             // Emitted when there is an error with the updater. We suggest to listen to this event even if the default dialog is enabled.
-    //             UpdaterEvent::Error(error) => {
-    //                 error!("failed to update: {}", error);
-    //             }
-    //             _ => (),
-    //         }
-    //     }
-    //     _ => {}
-    // });
 }

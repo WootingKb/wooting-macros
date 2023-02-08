@@ -307,8 +307,8 @@ fn check_macro_execution_efficiently(
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
-    debug!("Got data: {:?}", trigger_overview_print);
-    debug!("Got keys: {:?}", pressed_events);
+    trace!("Got data: {:?}", trigger_overview_print);
+    trace!("Got keys: {:?}", pressed_events);
 
     let mut output = false;
     for macros in &trigger_overview {
@@ -356,7 +356,7 @@ fn check_macro_execution_efficiently(
             TriggerEventType::MouseEvent { data } => {
                 let event_to_check: Vec<u32> = vec![data.into()];
 
-                debug!(
+                trace!(
                     "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
                     event_to_check
                 );
@@ -378,9 +378,9 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
-    #[cfg(not(debug_assertions))]
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
+        #[cfg(not(debug_assertions))]
         match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
             Ok(x) => x,
             Err(error) => error!("Directory creation failed, OS error: {}", error),
@@ -424,7 +424,6 @@ impl MacroBackend {
 
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
-            let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
@@ -455,16 +454,6 @@ impl MacroBackend {
                             );
                             debug!(
                                 "Pressed Keys CONVERTED TO RDEV: {:?}",
-                                pressed_keys_copy_converted
-                                    .par_iter()
-                                    .map(|x| *SCANCODE_TO_RDEV
-                                        .get(x)
-                                        .unwrap_or(&rdev::Key::Unknown(0)))
-                                    .collect::<Vec<rdev::Key>>()
-                            );
-
-                            debug!(
-                                "Pressed Keys: {:?}",
                                 pressed_keys_copy_converted
                                     .par_iter()
                                     .map(|x| *SCANCODE_TO_RDEV
@@ -523,8 +512,6 @@ impl MacroBackend {
                             let converted_button_to_u32: u32 =
                                 BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                            debug!("Pressed button: {:?}", buttons_pressed.blocking_read());
-
                             let trigger_list = inner_triggers.blocking_read().clone();
 
                             let check_these_macros =
@@ -551,8 +538,6 @@ impl MacroBackend {
                         }
                         rdev::EventType::ButtonRelease(button) => {
                             debug!("Button released: {:?}", button);
-
-                            buttons_pressed.blocking_write().retain(|x| *x != button);
 
                             Some(event)
                         }
