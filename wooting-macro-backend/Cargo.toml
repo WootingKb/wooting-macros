@@ -6,7 +6,6 @@ description = "Macro software backend made by Wooting."
 authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N"]
 license = "GPL-3.0-only"
 
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -27,11 +26,10 @@ serde_repr = "0.1"
 fastrand = "1.8"
 dirs = "4.0"
 itertools = "0.10"
-anyhow = "1.0.66"
+anyhow = "1.0"
 log = "0.4"
 env_logger = "0.10"
-rayon = "1.6.1"
-
+rayon = "1.6"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
 brightness = { version = "0.5"}

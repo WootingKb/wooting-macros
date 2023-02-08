@@ -24,10 +24,6 @@ log = "0.4"
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features= ["colored"] }
 byte-unit = "4.0"
 
-
-
-
-
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
@@ -40,7 +36,6 @@ custom-protocol = ["tauri/custom-protocol"]
 git = "https://github.com/tauri-apps/tauri-plugin-single-instance"
 #change this to stable release once it is available
 branch = "dev"
-
 
 [profile.release]
 lto = true
