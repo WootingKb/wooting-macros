@@ -16,7 +16,7 @@ tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
 rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
 halfbrown = { version = "0.1", features = ["serde"] }
 lazy_static = "1.4"
-tokio = { version = "1.23", features = ["full"] }
+tokio = { version = "1.24", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 opener = "0.5"
 obws = { version = "0.10" }
