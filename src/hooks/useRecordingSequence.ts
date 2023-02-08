@@ -4,7 +4,7 @@ import { KeyType } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
-import { trace, info, error, attachConsole } from "tauri-plugin-log"
+import {error} from "tauri-plugin-log"
 
 export default function useRecordingSequence(
   onItemChanged: (

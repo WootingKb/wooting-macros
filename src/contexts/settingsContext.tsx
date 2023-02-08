@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
 import { updateSettings } from '../constants/utils'
-import { trace, info, error, attachConsole } from "tauri-plugin-log"
+import {error} from "tauri-plugin-log"
 
 type SettingsProviderProps = { children: ReactNode }
 

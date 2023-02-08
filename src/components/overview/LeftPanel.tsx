@@ -20,7 +20,7 @@ import data from '@emoji-mart/data'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
-import { trace, info, error, attachConsole } from "tauri-plugin-log"
+import {error } from "tauri-plugin-log"
 
 interface Props {
   onOpenSettingsModal: () => void

@@ -12,7 +12,7 @@ import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../constants/utils'
-import { trace, info, error, attachConsole } from "tauri-plugin-log"
+import { error } from "tauri-plugin-log"
 
 interface ApplicationProviderProps {
   children: ReactNode

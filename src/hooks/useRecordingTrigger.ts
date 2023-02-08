@@ -8,7 +8,7 @@ import {
   checkIfModifierKey,
   checkIfKeyShouldContinueTriggerRecording
 } from '../constants/utils'
-import { trace, info, error, attachConsole } from "tauri-plugin-log"
+import {error} from "tauri-plugin-log"
 
 export default function useRecordingTrigger(
   initialItems: MouseButton | number[]

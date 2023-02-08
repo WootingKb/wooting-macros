@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 import { DiscordIcon, GithubIcon } from '../icons'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
-import { trace, info, error, attachConsole } from "tauri-plugin-log"
+import {error} from "tauri-plugin-log"
 
 interface Props {
   pageIndex: number
