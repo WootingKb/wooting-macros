@@ -139,8 +139,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         macro.trigger.data.length === 0) ||
       (macro.trigger.type === 'MouseEvent' &&
         macro.trigger.data === undefined) ||
-      sequence.length === 0 ||
-      willCauseTriggerLooping
+      sequence.length === 0 
     ) {
       return false
     }

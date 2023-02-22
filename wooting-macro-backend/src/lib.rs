@@ -322,7 +322,8 @@ fn check_macro_execution_efficiently(
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
 
-                            plugin::util::lift_keys(data, &channel_clone_execute);
+                            // Disabled until a better fix is done
+                            // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
                                 execute_macro(macro_clone_execute, channel_clone_execute).await;
@@ -342,7 +343,8 @@ fn check_macro_execution_efficiently(
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
 
-                            plugin::util::lift_keys(data, &channel_clone_execute);
+                            // Disabled until a better fix is done
+                            // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
                                 execute_macro(macro_clone_execute, channel_clone_execute).await;

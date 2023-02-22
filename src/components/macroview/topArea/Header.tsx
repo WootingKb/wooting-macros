@@ -79,8 +79,6 @@ export default function Header({ isEditing }: Props) {
       return 'Please set your trigger keys!'
     } else if (sequence.length === 0) {
       return 'Please add something to the sequence!'
-    } else if (!canSaveMacro) {
-      return 'Please adjust your sequence!'
     } else {
       return ''
     }
