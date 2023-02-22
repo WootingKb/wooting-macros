@@ -5367,7 +5367,7 @@ dependencies = [
 
 [[package]]
 name = "wooting-macro-backend"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "anyhow",
  "brightness",
@@ -5395,7 +5395,7 @@ dependencies = [
 
 [[package]]
 name = "wooting-macros"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "auto-launch",
  "byte-unit",
