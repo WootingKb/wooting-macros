@@ -3,24 +3,20 @@ import { useCallback, useEffect, useState } from 'react'
 import { KeyType } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
-import { Keypress, MousePressAction } from '../types'
-import {error} from "tauri-plugin-log"
+import { Keypress, MousePressAction, UserInputType } from '../types'
+import { error } from 'tauri-plugin-log'
 
 export default function useRecordingSequence(
   onItemChanged: (
-    item: Keypress | MousePressAction | undefined,
-    prevItem: Keypress | MousePressAction | undefined,
+    item: UserInputType,
+    prevItem: UserInputType,
     timeDiff: number,
     isUpEvent: boolean
   ) => void
 ) {
   const [recording, setRecording] = useState(false)
-  const [item, setItem] = useState<Keypress | MousePressAction | undefined>(
-    undefined
-  )
-  const [prevItem, setPrevItem] = useState<
-    Keypress | MousePressAction | undefined
-  >(undefined)
+  const [item, setItem] = useState<UserInputType>(undefined)
+  const [prevItem, setPrevItem] = useState<UserInputType>(undefined)
   const [eventType, setEventType] = useState<'Down' | 'Up'>('Down')
   const [prevEventType, setPrevEventType] = useState<'Down' | 'Up'>('Down')
 

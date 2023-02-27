@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { SystemEventInfo } from '../../../../constants/SystemEventMap'
 import { SystemIcon } from '../../../icons'
+import DraggableWrapper from '../DraggableWrapper'
 import SelectElementButton from '../SelectElementButton'
 
 interface Props {
@@ -44,18 +45,24 @@ export default function SystemEventsSection({ elementsToRender }: Props) {
           px={4}
           spacing={2}
         >
-          {elementsToRender.map((info: SystemEventInfo) => (
-            <AspectRatio ratio={2 / 0.75} key={info.displayString}>
-              <SelectElementButton
+          {elementsToRender.map((info: SystemEventInfo, index:number) => (
+            <DraggableWrapper
+              id={300 + index} // using a string ID causes lag, this is arbitrary to ensure no overlap with keyboard keys / mouse buttons
+              info={info}
               key={info.displayString}
-                nameText={info.displayString}
-                descText={info.description}
-                properties={{
-                  type: 'SystemEventAction',
-                  data: info.defaultData
-                }}
-              />
-            </AspectRatio>
+            >
+              <AspectRatio ratio={2 / 0.75} key={info.displayString}>
+                <SelectElementButton
+                  key={info.displayString}
+                  nameText={info.displayString}
+                  descText={info.description}
+                  properties={{
+                    type: 'SystemEventAction',
+                    data: info.defaultData
+                  }}
+                />
+              </AspectRatio>
+            </DraggableWrapper>
           ))}
         </SimpleGrid>
       </AccordionPanel>

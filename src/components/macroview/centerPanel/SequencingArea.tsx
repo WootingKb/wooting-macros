@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { DeleteIcon, SettingsIcon, TimeIcon } from '@chakra-ui/icons'
 import { useCallback } from 'react'
-import { Keypress, MousePressAction } from '../../../types'
+import { UserInputType } from '../../../types'
 import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingSequence from '../../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../../contexts/settingsContext'
@@ -23,6 +23,7 @@ import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
+import DroppableWrapper from './DroppableWrapper'
 
 interface Props {
   onOpenSettingsModal: () => void
@@ -41,8 +42,8 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
 
   const onItemChanged = useCallback(
     (
-      item: Keypress | MousePressAction | undefined,
-      prevItem: Keypress | MousePressAction | undefined,
+      item: UserInputType,
+      prevItem: UserInputType,
       timeDiff: number,
       isUpEvent: boolean
     ) => {
@@ -211,7 +212,9 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
         stopRecording={stopRecording}
       />
       <Divider w="full" />
-      <SortableList recording={recording} stopRecording={stopRecording} />
+      <DroppableWrapper id="sortableList">
+        <SortableList recording={recording} stopRecording={stopRecording} />
+      </DroppableWrapper>
     </VStack>
   )
 }

@@ -6,8 +6,8 @@ import { ActionEventType } from '../../../types'
 
 interface Props {
   properties: ActionEventType
-  nameText: string,
-  descText?: string,
+  nameText: string
+  descText?: string
 }
 
 export default function SelectElementButton({
@@ -51,7 +51,12 @@ export default function SelectElementButton({
   ])
 
   return (
-    <Tooltip label={descText === "" ? "" : descText} hasArrow variant="brandSecondary" textAlign="center">
+    <Tooltip
+      label={descText === '' ? '' : descText}
+      hasArrow
+      variant="brandSecondary"
+      textAlign="center"
+    >
       <Box
         w="full"
         h="full"
@@ -66,16 +71,16 @@ export default function SelectElementButton({
         onClick={handleAddElement}
         transition="ease-out 150ms"
       >
-          <Text
-            w="full"
-            fontWeight="semibold"
-            fontSize={['xs', 'sm', 'md']}
-            cursor="pointer"
-            overflowWrap="normal"
-            wordBreak="break-word"
-          >
-            {nameText}
-          </Text>
+        <Text
+          w="full"
+          fontWeight="semibold"
+          fontSize={['xs', 'sm', 'md']}
+          cursor="pointer"
+          overflowWrap="normal"
+          wordBreak="break-word"
+        >
+          {nameText}
+        </Text>
       </Box>
     </Tooltip>
   )

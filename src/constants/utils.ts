@@ -2,14 +2,16 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { HIDCategory, MouseButton } from './enums'
 import {
   ActionEventType,
+  ActiveInfo,
   ApplicationConfig,
   Collection,
   Keypress,
   MacroData,
-  MousePressAction
+  MousePressAction,
+  UserInputType
 } from '../types'
-import { HIDLookup } from './HIDmap'
-import { mouseEnumLookup } from './MouseMap'
+import { HidInfo, HIDLookup } from './HIDmap'
+import { mouseEnumLookup, MouseInputInfo } from './MouseMap'
 import { sysEventLookup } from './SystemEventMap'
 
 export const updateBackendConfig = (
@@ -37,16 +39,18 @@ export const checkIfMouseButtonArray = (
   )
 }
 
-export const checkIfKeypress = (
-  e: Keypress | MousePressAction | undefined
-): e is Keypress => {
+export const checkIfKeypress = (e: UserInputType): e is Keypress => {
   return (e as Keypress).keypress !== undefined
 }
 
-export const checkIfMouseButton = (
-  e: Keypress | MousePressAction | undefined
-): e is MousePressAction => {
+export const checkIfMouseButton = (e: UserInputType): e is MousePressAction => {
   return (e as MousePressAction).button !== undefined
+}
+export const checkIfKeyboardKey = (e: ActiveInfo): e is HidInfo => {
+  return (e as HidInfo).category !== undefined
+}
+export const checkIfMouseEvent = (e: ActiveInfo): e is MouseInputInfo => {
+  return (e as MouseInputInfo).enumVal !== undefined
 }
 
 /** Currently unused, if Macro types are added back this can probably be refactored elsewhere */
