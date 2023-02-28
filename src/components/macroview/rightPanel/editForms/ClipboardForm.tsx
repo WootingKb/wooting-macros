@@ -4,13 +4,15 @@ import {
   Text,
   HStack,
   Box,
-  useColorMode
+  useColorMode,
+  VStack
 } from '@chakra-ui/react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { SystemEventAction } from '../../../../types'
+import { motion } from 'framer-motion'
 
 interface Props {
   selectedElementId: number
@@ -103,32 +105,42 @@ export default function ClipboardForm({
   )
 
   return (
-    <>
+    <VStack
+      as={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      w="full"
+      gap={2}
+    >
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         Paste Text
       </Text>
       <Divider />
-      <HStack w="full" justifyContent="space-between">
-        <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
-          Text to paste
-        </Text>
-        <Box
-          filter={showEmojiPicker ? 'grayscale(0%)' : 'grayscale(100%)'}
-          _hover={{ filter: 'grayscale(0%)', transform: 'scale(110%)' }}
-          transition="ease-out 150ms"
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          id="emoji-button"
-        >
-          <em-emoji id="smile" size="32px" />
-        </Box>
-      </HStack>
-      <Textarea
-        variant="brandAccent"
-        value={text}
-        onChange={onTextChange}
-        onBlur={onInputBlur}
-        placeholder="e.g. glhf <3"
-      />
+      <VStack w="full">
+        <HStack w="full" justifyContent="space-between">
+          <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+            Text to paste
+          </Text>
+          <Box
+            filter={showEmojiPicker ? 'grayscale(0%)' : 'grayscale(100%)'}
+            _hover={{ filter: 'grayscale(0%)', transform: 'scale(110%)' }}
+            transition="ease-out 150ms"
+            cursor="pointer"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            id="emoji-button"
+          >
+            <em-emoji id="smile" size="32px" />
+          </Box>
+        </HStack>
+        <Textarea
+          variant="brandAccent"
+          value={text}
+          onChange={onTextChange}
+          onBlur={onInputBlur}
+          placeholder="e.g. glhf <3"
+        />
+      </VStack>
       {showEmojiPicker && (
         <Box ref={pickerRef} w="full">
           <Picker
@@ -143,6 +155,6 @@ export default function ClipboardForm({
         </Box>
         // TODO: need to figure out how to adjust height of picker, as it doesn't allow for customizing style. Maybe it will be updated one day or we find a different emoji picker
       )}
-    </>
+    </VStack>
   )
 }

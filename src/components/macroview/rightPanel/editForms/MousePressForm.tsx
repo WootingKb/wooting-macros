@@ -5,7 +5,8 @@ import {
   Flex,
   Button,
   Input,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
@@ -13,6 +14,7 @@ import { KeyType } from '../../../../constants/enums'
 import { mouseEnumLookup } from '../../../../constants/MouseMap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
 import { MouseEventAction } from '../../../../types'
+import { motion } from 'framer-motion'
 
 interface Props {
   selectedElementId: number
@@ -24,7 +26,7 @@ export default function MousePressForm({
   selectedElement
 }: Props) {
   const [headingText, setHeadingText] = useState('')
-  const [mousepressDuration, setMousepressDuration] = useState("1")
+  const [mousepressDuration, setMousepressDuration] = useState('1')
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
 
@@ -42,7 +44,6 @@ export default function MousePressForm({
 
   const onMousepressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-
       setMousepressDuration(event.target.value)
     },
     [setMousepressDuration]
@@ -54,9 +55,8 @@ export default function MousePressForm({
     }
     let duration
     if (mousepressDuration === '') {
-      duration = 0;
+      duration = 0
     } else {
-
       duration = parseInt(mousepressDuration)
       if (Number.isNaN(duration)) {
         return
@@ -116,7 +116,14 @@ export default function MousePressForm({
   )
 
   return (
-    <>
+    <VStack
+      as={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      w="full"
+      gap={2}
+    >
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
@@ -190,6 +197,6 @@ export default function MousePressForm({
           </GridItem>
         </Grid>
       )}
-    </>
+    </VStack>
   )
 }

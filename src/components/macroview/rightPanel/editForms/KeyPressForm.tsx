@@ -5,7 +5,8 @@ import {
   Flex,
   Button,
   Input,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
@@ -13,6 +14,7 @@ import { KeyType } from '../../../../constants/enums'
 import { HIDLookup } from '../../../../constants/HIDmap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
+import { motion } from 'framer-motion'
 
 interface Props {
   selectedElementId: number
@@ -24,7 +26,7 @@ export default function KeyPressForm({
   selectedElement
 }: Props) {
   const [headingText, setHeadingText] = useState('')
-  const [keypressDuration, setKeypressDuration] = useState("1")
+  const [keypressDuration, setKeypressDuration] = useState('1')
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
 
@@ -53,9 +55,8 @@ export default function KeyPressForm({
   const onInputBlur = useCallback(() => {
     let duration
     if (keypressDuration === '') {
-      duration = 0;
+      duration = 0
     } else {
-
       duration = parseInt(keypressDuration)
       if (Number.isNaN(duration)) {
         return
@@ -82,7 +83,14 @@ export default function KeyPressForm({
   )
 
   return (
-    <>
+    <VStack
+      as={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      w="full"
+      gap={2}
+    >
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
@@ -156,6 +164,6 @@ export default function KeyPressForm({
           </GridItem>
         </Grid>
       )}
-    </>
+    </VStack>
   )
 }

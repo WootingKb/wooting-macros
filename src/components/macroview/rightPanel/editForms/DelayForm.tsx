@@ -1,4 +1,5 @@
-import { Divider, Grid, GridItem, Input, Button, Text } from '@chakra-ui/react'
+import { Divider, Grid, GridItem, Input, Button, Text, VStack } from '@chakra-ui/react'
+import { motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
@@ -69,7 +70,14 @@ export default function DelayForm({
   ])
 
   return (
-    <>
+    <VStack
+      as={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      w="full"
+      gap={2}
+    >
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         Delay Element
       </Text>
@@ -92,6 +100,6 @@ export default function DelayForm({
       <Button variant="brand" w="fit-content" onClick={resetDuration}>
         Set to Default
       </Button>
-    </>
+    </VStack>
   )
 }

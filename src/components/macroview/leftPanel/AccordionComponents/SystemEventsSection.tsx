@@ -45,9 +45,9 @@ export default function SystemEventsSection({ elementsToRender }: Props) {
           px={4}
           spacing={2}
         >
-          {elementsToRender.map((info: SystemEventInfo, index:number) => (
+          {elementsToRender.map((info: SystemEventInfo, index: number) => (
             <DraggableWrapper
-              id={300 + index} // using a string ID causes lag, this is arbitrary to ensure no overlap with keyboard keys / mouse buttons
+              id={300 + index} // using a string ID causes lag (unsure why). 300 is an arbitrary value, but high enough to ensure no overlap with Hid codes / mouse buttons codes
               info={info}
               key={info.displayString}
             >
