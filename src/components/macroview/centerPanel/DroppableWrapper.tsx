@@ -19,6 +19,11 @@ export default function DroppableWrapper({ id, children }: Props) {
   return (
     <Box
       w="full"
+      h={{
+        base: 'calc(100% - 84px)',
+        sm: 'calc(100% - 100px)',
+        md: 'calc(100% - 108px)'
+      }}
       ref={setNodeRef}
       style={style}
     >

@@ -77,7 +77,7 @@ export default function SortableList({ recording, stopRecording }: Props) {
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <VStack
           w="full"
-          h="100vh"
+          h="full"
           px={4}
           py={2}
           overflowY="auto"
