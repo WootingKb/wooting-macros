@@ -282,6 +282,9 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
+        //MacOS and Linux require a delay between each macro execution.
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
+        thread::sleep(time::Duration::from_millis(10));
     }
 }
 
