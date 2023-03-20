@@ -51,7 +51,7 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
       const elements = keyboardKeyElements.filter((element) => {
         return HIDCategory[element.category] === categoryName
       })
-      temp.push({ name: categoryName, elements: elements })
+      if (elements.length > 0) temp.push({ name: categoryName, elements: elements })
     }
     return temp
   }, [keyboardKeyElements])
@@ -79,7 +79,7 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
   //     const elements = pluginElements.filter((element) => {
   //       return PluginGroup[element.pluginGroup] === groupName
   //     })
-  //     temp.push({ name: groupName, elements: elements })
+  //     if (elements.length > 0) temp.push({ name: groupName, elements: elements })
   //   }
   //   return temp
   // }, [pluginElements])
