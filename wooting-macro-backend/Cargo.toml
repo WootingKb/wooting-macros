@@ -15,21 +15,21 @@ tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
 rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
 halfbrown = { version = "0.1", features = ["serde"] }
 lazy_static = "1.4"
-tokio = { version = "1.23", features = ["full"] }
+tokio = { version = "1.26", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 opener = "0.5"
 obws = { version = "0.10" }
-rodio = "0.16"
+rodio = "0.17"
 copypasta = { version = "0.8", features = ["smithay-clipboard"] }
 
 serde_repr = "0.1"
-fastrand = "1.8"
-dirs = "4.0"
+fastrand = "1.9"
+dirs = "5.0"
 itertools = "0.10"
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.10"
-rayon = "1.6"
+rayon = "1.7"
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
 brightness = { version = "0.5"}
