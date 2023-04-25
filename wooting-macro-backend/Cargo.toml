@@ -13,11 +13,11 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
 rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
-halfbrown = { version = "0.1", features = ["serde"] }
+halfbrown = { version = "0.2", features = ["serde"] }
 lazy_static = "1.4"
 tokio = { version = "1.26", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
-opener = "0.5"
+opener = "0.6"
 obws = { version = "0.10" }
 rodio = "0.17"
 copypasta = { version = "0.8", features = ["smithay-clipboard"] }
