@@ -1,4 +1,5 @@
 pub mod config;
+pub mod grpc;
 mod hid_table;
 pub mod plugin;
 

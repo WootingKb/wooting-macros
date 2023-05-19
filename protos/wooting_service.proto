@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package wooting_service;
+
+
+
+message SetOnboardProfileRequest {
+    uint32 profile_number = 1;
+}
+
+message SetOnboardProfileResponse {
+    bool success = 1;
+}
+
+service AppProfileLinkingService {
+    rpc SetOnboardProfileKeyboard (SetOnboardProfileRequest) returns (SetOnboardProfileResponse);
+}

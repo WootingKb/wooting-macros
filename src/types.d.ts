@@ -163,7 +163,8 @@ export type SystemAction =
   | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-  // | { type: 'Brightness'; action: MonitorBrightnessAction }
+  | { type: 'Brightness'; action: MonitorBrightnessAction }
+  | { type: 'WootingEventAction'; action: WootingEventAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -188,6 +189,12 @@ export type MonitorBrightnessAction =
   | { type: 'SetSpecific'; level: number; name: string }
   | { type: 'ChangeSpecific'; by_how_much: number; name: string }
   | { type: 'ChangeAll'; by_how_much: number }
+
+export type WootingEventAction =
+  | { type: 'Digital'; data: number }
+  | { type: 'Analog1'; data: number }
+  | { type: 'Analog2'; data: number }
+  | { type: 'Analog3'; data: number }
 
 /** Misc */
 export interface KeyboardKeyCategory {

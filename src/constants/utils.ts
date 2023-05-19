@@ -123,6 +123,16 @@ export const getElementDisplayString = (element: ActionEventType): string => {
             sysEventLookup.get(element.data.action.type)?.displayString ||
             'error'
           )
+        case 'WootingEventAction':
+          return (
+            sysEventLookup.get(element.data.action.type)?.displayString ||
+            'error'
+          )
+        case 'Brightness':
+          return (
+            sysEventLookup.get(element.data.action.type)?.displayString ||
+            'error'
+          )
         default:
           return 'error'
       }

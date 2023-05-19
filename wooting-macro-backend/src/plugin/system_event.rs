@@ -6,7 +6,7 @@ use rdev;
 use std::vec;
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::hid_table::SCANCODE_TO_RDEV;
+use crate::{grpc::set_profile, hid_table::SCANCODE_TO_RDEV};
 
 // The Brightness of monitors is not implemented for macOS, so we have to condition the code.
 #[cfg(target_os = "windows")]
@@ -37,6 +37,7 @@ pub enum SystemAction {
     Volume { action: VolumeAction },
     Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
+    WootingEventAction { action: WootingAction },
 }
 
 impl SystemAction {
@@ -156,6 +157,12 @@ impl SystemAction {
                     //Paste the text again
                     util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
+            },
+            SystemAction::WootingEventAction { action } => match action {
+                WootingAction::Digital => set_profile(0).await,
+                WootingAction::Analog1 => set_profile(1).await,
+                WootingAction::Analog2 => set_profile(2).await,
+                WootingAction::Analog3 => set_profile(3).await,
             },
         }
     }
@@ -325,4 +332,14 @@ pub enum VolumeAction {
     LowerVolume,
     IncreaseVolume,
     ToggleMute,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
+/// Key shortcut alias to mute/increase/decrease volume.
+pub enum WootingAction {
+    Digital,
+    Analog1,
+    Analog2,
+    Analog3,
 }

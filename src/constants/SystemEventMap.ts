@@ -88,33 +88,72 @@ export class SystemEvent {
       description: "Mutes or unmutes the system audio output."
     }
   }
-  // static get SetBrightness(): SystemEventInfo {
-  //   return {
-  //     type: 'Brightness',
-  //     subtype: 'SetAll',
-  //     displayString: 'Set Brightness',
-  //     defaultData: {
-  //       type: 'Brightness',
-  //       action: { type: 'SetAll', level: 75, }
-  //     }
-  //   }
-  // }
-  // static get IncreaseBrightness(): SystemEventInfo {
-  //   return {
-  //     type: 'Brightness',
-  //     subtype: 'Increase',
-  //     displayString: 'Increase Brightness',
-  //     defaultData: { type: 'Brightness', action: { type: 'Increase' } }
-  //   }
-  // }
-  // static get DecreaseBrightness(): SystemEventInfo {
-  //   return {
-  //     type: 'Brightness',
-  //     subtype: 'Decrease',
-  //     displayString: 'Decrease Brightness',
-  //     defaultData: { type: 'Brightness', action: { type: 'Decrease' } }
-  //   }
-  // }
+  static get SetBrightness(): SystemEventInfo {
+    return {
+      type: 'Brightness',
+      subtype: 'SetAll',
+      displayString: 'Set Brightness',
+      defaultData: {
+        type: 'Brightness',
+        action: { type: 'SetAll', level: 75, }
+      },
+      description: "Sets brightness of all screens to a specified %."
+    }
+  }
+  static get IncreaseBrightness(): SystemEventInfo {
+    return {
+      type: 'Brightness',
+      subtype: 'ChangeAll',
+      displayString: 'Increase Brightness',
+      defaultData: { type: 'Brightness', action: { type: 'ChangeAll', by_how_much: 20 } },
+      description: "Increases brightness by a few %."
+    }
+  }
+  static get DecreaseBrightness(): SystemEventInfo {
+    return {
+      type: 'Brightness',
+      subtype: 'ChangeAll',
+      displayString: 'Decrease Brightness',
+      defaultData: { type: 'Brightness', action: { type: 'ChangeAll', by_how_much: -20 } },
+      description: "Decreases brightness by a few %."
+    }
+  }
+  static get SetProfile0(): SystemEventInfo {
+    return {
+      type: 'WootingEventAction',
+      subtype: 'Digital',
+      displayString: 'Digital Profile',
+      defaultData: { type: 'WootingEventAction', action: { type: 'Digital', data: 0 } },
+      description: "Sets the Wooting's digital profile"
+    }
+  }
+  static get SetProfile1(): SystemEventInfo {
+    return {
+      type: 'WootingEventAction',
+      subtype: 'Analog1',
+      displayString: 'Analog Profile 1',
+      defaultData: { type: 'WootingEventAction', action: { type: 'Analog1', data: 1 } },
+      description: "Sets the 1st analog profile"
+    }
+  }
+  static get SetProfile2(): SystemEventInfo {
+    return {
+      type: 'WootingEventAction',
+      subtype: 'Analog2',
+      displayString: 'Analog Profile 2',
+      defaultData: { type: 'WootingEventAction', action: { type: 'Analog2', data: 2 } },
+      description: "Sets the 2nd analog profile"
+    }
+  }
+  static get SetProfile3(): SystemEventInfo {
+    return {
+      type: 'WootingEventAction',
+      subtype: 'Analog3',
+      displayString: 'Analog Profile 3',
+      defaultData: { type: 'WootingEventAction', action: { type: 'Analog3', data: 3 } },
+      description: "Sets the 3rd analog profile"
+    }
+  }
 
   static readonly all: SystemEventInfo[] = [
     SystemEvent.OpenFile,
@@ -125,9 +164,13 @@ export class SystemEvent {
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
-    // SystemEvent.SetBrightness,
-    // SystemEvent.IncreaseBrightness,
-    // SystemEvent.DecreaseBrightness
+    SystemEvent.SetBrightness,
+    SystemEvent.IncreaseBrightness,
+    SystemEvent.DecreaseBrightness,
+    SystemEvent.SetProfile0,
+    SystemEvent.SetProfile1,
+    SystemEvent.SetProfile2,
+    SystemEvent.SetProfile3
   ]
 }
 
