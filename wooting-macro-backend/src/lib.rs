@@ -582,3 +582,11 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+
+
+// fibonnachi function in rust
+
+
+
+
+
