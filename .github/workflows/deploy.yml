@@ -10,10 +10,16 @@ jobs:
       fail-fast: true
       matrix:
         platform: [ubuntu-latest, windows-latest] # macos-latest
+        arch: [i686-pc-windows-msvc, ]
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
+      - name: check for invalid target
+        if: matrix.platform == 'ubuntu-latest' && matrix.arch != ''
+        run: echo "::error arch=$arch::Invalid target for Ubuntu"
+        env:
+          arch: ${{ matrix.arch }}
       - name: setup node
         uses: actions/setup-node@v1
         with:
@@ -31,6 +37,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev
+      - name: install and preset x86 deps
+        if: matrix.platform == 'windows-latest' && matrix.arch != ''
+        run: |
+          rustup target add i686-pc-windows-msvc
+          echo "TAURI_ARGS=--target i686-pc-windows-msvc" >> $GITHUB_ENV
+      - name: install
       - name: import windows certificate
         if: matrix.platform == 'windows-latest'
         env:
@@ -50,6 +62,7 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
+          args: ${{ env.TAURI_ARGS }}
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
           releaseName: 'v__VERSION__'
           releaseBody: 'Please see https://github.com/WootingKb/wooting-macros/releases/tag/v__VERSION__ for full changelog'
