@@ -10,14 +10,16 @@ jobs:
       fail-fast: true
       matrix:
         platform: [ubuntu-latest, windows-latest] # macos-latest
-        arch: [i686-pc-windows-msvc, triple] # ignored by cargo
+        arch: [i686-pc-windows-msvc, other] # ignored by cargo
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
       - name: check for invalid target
         if: matrix.platform == 'ubuntu-latest' && matrix.arch == 'i686-pc-windows-msvc'
-        run: echo "::error arch=$arch::Invalid target for Ubuntu"
+        run: |
+          echo "::error arch=$arch::Invalid target for Ubuntu"
+          exit 1
         env:
           arch: ${{ matrix.arch }}
       - name: setup node
