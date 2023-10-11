@@ -29,7 +29,7 @@
     "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.8.0",
+    "react-icons": "^4.11.0",
     "tauri-plugin-log": "https://github.com/tauri-apps/tauri-plugin-log.git#commit=1a369766cf90f3aed9c2b7c68b70bf39081538b3",
     "yarn": "^1.22.19"
   },

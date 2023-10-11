@@ -10,7 +10,7 @@ import {
   HiArrowsUpDown
 } from 'react-icons/hi2'
 import { HiStop, HiPlay } from 'react-icons/hi'
-import { GoKebabVertical } from 'react-icons/go'
+import { BsThreeDotsVertical } from 'react-icons/bs'
 
 export const KeyboardIcon = (props: IconProps) => {
   return <Icon as={RxKeyboard} boxSize={5} {...props} />
@@ -40,7 +40,7 @@ export const DownUpArrowsIcon = (props: IconProps) => {
   return <Icon as={HiArrowsUpDown} boxSize={6} {...props} />
 }
 export const KebabVertical = (props: IconProps) => {
-  return <Icon as={GoKebabVertical} w={3} h={6} {...props} />
+  return <Icon as={BsThreeDotsVertical} w={3} h={6} {...props} />
 }
 export const StopIcon = (props: IconProps) => {
   return <Icon as={HiStop} boxSize={5} {...props} />
