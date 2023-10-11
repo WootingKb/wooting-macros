@@ -10,16 +10,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.2", features = [] }
+tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
-tauri = { version = "1.2", features = ["app-hide", "app-show", "clipboard-read-text", "clipboard-write-text", "dialog-open", "icon-png", "os-all", "shell-open", "system-tray", "updater"] }
-tokio = { version = "1.26", features = ["full"] }
+tauri = { version = "1.4", features = ["app-hide", "app-show", "clipboard-read-text", "clipboard-write-text", "dialog-open", "icon-png", "os-all", "shell-open", "system-tray", "updater"] }
+tokio = { version = "1.32", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
-auto-launch = "0.4"
+auto-launch = "0.5"
 log = "0.4"
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features= ["colored"] }
 byte-unit = "4.0"

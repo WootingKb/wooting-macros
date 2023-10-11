@@ -24,7 +24,7 @@
     "@emotion/styled": "^11.10.5",
     "@fontsource/montserrat": "^4.5.13",
     "@formkit/auto-animate": "1.0.0-beta.5",
-    "@tauri-apps/api": "^1.1.0",
+    "@tauri-apps/api": "^1.5.0",
     "emoji-mart": "^5.5.2",
     "framer-motion": "^10.12.4",
     "react": "^18.2.0",
@@ -34,7 +34,7 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.2.2",
+    "@tauri-apps/cli": "^1.5.2",
     "@types/eslint": "^8",
     "@types/node": "^18.7.10",
     "@types/prettier": "^2",
