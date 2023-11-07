@@ -11,8 +11,8 @@ pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
         scancode.insert(Button::Left, 0x101);
         scancode.insert(Button::Right, 0x102);
         scancode.insert(Button::Middle, 0x103);
-        scancode.insert(Button::Unknown(4), 0x104);
-        scancode.insert(Button::Unknown(5), 0x105);
+        scancode.insert(Button::Forward, 0x104);
+        scancode.insert(Button::Backward, 0x105);
         scancode
 };}
 

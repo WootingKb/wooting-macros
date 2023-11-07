@@ -37,8 +37,8 @@ impl From<&rdev::Button> for MouseButton {
             rdev::Button::Left => MouseButton::Left,
             rdev::Button::Right => MouseButton::Right,
             rdev::Button::Middle => MouseButton::Middle,
-            rdev::Button::Unknown(1) => MouseButton::Mouse4,
-            rdev::Button::Unknown(2) => MouseButton::Mouse5,
+            rdev::Button::Forward => MouseButton::Mouse4,
+            rdev::Button::Backward => MouseButton::Mouse5,
             rdev::Button::Unknown(_) => MouseButton::Left,
         }
     }
@@ -50,8 +50,8 @@ impl From<&MouseButton> for rdev::Button {
             MouseButton::Left => rdev::Button::Left,
             MouseButton::Right => rdev::Button::Right,
             MouseButton::Middle => rdev::Button::Middle,
-            MouseButton::Mouse4 => rdev::Button::Unknown(1),
-            MouseButton::Mouse5 => rdev::Button::Unknown(2),
+            MouseButton::Mouse4 => rdev::Button::Forward,
+            MouseButton::Mouse5 => rdev::Button::Backward,
         }
     }
 }
