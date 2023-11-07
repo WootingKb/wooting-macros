@@ -6,17 +6,18 @@
 extern crate core;
 
 use log::*;
+
+use std::env::current_exe;
 use std::str::FromStr;
 use std::time;
-use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
 use byte_unit::{Byte, ByteUnit};
-use std::env::current_exe;
 
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
     WindowEvent,
 };
+use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
@@ -57,6 +58,7 @@ async fn set_macros(
 }
 
 #[tauri::command]
+/// Gets the monitor data to the frontend. Currently unused.
 async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     return Ok(plugin::system_event::backend_load_monitors().await);
@@ -72,7 +74,6 @@ async fn control_grabbing(
     frontend_bool: bool,
 ) -> Result<(), ()> {
     state.set_is_listening(frontend_bool);
-    // set_macro_listening(state, frontend_bool);
     Ok(())
 }
 
@@ -85,32 +86,33 @@ async fn main() {
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
-    wooting_macro_backend::MacroBackend::generate_directories();
+    MacroBackend::generate_directories();
 
     let backend = MacroBackend::default();
 
-    info!("Running the macro backend");
-
     #[cfg(any(target_os = "windows", target_os = "linux"))]
+    // The backend is run only on Windows and Linux, on macOS it won't work.
+    info!("Running the macro backend");
     backend.init().await;
 
+    // Read the options from the config.
     let set_autolaunch: bool = backend.config.read().await.auto_start;
     let set_launch_minimized: bool = backend.config.read().await.minimize_at_launch;
 
-    // Begin the main event loop. This loop cannot run on another thread on MacOS.
+    // Set the window behaviors (add buttons to the right click tray menu).
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let hide_show = CustomMenuItem::new("hide_show".to_string(), "Hide");
-
     let tray_menu = SystemTrayMenu::new()
         .add_item(hide_show)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit);
-
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
+    // Initialize the main application
     tauri::Builder::default()
-        // This is where you pass in your commands
+        // State management is initialized
         .manage(backend)
+        // This is where commands shared with frontend are passed
         .invoke_handler(tauri::generate_handler![
             get_macros,
             set_macros,
@@ -121,30 +123,32 @@ async fn main() {
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;
-            let current_exe = current_exe().unwrap();
+            if let Ok(current_exe) = current_exe() {
+                let auto_start = auto_launch::AutoLaunchBuilder::new()
+                    .set_app_name(app_name)
+                    .set_app_path(current_exe.as_path().to_str().unwrap())
+                    .set_use_launch_agent(true)
+                    .build()
+                    .expect("App name is empty, or unsupported OS is used.");
 
-            let auto_start = auto_launch::AutoLaunchBuilder::new()
-                .set_app_name(app_name)
-                .set_app_path(current_exe.as_path().to_str().unwrap())
-                .set_use_launch_agent(true)
-                .build()
-                .unwrap();
-
-            match set_autolaunch {
-                true => auto_start.enable().unwrap(),
-                false => {
-                    if let Err(e) = auto_start.disable() {
-                        match e {
-                            auto_launch::Error::Io(err) => match err.kind() {
-                                std::io::ErrorKind::NotFound => {
-                                    info!("Autostart is already removed, finished checking.")
-                                }
-                                _ => error!("{}", err),
-                            },
-                            _ => error!("{}", e),
+                match set_autolaunch {
+                    true => auto_start.enable().expect("Registry key failed to write."),
+                    false => {
+                        if let Err(e) = auto_start.disable() {
+                            match e {
+                                auto_launch::Error::Io(err) => match err.kind() {
+                                    std::io::ErrorKind::NotFound => {
+                                        trace!("Autostart is already removed, finished checking.")
+                                    }
+                                    _ => error!("{}", err),
+                                },
+                                _ => error!("{}", e),
+                            }
                         }
                     }
                 }
+            } else {
+                error!("Current EXE cannot be found, autostart cannot be enabled. ");
             }
 
             Ok(())
@@ -210,7 +214,7 @@ async fn main() {
         })
         .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
-                if wooting_macro_backend::config::ApplicationConfig::read_data().minimize_to_tray {
+                if ApplicationConfig::read_data().minimize_to_tray {
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
@@ -247,11 +251,9 @@ async fn main() {
                         .debug(Color::Magenta)
                         .trace(Color::White),
                 )
-                .max_file_size(Byte::from_unit(16f64, ByteUnit::KiB).unwrap().into())
+                .max_file_size(Byte::from_unit(16_f64, ByteUnit::KiB).unwrap().into())
                 .targets([
-                    tauri_plugin_log::LogTarget::Folder(
-                        wooting_macro_backend::config::LogDirPath::file_name(),
-                    ),
+                    tauri_plugin_log::LogTarget::Folder(LogDirPath::file_name()),
                     tauri_plugin_log::LogTarget::Stdout,
                     tauri_plugin_log::LogTarget::Webview,
                 ])
