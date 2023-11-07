@@ -58,16 +58,6 @@ async fn set_macros(
 }
 
 #[tauri::command]
-/// Gets the monitor data to the frontend. Currently unused.
-async fn get_monitor_data() -> Result<Vec<plugin::system_event::Monitor>, ()> {
-    #[cfg(any(target_os = "windows", target_os = "linux"))]
-    return Ok(plugin::system_event::backend_load_monitors().await);
-
-    #[cfg(target_os = "macos")]
-    return Ok(vec![]);
-}
-
-#[tauri::command]
 /// Allows the frontend to disable the macro execution scanning completely.
 async fn control_grabbing(
     state: tauri::State<'_, MacroBackend>,
@@ -118,8 +108,7 @@ async fn main() {
             set_macros,
             get_config,
             set_config,
-            control_grabbing,
-            get_monitor_data
+            control_grabbing
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;

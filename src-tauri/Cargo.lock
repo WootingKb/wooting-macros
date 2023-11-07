@@ -415,22 +415,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "brightness"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ccf3c64278486354c6c41b71293570a207684a34cceb53137975d781748d33f"
-dependencies = [
- "async-trait",
- "blocking",
- "cfg-if",
- "futures",
- "itertools 0.10.5",
- "thiserror",
- "windows 0.39.0",
- "zbus",
-]
-
-[[package]]
 name = "brotli"
 version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1440,28 +1424,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "futures"
-version = "0.3.29"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da0290714b38af9b4a7b094b8a37086d1b4e61f2df9122c3cad2577669145335"
-dependencies = [
- "futures-channel",
- "futures-core",
- "futures-executor",
- "futures-io",
- "futures-sink",
- "futures-task",
- "futures-util",
-]
-
-[[package]]
 name = "futures-channel"
 version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff4dd66668b557604244583e3e1e1eada8c5c2e96a6d0d6653ede395b78bbacb"
 dependencies = [
  "futures-core",
- "futures-sink",
 ]
 
 [[package]]
@@ -1541,7 +1509,6 @@ version = "0.3.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a19526d624e703a3179b3d322efec918b6246ea0fa51d41124525f00f1cc8104"
 dependencies = [
- "futures-channel",
  "futures-core",
  "futures-io",
  "futures-macro",
@@ -2237,15 +2204,6 @@ dependencies = [
  "hermit-abi",
  "rustix 0.38.21",
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "itertools"
-version = "0.10.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
-dependencies = [
- "either",
 ]
 
 [[package]]
@@ -5901,14 +5859,12 @@ name = "wooting-macro-backend"
 version = "1.0.2"
 dependencies = [
  "anyhow",
- "brightness",
  "copypasta",
  "dirs 5.0.1",
  "env_logger",
  "fastrand 2.0.1",
- "futures",
  "halfbrown",
- "itertools 0.11.0",
+ "itertools",
  "lazy_static",
  "log",
  "obws",

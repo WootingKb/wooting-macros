@@ -115,7 +115,7 @@ impl Macro {
     async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
         for action in &self.sequence {
             match action {
-                ActionEventType::KeyPressEventAction { data } => match data.keytype {
+                ActionEventType::KeyPressEventAction { data } => match data.key_type {
                     key_press::KeyType::Down => {
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
@@ -177,7 +177,6 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
-    pub display_list: Arc<RwLock<Vec<system_event::Monitor>>>,
 }
 
 ///MacroData is the main data structure that contains all macro data.
@@ -569,7 +568,6 @@ impl Default for MacroBackend {
             config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
-            display_list: Arc::new(RwLock::from(vec![])),
         }
     }
 }

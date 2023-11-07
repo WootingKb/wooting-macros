@@ -31,9 +31,5 @@ log = "0.4"
 env_logger = "0.10"
 rayon = "1.8"
 
-[target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
-brightness = { version = "0.5" }
-futures = "0.3"
-
 [profile.release]
 lto = true

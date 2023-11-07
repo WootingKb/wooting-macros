@@ -8,15 +8,6 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 
-// The Brightness of monitors is not implemented for macOS, so we have to condition the code.
-#[cfg(target_os = "windows")]
-use brightness::{windows::BrightnessExt, Brightness, BrightnessDevice};
-#[cfg(target_os = "linux")]
-use brightness::{Brightness, BrightnessDevice};
-
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-use futures::{StreamExt, TryFutureExt};
-
 // Frequently used constants
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
 const PASTE_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyV];
@@ -35,7 +26,6 @@ pub enum DirectoryAction {
 pub enum SystemAction {
     Open { action: DirectoryAction },
     Volume { action: VolumeAction },
-    Brightness { action: MonitorBrightnessAction },
     Clipboard { action: ClipboardAction },
 }
 
@@ -78,46 +68,6 @@ impl SystemAction {
                         .await;
                 }
             },
-
-            SystemAction::Brightness { action } => {
-                // This is split for windows/linux and macOS.
-                // macOS cannot implement this feature, so due to language limitations we have to make two separate matches.
-                #[cfg(any(target_os = "windows", target_os = "linux"))]
-                match action {
-                    MonitorBrightnessAction::SetAll { level } => {
-                        #[cfg(any(target_os = "windows", target_os = "linux"))]
-                        brightness_set_all_device(*level).await;
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                    MonitorBrightnessAction::SetSpecific { level, name } => {
-                        #[cfg(any(target_os = "windows", target_os = "linux"))]
-                        brightness_set_specific_device(*level, name).await;
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                    MonitorBrightnessAction::ChangeSpecific { by_how_much, name } => {
-                        #[cfg(any(target_os = "windows", target_os = "linux"))]
-                        brightness_change_specific(*by_how_much, name).await;
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                    MonitorBrightnessAction::ChangeAll { by_how_much } => {
-                        #[cfg(any(target_os = "windows", target_os = "linux"))]
-                        brightness_change_all(*by_how_much).await;
-                        #[cfg(target_os = "macos")]
-                        error!("Not supported on macOS");
-                    }
-                }
-                // Second match for macOS
-                #[cfg(target_os = "macos")]
-                match action {
-                    _ => {
-                        error!("Not supported on macOS");
-                    }
-                }
-            }
-
             SystemAction::Clipboard { action } => match action {
                 ClipboardAction::SetClipboard { data } => {
                     ClipboardContext::new()
@@ -161,122 +111,6 @@ impl SystemAction {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-/// Monitor information.
-pub struct Monitor {
-    pub device_id: String,
-    pub brightness: u32,
-    pub display_name: String,
-}
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Loads the monitors and sends them to the frontend.
-pub async fn backend_load_monitors() -> Vec<Monitor> {
-    let mut monitors = Vec::new();
-
-    if let Ok(i) = brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
-    {
-        monitors.push(Monitor {
-            device_id: i.device_name().into_future().await.unwrap(),
-            brightness: i.get().into_future().await.unwrap(),
-            #[cfg(target_os = "windows")]
-            display_name: i.device_description().unwrap(),
-            #[cfg(target_os = "linux")]
-            display_name: "Not supported on Linux".to_string(),
-        });
-    }
-
-    monitors
-}
-
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Sets brightness of all monitors to the given level.
-async fn brightness_set_all_device(percentage_level: u32) {
-    if let Ok(mut devices) = brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
-    {
-        set_brightness(&mut devices, percentage_level)
-            .await
-            .unwrap();
-    }
-}
-
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Sets brightness of a specific device (it's name) to the given level.
-async fn brightness_set_specific_device(percentage_level: u32, name: &str) {
-    if let Ok(mut devices) = brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
-    {
-        if devices.device_name().into_future().await.unwrap() == name {
-            set_brightness(&mut devices, percentage_level)
-                .await
-                .unwrap();
-        }
-    }
-}
-
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Decreases brightness of specific devices by 2%.
-async fn brightness_change_specific(by_how_much: i32, name: &str) {
-    if let Ok(mut devices) = brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
-    {
-        if devices.device_name().into_future().await.unwrap() == name {
-            let current_brightness: i32 = devices.get().await.unwrap() as i32;
-
-            set_brightness(
-                &mut devices,
-                (current_brightness.checked_add(by_how_much).unwrap_or(0)) as u32,
-            )
-            .await
-            .unwrap();
-        }
-    }
-}
-
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Decrements brightness of all devices by 2%.
-async fn brightness_change_all(by_how_much: i32) {
-    if let Ok(mut devices) = brightness::brightness_devices()
-        .into_future()
-        .await
-        .0
-        .unwrap()
-    {
-        let current_brightness: i32 = devices.get().await.unwrap() as i32;
-
-        set_brightness(
-            &mut devices,
-            (current_brightness.checked_add(by_how_much).unwrap_or(0)) as u32,
-        )
-        .await
-        .unwrap();
-    }
-}
-
-#[cfg(any(target_os = "windows", target_os = "linux"))]
-/// Sets brightness for a device.
-async fn set_brightness(
-    dev: &mut BrightnessDevice,
-    percentage_level: u32,
-) -> Result<(), brightness::Error> {
-    info!("Display {}", dev.device_name().await.unwrap());
-    dev.set(percentage_level).await.unwrap();
-    Ok(())
-}
-
 /// Transforms the text into a sarcastic version.
 fn transform_text(text: String) -> String {
     let mut transformed_text = String::new();
@@ -304,18 +138,6 @@ pub enum ClipboardAction {
     Paste,
     PasteUserDefinedString { data: String },
     Sarcasm,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
-#[serde(tag = "type")]
-/// Monitor get, set brightness of any screen.
-///
-/// ! **UNIMPLEMENTED** - The brightness is currently not implemented and tested on frontend. Backend needs testing. You are welcome to contribute.
-pub enum MonitorBrightnessAction {
-    SetAll { level: u32 },
-    SetSpecific { level: u32, name: String },
-    ChangeSpecific { by_how_much: i32, name: String },
-    ChangeAll { by_how_much: i32 },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
