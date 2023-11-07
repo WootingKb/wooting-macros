@@ -38,7 +38,7 @@ function useMacroContext() {
 const macroDefault: Macro = {
   name: '',
   icon: ':smile:',
-  active: true,
+  enabled: true,
   macro_type: 'Single',
   trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
   sequence: []
