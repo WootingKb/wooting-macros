@@ -19,6 +19,7 @@ import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
 import useMainBgColour from '../../../hooks/useMainBgColour'
+import MacroTypeArea from "./MacroTypeArea";
 
 interface Props {
   isEditing: boolean
@@ -141,7 +142,7 @@ export default function Header({ isEditing }: Props) {
         h={{ base: '80px', md: '100px', xl: '120px' }}
         py={2}
         px={{ base: 2, md: 4, xl: 6 }}
-        gap={4}
+        spacing={4}
         shadow={shadowColour}
         justifyContent="space-between"
         justifyItems="center"
@@ -174,7 +175,7 @@ export default function Header({ isEditing }: Props) {
             _focusVisible={{ borderColor: 'primary-accent.500' }}
           />
         </Flex>
-        {/* <MacroTypeArea /> */}
+        <MacroTypeArea />
         <Flex maxW="700px" flexGrow={1} gap={4} alignItems="center">
           <TriggerArea onOpen={onTriggerModalOpen} />
           <Tooltip

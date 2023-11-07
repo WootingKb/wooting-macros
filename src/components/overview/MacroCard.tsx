@@ -59,7 +59,7 @@ export default function MacroCard({
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const newCollection = { ...currentCollection }
-      newCollection.macros[index].active = event.target.checked
+      newCollection.macros[index].enabled = event.target.checked
       onCollectionUpdate(newCollection, selection.collectionIndex)
     },
     [currentCollection, index, onCollectionUpdate, selection.collectionIndex]
@@ -98,7 +98,7 @@ export default function MacroCard({
           <Box
             maxHeight="32px"
             cursor="default"
-            opacity={macro.active ? 1 : 0.5}
+            opacity={macro.enabled ? 1 : 0.5}
           >
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
@@ -106,7 +106,7 @@ export default function MacroCard({
             textStyle="name"
             fontWeight="semibold"
             fontSize="2xl"
-            opacity={macro.active ? 1 : 0.5}
+            opacity={macro.enabled ? 1 : 0.5}
           >
             {macro.name}
           </Text>
@@ -120,7 +120,7 @@ export default function MacroCard({
           >
             <KebabVertical />
           </MenuButton>
-          <MenuList p="2" right={0}>
+          <MenuList p="2" right={0} position="relative">
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
@@ -184,8 +184,8 @@ export default function MacroCard({
           placement="bottom"
           hasArrow
           label={
-            currentCollection.active
-              ? macro.active
+            currentCollection.enabled
+              ? macro.enabled
                 ? 'Disable Macro'
                 : 'Enable Macro'
               : 'Re-enable Collection!'
@@ -194,9 +194,9 @@ export default function MacroCard({
           <Box>
             <Switch
               variant="brand"
-              defaultChecked={macro.active}
-              isChecked={currentCollection.active ? macro.active : false}
-              isDisabled={!currentCollection.active}
+              defaultChecked={macro.enabled}
+              isChecked={currentCollection.enabled ? macro.enabled : false}
+              isDisabled={!currentCollection.enabled}
               aria-label="Macro Toggle"
               onChange={onToggle}
             />

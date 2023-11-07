@@ -13,7 +13,7 @@ import { checkIfStringIsNonNumeric } from '../../../constants/utils'
 export default function MacroTypeArea() {
   const { macro, updateMacroType } = useMacroContext()
   const borderColour = useColorModeValue('gray.400', 'gray.600')
-  const typeIcons = [<HiArrowRight />, <HiArrowPath />, <HiArrowDownTray />]
+  const typeIcons = [<HiArrowRight />, <HiArrowPath />, <HiArrowDownTray />, <HiArrowPathRoundedSquare />]
 
   return (
     <HStack
