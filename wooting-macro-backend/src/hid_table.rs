@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::hash::Hash;
 
+use crate::plugin::mouse::MouseButton;
 use lazy_static::lazy_static;
 use rdev::{Button, Key};
 
@@ -15,6 +16,43 @@ pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
         scancode.insert(Button::Backward, 0x105);
         scancode
 };}
+
+impl From<&Button> for MouseButton {
+    fn from(value: &Button) -> Self {
+        match *value {
+            Button::Left => MouseButton::Left,
+            Button::Right => MouseButton::Right,
+            Button::Middle => MouseButton::Middle,
+            Button::Forward => MouseButton::Mouse4,
+            Button::Backward => MouseButton::Mouse5,
+            Button::Unknown(_) => MouseButton::Left,
+        }
+    }
+}
+
+impl From<&MouseButton> for Button {
+    fn from(item: &MouseButton) -> Self {
+        match *item {
+            MouseButton::Left => Button::Left,
+            MouseButton::Right => Button::Right,
+            MouseButton::Middle => Button::Middle,
+            MouseButton::Mouse4 => Button::Forward,
+            MouseButton::Mouse5 => Button::Backward,
+        }
+    }
+}
+
+impl From<&MouseButton> for u32 {
+    fn from(value: &MouseButton) -> Self {
+        match *value {
+            MouseButton::Left => 0x101,
+            MouseButton::Right => 0x102,
+            MouseButton::Middle => 0x103,
+            MouseButton::Mouse4 => 0x104,
+            MouseButton::Mouse5 => 0x105,
+        }
+    }
+}
 
 lazy_static! {
 ///Conversion from HID codes to the library backend enums.
