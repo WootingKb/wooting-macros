@@ -14,27 +14,29 @@ pub fn send(event_type: &rdev::EventType) {
 }
 /// Sends a vector of keys to get processed
 pub async fn send_key(send_channel: &UnboundedSender<rdev::EventType>, key: Vec<rdev::Key>) {
-    for press in key {
-        send_channel.send(rdev::EventType::KeyPress(press)).unwrap();
+    key.iter().for_each(|press| {
         send_channel
-            .send(rdev::EventType::KeyRelease(press))
+            .send(rdev::EventType::KeyPress(*press))
             .unwrap();
-    }
+        send_channel
+            .send(rdev::EventType::KeyRelease(*press))
+            .unwrap();
+    });
 }
 
 /// Sends a vector of hotkeys to get processed
 pub async fn send_hotkey(send_channel: &UnboundedSender<rdev::EventType>, key: Vec<rdev::Key>) {
-    for press in &key {
+    key.iter().for_each(|press| {
         send_channel
             .send(rdev::EventType::KeyPress(*press))
-            .unwrap();
-    }
+            .unwrap()
+    });
 
-    for press in &key.into_iter().rev().collect::<Vec<rdev::Key>>() {
+    key.iter().rev().for_each(|press| {
         send_channel
             .send(rdev::EventType::KeyRelease(*press))
-            .unwrap();
-    }
+            .unwrap()
+    });
 }
 
 // Disabled until a better fix is done

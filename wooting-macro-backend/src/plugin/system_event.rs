@@ -8,8 +8,6 @@ use std::vec;
 use tokio::sync::mpsc::UnboundedSender;
 use url::Url;
 
-use crate::hid_table::SCANCODE_TO_RDEV;
-
 // Frequently used keys within the code.
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
 const PASTE_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyV];
@@ -64,40 +62,73 @@ impl SystemAction {
             },
             SystemAction::Clipboard { action } => match action {
                 ClipboardAction::SetClipboard { data } => {
-                    ClipboardContext::new()
-                        .unwrap()
-                        .set_contents(data.to_owned())
-                        .unwrap();
+                    match ClipboardContext::new() {
+                        Ok(mut clipboard) => clipboard
+                            .set_contents(data.to_owned())
+                            .unwrap_or_else(|err| {
+                                error!("Error setting clipboard data: {}", err);
+                            }),
+                        Err(err) => {
+                            error!("Error creating clipboard {}", err);
+                            return;
+                        }
+                    };
                 }
                 ClipboardAction::Copy => {
                     util::send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
                 }
                 ClipboardAction::GetClipboard => {
-                    ClipboardContext::new().unwrap().get_contents().unwrap();
+                    match ClipboardContext::new() {
+                        Ok(mut clipboard) => clipboard.get_contents().unwrap_or_else(|err| {
+                            error!("Error getting clipboard data: {}", err);
+                            String::default()
+                        }),
+                        Err(err) => {
+                            error!("Error creating clipboard {}", err);
+                            return;
+                        }
+                    };
                 }
                 ClipboardAction::Paste => {
                     util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
-                    ClipboardContext::new()
-                        .unwrap()
-                        .set_contents(data.to_owned())
-                        .unwrap();
+                    match ClipboardContext::new() {
+                        Ok(mut clipboard) => clipboard
+                            .set_contents(data.to_owned())
+                            .unwrap_or_else(|err| error!("Error setting clipboard: {}", err)),
+                        Err(err) => {
+                            error!("Error getting clipboard{}", err);
+                            return;
+                        }
+                    };
 
                     util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
 
                 ClipboardAction::Sarcasm => {
-                    let mut ctx = ClipboardContext::new().unwrap();
-
+                    let mut ctx = match ClipboardContext::new() {
+                        Ok(clipboard) => clipboard,
+                        Err(err) => {
+                            error!("Error creating clipboard {}", err);
+                            return;
+                        }
+                    };
+                    // Copy the text
                     util::send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
 
-                    //Transform the text
-                    let content = transform_text(ctx.get_contents().unwrap());
-                    ctx.set_contents(content).unwrap();
+                    // Transform the text
+                    let content = transform_text(ctx.get_contents().unwrap_or_else(|err| {
+                        error!("Error getting clipboard data: {}", err);
+                        String::default()
+                    }));
 
-                    //Paste the text again
+                    ctx.set_contents(content).unwrap_or_else(|err| {
+                        error!("Error setting clipboard data: {}", err);
+                    });
+
+                    // Paste the text again
                     util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
             },
@@ -107,19 +138,19 @@ impl SystemAction {
 
 /// Transforms the text into a sarcastic version.
 fn transform_text(text: String) -> String {
-    let mut transformed_text = String::new();
-    for c in text.chars() {
-        if c.is_ascii_alphabetic() && fastrand::bool() {
-            if c.is_ascii_lowercase() {
-                transformed_text.push(c.to_ascii_uppercase());
+    text.chars()
+        .map(|c| {
+            if c.is_ascii_alphabetic() && fastrand::bool() {
+                if c.is_ascii_lowercase() {
+                    c.to_ascii_uppercase()
+                } else {
+                    c.to_ascii_lowercase()
+                }
             } else {
-                transformed_text.push(c.to_ascii_lowercase());
+                c
             }
-        } else {
-            transformed_text.push(c);
-        }
-    }
-    transformed_text
+        })
+        .collect()
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
