@@ -4,11 +4,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 /// Sends an event to the library to Execute on an OS level. This makes it easier to implement keypresses in custom code.
 pub fn send(event_type: &rdev::EventType) {
-    debug!("Sending event: {:?}", event_type);
+    trace!("Sending event: {:?}", event_type);
     match rdev::simulate(event_type) {
         Ok(()) => (),
-        Err(_) => {
-            error!("We could not send {:?}", event_type);
+        Err(err) => {
+            error!("We could not send {:?}.\n{}", event_type, err);
         }
     }
 }
@@ -32,6 +32,7 @@ pub async fn send_hotkey(send_channel: &UnboundedSender<rdev::EventType>, key: V
             .unwrap()
     });
 
+    // Release the keys in opposite order
     key.iter().rev().for_each(|press| {
         send_channel
             .send(rdev::EventType::KeyRelease(*press))
