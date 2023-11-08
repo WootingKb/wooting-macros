@@ -53,17 +53,13 @@ impl SystemAction {
             },
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-
-                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()])
-                        .await;
+                    util::send_key(&send_channel, vec![rdev::Key::VolumeMute]).await;
                 }
                 VolumeAction::LowerVolume => {
-                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()])
-                        .await;
+                    util::send_key(&send_channel, vec![rdev::Key::VolumeDown]).await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()])
-                        .await;
+                    util::send_key(&send_channel, vec![rdev::Key::VolumeUp]).await;
                 }
             },
             SystemAction::Clipboard { action } => match action {
