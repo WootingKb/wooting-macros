@@ -253,15 +253,15 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::BackQuote, 0x35); //BACKQUOTE
         scancode.insert(Key::Comma, 0x36); //COMMA
         scancode.insert(Key::Dot, 0x37); //PERIOD
-        scancode.insert( Key::Slash, 0x38); //SLASH
-        scancode.insert( Key::CapsLock, 0x39); //CAPS_LOCK
+        scancode.insert(Key::Slash, 0x38); //SLASH
+        scancode.insert(Key::CapsLock, 0x39); //CAPS_LOCK
 
-        scancode.insert( Key::F1, 0x3a); //F1
-        scancode.insert( Key::F2, 0x3b); //F2
-        scancode.insert( Key::F3, 0x3c); //F3
-        scancode.insert( Key::F4, 0x3d); //F4
-        scancode.insert( Key::F5, 0x3e); //F5
-        scancode.insert( Key::F6, 0x3f); //F6
+        scancode.insert(Key::F1, 0x3a); //F1
+        scancode.insert(Key::F2, 0x3b); //F2
+        scancode.insert(Key::F3, 0x3c); //F3
+        scancode.insert(Key::F4, 0x3d); //F4
+        scancode.insert(Key::F5, 0x3e); //F5
+        scancode.insert(Key::F6, 0x3f); //F6
         scancode.insert(Key::F7, 0x40); //F7
         scancode.insert(Key::F8, 0x41); //F8
         scancode.insert(Key::F9, 0x42); //F9
