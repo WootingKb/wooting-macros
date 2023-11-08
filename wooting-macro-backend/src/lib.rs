@@ -568,11 +568,6 @@ impl MacroBackend {
                         rdev::EventType::Wheel { .. } => Some(event),
                     }
                 } else {
-                    debug!(
-                        "Passing event through... macro recording disabled: {:?}",
-                        event
-                    );
-
                     Some(event)
                 }
             })
