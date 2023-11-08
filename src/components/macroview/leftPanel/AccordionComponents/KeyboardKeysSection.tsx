@@ -66,7 +66,7 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                         data: {
                           keypress: HIDinfo.HIDcode,
                           press_duration: 1,
-                          keytype: KeyType[KeyType.DownUp]
+                          key_type: KeyType[KeyType.DownUp]
                         }
                       }}
                     />
