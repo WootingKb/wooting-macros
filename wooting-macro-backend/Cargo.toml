@@ -20,7 +20,7 @@ tokio-serde = { version = "0.8", features = ["json"] }
 opener = "0.6"
 obws = { version = "0.11" }
 rodio = "0.17"
-copypasta = { version = "0.8", features = ["smithay-clipboard"] }
+copypasta = { version = "0.10", features = ["smithay-clipboard"] }
 
 serde_repr = "0.1"
 fastrand = "2.0"
