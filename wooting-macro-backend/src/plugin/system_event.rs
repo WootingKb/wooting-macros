@@ -3,21 +3,23 @@ use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
 use log::*;
 use rdev;
+use std::path::PathBuf;
 use std::vec;
 use tokio::sync::mpsc::UnboundedSender;
+use url::Url;
 
 use crate::hid_table::SCANCODE_TO_RDEV;
 
-// Frequently used constants
+// Frequently used keys within the code.
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
 const PASTE_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyV];
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 pub enum DirectoryAction {
-    Directory { data: String },
-    File { data: String },
-    Website { data: String },
+    File { data: PathBuf },
+    Directory { data: PathBuf },
+    Website { data: Url },
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
@@ -35,20 +37,15 @@ impl SystemAction {
     pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
         match &self {
             SystemAction::Open { action } => match action {
-                DirectoryAction::Directory { data } => {
-                    match opener::open(std::path::Path::new(data)) {
-                        Ok(x) => x,
-                        Err(e) => error!("Error: {}", e),
-                    };
-                }
-                DirectoryAction::File { data } => {
-                    match opener::open(std::path::Path::new(data)) {
+                DirectoryAction::Directory { data } | DirectoryAction::File { data } => {
+                    match opener::open(data) {
                         Ok(x) => x,
                         Err(e) => error!("Error: {}", e),
                     };
                 }
                 DirectoryAction::Website { data } => {
-                    match opener::open_browser(std::path::Path::new(data)) {
+                    // The open_browser explicitly opens the path in a browser window.
+                    match opener::open_browser(data.as_str()) {
                         Ok(x) => x,
                         Err(e) => error!("Error: {}", e),
                     };
@@ -56,16 +53,13 @@ impl SystemAction {
             },
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x7f).unwrap()])
-                        .await;
+                    util::send_key(&send_channel, vec![rdev::Key::VolumeMute]).await;
                 }
                 VolumeAction::LowerVolume => {
-                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x81).unwrap()])
-                        .await;
+                    util::send_key(&send_channel, vec![rdev::Key::VolumeDown]).await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::send_key(&send_channel, vec![*SCANCODE_TO_RDEV.get(&0x80).unwrap()])
-                        .await;
+                    util::send_key(&send_channel, vec![rdev::Key::VolumeUp]).await;
                 }
             },
             SystemAction::Clipboard { action } => match action {
