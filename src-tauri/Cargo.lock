@@ -5878,6 +5878,7 @@ dependencies = [
  "tauri",
  "tokio",
  "tokio-serde",
+ "url",
 ]
 
 [[package]]

@@ -30,7 +30,7 @@ function useApplicationContext() {
   return context
 }
 
-function ApplicationProvider({ children }: ApplicationProviderProps) {
+function ApplicationProvider({children}: ApplicationProviderProps) {
   const [viewState, setViewState] = useState<ViewState>(ViewState.Overview)
   const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
@@ -53,7 +53,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
           description:
             'Unable to load macros, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
-          duration: 2000,
+          duration: 10000,
           isClosable: true
         })
       })
@@ -66,9 +66,10 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         toast({
           title: 'Error updating macro data',
           description:
-            'Unable to update macro data, please re-open the app. If that does not work, please contact us on Discord.',
+            `Unable to update macro data: ${e}. 
+            Your system action filepath or website URL may be incorrect. Alternatively, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
+          duration: 10000,
           isClosable: true
         })
       })
@@ -83,7 +84,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const changeSelectedCollectionIndex = useCallback(
     (index: number) => {
-      setSelection({ collectionIndex: index, macroIndex: undefined })
+      setSelection({collectionIndex: index, macroIndex: undefined})
     },
     [setSelection]
   )
@@ -111,7 +112,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       setCollections((collections) => {
         newIndex = collections.length
         if (itemToAdd.name === '') {
-          itemToAdd = { ...itemToAdd, name: `Collection ${newIndex + 1}` }
+          itemToAdd = {...itemToAdd, name: `Collection ${newIndex + 1}`}
         }
         return [...collections, itemToAdd]
       })

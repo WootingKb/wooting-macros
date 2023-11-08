@@ -30,6 +30,7 @@ anyhow = "1.0"
 log = "0.4"
 env_logger = "0.10"
 rayon = "1.8"
+url = "2.4.1"
 
 [profile.release]
 lto = true
