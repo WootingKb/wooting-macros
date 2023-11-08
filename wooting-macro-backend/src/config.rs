@@ -24,11 +24,17 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                 data
             }
 
-            Err(err) => {
-                error!("Error opening file, using default config {}", err);
-                Self::default().write_to_file();
-                Self::default()
-            }
+            Err(err) => match err.kind() {
+                std::io::ErrorKind::NotFound => {
+                    warn!("File not found, writing a default config {}", err);
+                    Self::default().write_to_file();
+                    Self::default()
+                }
+                _ => {
+                    error!("Error opening file, using empty in-memory config {}", err);
+                    Self::default()
+                }
+            },
         }
     }
 
