@@ -280,7 +280,7 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
-        plugin::util::send(&rchan_execute.blocking_recv().unwrap());
+        plugin::util::direct_send_event(&rchan_execute.blocking_recv().unwrap());
 
         //MacOS requires some strange delays so putting it here just in case.
         #[cfg(any(target_os = "macos", target_os = "linux"))]

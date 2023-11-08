@@ -51,13 +51,13 @@ impl SystemAction {
             },
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    util::send_key(&send_channel, vec![rdev::Key::VolumeMute]).await;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeMute]).await;
                 }
                 VolumeAction::LowerVolume => {
-                    util::send_key(&send_channel, vec![rdev::Key::VolumeDown]).await;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeDown]).await;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::send_key(&send_channel, vec![rdev::Key::VolumeUp]).await;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp]).await;
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -75,7 +75,7 @@ impl SystemAction {
                     };
                 }
                 ClipboardAction::Copy => {
-                    util::send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
                 }
                 ClipboardAction::GetClipboard => {
                     match ClipboardContext::new() {
@@ -90,7 +90,7 @@ impl SystemAction {
                     };
                 }
                 ClipboardAction::Paste => {
-                    util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
@@ -104,7 +104,7 @@ impl SystemAction {
                         }
                     };
 
-                    util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
 
                 ClipboardAction::Sarcasm => {
@@ -116,7 +116,7 @@ impl SystemAction {
                         }
                     };
                     // Copy the text
-                    util::send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await;
 
                     // Transform the text
                     let content = transform_text(ctx.get_contents().unwrap_or_else(|err| {
@@ -129,7 +129,7 @@ impl SystemAction {
                     });
 
                     // Paste the text again
-                    util::send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await;
                 }
             },
         }
