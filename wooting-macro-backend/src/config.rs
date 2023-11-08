@@ -12,16 +12,13 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     ///
     /// If it errors out, it replaces and writes a default config.
     fn read_data() -> Self {
-        let default = Self::default();
-
         match File::open(Self::file_name().as_path()) {
             Ok(data) => {
                 let data: Self = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
                         error!("Error reading config.json, using default data. {}", error);
-                        default.write_to_file();
-                        default
+                        Self::default()
                     }
                 };
                 data
@@ -29,8 +26,8 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
 
             Err(err) => {
                 error!("Error opening file, using default config {}", err);
-                default.write_to_file();
-                default
+                Self::default().write_to_file();
+                Self::default()
             }
         }
     }
@@ -39,18 +36,23 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     ///
     /// If it fails, it uses only in-memory defaults and won't save anything to disk.
     fn write_to_file(&self) {
-        match std::fs::write(
-            Self::file_name().as_path(),
-            serde_json::to_string_pretty(&self).unwrap(),
-        ) {
+        let converted_json = match serde_json::to_string_pretty(&self) {
+            Ok(value) => value,
+            Err(err) => {
+                error!(
+                    "Error converting data from json to types, aborting write.\n{}",
+                    err
+                );
+                return;
+            }
+        };
+
+        match std::fs::write(Self::file_name().as_path(), converted_json) {
             Ok(_) => {
                 info!("Success writing a new file");
             }
             Err(err) => {
-                error!(
-                    "Error writing a new file, using only read only defaults. {}",
-                    err
-                );
+                error!("Error writing a new file. {}", err);
             }
         };
     }
