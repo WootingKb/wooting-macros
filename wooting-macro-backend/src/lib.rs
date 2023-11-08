@@ -21,6 +21,7 @@ use halfbrown::HashMap;
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
+use rdev::simulate;
 
 // This has to be imported for release build
 #[allow(unused_imports)]
@@ -117,11 +118,13 @@ impl Macro {
             match action {
                 ActionEventType::KeyPressEventAction { data } => match data.key_type {
                     key_press::KeyType::Down => {
+                        // One key press down
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .unwrap();
                     }
                     key_press::KeyType::Up => {
+                        // One key lift up
                         send_channel
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
@@ -129,12 +132,15 @@ impl Macro {
                             .unwrap();
                     }
                     key_press::KeyType::DownUp => {
+                        // Key press
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
                             .unwrap();
 
+                        // Wait the set delay by user
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
 
+                        // Lift the key
                         send_channel
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
@@ -282,11 +288,11 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
     loop {
         plugin::util::direct_send_event(&rchan_execute.blocking_recv().unwrap());
 
-        //MacOS requires some strange delays so putting it here just in case.
-        #[cfg(any(target_os = "macos", target_os = "linux"))]
+        // MacOS and Linux require some delays.
+        #[cfg(not(target_os = "windows"))]
         thread::sleep(time::Duration::from_millis(10));
 
-        //Windows requires a delay between each macro execution.
+        // Windows execution delay can be set lower.
         #[cfg(target_os = "windows")]
         thread::sleep(time::Duration::from_millis(1));
     }
@@ -378,11 +384,30 @@ fn check_macro_execution_efficiently(
     output
 }
 
+#[derive(Debug, Clone, Default)]
+struct KeysPressed(Arc<RwLock<Vec<rdev::Key>>>);
+
+impl Drop for KeysPressed {
+    fn drop(&mut self) {
+        self.0.blocking_read().iter().for_each(|key| {
+            match simulate(&rdev::EventType::KeyRelease(*key)) {
+                Ok(()) => info!("Releasing pressed button {:?}", key),
+                Err(err) => error!("We could not send a release.\n{}", err),
+            }
+        });
+    }
+}
+
 impl MacroBackend {
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
         #[cfg(not(debug_assertions))]
-        match std::fs::create_dir_all(dirs::config_dir().unwrap().join(CONFIG_DIR).as_path()) {
+        match std::fs::create_dir_all(
+            dirs::config_dir()
+                .expect("Cannot get user config directory (e.g. %appdata%)!")
+                .join(CONFIG_DIR)
+                .as_path(),
+        ) {
             Ok(x) => x,
             Err(error) => error!("Directory creation failed, OS error: {}", error),
         };
@@ -418,13 +443,13 @@ impl MacroBackend {
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
 
-        //Create the executor
+        // Create the executor
         thread::spawn(move || {
             keypress_executor_sender(rchan_execute);
         });
 
         let _grabber = task::spawn_blocking(move || {
-            let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
+            let keys_pressed: KeysPressed = KeysPressed::default();
 
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
@@ -433,11 +458,8 @@ impl MacroBackend {
                             debug!("Key Pressed RAW: {:?}", key);
                             let key_to_push = key;
 
-                            // https://doc.rust-lang.org/std/collections/struct.HashSet.html
-                            // benchmark
-
                             let pressed_keys_copy_converted: Vec<u32> = {
-                                let mut keys_pressed = keys_pressed.blocking_write();
+                                let mut keys_pressed = keys_pressed.0.blocking_write();
 
                                 keys_pressed.push(key_to_push);
 
@@ -463,21 +485,20 @@ impl MacroBackend {
                                     .collect::<Vec<rdev::Key>>()
                             );
 
-                            let first_key: u32 = match pressed_keys_copy_converted.first() {
-                                None => 0,
-                                Some(data_first) => *data_first,
-                            };
+                            let first_key: u32 = pressed_keys_copy_converted
+                                .first()
+                                .map(|key| *key)
+                                .unwrap_or_default();
 
                             let trigger_list = inner_triggers.blocking_read().clone();
 
-                            let check_these_macros = match trigger_list.get(&first_key) {
-                                None => {
-                                    vec![]
-                                }
-                                Some(data_found) => data_found.to_vec(),
-                            };
+                            let check_these_macros = trigger_list
+                                .get(&first_key)
+                                .cloned()
+                                .unwrap_or_default()
+                                .to_vec();
 
-                            // ? up the pressed keys here immidiately?
+                            // ? up the pressed keys here right away?
 
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
@@ -500,9 +521,9 @@ impl MacroBackend {
                         }
 
                         rdev::EventType::KeyRelease(key) => {
-                            keys_pressed.blocking_write().retain(|x| *x != key);
+                            keys_pressed.0.blocking_write().retain(|x| *x != key);
 
-                            debug!("Key state: {:?}", keys_pressed.blocking_read());
+                            debug!("Key state: {:?}", keys_pressed.0.blocking_read());
 
                             Some(event)
                         }
@@ -570,14 +591,5 @@ impl Default for MacroBackend {
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
     }
 }
