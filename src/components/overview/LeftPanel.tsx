@@ -39,21 +39,22 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
 
   const onNewCollectionButtonPress = useCallback(() => {
-    const randomCategory =
-      data.categories[
-        Math.floor(Math.random() * (data.categories.length - 3) + 1) // The plus 1 is to avoid selecting the frequent category. The - 3 is to avoid selecting the flags and symbols categories
-      ]
-    let randomEmoji =
-      randomCategory.emojis[
-        Math.floor(Math.random() * randomCategory.emojis.length)
-      ]
-    if (randomEmoji.includes('flag') || randomEmoji.includes('symbols')) {
-      randomEmoji = 'smile'
-    }
+    // const randomCategory =
+    //   data.categories[
+    //     Math.floor(Math.random() * (data.categories.length - 3) + 1) // The plus 1 is to avoid selecting the frequent category. The - 3 is to avoid selecting the flags and symbols categories
+    //   ]
+    // let randomEmoji =
+    //   randomCategory.emojis[
+    //     Math.floor(Math.random() * randomCategory.emojis.length)
+    //   ]
+    // if (randomEmoji.includes('flag') || randomEmoji.includes('symbols')) {
+    //   randomEmoji = 'smile'
+    // }
 
     onCollectionAdd({
       active: true,
-      icon: `:${randomEmoji}:`,
+      icon: '📁',
+      // icon: `:${randomEmoji}:`,
       macros: [],
       name: `Collection ${collections.length + 1}`
     })
