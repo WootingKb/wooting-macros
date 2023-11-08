@@ -12,12 +12,30 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     ///
     /// If it errors out, it replaces and writes a default config.
     fn read_data() -> Self {
-        match File::open(Self::file_name().as_path()) {
+        match File::open(Self::file_name()) {
             Ok(data) => {
                 let data: Self = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
-                        error!("Error reading config.json, using default data. {}", error);
+                        error!("Error reading config.json, using default data and moving to backup. {}", error);
+                        let file_name = Self::file_name();
+                        let mut file_name = file_name
+                            .to_str()
+                            .expect("Cannot preserve invalid file, crashing to save custom config")
+                            .to_string();
+
+                        if PathBuf::from(format!("{}.bak", file_name)).exists() {
+                            let mut i = 0;
+                            while PathBuf::from(format!("{}-{}.bak", file_name, i)).exists() {
+                                i += 1;
+                            }
+                            file_name = String::from(format!("{}-{}.bak", file_name, i));
+                        }
+                        warn!("Renaming {} to {}", Self::file_name().to_str().unwrap(), file_name);
+
+                        std::fs::rename(Self::file_name(), file_name).unwrap_or_else(|err| {
+                            panic!("Cannot rename the invalid config. Aborting.\n {}", err)
+                        });
                         Self::default()
                     }
                 };
@@ -31,8 +49,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                     Self::default()
                 }
                 _ => {
-                    error!("Error opening file, using empty in-memory config {}", err);
-                    Self::default()
+                    panic!("Filesystem error, cannot proceed. {}", err);
                 }
             },
         }
