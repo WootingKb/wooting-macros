@@ -282,11 +282,11 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
     loop {
         plugin::util::send(&rchan_execute.blocking_recv().unwrap());
 
-        //Windows requires a delay between each macro execution.
+        //MacOS requires some strange delays so putting it here just in case.
         #[cfg(any(target_os = "macos", target_os = "linux"))]
         thread::sleep(time::Duration::from_millis(10));
 
-        //MacOS requires some strange delays so putting it here just in case.
+        //Windows requires a delay between each macro execution.
         #[cfg(target_os = "windows")]
         thread::sleep(time::Duration::from_millis(1));
     }
