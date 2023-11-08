@@ -31,43 +31,6 @@ pub enum MouseButton {
     Mouse5 = 0x105,
 }
 
-impl From<&rdev::Button> for MouseButton {
-    fn from(value: &rdev::Button) -> Self {
-        match *value {
-            rdev::Button::Left => MouseButton::Left,
-            rdev::Button::Right => MouseButton::Right,
-            rdev::Button::Middle => MouseButton::Middle,
-            rdev::Button::Forward => MouseButton::Mouse4,
-            rdev::Button::Backward => MouseButton::Mouse5,
-            rdev::Button::Unknown(_) => MouseButton::Left,
-        }
-    }
-}
-
-impl From<&MouseButton> for rdev::Button {
-    fn from(item: &MouseButton) -> Self {
-        match *item {
-            MouseButton::Left => rdev::Button::Left,
-            MouseButton::Right => rdev::Button::Right,
-            MouseButton::Middle => rdev::Button::Middle,
-            MouseButton::Mouse4 => rdev::Button::Forward,
-            MouseButton::Mouse5 => rdev::Button::Backward,
-        }
-    }
-}
-
-impl From<&MouseButton> for u32 {
-    fn from(value: &MouseButton) -> Self {
-        match *value {
-            MouseButton::Left => 0x101,
-            MouseButton::Right => 0x102,
-            MouseButton::Middle => 0x103,
-            MouseButton::Mouse4 => 0x104,
-            MouseButton::Mouse5 => 0x105,
-        }
-    }
-}
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 /// Mouse press action: Press presses a defined button. Release releases a defined button.
