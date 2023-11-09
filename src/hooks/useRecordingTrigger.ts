@@ -43,19 +43,14 @@ export default function useRecordingTrigger(
       event.preventDefault()
       event.stopPropagation()
 
-      const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+      // This stroke of genius compacts the key code, and which location the key is into a single string
+      const HIDIdentifier = event.which + '1' + event.location
+
+      console.error(HIDIdentifier)
+      const HIDcode = webCodeHIDLookup.get(HIDIdentifier)?.HIDcode
 
       console.warn("Code: ", event.code, "|Symbol: ", event.key, "|DEPR Which Code: ", event.which)
 
-      const addedKey = "Key" + event.key.toUpperCase()
-      const CorrectHIDCode = (addedKey == event.code)
-
-      const HIDwhich = webCodeHIDLookup.get(event.code)?.webKeyId
-
-      const KeyWhich = event.which
-
-
-      console.error(addedKey, "==", event.code, "Is correct?", CorrectHIDCode)
 
 
       if (HIDcode === undefined) {

@@ -5,7 +5,6 @@ export interface HidInfo {
   category: HIDCategory
   displayString: string
   webKeyId: string
-  whichId: number
   colSpan?: number
   allowAtStartOfTrigger?: boolean
 }
@@ -17,52 +16,51 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'A',
       webKeyId: 'KeyA',
-      whichId: 65,
     }
   }
+
   static get B(): HidInfo {
     return {
       HIDcode: 5,
       category: HIDCategory.Alphanumeric,
       displayString: 'B',
       webKeyId: 'KeyB',
-      whichId: 66,
     }
   }
+
   static get C(): HidInfo {
     return {
       HIDcode: 6,
       category: HIDCategory.Alphanumeric,
       displayString: 'C',
       webKeyId: 'KeyC',
-      whichId: 67,
     }
   }
+
   static get D(): HidInfo {
     return {
       HIDcode: 7,
       category: HIDCategory.Alphanumeric,
       displayString: 'D',
       webKeyId: 'KeyD',
-      whichId: 68,
     }
   }
+
   static get E(): HidInfo {
     return {
       HIDcode: 8,
       category: HIDCategory.Alphanumeric,
       displayString: 'E',
       webKeyId: 'KeyE',
-      whichId: 69,
     }
   }
+
   static get F(): HidInfo {
     return {
       HIDcode: 9,
       category: HIDCategory.Alphanumeric,
       displayString: 'F',
       webKeyId: 'KeyF',
-      whichId: 70,
     }
   }
 
@@ -72,72 +70,72 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'G',
       webKeyId: 'KeyG',
-      whichId: 71,
     }
   }
+
   static get H(): HidInfo {
     return {
       HIDcode: 11,
       category: HIDCategory.Alphanumeric,
       displayString: 'H',
       webKeyId: 'KeyH',
-      whichId: 72,
     }
   }
+
   static get I(): HidInfo {
     return {
       HIDcode: 12,
       category: HIDCategory.Alphanumeric,
       displayString: 'I',
       webKeyId: 'KeyI',
-      whichId: 73,
     }
   }
+
   static get J(): HidInfo {
     return {
       HIDcode: 13,
       category: HIDCategory.Alphanumeric,
       displayString: 'J',
       webKeyId: 'KeyJ',
-      whichId: 74
     }
   }
+
   static get K(): HidInfo {
     return {
       HIDcode: 14,
       category: HIDCategory.Alphanumeric,
       displayString: 'K',
       webKeyId: 'KeyK',
-      whichId: 75,
     }
   }
+
   static get L(): HidInfo {
     return {
       HIDcode: 15,
       category: HIDCategory.Alphanumeric,
       displayString: 'L',
       webKeyId: 'KeyL',
-      whichId: 76,
     }
   }
+
   static get M(): HidInfo {
     return {
       HIDcode: 16,
       category: HIDCategory.Alphanumeric,
       displayString: 'M',
       webKeyId: 'KeyM',
-      whichId: 77,
     }
   }
+
   static get N(): HidInfo {
     return {
       HIDcode: 17,
       category: HIDCategory.Alphanumeric,
       displayString: 'N',
       webKeyId: 'KeyN',
-      whichId: 78,
     }
   }
+
   static get O(): HidInfo {
     return {
       HIDcode: 18,
@@ -146,6 +144,7 @@ export class Hid {
       webKeyId: 'KeyO'
     }
   }
+
   static get P(): HidInfo {
     return {
       HIDcode: 19,
@@ -163,6 +162,7 @@ export class Hid {
       webKeyId: 'KeyQ'
     }
   }
+
   static get R(): HidInfo {
     return {
       HIDcode: 21,
@@ -171,6 +171,7 @@ export class Hid {
       webKeyId: 'KeyR'
     }
   }
+
   static get S(): HidInfo {
     return {
       HIDcode: 22,
@@ -179,6 +180,7 @@ export class Hid {
       webKeyId: 'KeyS'
     }
   }
+
   static get T(): HidInfo {
     return {
       HIDcode: 23,
@@ -187,6 +189,7 @@ export class Hid {
       webKeyId: 'KeyT'
     }
   }
+
   static get U(): HidInfo {
     return {
       HIDcode: 24,
@@ -195,6 +198,7 @@ export class Hid {
       webKeyId: 'KeyU'
     }
   }
+
   static get V(): HidInfo {
     return {
       HIDcode: 25,
@@ -203,6 +207,7 @@ export class Hid {
       webKeyId: 'KeyV'
     }
   }
+
   static get W(): HidInfo {
     return {
       HIDcode: 26,
@@ -211,6 +216,7 @@ export class Hid {
       webKeyId: 'KeyW'
     }
   }
+
   static get X(): HidInfo {
     return {
       HIDcode: 27,
@@ -219,6 +225,7 @@ export class Hid {
       webKeyId: 'KeyX'
     }
   }
+
   static get Y(): HidInfo {
     return {
       HIDcode: 28,
@@ -227,6 +234,7 @@ export class Hid {
       webKeyId: 'KeyY'
     }
   }
+
   static get Z(): HidInfo {
     return {
       HIDcode: 29,
@@ -244,6 +252,7 @@ export class Hid {
       webKeyId: 'Digit1'
     }
   }
+
   static get N2(): HidInfo {
     return {
       HIDcode: 31,
@@ -252,6 +261,7 @@ export class Hid {
       webKeyId: 'Digit2'
     }
   }
+
   static get N3(): HidInfo {
     return {
       HIDcode: 32,
@@ -260,6 +270,7 @@ export class Hid {
       webKeyId: 'Digit3'
     }
   }
+
   static get N4(): HidInfo {
     return {
       HIDcode: 33,
@@ -268,6 +279,7 @@ export class Hid {
       webKeyId: 'Digit4'
     }
   }
+
   static get N5(): HidInfo {
     return {
       HIDcode: 34,
@@ -276,6 +288,7 @@ export class Hid {
       webKeyId: 'Digit5'
     }
   }
+
   static get N6(): HidInfo {
     return {
       HIDcode: 35,
@@ -284,6 +297,7 @@ export class Hid {
       webKeyId: 'Digit6'
     }
   }
+
   static get N7(): HidInfo {
     return {
       HIDcode: 36,
@@ -292,6 +306,7 @@ export class Hid {
       webKeyId: 'Digit7'
     }
   }
+
   static get N8(): HidInfo {
     return {
       HIDcode: 37,
@@ -300,6 +315,7 @@ export class Hid {
       webKeyId: 'Digit8'
     }
   }
+
   static get N9(): HidInfo {
     return {
       HIDcode: 38,
@@ -308,6 +324,7 @@ export class Hid {
       webKeyId: 'Digit9'
     }
   }
+
   static get N0(): HidInfo {
     return {
       HIDcode: 39,
@@ -326,6 +343,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get ESCAPE(): HidInfo {
     return {
       HIDcode: 41,
@@ -335,6 +353,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get BACKSPACE(): HidInfo {
     return {
       HIDcode: 42,
@@ -344,6 +363,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get TAB(): HidInfo {
     return {
       HIDcode: 43,
@@ -352,6 +372,7 @@ export class Hid {
       webKeyId: 'Tab'
     }
   }
+
   static get SPACE(): HidInfo {
     return {
       HIDcode: 44,
@@ -361,6 +382,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get MINUS(): HidInfo {
     return {
       HIDcode: 45,
@@ -369,6 +391,7 @@ export class Hid {
       webKeyId: 'Minus'
     }
   }
+
   static get EQUAL(): HidInfo {
     return {
       HIDcode: 46,
@@ -377,6 +400,7 @@ export class Hid {
       webKeyId: 'Equal'
     }
   }
+
   static get BRACKETL(): HidInfo {
     return {
       HIDcode: 47,
@@ -385,6 +409,7 @@ export class Hid {
       webKeyId: 'BracketLeft'
     }
   }
+
   static get BRACKETR(): HidInfo {
     return {
       HIDcode: 48,
@@ -393,6 +418,7 @@ export class Hid {
       webKeyId: 'BracketRight'
     }
   }
+
   static get BACKSLASH(): HidInfo {
     return {
       HIDcode: 49,
@@ -410,6 +436,7 @@ export class Hid {
       webKeyId: 'Semicolon'
     }
   }
+
   static get QUOTE(): HidInfo {
     return {
       HIDcode: 52,
@@ -418,6 +445,7 @@ export class Hid {
       webKeyId: 'Quote'
     }
   }
+
   static get BACKQUOTE(): HidInfo {
     return {
       HIDcode: 53,
@@ -426,6 +454,7 @@ export class Hid {
       webKeyId: 'Backquote'
     }
   }
+
   static get COMMA(): HidInfo {
     return {
       HIDcode: 54,
@@ -434,6 +463,7 @@ export class Hid {
       webKeyId: 'Comma'
     }
   }
+
   static get PERIOD(): HidInfo {
     return {
       HIDcode: 55,
@@ -442,6 +472,7 @@ export class Hid {
       webKeyId: 'Period'
     }
   }
+
   static get SLASH(): HidInfo {
     return {
       HIDcode: 56,
@@ -450,6 +481,7 @@ export class Hid {
       webKeyId: 'Slash'
     }
   }
+
   static get CAPSLOCK(): HidInfo {
     return {
       HIDcode: 57,
@@ -460,6 +492,7 @@ export class Hid {
       allowAtStartOfTrigger: true
     }
   }
+
   static get F1(): HidInfo {
     return {
       HIDcode: 58,
@@ -468,6 +501,7 @@ export class Hid {
       webKeyId: 'F1'
     }
   }
+
   static get F2(): HidInfo {
     return {
       HIDcode: 59,
@@ -485,6 +519,7 @@ export class Hid {
       webKeyId: 'F3'
     }
   }
+
   static get F4(): HidInfo {
     return {
       HIDcode: 61,
@@ -493,6 +528,7 @@ export class Hid {
       webKeyId: 'F4'
     }
   }
+
   static get F5(): HidInfo {
     return {
       HIDcode: 62,
@@ -501,6 +537,7 @@ export class Hid {
       webKeyId: 'F5'
     }
   }
+
   static get F6(): HidInfo {
     return {
       HIDcode: 63,
@@ -509,6 +546,7 @@ export class Hid {
       webKeyId: 'F6'
     }
   }
+
   static get F7(): HidInfo {
     return {
       HIDcode: 64,
@@ -517,6 +555,7 @@ export class Hid {
       webKeyId: 'F7'
     }
   }
+
   static get F8(): HidInfo {
     return {
       HIDcode: 65,
@@ -525,6 +564,7 @@ export class Hid {
       webKeyId: 'F8'
     }
   }
+
   static get F9(): HidInfo {
     return {
       HIDcode: 66,
@@ -533,6 +573,7 @@ export class Hid {
       webKeyId: 'F9'
     }
   }
+
   static get F10(): HidInfo {
     return {
       HIDcode: 67,
@@ -541,6 +582,7 @@ export class Hid {
       webKeyId: 'F10'
     }
   }
+
   static get F11(): HidInfo {
     return {
       HIDcode: 68,
@@ -549,12 +591,121 @@ export class Hid {
       webKeyId: 'F11'
     }
   }
+
   static get F12(): HidInfo {
     return {
       HIDcode: 69,
       category: HIDCategory.Function,
       displayString: 'F12',
       webKeyId: 'F12'
+    }
+  }
+
+  static get F13(): HidInfo {
+    return {
+      HIDcode: 104,
+      category: HIDCategory.Function,
+      displayString: 'F13',
+      webKeyId: 'F13'
+    }
+  }
+
+  static get F14(): HidInfo {
+    return {
+      HIDcode: 105,
+      category: HIDCategory.Function,
+      displayString: 'F14',
+      webKeyId: 'F14'
+    }
+  }
+
+  static get F15(): HidInfo {
+    return {
+      HIDcode: 106,
+      category: HIDCategory.Function,
+      displayString: 'F15',
+      webKeyId: 'F15'
+    }
+  }
+
+  static get F16(): HidInfo {
+    return {
+      HIDcode: 107,
+      category: HIDCategory.Function,
+      displayString: 'F16',
+      webKeyId: 'F16'
+    }
+  }
+
+  static get F17(): HidInfo {
+    return {
+      HIDcode: 108,
+      category: HIDCategory.Function,
+      displayString: 'F17',
+      webKeyId: 'F17'
+    }
+  }
+
+  static get F18(): HidInfo {
+    return {
+      HIDcode: 109,
+      category: HIDCategory.Function,
+      displayString: 'F18',
+      webKeyId: 'F18'
+    }
+  }
+
+  static get F19(): HidInfo {
+    return {
+      HIDcode: 110,
+      category: HIDCategory.Function,
+      displayString: 'F19',
+      webKeyId: 'F19'
+    }
+  }
+
+  static get F20(): HidInfo {
+    return {
+      HIDcode: 111,
+      category: HIDCategory.Function,
+      displayString: 'F20',
+      webKeyId: 'F20'
+    }
+  }
+
+  static get F21(): HidInfo {
+    return {
+      HIDcode: 112,
+      category: HIDCategory.Function,
+      displayString: 'F21',
+      webKeyId: 'F21'
+    }
+  }
+
+  static get F22(): HidInfo {
+    return {
+      HIDcode: 113,
+      category: HIDCategory.Function,
+      displayString: 'F22',
+      webKeyId: 'F22'
+    }
+  }
+
+  static get F23(): HidInfo {
+    return {
+      HIDcode: 114,
+      category: HIDCategory.Function,
+      displayString: 'F23',
+      webKeyId: 'F23'
+    }
+  }
+
+  static get F24(): HidInfo {
+    return {
+      HIDcode: 115,
+      category: HIDCategory.Function,
+      displayString: 'F24',
+      webKeyId: 'F24'
     }
   }
 
@@ -567,6 +718,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get SCROLLLOCK(): HidInfo {
     return {
       HIDcode: 71,
@@ -576,6 +728,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get PAUSE(): HidInfo {
     return {
       HIDcode: 72,
@@ -585,6 +738,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get INSERT(): HidInfo {
     return {
       HIDcode: 73,
@@ -594,6 +748,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get HOME(): HidInfo {
     return {
       HIDcode: 74,
@@ -603,6 +758,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get PAGEUP(): HidInfo {
     return {
       HIDcode: 75,
@@ -612,6 +768,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get DELETE(): HidInfo {
     return {
       HIDcode: 76,
@@ -621,6 +778,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get END(): HidInfo {
     return {
       HIDcode: 77,
@@ -630,6 +788,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get PAGEDOWN(): HidInfo {
     return {
       HIDcode: 78,
@@ -639,6 +798,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get ARROWR(): HidInfo {
     return {
       HIDcode: 79,
@@ -658,6 +818,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get ARROWD(): HidInfo {
     return {
       HIDcode: 81,
@@ -667,6 +828,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get ARROWU(): HidInfo {
     return {
       HIDcode: 82,
@@ -676,6 +838,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NUMLOCK(): HidInfo {
     return {
       HIDcode: 83,
@@ -685,6 +848,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NUMDIVIDE(): HidInfo {
     return {
       HIDcode: 84,
@@ -694,6 +858,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NUMMULTIPLY(): HidInfo {
     return {
       HIDcode: 85,
@@ -703,6 +868,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NUMSUBTRACT(): HidInfo {
     return {
       HIDcode: 86,
@@ -712,6 +878,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NUMADD(): HidInfo {
     return {
       HIDcode: 87,
@@ -721,6 +888,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NUMENTER(): HidInfo {
     return {
       HIDcode: 88,
@@ -730,6 +898,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get NP1(): HidInfo {
     return {
       HIDcode: 89,
@@ -747,6 +916,7 @@ export class Hid {
       webKeyId: 'Numpad2'
     }
   }
+
   static get NP3(): HidInfo {
     return {
       HIDcode: 91,
@@ -755,6 +925,7 @@ export class Hid {
       webKeyId: 'Numpad3'
     }
   }
+
   static get NP4(): HidInfo {
     return {
       HIDcode: 92,
@@ -763,6 +934,7 @@ export class Hid {
       webKeyId: 'Numpad4'
     }
   }
+
   static get NP5(): HidInfo {
     return {
       HIDcode: 93,
@@ -771,6 +943,7 @@ export class Hid {
       webKeyId: 'Numpad5'
     }
   }
+
   static get NP6(): HidInfo {
     return {
       HIDcode: 94,
@@ -779,6 +952,7 @@ export class Hid {
       webKeyId: 'Numpad6'
     }
   }
+
   static get NP7(): HidInfo {
     return {
       HIDcode: 95,
@@ -787,6 +961,7 @@ export class Hid {
       webKeyId: 'Numpad7'
     }
   }
+
   static get NP8(): HidInfo {
     return {
       HIDcode: 96,
@@ -795,6 +970,7 @@ export class Hid {
       webKeyId: 'Numpad8'
     }
   }
+
   static get NP9(): HidInfo {
     return {
       HIDcode: 97,
@@ -803,6 +979,7 @@ export class Hid {
       webKeyId: 'Numpad9'
     }
   }
+
   static get NP0(): HidInfo {
     return {
       HIDcode: 98,
@@ -811,6 +988,7 @@ export class Hid {
       webKeyId: 'Numpad0'
     }
   }
+
   static get NUMDECIMAL(): HidInfo {
     return {
       HIDcode: 133,
@@ -821,102 +999,6 @@ export class Hid {
     }
   }
 
-  static get F13(): HidInfo {
-    return {
-      HIDcode: 104,
-      category: HIDCategory.Function,
-      displayString: 'F13',
-      webKeyId: 'F13'
-    }
-  }
-  static get F14(): HidInfo {
-    return {
-      HIDcode: 105,
-      category: HIDCategory.Function,
-      displayString: 'F14',
-      webKeyId: 'F14'
-    }
-  }
-  static get F15(): HidInfo {
-    return {
-      HIDcode: 106,
-      category: HIDCategory.Function,
-      displayString: 'F15',
-      webKeyId: 'F15'
-    }
-  }
-  static get F16(): HidInfo {
-    return {
-      HIDcode: 107,
-      category: HIDCategory.Function,
-      displayString: 'F16',
-      webKeyId: 'F16'
-    }
-  }
-  static get F17(): HidInfo {
-    return {
-      HIDcode: 108,
-      category: HIDCategory.Function,
-      displayString: 'F17',
-      webKeyId: 'F17'
-    }
-  }
-  static get F18(): HidInfo {
-    return {
-      HIDcode: 109,
-      category: HIDCategory.Function,
-      displayString: 'F18',
-      webKeyId: 'F18'
-    }
-  }
-  static get F19(): HidInfo {
-    return {
-      HIDcode: 110,
-      category: HIDCategory.Function,
-      displayString: 'F19',
-      webKeyId: 'F19'
-    }
-  }
-  static get F20(): HidInfo {
-    return {
-      HIDcode: 111,
-      category: HIDCategory.Function,
-      displayString: 'F20',
-      webKeyId: 'F20'
-    }
-  }
-  static get F21(): HidInfo {
-    return {
-      HIDcode: 112,
-      category: HIDCategory.Function,
-      displayString: 'F21',
-      webKeyId: 'F21'
-    }
-  }
-  static get F22(): HidInfo {
-    return {
-      HIDcode: 113,
-      category: HIDCategory.Function,
-      displayString: 'F22',
-      webKeyId: 'F22'
-    }
-  }
-  static get F23(): HidInfo {
-    return {
-      HIDcode: 114,
-      category: HIDCategory.Function,
-      displayString: 'F23',
-      webKeyId: 'F23'
-    }
-  }
-  static get F24(): HidInfo {
-    return {
-      HIDcode: 115,
-      category: HIDCategory.Function,
-      displayString: 'F24',
-      webKeyId: 'F24'
-    }
-  }
 
   static get CONTROLL(): HidInfo {
     return {
@@ -927,6 +1009,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get SHIFTL(): HidInfo {
     return {
       HIDcode: 225,
@@ -936,6 +1019,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get ALTL(): HidInfo {
     return {
       HIDcode: 226,
@@ -945,6 +1029,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get METAL(): HidInfo {
     return {
       HIDcode: 227,
@@ -954,6 +1039,7 @@ export class Hid {
       colSpan: 4
     }
   }
+
   static get CONTROLR(): HidInfo {
     return {
       HIDcode: 228,
@@ -963,6 +1049,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get SHIFTR(): HidInfo {
     return {
       HIDcode: 229,
@@ -972,6 +1059,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get ALTR(): HidInfo {
     return {
       HIDcode: 230,
@@ -981,6 +1069,7 @@ export class Hid {
       colSpan: 2
     }
   }
+
   static get METAR(): HidInfo {
     return {
       HIDcode: 231,
@@ -991,122 +1080,123 @@ export class Hid {
     }
   }
 
-  static readonly all: HidInfo[] = [
-    Hid.A,
-    Hid.B,
-    Hid.C,
-    Hid.D,
-    Hid.E,
-    Hid.F,
-    Hid.G,
-    Hid.H,
-    Hid.I,
-    Hid.J,
-    Hid.K,
-    Hid.L,
-    Hid.M,
-    Hid.N,
-    Hid.O,
-    Hid.P,
-    Hid.Q,
-    Hid.R,
-    Hid.S,
-    Hid.T,
-    Hid.U,
-    Hid.V,
-    Hid.W,
-    Hid.X,
-    Hid.Y,
-    Hid.Z,
-    Hid.N0,
-    Hid.N1,
-    Hid.N2,
-    Hid.N3,
-    Hid.N4,
-    Hid.N5,
-    Hid.N6,
-    Hid.N7,
-    Hid.N8,
-    Hid.N9,
-    Hid.NP0,
-    Hid.NP1,
-    Hid.NP2,
-    Hid.NP3,
-    Hid.NP4,
-    Hid.NP5,
-    Hid.NP6,
-    Hid.NP7,
-    Hid.NP8,
-    Hid.NP9,
-    Hid.ENTER,
-    Hid.ESCAPE,
-    Hid.BACKSPACE,
-    Hid.TAB,
-    Hid.SPACE,
-    Hid.MINUS,
-    Hid.EQUAL,
-    Hid.BRACKETL,
-    Hid.BRACKETR,
-    Hid.BACKSLASH,
-    Hid.SEMICOLON,
-    Hid.QUOTE,
-    Hid.BACKQUOTE,
-    Hid.COMMA,
-    Hid.PERIOD,
-    Hid.CAPSLOCK,
-    Hid.SLASH,
-    Hid.F1,
-    Hid.F2,
-    Hid.F3,
-    Hid.F4,
-    Hid.F5,
-    Hid.F6,
-    Hid.F7,
-    Hid.F8,
-    Hid.F9,
-    Hid.F10,
-    Hid.F11,
-    Hid.F12,
-    Hid.PRINTSCREEN,
-    Hid.SCROLLLOCK,
-    Hid.PAUSE,
-    Hid.INSERT,
-    Hid.HOME,
-    Hid.PAGEUP,
-    Hid.DELETE,
-    Hid.END,
-    Hid.PAGEDOWN,
-    Hid.ARROWR,
-    Hid.ARROWL,
-    Hid.ARROWD,
-    Hid.ARROWU,
-    Hid.NUMLOCK,
-    Hid.NUMDIVIDE,
-    Hid.NUMMULTIPLY,
-    Hid.NUMSUBTRACT,
-    Hid.NUMADD,
-    Hid.NUMENTER,
-    Hid.NUMDECIMAL,
-    Hid.F13,
-    Hid.F14,
-    Hid.F15,
-    Hid.F16,
-    Hid.F17,
-    Hid.F18,
-    Hid.F19,
-    Hid.F20,
-    Hid.F21,
-    Hid.F22,
-    Hid.F23,
-    Hid.F24,
-    Hid.SHIFTL,
-    Hid.CONTROLL,
-    Hid.ALTL,
-    Hid.METAL,
-    Hid.SHIFTR,
-    Hid.CONTROLR,
-    Hid.METAR,
-    Hid.ALTR
+  static readonly all: number[] = [
+    6510,//Hid.A,
+    6610,//Hid.B,
+    6710,//Hid.C,
+    6810,//Hid.D,
+    6910,//Hid.E,
+    7010,//Hid.F,
+    7110,//Hid.G,
+    7210,//Hid.H,
+    7310,//Hid.I,
+    7410,//Hid.J,
+    7510,//Hid.K,
+    7610,//Hid.L,
+    7710,//Hid.M,
+    7810,//Hid.N,
+    7910,//Hid.O,
+    8010,//Hid.P,
+    8110,//Hid.Q,
+    8210,//Hid.R,
+    8310,//Hid.S,
+    8410,//Hid.T,
+    8510,//Hid.U,
+    8610,//Hid.V,
+    8710,//Hid.W,
+    8810,//Hid.X,
+    8910,//Hid.Y,
+    9010,//Hid.Z,
+    4810,//Hid.N0,
+    4910,//Hid.N1,
+    5010,//Hid.N2,
+    5110,//Hid.N3,
+    5210,//Hid.N4,
+    5310,//Hid.N5,
+    5410,//Hid.N6,
+    5510,//Hid.N7,
+    5610,//Hid.N8,
+    5710,//Hid.N9,
+    9610,//Hid.NP0,
+    9710,//Hid.NP1,
+    9810,//Hid.NP2,
+    9910,//Hid.NP3,
+    10010,//Hid.NP4,
+    10110,//Hid.NP5,
+    10210,//Hid.NP6,
+    10310,//Hid.NP7,
+    10410,//Hid.NP8,
+    10510,//Hid.NP9,
+    1310,//Hid.ENTER,
+    2710,//Hid.ESCAPE,
+    810,//Hid.BACKSPACE,
+    910,//Hid.TAB,
+    3210,//Hid.SPACE,
+    18910,//Hid.MINUS,
+    18710,//Hid.EQUAL,
+    21910,//Hid.BRACKETL,
+    22110,//Hid.BRACKETR,
+    22010,//Hid.BACKSLASH,
+    18610,//Hid.SEMICOLON,
+    22210,//Hid.QUOTE,
+    19210,//Hid.BACKQUOTE,
+    7710,//Hid.COMMA,
+    18810,//Hid.PERIOD,
+    2010,//Hid.CAPSLOCK,
+    19110,//Hid.SLASH,
+    11210,//Hid.F1,
+    11310,//Hid.F2,
+    11410,//Hid.F3,
+    11510,//Hid.F4,
+    11610,//Hid.F5,
+    11710,//Hid.F6,
+    11810,//Hid.F7,
+    11910,//Hid.F8,
+    12010,//Hid.F9,
+    12110,//Hid.F10,
+    12210,//Hid.F11,
+    12310,//Hid.F12,
+    12410,//Hid.F13,
+    12510,//Hid.F14,
+    12610,//Hid.F15,
+    12710,//Hid.F16,
+    12810,//Hid.F17,
+    12910,//Hid.F18,
+    13010,//Hid.F19,
+    13110,//Hid.F20,
+    13210,//Hid.F21,
+    13310,//Hid.F22,
+    13410,//Hid.F23,
+    13510,//Hid.F24,
+    4410,//Hid.PRINTSCREEN,
+    14510,//Hid.SCROLLLOCK,
+    1910,//Hid.PAUSE,
+    4510,//Hid.INSERT,
+    3610,//Hid.HOME,
+    3310,//Hid.PAGEUP,
+    4610,//Hid.DELETE,
+    3510,//Hid.END,
+    3410,//Hid.PAGEDOWN,
+    3910,//Hid.ARROWR,
+    3710,//Hid.ARROWL,
+    4010,//Hid.ARROWD,
+    3810,//Hid.ARROWU,
+    14410,//Hid.NUMLOCK,
+    11110,//Hid.NUMDIVIDE,
+    10610,//Hid.NUMMULTIPLY,
+    10910,//Hid.NUMSUBTRACT,
+    10710,//Hid.NUMADD,
+    1310,//Hid.NUMENTER,
+    11010,//Hid.NUMDECIMAL,
+
+    1611,//Hid.SHIFTL,
+    1711,//Hid.CONTROLL,
+    1811,//Hid.ALTL,
+    9111,//Hid.METAL,
+    1612,//Hid.SHIFTR,
+    1712,//Hid.CONTROLR,
+    9212,//Hid.METAR,
+    1812,//Hid.ALTR
   ]
 }
 
