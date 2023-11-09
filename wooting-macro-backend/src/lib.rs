@@ -552,11 +552,10 @@ impl MacroBackend {
                                 channel_clone,
                             );
 
-                            // Left mouse button never gets consumed to allow users to control their PC.
-                            match (should_grab, button) {
-                                (true, rdev::Button::Left) => Some(event),
-                                (true, _) => None,
-                                (false, _) => Some(event),
+                            if should_grab {
+                                None
+                            } else {
+                                Some(event)
                             }
                         }
                         rdev::EventType::ButtonRelease(button) => {
