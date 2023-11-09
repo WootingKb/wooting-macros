@@ -1,6 +1,8 @@
+use crate::hid_table::RDEV_MODIFIER_KEYS;
 use anyhow::Result;
 use log::*;
 use rdev;
+use rdev::Key;
 use tokio::sync::mpsc::UnboundedSender;
 
 /// Sends an event to the library to Execute on an OS level. This makes it easier to implement keypresses in custom code.
@@ -40,12 +42,20 @@ pub async fn direct_send_hotkey(
 
 // Disabled until a better fix is done
 // /// Lifts the keys pressed
-// pub fn lift_keys(pressed_events: &Vec<u32>, channel_sender: &UnboundedSender<rdev::EventType>) {
-//     for x in pressed_events {
-//         channel_sender
-//             .send(rdev::EventType::KeyRelease(
-//                 super::super::SCANCODE_TO_RDEV[x],
-//             ))
-//             .unwrap();
-//     }
-// }
+pub fn lift_keys(pressed_events: &Vec<u32>, channel_sender: &UnboundedSender<rdev::EventType>) {
+    let mut pressed_events_local = pressed_events.clone();
+
+    pressed_events_local.retain(|id_key| {
+        RDEV_MODIFIER_KEYS
+            .iter()
+            .any(|rdev_key| super::super::SCANCODE_TO_RDEV[id_key] == *rdev_key)
+    });
+
+    pressed_events_local.iter().for_each(|key| {
+        channel_sender
+            .send(rdev::EventType::KeyRelease(
+                super::super::SCANCODE_TO_RDEV[key],
+            ))
+            .unwrap()
+    });
+}
