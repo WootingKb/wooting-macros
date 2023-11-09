@@ -5,6 +5,7 @@ export interface HidInfo {
   category: HIDCategory
   displayString: string
   webKeyId: string
+  whichId: number
   colSpan?: number
   allowAtStartOfTrigger?: boolean
 }
@@ -15,7 +16,8 @@ export class Hid {
       HIDcode: 4,
       category: HIDCategory.Alphanumeric,
       displayString: 'A',
-      webKeyId: 'KeyA'
+      webKeyId: 'KeyA',
+      whichId: 65,
     }
   }
   static get B(): HidInfo {
@@ -23,7 +25,8 @@ export class Hid {
       HIDcode: 5,
       category: HIDCategory.Alphanumeric,
       displayString: 'B',
-      webKeyId: 'KeyB'
+      webKeyId: 'KeyB',
+      whichId: 66,
     }
   }
   static get C(): HidInfo {
@@ -31,7 +34,8 @@ export class Hid {
       HIDcode: 6,
       category: HIDCategory.Alphanumeric,
       displayString: 'C',
-      webKeyId: 'KeyC'
+      webKeyId: 'KeyC',
+      whichId: 67,
     }
   }
   static get D(): HidInfo {
@@ -39,7 +43,8 @@ export class Hid {
       HIDcode: 7,
       category: HIDCategory.Alphanumeric,
       displayString: 'D',
-      webKeyId: 'KeyD'
+      webKeyId: 'KeyD',
+      whichId: 68,
     }
   }
   static get E(): HidInfo {
@@ -47,7 +52,8 @@ export class Hid {
       HIDcode: 8,
       category: HIDCategory.Alphanumeric,
       displayString: 'E',
-      webKeyId: 'KeyE'
+      webKeyId: 'KeyE',
+      whichId: 69,
     }
   }
   static get F(): HidInfo {
@@ -55,7 +61,8 @@ export class Hid {
       HIDcode: 9,
       category: HIDCategory.Alphanumeric,
       displayString: 'F',
-      webKeyId: 'KeyF'
+      webKeyId: 'KeyF',
+      whichId: 70,
     }
   }
 
@@ -64,7 +71,8 @@ export class Hid {
       HIDcode: 10,
       category: HIDCategory.Alphanumeric,
       displayString: 'G',
-      webKeyId: 'KeyG'
+      webKeyId: 'KeyG',
+      whichId: 71,
     }
   }
   static get H(): HidInfo {
@@ -72,7 +80,8 @@ export class Hid {
       HIDcode: 11,
       category: HIDCategory.Alphanumeric,
       displayString: 'H',
-      webKeyId: 'KeyH'
+      webKeyId: 'KeyH',
+      whichId: 72,
     }
   }
   static get I(): HidInfo {
@@ -80,7 +89,8 @@ export class Hid {
       HIDcode: 12,
       category: HIDCategory.Alphanumeric,
       displayString: 'I',
-      webKeyId: 'KeyI'
+      webKeyId: 'KeyI',
+      whichId: 73,
     }
   }
   static get J(): HidInfo {
@@ -88,7 +98,8 @@ export class Hid {
       HIDcode: 13,
       category: HIDCategory.Alphanumeric,
       displayString: 'J',
-      webKeyId: 'KeyJ'
+      webKeyId: 'KeyJ',
+      whichId: 74
     }
   }
   static get K(): HidInfo {
@@ -96,7 +107,8 @@ export class Hid {
       HIDcode: 14,
       category: HIDCategory.Alphanumeric,
       displayString: 'K',
-      webKeyId: 'KeyK'
+      webKeyId: 'KeyK',
+      whichId: 75,
     }
   }
   static get L(): HidInfo {
@@ -104,7 +116,8 @@ export class Hid {
       HIDcode: 15,
       category: HIDCategory.Alphanumeric,
       displayString: 'L',
-      webKeyId: 'KeyL'
+      webKeyId: 'KeyL',
+      whichId: 76,
     }
   }
   static get M(): HidInfo {
@@ -112,7 +125,8 @@ export class Hid {
       HIDcode: 16,
       category: HIDCategory.Alphanumeric,
       displayString: 'M',
-      webKeyId: 'KeyM'
+      webKeyId: 'KeyM',
+      whichId: 77,
     }
   }
   static get N(): HidInfo {
@@ -120,7 +134,8 @@ export class Hid {
       HIDcode: 17,
       category: HIDCategory.Alphanumeric,
       displayString: 'N',
-      webKeyId: 'KeyN'
+      webKeyId: 'KeyN',
+      whichId: 78,
     }
   }
   static get O(): HidInfo {

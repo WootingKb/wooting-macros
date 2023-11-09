@@ -44,6 +44,20 @@ export default function useRecordingTrigger(
       event.stopPropagation()
 
       const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+
+      console.warn("Code: ", event.code, "|Symbol: ", event.key, "|DEPR Which Code: ", event.which)
+
+      const addedKey = "Key" + event.key.toUpperCase()
+      const CorrectHIDCode = (addedKey == event.code)
+
+      const HIDwhich = webCodeHIDLookup.get(event.code)?.webKeyId
+
+      const KeyWhich = event.which
+
+
+      console.error(addedKey, "==", event.code, "Is correct?", CorrectHIDCode)
+
+
       if (HIDcode === undefined) {
         return
       }
@@ -95,7 +109,7 @@ export default function useRecordingTrigger(
 
     window.addEventListener('keydown', addKeypress, true)
     window.addEventListener('mousedown', addMousepress, true)
-    invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
+    invoke<void>('control_grabbing', {frontendBool: false}).catch((e) => {
       error(e)
       toast({
         title: 'Error disabling macro output',
@@ -110,7 +124,7 @@ export default function useRecordingTrigger(
     return () => {
       window.removeEventListener('keydown', addKeypress, true)
       window.removeEventListener('mousedown', addMousepress, true)
-      invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
+      invoke<void>('control_grabbing', {frontendBool: true}).catch((e) => {
         error(e)
         toast({
           title: 'Error enabling macro output',
