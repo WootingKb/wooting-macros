@@ -19,14 +19,13 @@ import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
 import useMainBgColour from '../../../hooks/useMainBgColour'
-import MacroTypeArea from "./MacroTypeArea";
 
 interface Props {
   isEditing: boolean
 }
 
-export default function Header({isEditing}: Props) {
-  const {changeSelectedMacroIndex} = useApplicationContext()
+export default function Header({ isEditing }: Props) {
+  const { changeSelectedMacroIndex } = useApplicationContext()
   const {
     macro,
     sequence,
@@ -139,9 +138,9 @@ export default function Header({isEditing}: Props) {
         zIndex={1}
         bg={useMainBgColour()}
         w="full"
-        h={{base: '80px', md: '100px', xl: '120px'}}
+        h={{ base: '80px', md: '100px', xl: '120px' }}
         py={2}
-        px={{base: 2, md: 4, xl: 6}}
+        px={{ base: 2, md: 4, xl: 6 }}
         gap={4}
         shadow={shadowColour}
         justifyContent="space-between"
@@ -150,7 +149,7 @@ export default function Header({isEditing}: Props) {
           <IconButton
             aria-label="Back"
             variant="brand"
-            icon={<ArrowBackIcon/>}
+            icon={<ArrowBackIcon />}
             size="sm"
             onClick={onBackButtonPress}
           />
@@ -167,16 +166,16 @@ export default function Header({isEditing}: Props) {
             placeholder="Macro Name"
             size="xl"
             textStyle="name"
-            _placeholder={{opacity: 1, color: placeholderTextColour}}
+            _placeholder={{ opacity: 1, color: placeholderTextColour }}
             onChange={(event) => setInputValue(event.target.value)}
             onBlur={(event) => updateMacroName(event.target.value)}
             value={inputValue}
-            _focusVisible={{borderColor: 'primary-accent.500'}}
+            _focusVisible={{ borderColor: 'primary-accent.500' }}
           />
         </Flex>
-        <MacroTypeArea/>
+        {/* <MacroTypeArea /> */}
         <Flex maxW="700px" flexGrow={1} gap={4} alignItems="center">
-          <TriggerArea onOpen={onTriggerModalOpen}/>
+          <TriggerArea onOpen={onTriggerModalOpen} />
           <Tooltip
             variant="brand"
             label={saveButtonTooltipText}
@@ -185,7 +184,7 @@ export default function Header({isEditing}: Props) {
           >
             <Box>
               <Button
-                size={{base: 'md', lg: 'lg'}}
+                size={{ base: 'md', lg: 'lg' }}
                 variant="yellowGradient"
                 isDisabled={!canSaveMacro}
                 onClick={updateMacro}
@@ -201,7 +200,7 @@ export default function Header({isEditing}: Props) {
         isOpen={isUnsavedChangesModalOpen}
         onClose={onUnsavedChangesModalClose}
       />
-      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose}/>
+      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose} />
     </>
   )
 }
