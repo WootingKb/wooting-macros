@@ -18,6 +18,7 @@ import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
 import useMainBgColour from '../../../hooks/useMainBgColour'
+import MacroTypeArea from "./MacroTypeArea";
 
 interface Props {
   isEditing: boolean
@@ -145,55 +146,56 @@ export default function Header({ isEditing }: Props) {
         justifyContent="space-between"
         justifyItems="center"
       >
-        {/*<Flex maxW="500px" flexGrow={1} gap={4} alignItems="flex-start">*/}
-        <IconButton
-          aria-label="Back"
-          variant="brand"
-          icon={<ArrowBackIcon />}
-          size="sm"
-          onClick={onBackButtonPress}
-        />
-        <EmojiPopover
-          shortcodeToShow={macro.icon}
-          isEmojiPopoverOpen={isEmojiPopoverOpen}
-          onEmojiPopoverClose={onEmojiPopoverClose}
-          onEmojiPopoverOpen={onEmojiPopoverOpen}
-          onEmojiSelect={onEmojiSelect}
-        />
-        <Input
-          maxW="400px"
-          w="40%"
-          variant="flushed"
-          placeholder="Macro Name"
-          size="xl"
-          fontSize="25px"
-          textStyle="name"
-          _placeholder={{ opacity: 1, color: placeholderTextColour }}
-          onChange={(event) => setInputValue(event.target.value)}
-          onBlur={(event) => updateMacroName(event.target.value)}
-          value={inputValue}
-          _focusVisible={{ borderColor: 'primary-accent.500' }}
-        />
-        {/* <MacroTypeArea /> */}
-        <TriggerArea onOpen={onTriggerModalOpen} />
-        <Tooltip
-          variant="brand"
-          label={saveButtonTooltipText}
-          placement="bottom-start"
-          hasArrow
-        >
-          <Box>
-            <Button
-              size={{ base: 'md', lg: 'lg' }}
-              variant="yellowGradient"
-              isDisabled={!canSaveMacro}
-              onClick={updateMacro}
-              aria-label="Save"
-            >
-              Save Macro
-            </Button>
-          </Box>
-        </Tooltip>
+        <Flex maxW="400px" h="full" alignItems="center" gap="4">
+          <IconButton
+            aria-label="Back"
+            variant="brand"
+            icon={<ArrowBackIcon />}
+            size="sm"
+            onClick={onBackButtonPress}
+          />
+          <EmojiPopover
+            shortcodeToShow={macro.icon}
+            isEmojiPopoverOpen={isEmojiPopoverOpen}
+            onEmojiPopoverClose={onEmojiPopoverClose}
+            onEmojiPopoverOpen={onEmojiPopoverOpen}
+            onEmojiSelect={onEmojiSelect}
+          />
+          <Input
+            w="full"
+            variant="flushed"
+            placeholder="Macro Name"
+            size="xl"
+            textStyle="name"
+            _placeholder={{ opacity: 1, color: placeholderTextColour }}
+            onChange={(event) => setInputValue(event.target.value)}
+            onBlur={(event) => updateMacroName(event.target.value)}
+            value={inputValue}
+            _focusVisible={{ borderColor: 'primary-accent.500' }}
+          />
+        </Flex>
+        <MacroTypeArea />
+        <Flex maxW="700px" flexGrow={1} gap={4} alignItems="center">
+          <TriggerArea onOpen={onTriggerModalOpen} />
+          <Tooltip
+            variant="brand"
+            label={saveButtonTooltipText}
+            placement="bottom-start"
+            hasArrow
+          >
+            <Box>
+              <Button
+                size={{ base: 'md', lg: 'lg' }}
+                variant="yellowGradient"
+                isDisabled={!canSaveMacro}
+                onClick={updateMacro}
+                aria-label="Save"
+              >
+                Save Macro
+              </Button>
+            </Box>
+          </Tooltip>
+        </Flex>
       </HStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}
