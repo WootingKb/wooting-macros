@@ -49,7 +49,7 @@ export default function useRecordingTrigger(
       console.error(HIDIdentifier)
       const HIDcode = webCodeHIDLookup.get(HIDIdentifier)?.HIDcode
 
-      console.warn("Code: ", event.code, "|Symbol: ", event.key, "|DEPR Which Code: ", event.which)
+      console.warn("Code:", HIDcode)
 
 
 
