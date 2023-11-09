@@ -11,7 +11,7 @@ interface Props {
   children: ReactNode
 }
 
-export default function DragWrapper({ id, element, children }: Props) {
+export default function SortableDragWrapper({ id, element, children }: Props) {
   const { selectedElementId } = useMacroContext()
 
   const bg = useMainBgColour()

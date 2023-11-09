@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { MouseInputInfo } from '../../../../constants/MouseMap'
 import { MouseIcon } from '../../../icons'
+import DraggableWrapper from '../DraggableWrapper'
 import SelectElementButton from '../SelectElementButton'
 
 interface Props {
@@ -45,22 +46,28 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
           spacing={2}
         >
           {elementsToRender.map((info: MouseInputInfo) => (
-            <AspectRatio ratio={2 / 0.75} key={info.webButtonVal}>
-              <SelectElementButton
-                nameText={info.displayString}
-                properties={{
-                  type: 'MouseEventAction',
-                  data: {
-                    type: 'Press',
+            <DraggableWrapper
+              id={info.enumVal}
+              info={info}
+              key={info.enumVal}
+            >
+              <AspectRatio ratio={2 / 0.75} key={info.enumVal}>
+                <SelectElementButton
+                  nameText={info.displayString}
+                  properties={{
+                    type: 'MouseEventAction',
                     data: {
-                      type: 'DownUp',
-                      button: info.enumVal,
-                      duration: 20
+                      type: 'Press',
+                      data: {
+                        type: 'DownUp',
+                        button: info.enumVal,
+                        duration: 20
+                      }
                     }
-                  }
-                }}
-              />
-            </AspectRatio>
+                  }}
+                />
+              </AspectRatio>
+            </DraggableWrapper>
           ))}
         </SimpleGrid>
       </AccordionPanel>

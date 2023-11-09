@@ -198,3 +198,5 @@ export interface PluginCategory {
   name: string
   elements: PluginEventInfo[]
 }
+export type ActiveInfo = HidInfo | SystemEventInfo | MouseInputInfo | undefined
+export type UserInputType = Keypress | MousePressAction | undefined

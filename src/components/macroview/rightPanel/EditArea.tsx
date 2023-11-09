@@ -1,4 +1,5 @@
 import { VStack, Text } from '@chakra-ui/react'
+import { AnimatePresence } from 'framer-motion'
 import { useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -64,7 +65,7 @@ export default function EditArea() {
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         Edit Element
       </Text>
-      {SelectedElementFormComponent}
+      <AnimatePresence>{SelectedElementFormComponent}</AnimatePresence>
     </VStack>
   )
 }

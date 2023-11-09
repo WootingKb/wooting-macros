@@ -22,7 +22,7 @@ import SettingsLeftPanel from '../components/settings/SettingsLeftPanel'
 import useScrollbarStyles from '../hooks/useScrollbarStyles'
 import useMainBgColour from '../hooks/useMainBgColour'
 
-type Props = {
+interface Props {
   isOpen: boolean
   onClose: () => void
 }

@@ -12,6 +12,7 @@ import { KeyType } from '../../../../constants/enums'
 import { HidInfo } from '../../../../constants/HIDmap'
 import { KeyboardKeyCategory } from '../../../../types'
 import { KeyboardIcon } from '../../../icons'
+import DraggableWrapper from '../DraggableWrapper'
 import SelectElementButton from '../SelectElementButton'
 
 interface Props {
@@ -53,24 +54,25 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
             >
               {category.elements.map((HIDinfo: HidInfo) => (
                 <GridItem colSpan={HIDinfo.colSpan ?? 1} key={HIDinfo.HIDcode}>
-                  <AspectRatio
-                    h="full"
-                    ratio={
-                      HIDinfo.colSpan !== undefined ? HIDinfo.colSpan / 1 : 1
-                    }
-                  >
-                    <SelectElementButton
-                      nameText={HIDinfo.displayString}
-                      properties={{
-                        type: 'KeyPressEventAction',
-                        data: {
-                          keypress: HIDinfo.HIDcode,
-                          press_duration: 1,
-                          keytype: KeyType[KeyType.DownUp]
-                        }
-                      }}
-                    />
-                  </AspectRatio>
+                  <DraggableWrapper id={HIDinfo.HIDcode} info={HIDinfo}>
+                    <AspectRatio
+                      ratio={
+                        HIDinfo.colSpan !== undefined ? HIDinfo.colSpan / 1 : 1
+                      }
+                    >
+                      <SelectElementButton
+                        nameText={HIDinfo.displayString}
+                        properties={{
+                          type: 'KeyPressEventAction',
+                          data: {
+                            keypress: HIDinfo.HIDcode,
+                            press_duration: 1,
+                            keytype: KeyType[KeyType.DownUp]
+                          }
+                        }}
+                      />
+                    </AspectRatio>
+                  </DraggableWrapper>
                 </GridItem>
               ))}
             </Grid>

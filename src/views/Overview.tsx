@@ -2,7 +2,7 @@ import { HStack } from '@chakra-ui/react'
 import LeftPanel from '../components/overview/LeftPanel'
 import CollectionPanel from '../components/overview/CollectionPanel'
 
-type Props = {
+interface Props {
   onOpenSettingsModal: () => void
 }
 

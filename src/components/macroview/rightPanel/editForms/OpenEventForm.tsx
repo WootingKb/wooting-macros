@@ -4,6 +4,7 @@ import { useMacroContext } from '../../../../contexts/macroContext'
 import { open } from '@tauri-apps/api/dialog'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
+import { motion } from 'framer-motion'
 
 interface Props {
   selectedElement: SystemEventAction
@@ -104,22 +105,32 @@ export default function OpenEventForm({
   )
 
   return (
-    <VStack textAlign="left" w="full">
+    <VStack
+      as={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      textAlign="left"
+      w="full"
+      gap={2}
+    >
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headerText}
       </Text>
       <Divider />
-      <Text w="full" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
-        {subHeaderText}
-      </Text>
-      <Textarea
-        variant="brand"
-        value={path}
-        onChange={onPathChange}
-        onBlur={onInputBlur}
-        placeholder="path"
-        isDisabled={subtype === 'File' || subtype === 'Directory'}
-      />
+      <VStack w="full">
+        <Text w="full" fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
+          {subHeaderText}
+        </Text>
+        <Textarea
+          variant="brand"
+          value={path}
+          onChange={onPathChange}
+          onBlur={onInputBlur}
+          placeholder="path"
+          isDisabled={subtype === 'File' || subtype === 'Directory'}
+        />
+      </VStack>
       {subtype === 'File' && (
         <Button
           variant="brandAccent"

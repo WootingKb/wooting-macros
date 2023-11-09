@@ -20,7 +20,7 @@ import {
 import { useCallback, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import useScrollbarStyles from '../../../hooks/useScrollbarStyles'
-import DragWrapper from './sortableElement/DragWrapper'
+import SortableDragWrapper from './sortableElement/SortableDragWrapper'
 import SortableItem from './sortableElement/SortableItem'
 import SortableWrapper from './sortableElement/SortableWrapper'
 
@@ -79,7 +79,7 @@ export default function SortableList({ recording, stopRecording }: Props) {
           w="full"
           h="full"
           px={4}
-          pb={4}
+          py={2}
           overflowY="auto"
           overflowX="hidden"
           sx={useScrollbarStyles()}
@@ -100,16 +100,16 @@ export default function SortableList({ recording, stopRecording }: Props) {
           ))}
         </VStack>
       </SortableContext>
-      <DragOverlay>
+      <DragOverlay zIndex={1}>
         {activeId ? (
-          <DragWrapper id={activeId} element={sequence[activeId - 1]}>
+          <SortableDragWrapper id={activeId} element={sequence[activeId - 1]}>
             <SortableItem
               id={activeId}
               element={sequence[activeId - 1]}
               recording={recording}
               stopRecording={stopRecording}
             />
-          </DragWrapper>
+          </SortableDragWrapper>
         ) : undefined}
       </DragOverlay>
     </DndContext>

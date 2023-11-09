@@ -145,12 +145,7 @@ function MacroProvider({ children }: MacroProviderProps) {
     }
 
     return true
-  }, [
-    macro.trigger.data,
-    macro.trigger.type,
-    sequence.length,
-    willCauseTriggerLooping
-  ])
+  }, [macro.trigger.data, macro.trigger.type, sequence.length])
 
   useEffect(() => {
     if (currentMacro === undefined) {
