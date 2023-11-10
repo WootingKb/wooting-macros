@@ -1,5 +1,4 @@
 use log::*;
-use rdev::EventType;
 use serde_repr;
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -43,29 +42,29 @@ pub enum MousePressAction {
 
 impl MouseAction {
     /// Creates a new MouseAction from a rdev event and sends it to the channel for async execution.
-    pub async fn execute(&self, send_channel: UnboundedSender<EventType>) {
+    pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
         match &self {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {
                     send_channel
                         .send(rdev::EventType::ButtonPress(button.into()))
-                        .unwrap();
+                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
                 }
                 MousePressAction::Up { button } => {
                     send_channel
                         .send(rdev::EventType::ButtonRelease(button.into()))
-                        .unwrap();
+                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
                 }
                 MousePressAction::DownUp { button, duration } => {
                     send_channel
                         .send(rdev::EventType::ButtonPress(button.into()))
-                        .unwrap();
+                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
 
                     tokio::time::sleep(time::Duration::from_millis(*duration as u64)).await;
 
                     send_channel
                         .send(rdev::EventType::ButtonRelease(button.into()))
-                        .unwrap();
+                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
                 }
             },
 
@@ -78,7 +77,7 @@ impl MouseAction {
                         x: *x as f64,
                         y: *y as f64,
                     })
-                    .unwrap();
+                    .unwrap_or_else(|err| error!("Error sending mouse move event: {}", err));
             }
         }
     }
