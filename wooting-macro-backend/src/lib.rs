@@ -431,7 +431,7 @@ impl MacroBackend {
     }
 
     /// Initializes the entire backend and gets the whole grabbing system running.
-    pub async fn init(&self) {
+    pub async fn init(&self) -> Result<(), String> {
         //? : io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
@@ -571,6 +571,7 @@ impl MacroBackend {
                 }
             })
         });
+        Err("Backend stopped capturing".to_string())
     }
 }
 
