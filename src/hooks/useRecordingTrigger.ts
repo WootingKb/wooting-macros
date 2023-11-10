@@ -43,15 +43,10 @@ export default function useRecordingTrigger(
       event.preventDefault()
       event.stopPropagation()
 
-      // This stroke of genius compacts the key code, and which location the key is into a single string
+      // Gets the ID according to the whichID, adds a separator extra digit '1' and then adds location to the end.
       const HIDIdentifier = event.which + '1' + event.location
 
-      console.error(HIDIdentifier)
       const HIDcode = webCodeHIDLookup.get(HIDIdentifier)?.HIDcode
-
-      console.warn("Code:", HIDcode)
-
-
 
       if (HIDcode === undefined) {
         return

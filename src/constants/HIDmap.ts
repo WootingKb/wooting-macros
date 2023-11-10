@@ -6,6 +6,7 @@ export interface HidInfo {
   displayString: string
   webKeyId: string
   whichID: number
+  locationID: number
   colSpan?: number
   allowAtStartOfTrigger?: boolean
 }
@@ -17,7 +18,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'A',
       webKeyId: 'KeyA',
-      whichID: 6510,
+      whichID: 65,
+      locationID: 0,
     }
   }
 
@@ -27,7 +29,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'B',
       webKeyId: 'KeyB',
-      whichID: 6610,
+      whichID: 66,
+      locationID: 0,
     }
   }
 
@@ -37,7 +40,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'C',
       webKeyId: 'KeyC',
-      whichID: 6710,
+      whichID: 67,
+      locationID: 0,
 
     }
   }
@@ -48,7 +52,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'D',
       webKeyId: 'KeyD',
-      whichID: 6810,
+      whichID: 68,
+      locationID: 0,
 
     }
   }
@@ -59,7 +64,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'E',
       webKeyId: 'KeyE',
-      whichID: 6910,
+      whichID: 69,
+      locationID: 0,
     }
   }
 
@@ -69,7 +75,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'F',
       webKeyId: 'KeyF',
-      whichID: 7010
+      whichID: 70,
+      locationID: 0,
     }
   }
 
@@ -79,7 +86,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'G',
       webKeyId: 'KeyG',
-      whichID: 7110
+      whichID: 71,
+      locationID: 0,
 
     }
   }
@@ -90,7 +98,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'H',
       webKeyId: 'KeyH',
-      whichID: 7210
+      whichID: 72,
+      locationID: 0,
     }
   }
 
@@ -100,7 +109,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'I',
       webKeyId: 'KeyI',
-      whichID: 7310
+      whichID: 73,
+      locationID: 0,
     }
   }
 
@@ -110,7 +120,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'J',
       webKeyId: 'KeyJ',
-      whichID: 7410
+      whichID: 74,
+      locationID: 0,
     }
   }
 
@@ -120,7 +131,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'K',
       webKeyId: 'KeyK',
-      whichID: 7510
+      whichID: 75,
+      locationID: 0,
     }
   }
 
@@ -130,7 +142,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'L',
       webKeyId: 'KeyL',
-      whichID: 7610
+      whichID: 76,
+      locationID: 0,
     }
   }
 
@@ -140,7 +153,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'M',
       webKeyId: 'KeyM',
-      whichID: 7710
+      whichID: 77,
+      locationID: 0,
     }
   }
 
@@ -150,7 +164,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'N',
       webKeyId: 'KeyN',
-      whichID: 7810
+      whichID: 78,
+      locationID: 0,
     }
   }
 
@@ -160,7 +175,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'O',
       webKeyId: 'KeyO',
-      whichID: 7910
+      whichID: 79,
+      locationID: 0,
     }
   }
 
@@ -170,7 +186,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'P',
       webKeyId: 'KeyP',
-      whichID: 8010
+      whichID: 80,
+      locationID: 0,
     }
   }
 
@@ -180,7 +197,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Q',
       webKeyId: 'KeyQ',
-      whichID: 8110
+      whichID: 81,
+      locationID: 0,
     }
   }
 
@@ -190,7 +208,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'R',
       webKeyId: 'KeyR',
-      whichID: 8210
+      whichID: 82,
+      locationID: 0,
     }
   }
 
@@ -200,7 +219,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'S',
       webKeyId: 'KeyS',
-      whichID: 8310
+      whichID: 83,
+      locationID: 0,
     }
   }
 
@@ -210,7 +230,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'T',
       webKeyId: 'KeyT',
-      whichID: 8410
+      whichID: 84,
+      locationID: 0,
     }
   }
 
@@ -220,7 +241,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'U',
       webKeyId: 'KeyU',
-      whichID: 8510
+      whichID: 85,
+      locationID: 0,
     }
   }
 
@@ -230,7 +252,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'V',
       webKeyId: 'KeyV',
-      whichID: 8610
+      whichID: 86,
+      locationID: 0,
     }
   }
 
@@ -240,7 +263,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'W',
       webKeyId: 'KeyW',
-      whichID: 8710
+      whichID: 87,
+      locationID: 0,
     }
   }
 
@@ -250,7 +274,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'X',
       webKeyId: 'KeyX',
-      whichID: 8810
+      whichID: 88,
+      locationID: 0,
     }
   }
 
@@ -260,7 +285,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Y',
       webKeyId: 'KeyY',
-      whichID: 8910
+      whichID: 89,
+      locationID: 0,
     }
   }
 
@@ -270,7 +296,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Z',
       webKeyId: 'KeyZ',
-      whichID: 9010
+      whichID: 90,
+      locationID: 0,
     }
   }
 
@@ -280,7 +307,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '1',
       webKeyId: 'Digit1',
-      whichID: 4910,
+      whichID: 49,
+      locationID: 0,
     }
   }
 
@@ -290,7 +318,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '2',
       webKeyId: 'Digit2',
-      whichID: 5010,
+      whichID: 50,
+      locationID: 0,
     }
   }
 
@@ -300,7 +329,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '3',
       webKeyId: 'Digit3',
-      whichID: 5110,
+      whichID: 51,
+      locationID: 0,
     }
   }
 
@@ -310,7 +340,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '4',
       webKeyId: 'Digit4',
-      whichID: 5210,
+      whichID: 52,
+      locationID: 0,
     }
   }
 
@@ -320,7 +351,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '5',
       webKeyId: 'Digit5',
-      whichID: 5310,
+      whichID: 53,
+      locationID: 0,
     }
   }
 
@@ -330,7 +362,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '6',
       webKeyId: 'Digit6',
-      whichID: 5410,
+      whichID: 54,
+      locationID: 0,
     }
   }
 
@@ -340,7 +373,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '7',
       webKeyId: 'Digit7',
-      whichID: 5510,
+      whichID: 55,
+      locationID: 0,
     }
   }
 
@@ -350,7 +384,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '8',
       webKeyId: 'Digit8',
-      whichID: 5610,
+      whichID: 56,
+      locationID: 0,
     }
   }
 
@@ -360,7 +395,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '9',
       webKeyId: 'Digit9',
-      whichID: 5710,
+      whichID: 57,
+      locationID: 0,
     }
   }
 
@@ -370,7 +406,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '0',
       webKeyId: 'Digit0',
-      whichID: 4810,
+      whichID: 48,
+      locationID: 0,
     }
   }
 
@@ -381,7 +418,8 @@ export class Hid {
       displayString: 'Enter',
       webKeyId: 'Enter',
       colSpan: 2,
-      whichID: 1310,
+      whichID: 13,
+      locationID: 0,
     }
   }
 
@@ -392,7 +430,8 @@ export class Hid {
       displayString: 'Escape',
       webKeyId: 'Escape',
       colSpan: 2,
-      whichID: 2710,
+      whichID: 27,
+      locationID: 0,
     }
   }
 
@@ -403,7 +442,8 @@ export class Hid {
       displayString: 'Backspace',
       webKeyId: 'Backspace',
       colSpan: 2,
-      whichID: 810,
+      whichID: 8,
+      locationID: 0,
     }
   }
 
@@ -413,7 +453,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Tab',
       webKeyId: 'Tab',
-      whichID: 910,
+      whichID: 9,
+      locationID: 0,
     }
   }
 
@@ -424,7 +465,8 @@ export class Hid {
       displayString: 'Space',
       webKeyId: 'Space',
       colSpan: 2,
-      whichID: 3210
+      whichID: 32,
+      locationID: 0,
     }
   }
 
@@ -434,7 +476,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '-',
       webKeyId: 'Minus',
-      whichID: 18910,
+      whichID: 189,
+      locationID: 0,
 
     }
   }
@@ -445,7 +488,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '=',
       webKeyId: 'Equal',
-      whichID: 18710,
+      whichID: 187,
+      locationID: 0,
     }
   }
 
@@ -455,7 +499,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '[',
       webKeyId: 'BracketLeft',
-      whichID: 21910,
+      whichID: 219,
+      locationID: 0,
     }
   }
 
@@ -465,7 +510,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: ']',
       webKeyId: 'BracketRight',
-      whichID: 22110,
+      whichID: 221,
+      locationID: 0,
     }
   }
 
@@ -475,7 +521,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '\\',
       webKeyId: 'Backslash',
-      whichID: 22010,
+      whichID: 220,
+      locationID: 0,
     }
   }
 
@@ -485,7 +532,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: ';',
       webKeyId: 'Semicolon',
-      whichID: 18610,
+      whichID: 186,
+      locationID: 0,
     }
   }
 
@@ -495,7 +543,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '"',
       webKeyId: 'Quote',
-      whichID: 22210,
+      whichID: 222,
+      locationID: 0,
     }
   }
 
@@ -505,7 +554,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '`',
       webKeyId: 'Backquote',
-      whichID: 19210,
+      whichID: 192,
+      locationID: 0,
     }
   }
 
@@ -515,7 +565,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: ',',
       webKeyId: 'Comma',
-      whichID: 7710,
+      whichID: 77,
+      locationID: 0,
     }
   }
 
@@ -525,7 +576,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '.',
       webKeyId: 'Period',
-      whichID: 18810,
+      whichID: 188,
+      locationID: 0,
     }
   }
 
@@ -535,7 +587,8 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: '/',
       webKeyId: 'Slash',
-      whichID: 19110,
+      whichID: 191,
+      locationID: 0,
     }
   }
 
@@ -547,7 +600,8 @@ export class Hid {
       webKeyId: 'CapsLock',
       colSpan: 2,
       allowAtStartOfTrigger: true,
-      whichID: 2010,
+      whichID: 20,
+      locationID: 0,
     }
   }
 
@@ -557,7 +611,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F1',
       webKeyId: 'F1',
-      whichID: 11210,
+      whichID: 112,
+      locationID: 0,
     }
   }
 
@@ -567,7 +622,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F2',
       webKeyId: 'F2',
-      whichID: 11310,
+      whichID: 113,
+      locationID: 0,
     }
   }
 
@@ -577,7 +633,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F3',
       webKeyId: 'F3',
-      whichID: 11410,
+      whichID: 114,
+      locationID: 0,
     }
   }
 
@@ -587,7 +644,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F4',
       webKeyId: 'F4',
-      whichID: 11510,
+      whichID: 115,
+      locationID: 0,
     }
   }
 
@@ -597,7 +655,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F5',
       webKeyId: 'F5',
-      whichID: 11610,
+      whichID: 116,
+      locationID: 0,
     }
   }
 
@@ -607,7 +666,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F6',
       webKeyId: 'F6',
-      whichID: 11710,
+      whichID: 117,
+      locationID: 0,
     }
   }
 
@@ -617,7 +677,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F7',
       webKeyId: 'F7',
-      whichID: 11810,
+      whichID: 118,
+      locationID: 0,
     }
   }
 
@@ -627,7 +688,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F8',
       webKeyId: 'F8',
-      whichID: 11910,
+      whichID: 119,
+      locationID: 0,
     }
   }
 
@@ -637,7 +699,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F9',
       webKeyId: 'F9',
-      whichID: 12010,
+      whichID: 120,
+      locationID: 0,
     }
   }
 
@@ -647,7 +710,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F10',
       webKeyId: 'F10',
-      whichID: 12110,
+      whichID: 121,
+      locationID: 0,
     }
   }
 
@@ -657,7 +721,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F11',
       webKeyId: 'F11',
-      whichID: 12210,
+      whichID: 122,
+      locationID: 0,
     }
   }
 
@@ -667,7 +732,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F12',
       webKeyId: 'F12',
-      whichID: 12310,
+      whichID: 123,
+      locationID: 0,
     }
   }
 
@@ -677,7 +743,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F13',
       webKeyId: 'F13',
-      whichID: 12410,
+      whichID: 124,
+      locationID: 0,
     }
   }
 
@@ -687,7 +754,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F14',
       webKeyId: 'F14',
-      whichID: 12510,
+      whichID: 125,
+      locationID: 0,
     }
   }
 
@@ -697,7 +765,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F15',
       webKeyId: 'F15',
-      whichID: 12610,
+      whichID: 126,
+      locationID: 0,
     }
   }
 
@@ -707,7 +776,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F16',
       webKeyId: 'F16',
-      whichID: 12710,
+      whichID: 127,
+      locationID: 0,
     }
   }
 
@@ -717,7 +787,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F17',
       webKeyId: 'F17',
-      whichID: 12810,
+      whichID: 128,
+      locationID: 0,
     }
   }
 
@@ -727,7 +798,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F18',
       webKeyId: 'F18',
-      whichID: 12910,
+      whichID: 129,
+      locationID: 0,
     }
   }
 
@@ -737,7 +809,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F19',
       webKeyId: 'F19',
-      whichID: 13010,
+      whichID: 130,
+      locationID: 0,
     }
   }
 
@@ -747,7 +820,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F20',
       webKeyId: 'F20',
-      whichID: 13110,
+      whichID: 131,
+      locationID: 0,
     }
   }
 
@@ -757,7 +831,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F21',
       webKeyId: 'F21',
-      whichID: 13210,
+      whichID: 132,
+      locationID: 0,
     }
   }
 
@@ -767,7 +842,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F22',
       webKeyId: 'F22',
-      whichID: 13310,
+      whichID: 133,
+      locationID: 0,
     }
   }
 
@@ -777,7 +853,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F23',
       webKeyId: 'F23',
-      whichID: 13410,
+      whichID: 134,
+      locationID: 0,
     }
   }
 
@@ -787,7 +864,8 @@ export class Hid {
       category: HIDCategory.Function,
       displayString: 'F24',
       webKeyId: 'F24',
-      whichID: 13510,
+      whichID: 135,
+      locationID: 0,
     }
   }
 
@@ -798,7 +876,8 @@ export class Hid {
       displayString: 'Print Screen',
       webKeyId: 'PrintScreen',
       colSpan: 2,
-      whichID: 4410,
+      whichID: 44,
+      locationID: 0,
     }
   }
 
@@ -809,7 +888,8 @@ export class Hid {
       displayString: 'Scroll Lock',
       webKeyId: 'ScrollLock',
       colSpan: 2,
-      whichID: 14510,
+      whichID: 145,
+      locationID: 0,
     }
   }
 
@@ -820,7 +900,8 @@ export class Hid {
       displayString: 'Pause',
       webKeyId: 'Pause',
       colSpan: 2,
-      whichID: 1910,
+      whichID: 19,
+      locationID: 0,
     }
   }
 
@@ -831,7 +912,8 @@ export class Hid {
       displayString: 'Insert',
       webKeyId: 'Insert',
       colSpan: 2,
-      whichID: 4510,
+      whichID: 45,
+      locationID: 0,
     }
   }
 
@@ -842,7 +924,8 @@ export class Hid {
       displayString: 'Home',
       webKeyId: 'Home',
       colSpan: 2,
-      whichID: 3610,
+      whichID: 36,
+      locationID: 0,
     }
   }
 
@@ -853,7 +936,8 @@ export class Hid {
       displayString: 'Page Up',
       webKeyId: 'PageUp',
       colSpan: 2,
-      whichID: 3310,
+      whichID: 33,
+      locationID: 0,
     }
   }
 
@@ -864,7 +948,8 @@ export class Hid {
       displayString: 'Delete',
       webKeyId: 'Delete',
       colSpan: 2,
-      whichID: 4610,
+      whichID: 46,
+      locationID: 0,
     }
   }
 
@@ -875,7 +960,8 @@ export class Hid {
       displayString: 'End',
       webKeyId: 'End',
       colSpan: 2,
-      whichID: 3510,
+      whichID: 35,
+      locationID: 0,
     }
   }
 
@@ -886,7 +972,8 @@ export class Hid {
       displayString: 'Page Down',
       webKeyId: 'PageDown',
       colSpan: 2,
-      whichID: 3410,
+      whichID: 34,
+      locationID: 0,
     }
   }
 
@@ -897,7 +984,8 @@ export class Hid {
       displayString: 'Right Arrow',
       webKeyId: 'ArrowRight',
       colSpan: 2,
-      whichID: 3910,
+      whichID: 39,
+      locationID: 0,
     }
   }
 
@@ -908,7 +996,8 @@ export class Hid {
       displayString: 'Left Arrow',
       webKeyId: 'ArrowLeft',
       colSpan: 2,
-      whichID: 3710,
+      whichID: 37,
+      locationID: 0,
     }
   }
 
@@ -919,7 +1008,8 @@ export class Hid {
       displayString: 'Down Arrow',
       webKeyId: 'ArrowDown',
       colSpan: 2,
-      whichID: 4010,
+      whichID: 40,
+      locationID: 0,
     }
   }
 
@@ -930,7 +1020,8 @@ export class Hid {
       displayString: 'Up Arrow',
       webKeyId: 'ArrowUp',
       colSpan: 2,
-      whichID: 3810,
+      whichID: 38,
+      locationID: 0,
     }
   }
 
@@ -941,7 +1032,8 @@ export class Hid {
       displayString: 'Num Lock',
       webKeyId: 'NumLock',
       colSpan: 2,
-      whichID: 14410,
+      whichID: 144,
+      locationID: 0,
     }
   }
 
@@ -952,7 +1044,8 @@ export class Hid {
       displayString: 'Numpad Divide',
       webKeyId: 'NumpadDivide',
       colSpan: 2,
-      whichID: 11110,
+      whichID: 111,
+      locationID: 0,
     }
   }
 
@@ -963,7 +1056,8 @@ export class Hid {
       displayString: 'Numpad Multiply',
       webKeyId: 'NumpadMultiply',
       colSpan: 2,
-      whichID: 10610,
+      whichID: 106,
+      locationID: 0,
     }
   }
 
@@ -974,7 +1068,8 @@ export class Hid {
       displayString: 'Numpad Subtract',
       webKeyId: 'NumpadSubtract',
       colSpan: 2,
-      whichID: 10910,
+      whichID: 109,
+      locationID: 0,
     }
   }
 
@@ -985,7 +1080,8 @@ export class Hid {
       displayString: 'Numpad Add',
       webKeyId: 'NumpadAdd',
       colSpan: 2,
-      whichID: 10710,
+      whichID: 107,
+      locationID: 0,
     }
   }
 
@@ -996,7 +1092,8 @@ export class Hid {
       displayString: 'Numpad Enter',
       webKeyId: 'NumpadEnter',
       colSpan: 2,
-      whichID: 1310,
+      whichID: 13,
+      locationID: 0,
     }
   }
 
@@ -1006,7 +1103,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP1',
       webKeyId: 'Numpad1',
-      whichID: 9710,
+      whichID: 97,
+      locationID: 0,
     }
   }
 
@@ -1016,7 +1114,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP2',
       webKeyId: 'Numpad2',
-      whichID: 9810,
+      whichID: 98,
+      locationID: 0,
     }
   }
 
@@ -1026,7 +1125,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP3',
       webKeyId: 'Numpad3',
-      whichID: 9910,
+      whichID: 99,
+      locationID: 0,
     }
   }
 
@@ -1036,7 +1136,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP4',
       webKeyId: 'Numpad4',
-      whichID: 10010,
+      whichID: 100,
+      locationID: 0,
     }
   }
 
@@ -1046,7 +1147,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP5',
       webKeyId: 'Numpad5',
-      whichID: 10110,
+      whichID: 101,
+      locationID: 0,
     }
   }
 
@@ -1056,7 +1158,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP6',
       webKeyId: 'Numpad6',
-      whichID: 10210,
+      whichID: 102,
+      locationID: 0,
     }
   }
 
@@ -1066,7 +1169,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP7',
       webKeyId: 'Numpad7',
-      whichID: 10310,
+      whichID: 103,
+      locationID: 0,
     }
   }
 
@@ -1076,7 +1180,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP8',
       webKeyId: 'Numpad8',
-      whichID: 10410,
+      whichID: 104,
+      locationID: 0,
     }
   }
 
@@ -1086,7 +1191,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP9',
       webKeyId: 'Numpad9',
-      whichID: 10510,
+      whichID: 105,
+      locationID: 0,
     }
   }
 
@@ -1096,7 +1202,8 @@ export class Hid {
       category: HIDCategory.Numpad,
       displayString: 'NP0',
       webKeyId: 'Numpad0',
-      whichID: 9610,
+      whichID: 96,
+      locationID: 0,
     }
   }
 
@@ -1107,7 +1214,8 @@ export class Hid {
       displayString: 'Numpad Decimal',
       webKeyId: 'NumpadDecimal',
       colSpan: 2,
-      whichID: 11010,
+      whichID: 110,
+      locationID: 0,
     }
   }
 
@@ -1119,7 +1227,8 @@ export class Hid {
       displayString: 'L-CTRL',
       webKeyId: 'ControlLeft',
       colSpan: 2,
-      whichID: 1711,
+      whichID: 17,
+      locationID: 1,
     }
   }
 
@@ -1130,7 +1239,8 @@ export class Hid {
       displayString: 'L-SHIFT',
       webKeyId: 'ShiftLeft',
       colSpan: 2,
-      whichID: 1611,
+      whichID: 16,
+      locationID: 1,
     }
   }
 
@@ -1141,7 +1251,8 @@ export class Hid {
       displayString: 'L-ALT',
       webKeyId: 'AltLeft',
       colSpan: 2,
-      whichID: 1811,
+      whichID: 18,
+      locationID: 1,
     }
   }
 
@@ -1152,7 +1263,8 @@ export class Hid {
       displayString: 'L-Win/Super/Command',
       webKeyId: 'MetaLeft',
       colSpan: 4,
-      whichID: 9111,
+      whichID: 91,
+      locationID: 1,
     }
   }
 
@@ -1163,7 +1275,8 @@ export class Hid {
       displayString: 'R-CTRL',
       webKeyId: 'ControlRight',
       colSpan: 2,
-      whichID: 1712
+      whichID: 17,
+      locationID: 2,
     }
   }
 
@@ -1174,7 +1287,8 @@ export class Hid {
       displayString: 'R-SHIFT',
       webKeyId: 'ShiftRight',
       colSpan: 2,
-      whichID: 1612
+      whichID: 16,
+      locationID: 2,
     }
   }
 
@@ -1185,7 +1299,8 @@ export class Hid {
       displayString: 'R-ALT',
       webKeyId: 'AltRight',
       colSpan: 2,
-      whichID: 1812
+      whichID: 18,
+      locationID: 2,
     }
   }
 
@@ -1196,7 +1311,8 @@ export class Hid {
       displayString: 'R-Win/Super/Command',
       webKeyId: 'MetaRight',
       colSpan: 4,
-      whichID: 9212
+      whichID: 92,
+      locationID: 2,
     }
   }
 
@@ -1321,9 +1437,10 @@ export class Hid {
 }
 
 export const webCodeHIDLookup = new Map<string, HidInfo>(
+  // This creates a unique ID: whichID, separated by an extra '1' digit, then locationID.
   Hid.all
     .filter((hid) => hid.whichID !== undefined)
-    .map((hid) => [hid.whichID!.toString(), hid])
+    .map((hid) => [hid.whichID!.toString() + '1' + hid.locationID!.toString(), hid])
 )
 export const HIDLookup = new Map<number, HidInfo>(
   Hid.all
