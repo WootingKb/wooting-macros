@@ -121,7 +121,7 @@ impl Macro {
                         // One key press down
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .unwrap();
+                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
                     }
                     key_press::KeyType::Up => {
                         // One key lift up
@@ -129,13 +129,13 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            .unwrap();
+                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
                     }
                     key_press::KeyType::DownUp => {
                         // Key press
                         send_channel
                             .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .unwrap();
+                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
 
                         // Wait the set delay by user
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
@@ -145,7 +145,7 @@ impl Macro {
                             .send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))
-                            .unwrap();
+                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
                     }
                 },
                 ActionEventType::PhillipsHueEventAction { .. } => {}
@@ -217,11 +217,25 @@ impl MacroData {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
                                 match data.len() {
-                                    0 => error!("A trigger key can't be zero...: {:#?}", data),
-                                    1 => output_hashmap
-                                        .entry(*data.first().unwrap())
-                                        .or_default()
-                                        .push(macros.clone()),
+                                    0 => {
+                                        error!("A trigger key can't be zero...: {:#?}", data);
+                                        continue;
+                                    }
+                                    1 => {
+                                        let first_data = match data.first() {
+                                            Some(data) => *data,
+                                            None => {
+                                                error!(
+                                                    "Error getting first element in macro trigger"
+                                                );
+                                                continue;
+                                            }
+                                        };
+                                        output_hashmap
+                                            .entry(first_data)
+                                            .or_default()
+                                            .push(macros.clone())
+                                    }
                                     _ => data[..data.len() - 1].iter().for_each(|x| {
                                         output_hashmap.entry(*x).or_default().push(macros.clone());
                                     }),
@@ -286,7 +300,14 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
-        plugin::util::direct_send_event(&rchan_execute.blocking_recv().unwrap());
+        let received_event = match &rchan_execute.blocking_recv() {
+            Some(event) => event.clone(),
+            None => {
+                error!("Failed to receive an event!");
+                continue;
+            }
+        };
+        plugin::util::direct_send_event(&received_event);
 
         // MacOS and Linux require some delays.
         #[cfg(not(target_os = "windows"))]
