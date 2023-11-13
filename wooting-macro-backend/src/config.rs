@@ -105,7 +105,9 @@ impl ConfigFile for LogDirPath {
     fn file_name() -> Result<PathBuf> {
         let path: PathBuf;
         #[cfg(debug_assertions)]
-        let path = PathBuf::from("..");
+        {
+            path = PathBuf::from("..");
+        }
 
         #[cfg(not(debug_assertions))]
         {
