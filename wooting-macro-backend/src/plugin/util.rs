@@ -1,44 +1,23 @@
+use anyhow::Result;
 use log::*;
 use rdev;
 use tokio::sync::mpsc::UnboundedSender;
 
 /// Sends an event to the library to Execute on an OS level. This makes it easier to implement keypresses in custom code.
-pub fn direct_send_event(event_type: &rdev::EventType) -> Result<(), String> {
+pub fn direct_send_event(event_type: &rdev::EventType) -> Result<()> {
     trace!("Sending event: {:?}", event_type);
-    rdev::simulate(event_type).map_err(|err| {
-        format!(
-            "Error occurred while sending key release event: {}",
-            err.to_string()
-        )
-        .to_string()
-    })?;
+    rdev::simulate(event_type)?;
     Ok(())
 }
 /// Sends a vector of keys to get processed
 pub async fn direct_send_key(
     send_channel: &UnboundedSender<rdev::EventType>,
     key: Vec<rdev::Key>,
-) -> Result<(), String> {
+) -> Result<()> {
     for press in key.iter() {
-        send_channel
-            .send(rdev::EventType::KeyPress(*press))
-            .map_err(|err| {
-                format!(
-                    "Error occurred while sending key release event: {}",
-                    err.to_string()
-                )
-                .to_string()
-            })?;
+        send_channel.send(rdev::EventType::KeyPress(*press))?;
 
-        send_channel
-            .send(rdev::EventType::KeyRelease(*press))
-            .map_err(|err| {
-                format!(
-                    "Error occurred while sending key release event: {}",
-                    err.to_string()
-                )
-                .to_string()
-            })?;
+        send_channel.send(rdev::EventType::KeyRelease(*press))?;
     }
     Ok(())
 }
@@ -47,29 +26,13 @@ pub async fn direct_send_key(
 pub async fn direct_send_hotkey(
     send_channel: &UnboundedSender<rdev::EventType>,
     key: Vec<rdev::Key>,
-) -> Result<(), String> {
+) -> Result<()> {
     for press in key.iter() {
-        send_channel
-            .send(rdev::EventType::KeyPress(*press))
-            .map_err(|err| {
-                format!(
-                    "Error occurred while sending key release event: {}",
-                    err.to_string()
-                )
-                .to_string()
-            })?;
+        send_channel.send(rdev::EventType::KeyPress(*press))?;
     }
 
     for press in key.iter().rev() {
-        send_channel
-            .send(rdev::EventType::KeyRelease(*press))
-            .map_err(|err| {
-                format!(
-                    "Error occurred while sending key release event: {}",
-                    err.to_string()
-                )
-                .to_string()
-            })?;
+        send_channel.send(rdev::EventType::KeyRelease(*press))?;
     }
 
     Ok(())

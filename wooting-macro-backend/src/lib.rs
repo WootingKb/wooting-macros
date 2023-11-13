@@ -23,6 +23,8 @@ use config::{ApplicationConfig, ConfigFile};
 use dirs;
 use rdev::simulate;
 
+use anyhow::{Error, Result};
+
 // This has to be imported for release build
 #[allow(unused_imports)]
 use crate::config::CONFIG_DIR;
@@ -206,7 +208,7 @@ impl Default for MacroData {
 
 impl MacroData {
     /// Extracts the first trigger data from the macros.
-    pub fn extract_triggers(&self) -> MacroTriggerLookup {
+    pub fn extract_triggers(&self) -> Result<MacroTriggerLookup, String> {
         let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
@@ -218,17 +220,16 @@ impl MacroData {
                                 //TODO: optimize using references
                                 match data.len() {
                                     0 => {
-                                        error!("A trigger key can't be zero...: {:#?}", data);
-                                        continue;
+                                        return Err(format!("A trigger key can't be zero, aborting trigger generation: {:#?}", data).to_string());
                                     }
                                     1 => {
                                         let first_data = match data.first() {
                                             Some(data) => *data,
                                             None => {
-                                                error!(
+                                                return Err(format!(
                                                     "Error getting first element in macro trigger"
-                                                );
-                                                continue;
+                                                )
+                                                .to_string());
                                             }
                                         };
                                         output_hashmap
@@ -242,7 +243,6 @@ impl MacroData {
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
-                                // let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
                                 let data: u32 = data.into();
 
                                 match output_hashmap.get_mut(&data) {
@@ -258,7 +258,7 @@ impl MacroData {
             }
         }
 
-        output_hashmap
+        Ok(output_hashmap)
     }
 }
 
@@ -440,20 +440,22 @@ impl MacroBackend {
         self.is_listening.store(is_listening, Ordering::Relaxed);
     }
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
-    pub async fn set_macros(&self, macros: MacroData) {
-        macros.write_to_file();
-        *self.triggers.write().await = macros.extract_triggers();
+    pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
+        macros.write_to_file()?;
+        *self.triggers.write().await = macros.extract_triggers().map_err(|err| anyhow::Error::msg(err.to_string()))?;
         *self.data.write().await = macros;
+        Ok(())
     }
 
     /// Sets the config from the frontend to the files. This function is here to completely split the frontend off.
-    pub async fn set_config(&self, config: ApplicationConfig) {
-        config.write_to_file();
+    pub async fn set_config(&self, config: ApplicationConfig) -> Result<()> {
+        config.write_to_file()?;
         *self.config.write().await = config;
+        Ok(())
     }
 
     /// Initializes the entire backend and gets the whole grabbing system running.
-    pub async fn init(&self) -> Result<(), String> {
+    pub async fn init(&self) -> Result<()> {
         //? : io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
@@ -593,18 +595,25 @@ impl MacroBackend {
                 }
             })
         });
-        Err("Backend stopped capturing".to_string())
+        Err(anyhow::Error::msg("Error in grabbing thread!"))
     }
 }
 
 impl Default for MacroBackend {
     /// Generates a new state.
     fn default() -> Self {
-        let macro_data = MacroData::read_data();
-        let triggers = macro_data.extract_triggers();
+        let macro_data =
+            MacroData::read_data().unwrap_or_else(|err| panic!("Cannot get macro data! {}", err));
+
+        let triggers = macro_data
+            .extract_triggers()
+            .unwrap_or_else(|err| panic!("Error extracting triggers: {}", err));
         MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
-            config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
+            config: Arc::new(RwLock::from(
+                ApplicationConfig::read_data()
+                    .unwrap_or_else(|err| panic!("Error reading config: {}", err)),
+            )),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
         }

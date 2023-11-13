@@ -1,7 +1,6 @@
 use super::util;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
-use log::*;
 use rdev;
 use std::path::PathBuf;
 use std::vec;
@@ -39,28 +38,28 @@ impl SystemAction {
         match &self {
             SystemAction::Open { action } => match action {
                 DirectoryAction::Directory { data } | DirectoryAction::File { data } => {
-                    match opener::open(data) {
-                        Ok(x) => x,
-                        Err(e) => error!("Error: {}", e),
-                    };
+                    opener::open(data).map_err(|err| err.to_string())?;
                 }
                 DirectoryAction::Website { data } => {
                     // The open_browser explicitly opens the path in a browser window.
-                    match opener::open_browser(data.as_str()) {
-                        Ok(x) => x,
-                        Err(e) => error!("Error: {}", e),
-                    };
+                    opener::open_browser(data.as_str()).map_err(|err| err.to_string())?;
                 }
             },
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeMute]).await?;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeMute])
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
                 VolumeAction::LowerVolume => {
-                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeDown]).await?;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeDown])
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp]).await?;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp])
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -71,7 +70,9 @@ impl SystemAction {
                         .map_err(|err| err.to_string())?;
                 }
                 ClipboardAction::Copy => {
-                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec())
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
                 ClipboardAction::GetClipboard => {
                     ClipboardContext::new()
@@ -80,7 +81,9 @@ impl SystemAction {
                         .map_err(|err| err.to_string())?;
                 }
                 ClipboardAction::Paste => {
-                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec())
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
@@ -89,14 +92,18 @@ impl SystemAction {
                         .set_contents(data.to_owned())
                         .map_err(|err| err.to_string())?;
 
-                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec())
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
 
                 ClipboardAction::Sarcasm => {
                     let mut ctx = ClipboardContext::new().map_err(|err| err.to_string())?;
 
                     // Copy the text
-                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec())
+                        .await
+                        .map_err(|err| err.to_string())?;
 
                     // Transform the text
                     let content =
@@ -105,7 +112,9 @@ impl SystemAction {
                     ctx.set_contents(content).map_err(|err| err.to_string())?;
 
                     // Paste the text again
-                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec())
+                        .await
+                        .map_err(|err| err.to_string())?;
                 }
             },
         }

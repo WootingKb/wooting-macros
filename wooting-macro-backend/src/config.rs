@@ -1,4 +1,5 @@
 use crate::MacroData;
+use anyhow::Result;
 use std::fs::File;
 use std::path::PathBuf;
 
@@ -6,20 +7,20 @@ use log::*;
 
 /// Trait to get data or write out data from the state to file.
 pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'de> {
-    fn file_name() -> PathBuf;
+    fn file_name() -> Result<PathBuf>;
 
     /// Reads the data from the file and returns it.
     ///
     /// If it errors out, it replaces and writes a default config.
-    fn read_data() -> Self {
-        match File::open(Self::file_name()) {
+    fn read_data() -> Result<Self> {
+        match File::open(Self::file_name()?) {
             Ok(data) => {
                 let data: Self = match serde_json::from_reader(&data) {
                     Ok(x) => x,
                     Err(error) => {
                         error!("Error reading config.json, using default data and moving to backup. {}", error);
                         let file_name = Self::file_name();
-                        let mut file_name = file_name
+                        let mut file_name = file_name?
                             .to_str()
                             .expect("Cannot preserve invalid file, crashing to save custom config")
                             .to_string();
@@ -31,22 +32,26 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                             }
                             file_name = String::from(format!("{}-{}.bak", file_name, i));
                         }
-                        warn!("Renaming {} to {}", Self::file_name().to_str().unwrap(), file_name);
+                        warn!(
+                            "Renaming {} to {}",
+                            Self::file_name()?.to_str().unwrap(),
+                            file_name
+                        );
 
-                        std::fs::rename(Self::file_name(), file_name).unwrap_or_else(|err| {
+                        std::fs::rename(Self::file_name()?, file_name).unwrap_or_else(|err| {
                             panic!("Cannot rename the invalid config. Aborting.\n {}", err)
                         });
                         Self::default()
                     }
                 };
-                data
+                Ok(data)
             }
 
             Err(err) => match err.kind() {
                 std::io::ErrorKind::NotFound => {
                     warn!("File not found, writing a default config {}", err);
-                    Self::default().write_to_file();
-                    Self::default()
+                    Self::default().write_to_file()?;
+                    Ok(Self::default())
                 }
                 _ => {
                     panic!("Filesystem error, cannot proceed. {}", err);
@@ -58,85 +63,71 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
     /// Writes the config file to the config directory.
     ///
     /// If it fails, it uses only in-memory defaults and won't save anything to disk.
-    fn write_to_file(&self) {
-        let converted_json = match serde_json::to_string_pretty(&self) {
-            Ok(value) => value,
-            Err(err) => {
-                error!(
-                    "Error converting data from json to types, aborting write.\n{}",
-                    err
-                );
-                return;
-            }
-        };
+    fn write_to_file(&self) -> Result<()> {
+        let converted_json = serde_json::to_string_pretty(&self)?;
 
-        match std::fs::write(Self::file_name().as_path(), converted_json) {
-            Ok(_) => {
-                info!("Success writing a new file");
-            }
-            Err(err) => {
-                error!("Error writing a new file. {}", err);
-            }
-        };
+        std::fs::write(Self::file_name()?.as_path(), converted_json)?;
+
+        Ok(())
     }
 }
 
 impl ConfigFile for ApplicationConfig {
-    fn file_name() -> PathBuf {
+    fn file_name() -> Result<PathBuf> {
         let dir = {
             #[cfg(debug_assertions)]
-            let x = PathBuf::from("..");
+            let path = PathBuf::from("..");
 
             #[cfg(not(debug_assertions))]
-            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+            let path = dirs::config_dir()?.join(CONFIG_DIR);
 
-            x
+            path
         };
 
-        dir.join(CONFIG_FILE)
+        Ok(dir.join(CONFIG_FILE))
     }
 }
 
 impl ConfigFile for LogDirPath {
-    fn file_name() -> PathBuf {
+    fn file_name() -> Result<PathBuf> {
         #[cfg(debug_assertions)]
-        let x = PathBuf::from("..");
+        let path = PathBuf::from("..");
 
         #[cfg(not(debug_assertions))]
-        let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+        let path = dirs::config_dir()?.join(CONFIG_DIR);
 
-        x
+        Ok(path)
     }
 }
 
 impl ConfigFile for LogFileName {
-    fn file_name() -> PathBuf {
+    fn file_name() -> Result<PathBuf> {
         let dir = {
             #[cfg(debug_assertions)]
-            let x = PathBuf::from("..");
+            let path = PathBuf::from("..");
 
             #[cfg(not(debug_assertions))]
-            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+            let path = dirs::config_dir().unwrap().join(CONFIG_DIR);
 
-            x
+            path
         };
 
-        dir.join(LOG_FILE)
+        Ok(dir.join(LOG_FILE))
     }
 }
 impl ConfigFile for MacroData {
-    fn file_name() -> PathBuf {
+    fn file_name() -> Result<PathBuf> {
         let dir = {
             #[cfg(debug_assertions)]
-            let x = PathBuf::from("..");
+            let path = PathBuf::from("..");
 
             #[cfg(not(debug_assertions))]
-            let x = dirs::config_dir().unwrap().join(CONFIG_DIR);
+            let path = dirs::config_dir().unwrap().join(CONFIG_DIR);
 
-            x
+            path
         };
 
-        dir.join(DATA_FILE)
+        Ok(dir.join(DATA_FILE))
     }
 }
 

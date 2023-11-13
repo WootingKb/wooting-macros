@@ -22,6 +22,8 @@ use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
+use anyhow::Result;
+
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
@@ -85,7 +87,7 @@ async fn main() {
     info!("Running the macro backend");
     if let Err(e) = backend.init().await {
         eprintln!("Initialization error: {}", e);
-    }
+    };
 
 
     // Read the options from the config.
