@@ -307,7 +307,8 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
                 continue;
             }
         };
-        plugin::util::direct_send_event(&received_event);
+        plugin::util::direct_send_event(&received_event)
+            .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
 
         // MacOS and Linux require some delays.
         #[cfg(not(target_os = "windows"))]
