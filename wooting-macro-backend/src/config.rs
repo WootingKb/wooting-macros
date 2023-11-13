@@ -30,7 +30,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                             while PathBuf::from(format!("{}-{}.bak", file_name, i)).exists() {
                                 i += 1;
                             }
-                            file_name = String::from(format!("{}-{}.bak", file_name, i));
+                            file_name = format!("{}-{}.bak", file_name, i);
                         }
                         warn!(
                             "Renaming {} to {}",

@@ -37,9 +37,11 @@ async fn get_config(state: tauri::State<'_, MacroBackend>) -> Result<Application
 async fn set_config(
     state: tauri::State<'_, MacroBackend>,
     config: ApplicationConfig,
-) -> Result<(), ()> {
-    state.set_config(config).await;
-    Ok(())
+) -> Result<(), String> {
+    state
+        .set_config(config)
+        .await
+        .map_err(|err| err.to_string())
 }
 
 #[tauri::command]
@@ -54,9 +56,11 @@ async fn get_macros(state: tauri::State<'_, MacroBackend>) -> Result<MacroData, 
 async fn set_macros(
     state: tauri::State<'_, MacroBackend>,
     frontend_data: MacroData,
-) -> Result<(), ()> {
-    state.set_macros(frontend_data).await;
-    Ok(())
+) -> Result<(), String> {
+    state
+        .set_macros(frontend_data)
+        .await
+        .map_err(|err| err.to_string())
 }
 
 #[tauri::command]
@@ -78,7 +82,8 @@ async fn main() {
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
-    MacroBackend::generate_directories();
+    MacroBackend::generate_directories()
+        .unwrap_or_else(|err| panic!("Unable to generate config directories {}", err));
 
     let backend = MacroBackend::default();
 
@@ -88,7 +93,6 @@ async fn main() {
     if let Err(e) = backend.init().await {
         eprintln!("Initialization error: {}", e);
     };
-
 
     // Read the options from the config.
     let set_autolaunch: bool = backend.config.read().await.auto_start;
@@ -208,7 +212,10 @@ async fn main() {
         })
         .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
-                if ApplicationConfig::read_data().minimize_to_tray {
+                if ApplicationConfig::read_data()
+                    .unwrap_or_else(|err| panic!("Error reading config: {}", err))
+                    .minimize_to_tray
+                {
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
@@ -247,7 +254,10 @@ async fn main() {
                 )
                 .max_file_size(Byte::from_unit(16_f64, ByteUnit::KiB).unwrap().into())
                 .targets([
-                    tauri_plugin_log::LogTarget::Folder(LogDirPath::file_name()),
+                    tauri_plugin_log::LogTarget::Folder(
+                        LogDirPath::file_name()
+                            .unwrap_or_else(|err| panic!("Error getting log folder name {}", err)),
+                    ),
                     tauri_plugin_log::LogTarget::Stdout,
                     tauri_plugin_log::LogTarget::Webview,
                 ])

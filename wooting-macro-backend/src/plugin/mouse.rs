@@ -1,3 +1,4 @@
+use anyhow::Result;
 use log::*;
 use serde_repr;
 use tokio::sync::mpsc::UnboundedSender;
@@ -42,43 +43,36 @@ pub enum MousePressAction {
 
 impl MouseAction {
     /// Creates a new MouseAction from a rdev event and sends it to the channel for async execution.
-    pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
+    pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
         match &self {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {
-                    send_channel
-                        .send(rdev::EventType::ButtonPress(button.into()))
-                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
+                    send_channel.send(rdev::EventType::ButtonPress(button.into()))?;
                 }
                 MousePressAction::Up { button } => {
-                    send_channel
-                        .send(rdev::EventType::ButtonRelease(button.into()))
-                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
+                    send_channel.send(rdev::EventType::ButtonRelease(button.into()))?;
                 }
                 MousePressAction::DownUp { button, duration } => {
-                    send_channel
-                        .send(rdev::EventType::ButtonPress(button.into()))
-                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
+                    send_channel.send(rdev::EventType::ButtonPress(button.into()))?;
 
                     tokio::time::sleep(time::Duration::from_millis(*duration as u64)).await;
 
-                    send_channel
-                        .send(rdev::EventType::ButtonRelease(button.into()))
-                        .unwrap_or_else(|err| error!("Error sending mouse click event: {}", err));
+                    send_channel.send(rdev::EventType::ButtonRelease(button.into()))?;
                 }
             },
 
             MouseAction::Move { x, y } => {
-                let display_size = rdev::display_size().unwrap();
+                let display_size = rdev::display_size().map_err(|err| {
+                    anyhow::Error::msg(format!("Error getting displays: {:?}", err))
+                })?;
                 info!("Display size: {:?}", display_size);
 
-                send_channel
-                    .send(rdev::EventType::MouseMove {
-                        x: *x as f64,
-                        y: *y as f64,
-                    })
-                    .unwrap_or_else(|err| error!("Error sending mouse move event: {}", err));
+                send_channel.send(rdev::EventType::MouseMove {
+                    x: *x as f64,
+                    y: *y as f64,
+                })?;
             }
         }
+        Ok(())
     }
 }

@@ -118,39 +118,33 @@ impl Macro {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
     /// Make sure to expand this if you implement new action types.
-    async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
+    async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
         for action in &self.sequence {
             match action {
                 ActionEventType::KeyPressEventAction { data } => match data.key_type {
                     key_press::KeyType::Down => {
                         // One key press down
                         send_channel
-                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
+                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
                     }
                     key_press::KeyType::Up => {
                         // One key lift up
-                        send_channel
-                            .send(rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))
-                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
+                        send_channel.send(rdev::EventType::KeyRelease(
+                            SCANCODE_TO_RDEV[&data.keypress],
+                        ))?;
                     }
                     key_press::KeyType::DownUp => {
                         // Key press
                         send_channel
-                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
+                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
 
                         // Wait the set delay by user
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
 
                         // Lift the key
-                        send_channel
-                            .send(rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))
-                            .unwrap_or_else(|err| error!("Failed to send keypress event: {}", err));
+                        send_channel.send(rdev::EventType::KeyRelease(
+                            SCANCODE_TO_RDEV[&data.keypress],
+                        ))?;
                     }
                 },
                 ActionEventType::PhillipsHueEventAction { .. } => {}
@@ -172,6 +166,7 @@ impl Macro {
                 }
             }
         }
+        Ok(())
     }
 }
 
@@ -230,10 +225,7 @@ impl MacroData {
                                             Some(data) => *data,
                                             None => {
                                                 return Err(Error::msg(
-                                                    format!(
-                                                    "Error getting first element in macro trigger"
-                                                )
-                                                    .to_string(),
+                                                    "Error getting first element in macro trigger",
                                                 ));
                                             }
                                         };
@@ -287,7 +279,10 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
             let cloned_channel = channel;
 
             task::spawn(async move {
-                macros.execute(cloned_channel).await;
+                macros
+                    .execute(cloned_channel)
+                    .await
+                    .unwrap_or_else(|err| error!("Error executing macro: {}", err));
             });
         }
         MacroType::Toggle => {
@@ -306,7 +301,7 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
         let received_event = match &rchan_execute.blocking_recv() {
-            Some(event) => event.clone(),
+            Some(event) => *event,
             None => {
                 error!("Failed to receive an event!");
                 continue;
@@ -520,7 +515,7 @@ impl MacroBackend {
 
                             let first_key: u32 = pressed_keys_copy_converted
                                 .first()
-                                .map(|key| *key)
+                                .copied()
                                 .unwrap_or_default();
 
                             let trigger_list = inner_triggers.blocking_read().clone();
