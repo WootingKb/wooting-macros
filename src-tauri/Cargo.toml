@@ -16,7 +16,7 @@ tauri-build = { version = "1.5", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.5", features = ["app-hide", "app-show", "clipboard-read-text", "clipboard-write-text", "dialog-open", "icon-png", "os-all", "shell-open", "system-tray", "updater"] }
-tokio = { version = "1.33", features = ["full"] }
+tokio = { version = "1.34", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.5"
@@ -29,7 +29,7 @@ anyhow = "1.0.75"
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
 default = ["custom-protocol"]
-# this feature is used used for production builds where `devPath` points to the filesystem
+# this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
 custom-protocol = ["tauri/custom-protocol"]
 
