@@ -21,6 +21,9 @@ use halfbrown::HashMap;
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
+#[cfg(not(debug_assertions))]
+use std::path::PathBuf;
+
 use rdev::simulate;
 
 use anyhow::{Error, Result};
@@ -208,7 +211,7 @@ impl Default for MacroData {
 
 impl MacroData {
     /// Extracts the first trigger data from the macros.
-    pub fn extract_triggers(&self) -> Result<MacroTriggerLookup, String> {
+    pub fn extract_triggers(&self) -> Result<MacroTriggerLookup> {
         let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
@@ -220,16 +223,18 @@ impl MacroData {
                                 //TODO: optimize using references
                                 match data.len() {
                                     0 => {
-                                        return Err(format!("A trigger key can't be zero, aborting trigger generation: {:#?}", data).to_string());
+                                        return Err(Error::msg(format!("A trigger key can't be zero, aborting trigger generation: {:#?}", data).to_string()));
                                     }
                                     1 => {
                                         let first_data = match data.first() {
                                             Some(data) => *data,
                                             None => {
-                                                return Err(format!(
+                                                return Err(Error::msg(
+                                                    format!(
                                                     "Error getting first element in macro trigger"
                                                 )
-                                                .to_string());
+                                                    .to_string(),
+                                                ));
                                             }
                                         };
                                         output_hashmap
@@ -414,7 +419,7 @@ impl Drop for KeysPressed {
         self.0.blocking_read().iter().for_each(|key| {
             match simulate(&rdev::EventType::KeyRelease(*key)) {
                 Ok(()) => info!("Releasing pressed button {:?}", key),
-                Err(err) => error!("We could not send a release.\n{}", err),
+                Err(err) => error!("We could not send a drop key release.\n{}", err),
             }
         });
     }
@@ -422,17 +427,21 @@ impl Drop for KeysPressed {
 
 impl MacroBackend {
     /// Creates the data directory if not present in %appdata% (only in release build).
-    pub fn generate_directories() {
+    pub fn generate_directories() -> Result<()> {
         #[cfg(not(debug_assertions))]
-        match std::fs::create_dir_all(
-            dirs::config_dir()
-                .expect("Cannot get user config directory (e.g. %appdata%)!")
-                .join(CONFIG_DIR)
-                .as_path(),
-        ) {
-            Ok(x) => x,
-            Err(error) => error!("Directory creation failed, OS error: {}", error),
-        };
+        {
+            let conf_dir: Result<PathBuf> = match dirs::config_dir() {
+                Some(config_path) => Ok(config_path),
+                None => Err(anyhow::Error::msg(
+                    "Cannot find config directory, cannot proceed.",
+                )),
+            };
+
+            let conf_dir = conf_dir?.join(CONFIG_DIR);
+
+            std::fs::create_dir_all(conf_dir.as_path())?;
+        }
+        Ok(())
     }
 
     /// Sets whether the backend should process keys that it listens to. Disabling disables the processing logic, but the app still grabs the keys.
@@ -442,7 +451,7 @@ impl MacroBackend {
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
         macros.write_to_file()?;
-        *self.triggers.write().await = macros.extract_triggers().map_err(|err| anyhow::Error::msg(err.to_string()))?;
+        *self.triggers.write().await = macros.extract_triggers()?;
         *self.data.write().await = macros;
         Ok(())
     }

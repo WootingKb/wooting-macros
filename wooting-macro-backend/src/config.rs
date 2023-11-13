@@ -74,12 +74,25 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
 
 impl ConfigFile for ApplicationConfig {
     fn file_name() -> Result<PathBuf> {
+        let path: PathBuf;
         let dir = {
             #[cfg(debug_assertions)]
-            let path = PathBuf::from("..");
+            {
+                path = PathBuf::from("..");
+            }
 
             #[cfg(not(debug_assertions))]
-            let path = dirs::config_dir()?.join(CONFIG_DIR);
+            {
+                path = {
+                    let conf_dir: Result<PathBuf> = match dirs::config_dir() {
+                        Some(config_path) => Ok(config_path),
+                        None => Err(anyhow::Error::msg(
+                            "Cannot find config directory, cannot proceed.",
+                        )),
+                    };
+                    conf_dir?.join(CONFIG_DIR)
+                };
+            }
 
             path
         };
@@ -90,11 +103,22 @@ impl ConfigFile for ApplicationConfig {
 
 impl ConfigFile for LogDirPath {
     fn file_name() -> Result<PathBuf> {
+        let path: PathBuf;
         #[cfg(debug_assertions)]
         let path = PathBuf::from("..");
 
         #[cfg(not(debug_assertions))]
-        let path = dirs::config_dir()?.join(CONFIG_DIR);
+        {
+            path = {
+                let conf_dir: Result<PathBuf> = match dirs::config_dir() {
+                    Some(config_path) => Ok(config_path),
+                    None => Err(anyhow::Error::msg(
+                        "Cannot find config directory, cannot proceed.",
+                    )),
+                };
+                conf_dir?.join(CONFIG_DIR)
+            };
+        }
 
         Ok(path)
     }
@@ -102,13 +126,24 @@ impl ConfigFile for LogDirPath {
 
 impl ConfigFile for LogFileName {
     fn file_name() -> Result<PathBuf> {
+        let path: PathBuf;
+
         let dir = {
             #[cfg(debug_assertions)]
-            let path = PathBuf::from("..");
+            {
+                path = PathBuf::from("..");
+            }
 
             #[cfg(not(debug_assertions))]
-            let path = dirs::config_dir().unwrap().join(CONFIG_DIR);
-
+            {
+                let conf_dir: Result<PathBuf> = match dirs::config_dir() {
+                    Some(config_path) => Ok(config_path),
+                    None => Err(anyhow::Error::msg(
+                        "Cannot find config directory, cannot proceed.",
+                    )),
+                };
+                path = conf_dir?.join(CONFIG_DIR);
+            }
             path
         };
 
@@ -117,12 +152,25 @@ impl ConfigFile for LogFileName {
 }
 impl ConfigFile for MacroData {
     fn file_name() -> Result<PathBuf> {
+        let path: PathBuf;
         let dir = {
             #[cfg(debug_assertions)]
-            let path = PathBuf::from("..");
+            {
+                path = PathBuf::from("..");
+            }
 
             #[cfg(not(debug_assertions))]
-            let path = dirs::config_dir().unwrap().join(CONFIG_DIR);
+            {
+                path = {
+                    let conf_dir: Result<PathBuf> = match dirs::config_dir() {
+                        Some(config_path) => Ok(config_path),
+                        None => Err(anyhow::Error::msg(
+                            "Cannot find config directory, cannot proceed.",
+                        )),
+                    };
+                    conf_dir?.join(CONFIG_DIR)
+                };
+            }
 
             path
         };
