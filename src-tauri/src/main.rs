@@ -110,11 +110,20 @@ async fn main() {
             control_grabbing
         ])
         .setup(move |app| {
-            tauri::api::notification::Notification::new(&app.config().tauri.bundle.identifier)
-                .title("Wootomation is now running in the background")
-                .body("Remember that anti-cheat software can flag you until you exit Wootomation.")
-                .show()
-                .unwrap_or_else(|err| warn!("Couldn't show notification: {}", err));
+
+            if log_level <= log::LevelFilter::Debug {
+                tauri::api::notification::Notification::new(&app.config().tauri.bundle.identifier)
+                    .title("DEBUG Wootomation is now running")
+                    .body("Warning: keystrokes are logged in an unencrypted .log file when debug log level is enabled. Be careful!\nRemember that anti-cheat software can flag you!")
+                    .show()
+                    .unwrap_or_else(|err| warn!("Couldn't show notification: {}", err));
+            } else {
+                tauri::api::notification::Notification::new(&app.config().tauri.bundle.identifier)
+                    .title("Wootomation is now running in the background")
+                    .body("Remember that anti-cheat software can flag you until you exit Wootomation.")
+                    .show()
+                    .unwrap_or_else(|err| warn!("Couldn't show notification: {}", err));
+            }
 
             let app_name = &app.package_info().name;
             if let Ok(current_exe) = current_exe() {
