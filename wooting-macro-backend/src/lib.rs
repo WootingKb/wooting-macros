@@ -611,12 +611,11 @@ impl Default for MacroBackend {
 
         let triggers = macro_data
             .extract_triggers()
-            .unwrap_or_else(|err| panic!("Error extracting triggers: {}", err));
+            .expect("error extracting triggers");
         MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
             config: Arc::new(RwLock::from(
-                ApplicationConfig::read_data()
-                    .unwrap_or_else(|err| panic!("Error reading config: {}", err)),
+                ApplicationConfig::read_data().expect("error reading config"),
             )),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),

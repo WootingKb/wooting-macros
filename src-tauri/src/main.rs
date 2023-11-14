@@ -82,8 +82,7 @@ async fn main() {
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
-    MacroBackend::generate_directories()
-        .unwrap_or_else(|err| panic!("Unable to generate config directories {}", err));
+    MacroBackend::generate_directories().expect("unable to generate config directories");
 
     let backend = MacroBackend::default();
 
@@ -213,7 +212,7 @@ async fn main() {
         .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 if ApplicationConfig::read_data()
-                    .unwrap_or_else(|err| panic!("Error reading config: {}", err))
+                    .expect("Error reading config")
                     .minimize_to_tray
                 {
                     event.window().hide().unwrap();
@@ -256,7 +255,7 @@ async fn main() {
                 .targets([
                     tauri_plugin_log::LogTarget::Folder(
                         LogDirPath::file_name()
-                            .unwrap_or_else(|err| panic!("Error getting log folder name {}", err)),
+                            .expect("error getting log folder name"),
                     ),
                     tauri_plugin_log::LogTarget::Stdout,
                     tauri_plugin_log::LogTarget::Webview,
