@@ -254,8 +254,7 @@ async fn main() {
                 .max_file_size(Byte::from_unit(16_f64, ByteUnit::KiB).unwrap().into())
                 .targets([
                     tauri_plugin_log::LogTarget::Folder(
-                        LogDirPath::file_name()
-                            .expect("error getting log folder name"),
+                        LogDirPath::file_name().expect("error getting log folder name"),
                     ),
                     tauri_plugin_log::LogTarget::Stdout,
                     tauri_plugin_log::LogTarget::Webview,
