@@ -22,6 +22,8 @@ use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
+use anyhow::Result;
+
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
 /// The state gets it from the config file at bootup.
@@ -35,9 +37,11 @@ async fn get_config(state: tauri::State<'_, MacroBackend>) -> Result<Application
 async fn set_config(
     state: tauri::State<'_, MacroBackend>,
     config: ApplicationConfig,
-) -> Result<(), ()> {
-    state.set_config(config).await;
-    Ok(())
+) -> Result<(), String> {
+    state
+        .set_config(config)
+        .await
+        .map_err(|err| err.to_string())
 }
 
 #[tauri::command]
@@ -52,9 +56,11 @@ async fn get_macros(state: tauri::State<'_, MacroBackend>) -> Result<MacroData, 
 async fn set_macros(
     state: tauri::State<'_, MacroBackend>,
     frontend_data: MacroData,
-) -> Result<(), ()> {
-    state.set_macros(frontend_data).await;
-    Ok(())
+) -> Result<(), String> {
+    state
+        .set_macros(frontend_data)
+        .await
+        .map_err(|err| err.to_string())
 }
 
 #[tauri::command]
@@ -76,14 +82,16 @@ async fn main() {
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
-    MacroBackend::generate_directories();
+    MacroBackend::generate_directories().expect("unable to generate config directories");
 
     let backend = MacroBackend::default();
 
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     // The backend is run only on Windows and Linux, on macOS it won't work.
     info!("Running the macro backend");
-    backend.init().await;
+    if let Err(e) = backend.init().await {
+        eprintln!("Initialization error: {}", e);
+    };
 
     // Read the options from the config.
     let set_autolaunch: bool = backend.config.read().await.auto_start;
@@ -203,7 +211,10 @@ async fn main() {
         })
         .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
-                if ApplicationConfig::read_data().minimize_to_tray {
+                if ApplicationConfig::read_data()
+                    .expect("Error reading config")
+                    .minimize_to_tray
+                {
                     event.window().hide().unwrap();
                     api.prevent_close();
                 }
@@ -242,7 +253,9 @@ async fn main() {
                 )
                 .max_file_size(Byte::from_unit(16_f64, ByteUnit::KiB).unwrap().into())
                 .targets([
-                    tauri_plugin_log::LogTarget::Folder(LogDirPath::file_name()),
+                    tauri_plugin_log::LogTarget::Folder(
+                        LogDirPath::file_name().expect("error getting log folder name"),
+                    ),
                     tauri_plugin_log::LogTarget::Stdout,
                     tauri_plugin_log::LogTarget::Webview,
                 ])

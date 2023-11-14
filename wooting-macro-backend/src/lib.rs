@@ -21,7 +21,12 @@ use halfbrown::HashMap;
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
 use dirs;
+#[cfg(not(debug_assertions))]
+use std::path::PathBuf;
+
 use rdev::simulate;
+
+use anyhow::{Error, Result};
 
 // This has to be imported for release build
 #[allow(unused_imports)]
@@ -113,39 +118,33 @@ impl Macro {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
     /// Make sure to expand this if you implement new action types.
-    async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) {
+    async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
         for action in &self.sequence {
             match action {
                 ActionEventType::KeyPressEventAction { data } => match data.key_type {
                     key_press::KeyType::Down => {
                         // One key press down
                         send_channel
-                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .unwrap();
+                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
                     }
                     key_press::KeyType::Up => {
                         // One key lift up
-                        send_channel
-                            .send(rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))
-                            .unwrap();
+                        send_channel.send(rdev::EventType::KeyRelease(
+                            SCANCODE_TO_RDEV[&data.keypress],
+                        ))?;
                     }
                     key_press::KeyType::DownUp => {
                         // Key press
                         send_channel
-                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))
-                            .unwrap();
+                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
 
                         // Wait the set delay by user
                         tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
 
                         // Lift the key
-                        send_channel
-                            .send(rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))
-                            .unwrap();
+                        send_channel.send(rdev::EventType::KeyRelease(
+                            SCANCODE_TO_RDEV[&data.keypress],
+                        ))?;
                     }
                 },
                 ActionEventType::PhillipsHueEventAction { .. } => {}
@@ -167,6 +166,7 @@ impl Macro {
                 }
             }
         }
+        Ok(())
     }
 }
 
@@ -206,7 +206,7 @@ impl Default for MacroData {
 
 impl MacroData {
     /// Extracts the first trigger data from the macros.
-    pub fn extract_triggers(&self) -> MacroTriggerLookup {
+    pub fn extract_triggers(&self) -> Result<MacroTriggerLookup> {
         let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
@@ -217,18 +217,29 @@ impl MacroData {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
                                 match data.len() {
-                                    0 => error!("A trigger key can't be zero...: {:#?}", data),
-                                    1 => output_hashmap
-                                        .entry(*data.first().unwrap())
-                                        .or_default()
-                                        .push(macros.clone()),
+                                    0 => {
+                                        return Err(Error::msg(format!("A trigger key can't be zero, aborting trigger generation: {:#?}", data).to_string()));
+                                    }
+                                    1 => {
+                                        let first_data = match data.first() {
+                                            Some(data) => *data,
+                                            None => {
+                                                return Err(Error::msg(
+                                                    "Error getting first element in macro trigger",
+                                                ));
+                                            }
+                                        };
+                                        output_hashmap
+                                            .entry(first_data)
+                                            .or_default()
+                                            .push(macros.clone())
+                                    }
                                     _ => data[..data.len() - 1].iter().for_each(|x| {
                                         output_hashmap.entry(*x).or_default().push(macros.clone());
                                     }),
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
-                                // let data: u32 = *<&mouse::MouseButton as Into<&u32>>::into(data);
                                 let data: u32 = data.into();
 
                                 match output_hashmap.get_mut(&data) {
@@ -244,7 +255,7 @@ impl MacroData {
             }
         }
 
-        output_hashmap
+        Ok(output_hashmap)
     }
 }
 
@@ -268,7 +279,10 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
             let cloned_channel = channel;
 
             task::spawn(async move {
-                macros.execute(cloned_channel).await;
+                macros
+                    .execute(cloned_channel)
+                    .await
+                    .unwrap_or_else(|err| error!("Error executing macro: {}", err));
             });
         }
         MacroType::Toggle => {
@@ -286,7 +300,15 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
-        plugin::util::direct_send_event(&rchan_execute.blocking_recv().unwrap());
+        let received_event = match &rchan_execute.blocking_recv() {
+            Some(event) => *event,
+            None => {
+                error!("Failed to receive an event!");
+                continue;
+            }
+        };
+        plugin::util::direct_send_event(&received_event)
+            .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
 
         // MacOS and Linux require some delays.
         #[cfg(not(target_os = "windows"))]
@@ -392,7 +414,7 @@ impl Drop for KeysPressed {
         self.0.blocking_read().iter().for_each(|key| {
             match simulate(&rdev::EventType::KeyRelease(*key)) {
                 Ok(()) => info!("Releasing pressed button {:?}", key),
-                Err(err) => error!("We could not send a release.\n{}", err),
+                Err(err) => error!("We could not send a drop key release.\n{}", err),
             }
         });
     }
@@ -400,17 +422,21 @@ impl Drop for KeysPressed {
 
 impl MacroBackend {
     /// Creates the data directory if not present in %appdata% (only in release build).
-    pub fn generate_directories() {
+    pub fn generate_directories() -> Result<()> {
         #[cfg(not(debug_assertions))]
-        match std::fs::create_dir_all(
-            dirs::config_dir()
-                .expect("Cannot get user config directory (e.g. %appdata%)!")
-                .join(CONFIG_DIR)
-                .as_path(),
-        ) {
-            Ok(x) => x,
-            Err(error) => error!("Directory creation failed, OS error: {}", error),
-        };
+        {
+            let conf_dir: Result<PathBuf> = match dirs::config_dir() {
+                Some(config_path) => Ok(config_path),
+                None => Err(anyhow::Error::msg(
+                    "Cannot find config directory, cannot proceed.",
+                )),
+            };
+
+            let conf_dir = conf_dir?.join(CONFIG_DIR);
+
+            std::fs::create_dir_all(conf_dir.as_path())?;
+        }
+        Ok(())
     }
 
     /// Sets whether the backend should process keys that it listens to. Disabling disables the processing logic, but the app still grabs the keys.
@@ -418,20 +444,22 @@ impl MacroBackend {
         self.is_listening.store(is_listening, Ordering::Relaxed);
     }
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
-    pub async fn set_macros(&self, macros: MacroData) {
-        macros.write_to_file();
-        *self.triggers.write().await = macros.extract_triggers();
+    pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
+        macros.write_to_file()?;
+        *self.triggers.write().await = macros.extract_triggers()?;
         *self.data.write().await = macros;
+        Ok(())
     }
 
     /// Sets the config from the frontend to the files. This function is here to completely split the frontend off.
-    pub async fn set_config(&self, config: ApplicationConfig) {
-        config.write_to_file();
+    pub async fn set_config(&self, config: ApplicationConfig) -> Result<()> {
+        config.write_to_file()?;
         *self.config.write().await = config;
+        Ok(())
     }
 
     /// Initializes the entire backend and gets the whole grabbing system running.
-    pub async fn init(&self) {
+    pub async fn init(&self) -> Result<()> {
         //? : io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
@@ -487,7 +515,7 @@ impl MacroBackend {
 
                             let first_key: u32 = pressed_keys_copy_converted
                                 .first()
-                                .map(|key| *key)
+                                .copied()
                                 .unwrap_or_default();
 
                             let trigger_list = inner_triggers.blocking_read().clone();
@@ -571,17 +599,24 @@ impl MacroBackend {
                 }
             })
         });
+        Err(anyhow::Error::msg("Error in grabbing thread!"))
     }
 }
 
 impl Default for MacroBackend {
     /// Generates a new state.
     fn default() -> Self {
-        let macro_data = MacroData::read_data();
-        let triggers = macro_data.extract_triggers();
+        let macro_data =
+            MacroData::read_data().unwrap_or_else(|err| panic!("Cannot get macro data! {}", err));
+
+        let triggers = macro_data
+            .extract_triggers()
+            .expect("error extracting triggers");
         MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
-            config: Arc::new(RwLock::from(ApplicationConfig::read_data())),
+            config: Arc::new(RwLock::from(
+                ApplicationConfig::read_data().expect("error reading config"),
+            )),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
         }
