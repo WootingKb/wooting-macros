@@ -313,17 +313,31 @@ async fn execute_macro(
 
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
-fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
+fn keypress_executor_receiver(
+    mut rchan_execute: UnboundedReceiver<rdev::EventType>,
+    app_identifier: Option<String>,
+) {
     loop {
         let received_event = match &rchan_execute.blocking_recv() {
             Some(event) => *event,
             None => {
+                util::show_error_notification(
+                    "Keystroke receiver".to_string(),
+                    app_identifier.clone(),
+                    "Failed to receive an event!".to_string(),
+                );
                 error!("Failed to receive an event!");
                 continue;
             }
         };
-        plugin::util::direct_send_event(&received_event)
-            .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
+        plugin::util::direct_send_event(&received_event).unwrap_or_else(|err| {
+            error!("Error directly sending an event to keyboard: {}", err);
+            util::show_error_notification(
+                "Keystroke receiver error".to_string(),
+                app_identifier.clone(),
+                err.to_string(),
+            );
+        });
 
         // MacOS and Linux require some delays.
         #[cfg(not(target_os = "windows"))]
@@ -496,14 +510,15 @@ impl MacroBackend {
 
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
-        let inner_app_identifier = app_identifier.clone();
+        let inner_app_identifier_sender = app_identifier.clone();
+        let inner_app_identifier_receiver = app_identifier.clone();
 
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
 
         // Create the executor
         thread::spawn(move || {
-            keypress_executor_sender(rchan_execute);
+            keypress_executor_receiver(rchan_execute, inner_app_identifier_receiver.clone());
         });
 
         let _grabber = task::spawn_blocking(move || {
@@ -561,7 +576,7 @@ impl MacroBackend {
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
                                     let channel_copy_send = schan_execute.clone();
-                                    let cloned_app_identifier = inner_app_identifier.clone();
+                                    let cloned_app_identifier = inner_app_identifier_sender.clone();
                                     check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
@@ -605,7 +620,7 @@ impl MacroBackend {
                                 };
 
                             let channel_clone = schan_execute.clone();
-                            let inner_app_identifier_cloned = inner_app_identifier.clone();
+                            let inner_app_identifier_cloned = inner_app_identifier_sender.clone();
 
                             let should_grab = check_macro_execution_efficiently(
                                 vec![converted_button_to_u32],
@@ -633,15 +648,21 @@ impl MacroBackend {
                 }
             })
         });
-        Err(anyhow::Error::msg("Error in grabbing thread!"))
+
+        let error = anyhow::Error::msg("Error in grabbing thread!");
+        util::show_error_notification(
+            "Keystroke analysis error".to_string(),
+            app_identifier,
+            error.to_string(),
+        );
+        Err(error)
     }
 }
 
 impl Default for MacroBackend {
     /// Generates a new state.
     fn default() -> Self {
-        let macro_data =
-            MacroData::read_data().unwrap_or_else(|err| panic!("Cannot get macro data! {}", err));
+        let macro_data = MacroData::read_data().expect("Cannot get macro data!");
 
         let triggers = macro_data
             .extract_triggers()
