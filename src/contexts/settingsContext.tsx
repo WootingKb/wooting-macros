@@ -34,7 +34,8 @@ function SettingsProvider({children}: SettingsProviderProps) {
     AutoSelectElement: true,
     MinimizeAtLaunch: false,
     Theme: 'light',
-    MinimizeToTray: true
+    MinimizeToTray: true,
+    ShowCriticalNotifications: true
   })
   const toast = useToast()
 
@@ -113,6 +114,11 @@ function SettingsProvider({children}: SettingsProviderProps) {
     },
     [setColorMode]
   )
+  const updateShowCriticalNotifications = useCallback((value: boolean) => {
+    setConfig((config) => {
+      return {...config, ShowCriticalNotifications: value}
+    })
+  }, [])
 
   const value = useMemo<SettingsState>(
     () => ({
@@ -123,7 +129,8 @@ function SettingsProvider({children}: SettingsProviderProps) {
       updateAutoAddDelay,
       updateDefaultDelayVal,
       updateAutoSelectElement,
-      updateTheme
+      updateTheme,
+      updateShowCriticalNotifications,
     }),
     [
       config,
@@ -133,7 +140,8 @@ function SettingsProvider({children}: SettingsProviderProps) {
       updateAutoAddDelay,
       updateDefaultDelayVal,
       updateAutoSelectElement,
-      updateTheme
+      updateTheme,
+      updateShowCriticalNotifications,
     ]
   )
 

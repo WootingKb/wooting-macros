@@ -49,6 +49,7 @@ export type MacroState = {
   updateSelectedElementId: (newIndex: number | undefined) => void
   updateMacro: () => void
   changeIsUpdatingMacro: (newVal: boolean) => void
+  updateShowNotification: (value: boolean) => void
 }
 
 export type SettingsState = {
@@ -60,6 +61,7 @@ export type SettingsState = {
   updateDefaultDelayVal: (value: string) => void
   updateAutoSelectElement: (value: boolean) => void
   updateTheme: (value: string) => void
+  updateShowCriticalNotifications: (value: boolean) => void
 }
 
 // Input Event Types
@@ -102,6 +104,7 @@ export interface ApplicationConfig {
   MinimizeAtLaunch: boolean
   Theme: string
   MinimizeToTray: boolean
+  ShowCriticalNotifications: boolean
 }
 
 export interface Macro {
@@ -111,6 +114,7 @@ export interface Macro {
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
+  show_notification: boolean
 }
 
 export interface Collection {

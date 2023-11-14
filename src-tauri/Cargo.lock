@@ -2640,12 +2640,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
-name = "minisign-verify"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "933dca44d65cdd53b355d0b73d380a2ff5da71f87f036053188bf1eab6a19881"
-
-[[package]]
 name = "miniz_oxide"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2795,7 +2789,6 @@ version = "4.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6d7b75c8958cb2eab3451538b32db8a7b74006abc33eb2e6a9a56d21e4775c2b"
 dependencies = [
- "env_logger",
  "log",
  "mac-notification-sys",
  "serde",
@@ -4492,7 +4485,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9bfe673cf125ef364d6f56b15e8ce7537d9ca7e4dae1cf6fbbdeed2e024db3d9"
 dependencies = [
  "anyhow",
- "base64 0.21.5",
  "bytes",
  "cocoa 0.24.1",
  "dirs-next",
@@ -4507,7 +4499,6 @@ dependencies = [
  "http",
  "ignore",
  "infer 0.9.0",
- "minisign-verify",
  "notify-rust",
  "objc",
  "once_cell",
@@ -4536,14 +4527,12 @@ dependencies = [
  "tauri-utils",
  "tempfile",
  "thiserror",
- "time",
  "tokio",
  "url",
  "uuid",
  "webkit2gtk",
  "webview2-com",
  "windows 0.39.0",
- "zip",
 ]
 
 [[package]]
@@ -5919,7 +5908,6 @@ dependencies = [
  "itertools",
  "lazy_static",
  "log",
- "notify-rust",
  "obws",
  "opener",
  "rayon",
@@ -6161,17 +6149,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.39",
-]
-
-[[package]]
-name = "zip"
-version = "0.6.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "760394e246e4c28189f19d488c058bf16f564016aefac5d32bb1f3b51d5e9261"
-dependencies = [
- "byteorder",
- "crc32fast",
- "crossbeam-utils",
 ]
 
 [[package]]

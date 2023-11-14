@@ -83,15 +83,7 @@ async fn main() {
         .unwrap_or(log::LevelFilter::Info);
 
     MacroBackend::generate_directories().expect("unable to generate config directories");
-
     let backend = MacroBackend::default();
-
-    #[cfg(any(target_os = "windows", target_os = "linux"))]
-    // The backend is run only on Windows and Linux, on macOS it won't work.
-    info!("Running the macro backend");
-    if let Err(e) = backend.init().await {
-        eprintln!("Initialization error: {}", e);
-    };
 
     // Read the options from the config.
     let set_autolaunch: bool = backend.config.read().await.auto_start;
@@ -107,9 +99,8 @@ async fn main() {
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
     // Initialize the main application
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         // State management is initialized
-        .manage(backend)
         // This is where commands shared with frontend are passed
         .invoke_handler(tauri::generate_handler![
             get_macros,
@@ -119,6 +110,12 @@ async fn main() {
             control_grabbing
         ])
         .setup(move |app| {
+            tauri::api::notification::Notification::new(&app.config().tauri.bundle.identifier)
+                .title("Wootomation is now running in the background")
+                .body("Remember that anti-cheat software can flag you until you exit Wootomation.")
+                .show()
+                .unwrap_or_else(|err| warn!("Couldn't show notification: {}", err));
+
             let app_name = &app.package_info().name;
             if let Ok(current_exe) = current_exe() {
                 let auto_start = auto_launch::AutoLaunchBuilder::new()
@@ -261,6 +258,25 @@ async fn main() {
                 ])
                 .build(),
         )
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error building tauri application");
+
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
+    {
+        // The backend is run only on Windows and Linux, on macOS it won't work.
+        debug!("Running the macro backend");
+
+        if let Err(e) = backend
+            .init(Some(app.config().tauri.bundle.identifier.clone()))
+            .await
+        {
+            error!("Initialization error: {}", e);
+        };
+    }
+
+    // Manage the backend state
+    app.manage(backend);
+
+    // Run the application
+    app.run(|_, _| {});
 }

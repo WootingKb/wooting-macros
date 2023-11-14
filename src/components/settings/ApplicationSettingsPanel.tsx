@@ -11,7 +11,8 @@ export default function ApplicationSettingsPanel() {
     updateMinimizeOnClose,
     updateAutoAddDelay,
     updateDefaultDelayVal,
-    updateAutoSelectElement
+    updateAutoSelectElement,
+    updateShowCriticalNotifications
   } = useSettingsContext()
 
   return (
@@ -42,6 +43,13 @@ export default function ApplicationSettingsPanel() {
           description="Pressing X will minimize the app instead of closing it."
           value={config.MinimizeToTray}
           onChange={updateMinimizeOnClose}
+        />
+        <Divider />
+        <ToggleSetting
+          title="Show critical notifications"
+          description="Wootomation will inform you of errors via notifications in your OS."
+          value={config.ShowCriticalNotifications}
+          onChange={updateShowCriticalNotifications}
         />
         <Divider />
       </VStack>
