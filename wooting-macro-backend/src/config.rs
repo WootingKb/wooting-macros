@@ -38,9 +38,8 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                             file_name
                         );
 
-                        std::fs::rename(Self::file_name()?, file_name).unwrap_or_else(|err| {
-                            panic!("Cannot rename the invalid config. Aborting.\n {}", err)
-                        });
+                        std::fs::rename(Self::file_name()?, file_name)
+                            .expect("cannot rename the invalid config, aborting.");
                         Self::default()
                     }
                 };
