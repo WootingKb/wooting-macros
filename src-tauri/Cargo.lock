@@ -2795,6 +2795,7 @@ version = "4.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6d7b75c8958cb2eab3451538b32db8a7b74006abc33eb2e6a9a56d21e4775c2b"
 dependencies = [
+ "env_logger",
  "log",
  "mac-notification-sys",
  "serde",
@@ -5918,6 +5919,7 @@ dependencies = [
  "itertools",
  "lazy_static",
  "log",
+ "notify-rust",
  "obws",
  "opener",
  "rayon",
