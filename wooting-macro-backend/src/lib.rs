@@ -5,6 +5,7 @@ pub mod plugin;
 use rayon::prelude::*;
 
 use log::*;
+use notify_rust::Notification;
 
 use itertools::Itertools;
 
@@ -278,12 +279,22 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 
             let cloned_channel = channel;
 
+            Notification::new()
+                .appname("Wootomation")
+                .summary("Executing Wootomation Macro")
+                .body(format!("Executed macro {}", &macros.name).as_ref())
+                .sound_name("message-new-instant")
+                .icon("wootomation")
+                .show()
+                .unwrap();
+
             task::spawn(async move {
                 macros
                     .execute(cloned_channel)
                     .await
                     .unwrap_or_else(|err| error!("Error executing macro: {}", err));
             });
+
         }
         MacroType::Toggle => {
             //Postponed
