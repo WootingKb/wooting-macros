@@ -42,11 +42,14 @@ pub mod plugin;
 ///
 /// ! **UNIMPLEMENTED** - Only the `Single` macro type is implemented for now. Feel free to contribute ideas.
 pub enum MacroType {
-    Single,
     // Single macro fire
-    Toggle,
+    Single,
     // press to start, press to finish cycle and terminate
-    OnHold, // while held Execute macro (repeats)
+    Toggle,
+    // while held Execute macro (repeats)
+    OnHold,
+    // X amount of times repeat
+    RepeatX,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -285,6 +288,9 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
         MacroType::OnHold => {
             //Postponed
             //execute_macro_onhold(&macros).await;
+        }
+        MacroType::RepeatX => {
+            //Postponed
         }
     }
 }
