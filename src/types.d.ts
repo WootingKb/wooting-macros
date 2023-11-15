@@ -111,7 +111,7 @@ export interface ApplicationConfig {
 export interface Macro {
   name: string
   icon: string
-  active: boolean
+  enabled: boolean
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
@@ -119,7 +119,7 @@ export interface Macro {
 
 export interface Collection {
   name: string
-  active: boolean
+  enabled: boolean
   macros: Macro[]
   icon: string
 }
