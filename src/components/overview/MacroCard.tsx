@@ -51,7 +51,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const newCollection = { ...currentCollection }
-      newCollection.macros[index].active = event.target.checked
+      newCollection.macros[index].enabled = event.target.checked
       onCollectionUpdate(newCollection, selection.collectionIndex)
     },
     [currentCollection, index, onCollectionUpdate, selection.collectionIndex]
@@ -86,7 +86,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <Box
             maxHeight="32px"
             cursor="default"
-            opacity={macro.active ? 1 : 0.5}
+            opacity={macro.enabled ? 1 : 0.5}
           >
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
@@ -94,7 +94,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             textStyle="name"
             fontWeight="semibold"
             fontSize="2xl"
-            opacity={macro.active ? 1 : 0.5}
+            opacity={macro.enabled ? 1 : 0.5}
           >
             {macro.name}
           </Text>
@@ -120,7 +120,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
+      <VStack w="full" spacing={1} opacity={macro.enabled ? 1 : 0.5}>
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
           Trigger Keys:
         </Text>
@@ -162,8 +162,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           placement="bottom"
           hasArrow
           label={
-            currentCollection.active
-              ? macro.active
+            currentCollection.enabled
+              ? macro.enabled
                 ? 'Disable Macro'
                 : 'Enable Macro'
               : 'Re-enable Collection!'
@@ -172,9 +172,9 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <Box>
             <Switch
               variant="brand"
-              defaultChecked={macro.active}
-              isChecked={currentCollection.active ? macro.active : false}
-              isDisabled={!currentCollection.active}
+              defaultChecked={macro.enabled}
+              isChecked={currentCollection.enabled ? macro.enabled : false}
+              isDisabled={!currentCollection.enabled}
               aria-label="Macro Toggle"
               onChange={onToggle}
             />

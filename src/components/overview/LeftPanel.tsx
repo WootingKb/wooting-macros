@@ -52,7 +52,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     // }
 
     onCollectionAdd({
-      active: true,
+      enabled: true,
       icon: '📁',
       // icon: `:${randomEmoji}:`,
       macros: [],
@@ -149,7 +149,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
               onCollectionUpdate(
                 {
                   ...collections[index],
-                  active: !collections[index].active
+                  enabled: !collections[index].enabled
                 },
                 index
               )

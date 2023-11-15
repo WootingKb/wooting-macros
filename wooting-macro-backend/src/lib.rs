@@ -114,7 +114,7 @@ pub struct Macro {
     pub sequence: Vec<ActionEventType>,
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
-    pub active: bool,
+    pub enabled: bool,
 }
 
 impl Macro {
@@ -201,7 +201,7 @@ impl Default for MacroData {
                 name: "Collection 1".to_string(),
                 icon: ":smile:".to_string(),
                 macros: vec![],
-                active: true,
+                enabled: true,
             }],
         }
     }
@@ -213,9 +213,9 @@ impl MacroData {
         let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
-            if collections.active {
+            if collections.enabled {
                 for macros in &collections.macros {
-                    if macros.active {
+                    if macros.enabled {
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
@@ -268,7 +268,7 @@ pub struct Collection {
     pub name: String,
     pub icon: String,
     pub macros: Vec<Macro>,
-    pub active: bool,
+    pub enabled: bool,
 }
 
 /// Executes a given macro (according to its type).
