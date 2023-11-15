@@ -5,7 +5,7 @@ import {
   useColorModeValue,
   StackDivider
 } from '@chakra-ui/react'
-import { HiArrowRight, HiArrowDownTray, HiArrowPath } from 'react-icons/hi2'
+import { HiArrowRight, HiArrowDownTray, HiArrowPath, HiArrowPathRoundedSquare  } from 'react-icons/hi2'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { MacroType } from '../../../constants/enums'
 import { checkIfStringIsNonNumeric } from '../../../constants/utils'
@@ -13,7 +13,7 @@ import { checkIfStringIsNonNumeric } from '../../../constants/utils'
 export default function MacroTypeArea() {
   const { macro, updateMacroType } = useMacroContext()
   const borderColour = useColorModeValue('gray.400', 'gray.600')
-  const typeIcons = [<HiArrowRight />, <HiArrowPath />, <HiArrowDownTray />]
+  const typeIcons = [<HiArrowRight />, <HiArrowPath />, <HiArrowDownTray />, <HiArrowPathRoundedSquare />]
 
   return (
     <HStack
