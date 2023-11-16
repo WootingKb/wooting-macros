@@ -47,7 +47,7 @@ async fn set_config(
 /// Gets the macro data from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
 async fn get_macros(state: tauri::State<'_, MacroBackend>) -> Result<MacroData, ()> {
-    Ok(state.data.read().await.clone())
+    Ok(state.macro_data.read().await.clone())
 }
 
 #[tauri::command]

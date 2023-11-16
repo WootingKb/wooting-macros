@@ -33,7 +33,7 @@ pub enum SystemAction {
 
 impl SystemAction {
     /// Execute the keys themselves.
-    pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
+    pub async fn execute(&self, send_channel: &UnboundedSender<rdev::EventType>) -> Result<()> {
         match &self {
             SystemAction::Open { action } => match action {
                 DirectoryAction::Directory { data } | DirectoryAction::File { data } => {
@@ -46,13 +46,13 @@ impl SystemAction {
             },
             SystemAction::Volume { action } => match action {
                 VolumeAction::ToggleMute => {
-                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeMute]).await?;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeMute])?;
                 }
                 VolumeAction::LowerVolume => {
-                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeDown]).await?;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeDown])?;
                 }
                 VolumeAction::IncreaseVolume => {
-                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp]).await?;
+                    util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp])?;
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -63,7 +63,7 @@ impl SystemAction {
                         .map_err(|err| anyhow::Error::msg(err.to_string()))?;
                 }
                 ClipboardAction::Copy => {
-                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec())?;
                 }
                 ClipboardAction::GetClipboard => {
                     ClipboardContext::new()
@@ -72,7 +72,7 @@ impl SystemAction {
                         .map_err(|err| anyhow::Error::msg(err.to_string()))?;
                 }
                 ClipboardAction::Paste => {
-                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec())?;
                 }
 
                 ClipboardAction::PasteUserDefinedString { data } => {
@@ -81,7 +81,7 @@ impl SystemAction {
                         .set_contents(data.to_owned())
                         .map_err(|err| anyhow::Error::msg(err.to_string()))?;
 
-                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec())?;
                 }
 
                 ClipboardAction::Sarcasm => {
@@ -89,7 +89,7 @@ impl SystemAction {
                         .map_err(|err| anyhow::Error::msg(err.to_string()))?;
 
                     // Copy the text
-                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec())?;
 
                     // Delay is required to make Discord, and some other apps cooperate properly.
                     tokio::time::sleep(time::Duration::from_millis(10)).await;
@@ -104,7 +104,7 @@ impl SystemAction {
                         .map_err(|err| anyhow::Error::msg(err.to_string()))?;
 
                     // Paste the text again
-                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec())?;
                 }
             },
         }

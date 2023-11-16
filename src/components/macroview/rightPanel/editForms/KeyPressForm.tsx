@@ -184,7 +184,7 @@ export default function KeyPressForm({
             justifyContent="center"
           >
             <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
-              Duration (ms)
+              Duration (ms) - 20ms minimum
             </Text>
           </GridItem>
           <VStack w="full">

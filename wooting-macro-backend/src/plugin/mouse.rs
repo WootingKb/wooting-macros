@@ -43,7 +43,7 @@ pub enum MousePressAction {
 
 impl MouseAction {
     /// Creates a new MouseAction from a rdev event and sends it to the channel for async execution.
-    pub async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
+    pub async fn execute(&self, send_channel: &UnboundedSender<rdev::EventType>) -> Result<()> {
         match &self {
             MouseAction::Press { data } => match data {
                 MousePressAction::Down { button } => {

@@ -38,6 +38,7 @@ export type MacroState = {
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
   updateMacroType: (newType: MacroType) => void
+  updateMacroRepeatAmount: (newAmount: number) => void
   updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
   onElementAdd: (newElement: ActionEventType) => void
@@ -68,10 +69,10 @@ export type SettingsState = {
 // Input Event Types
 export type TriggerEventType =
   | {
-      type: 'KeyPressEvent'
-      data: number[]
-      allow_while_other_keys: boolean
-    }
+  type: 'KeyPressEvent'
+  data: number[]
+  allow_while_other_keys: boolean
+}
   | { type: 'MouseEvent'; data: MouseButton }
 
 export type KeyPressEventAction = {
@@ -114,6 +115,7 @@ export interface Macro {
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
+  repeat_amount: number
 }
 
 export interface Collection {
