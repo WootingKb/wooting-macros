@@ -49,7 +49,7 @@ pub enum MacroType {
     // while held Execute macro (repeats)
     OnHold,
     // X amount of times repeat
-    RepeatX,
+    RepeatX, //  Unused currently
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -108,6 +108,7 @@ pub struct Macro {
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
     pub enabled: bool,
+    pub is_running: bool,
 }
 
 impl Macro {
@@ -179,6 +180,7 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
+    pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 }
 
 ///MacroData is the main data structure that contains all macro data.
@@ -267,7 +269,11 @@ pub struct Collection {
 /// Executes a given macro (according to its type).
 ///
 /// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
-async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>) {
+async fn execute_macro(
+    mut macros: Macro,
+    channel: UnboundedSender<rdev::EventType>,
+    keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
+) {
     match macros.macro_type {
         MacroType::Single => {
             info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
@@ -282,9 +288,19 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
             });
         }
         MacroType::Toggle => {
-            //Postponed
-            //execute_macro_toggle(&macros).await;
+            if macros.is_running == false {
+                macros.is_running = true;
+                let cloned_channel = channel;
+
+                task::spawn(async move {
+                    macros
+                        .execute(cloned_channel)
+                        .await
+                        .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+                });
+            }
         }
+
         MacroType::OnHold => {
             //Postponed
             //execute_macro_onhold(&macros).await;
@@ -327,6 +343,7 @@ fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
     channel_sender: UnboundedSender<rdev::EventType>,
+    inner_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
@@ -344,9 +361,17 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
+                            let inner_clone_pressed = inner_pressed.clone();
+                            // Disabled until a better fix is done
+                            // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
-                                execute_macro(macro_clone_execute, channel_clone_execute).await;
+                                execute_macro(
+                                    macro_clone_execute,
+                                    channel_clone_execute,
+                                    inner_clone_pressed,
+                                )
+                                .await;
                             });
                             output = true;
                         }
@@ -362,6 +387,7 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
+                            let inner_clone_pressed = inner_pressed.clone();
 
                             // This releases any trigger keys that have been held to make macros more reliable when used with modifier hotkeys.
                             // Only required for multi-key triggers.
@@ -369,7 +395,12 @@ fn check_macro_execution_efficiently(
                                 .unwrap_or_else(|err| error!("Error lifting keys: {}", err));
 
                             task::spawn(async move {
-                                execute_macro(macro_clone_execute, channel_clone_execute).await;
+                                execute_macro(
+                                    macro_clone_execute,
+                                    channel_clone_execute,
+                                    inner_clone_pressed,
+                                )
+                                .await;
                             });
                             output = true;
                         }
@@ -390,7 +421,8 @@ fn check_macro_execution_efficiently(
                     let macro_clone = macros.clone();
 
                     task::spawn(async move {
-                        execute_macro(macro_clone, channel_clone).await;
+                        execute_macro(macro_clone, channel_clone, Arc::new(RwLock::from(vec![])))
+                            .await;
                     });
                     output = true;
                 }
@@ -399,20 +431,6 @@ fn check_macro_execution_efficiently(
     }
 
     output
-}
-
-#[derive(Debug, Clone, Default)]
-struct KeysPressed(Arc<RwLock<Vec<rdev::Key>>>);
-
-impl Drop for KeysPressed {
-    fn drop(&mut self) {
-        self.0.blocking_read().iter().for_each(|key| {
-            match simulate(&rdev::EventType::KeyRelease(*key)) {
-                Ok(()) => info!("Releasing pressed button {:?}", key),
-                Err(err) => error!("We could not send a drop key release.\n{}", err),
-            }
-        });
-    }
 }
 
 impl MacroBackend {
@@ -462,6 +480,7 @@ impl MacroBackend {
 
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
+        let inner_keys_pressed = self.keys_pressed.clone();
 
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
@@ -472,7 +491,7 @@ impl MacroBackend {
         });
 
         let _grabber = task::spawn_blocking(move || {
-            let keys_pressed: KeysPressed = KeysPressed::default();
+            *inner_keys_pressed.blocking_write() = vec![];
 
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
@@ -482,13 +501,19 @@ impl MacroBackend {
                             let key_to_push = key;
 
                             let pressed_keys_copy_converted: Vec<u32> = {
-                                let mut keys_pressed = keys_pressed.0.blocking_write();
+                                // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
 
-                                keys_pressed.push(key_to_push);
+                                inner_keys_pressed.blocking_write().push(key_to_push);
 
-                                *keys_pressed = keys_pressed.clone().into_iter().unique().collect();
+                                *inner_keys_pressed.blocking_write() = inner_keys_pressed
+                                    .blocking_read()
+                                    .clone()
+                                    .into_iter()
+                                    .unique()
+                                    .collect();
 
-                                keys_pressed
+                                inner_keys_pressed
+                                    .blocking_read()
                                     .iter()
                                     .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
                                     .collect()
@@ -526,10 +551,12 @@ impl MacroBackend {
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
                                     let channel_copy_send = schan_execute.clone();
+                                    let inner_keys_pressed_copy = inner_keys_pressed.clone();
                                     check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
                                         channel_copy_send,
+                                        inner_keys_pressed_copy,
                                     )
                                 } else {
                                     false
@@ -544,9 +571,9 @@ impl MacroBackend {
                         }
 
                         rdev::EventType::KeyRelease(key) => {
-                            keys_pressed.0.blocking_write().retain(|x| *x != key);
+                            inner_keys_pressed.blocking_write().retain(|x| *x != key);
 
-                            debug!("Key state: {:?}", keys_pressed.0.blocking_read());
+                            debug!("Key state: {:?}", inner_keys_pressed.blocking_read());
 
                             Some(event)
                         }
@@ -573,6 +600,7 @@ impl MacroBackend {
                                 vec![converted_button_to_u32],
                                 check_these_macros,
                                 channel_clone,
+                                Arc::new(RwLock::from(vec![])),
                             );
 
                             // Left mouse button never gets consumed to allow users to control their PC.
@@ -615,6 +643,7 @@ impl Default for MacroBackend {
             )),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
+            keys_pressed: Arc::new(RwLock::from(vec![])),
         }
     }
 }
