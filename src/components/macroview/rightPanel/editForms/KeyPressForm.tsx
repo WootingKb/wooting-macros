@@ -20,13 +20,13 @@ interface Props {
 }
 
 export default function KeyPressForm({
-  selectedElementId,
-  selectedElement
-}: Props) {
+                                       selectedElementId,
+                                       selectedElement
+                                     }: Props) {
   const [headingText, setHeadingText] = useState('')
   const [keypressDuration, setKeypressDuration] = useState("1")
   const [keypressType, setKeypressType] = useState<KeyType>()
-  const { updateElement } = useMacroContext()
+  const {updateElement} = useMacroContext()
 
   useEffect(() => {
     if (
@@ -35,7 +35,7 @@ export default function KeyPressForm({
     )
       return
 
-    const typeString = selectedElement.data.keytype as keyof typeof KeyType
+    const typeString = selectedElement.data.key_type as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
     setKeypressDuration(selectedElement.data.press_duration.toString())
     setHeadingText(
@@ -64,7 +64,7 @@ export default function KeyPressForm({
 
     const temp: KeyPressEventAction = {
       ...selectedElement,
-      data: { ...selectedElement.data, press_duration: duration }
+      data: {...selectedElement.data, press_duration: duration}
     }
     updateElement(temp, selectedElementId)
   }, [keypressDuration, selectedElement, selectedElementId, updateElement])
@@ -74,7 +74,7 @@ export default function KeyPressForm({
       setKeypressType(newType)
       const temp: KeyPressEventAction = {
         ...selectedElement,
-        data: { ...selectedElement.data, keytype: KeyType[newType].toString() }
+        data: {...selectedElement.data, key_type: KeyType[newType].toString()}
       }
       updateElement(temp, selectedElementId)
     },
@@ -86,7 +86,7 @@ export default function KeyPressForm({
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
-      <Divider />
+      <Divider/>
       <Grid templateRows={'20px 1fr'} gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
@@ -101,7 +101,7 @@ export default function KeyPressForm({
           >
             <Button
               variant="brandAccentLight"
-              leftIcon={<DownUpArrowsIcon />}
+              leftIcon={<DownUpArrowsIcon/>}
               w="full"
               size={['sm', 'md']}
               onClick={() => onKeypressTypeChange(KeyType.DownUp)}
@@ -111,7 +111,7 @@ export default function KeyPressForm({
             </Button>
             <Button
               variant="brandAccentLight"
-              leftIcon={<DownArrowIcon />}
+              leftIcon={<DownArrowIcon/>}
               w="full"
               size={['sm', 'md']}
               onClick={() => onKeypressTypeChange(KeyType.Down)}
@@ -121,7 +121,7 @@ export default function KeyPressForm({
             </Button>
             <Button
               variant="brandAccentLight"
-              leftIcon={<UpArrowIcon />}
+              leftIcon={<UpArrowIcon/>}
               w="full"
               size={['sm', 'md']}
               onClick={() => onKeypressTypeChange(KeyType.Up)}
