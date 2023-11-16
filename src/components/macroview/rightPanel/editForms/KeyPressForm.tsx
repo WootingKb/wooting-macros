@@ -90,7 +90,7 @@ export default function KeyPressForm({
 
     const temp: KeyPressEventAction = {
       ...selectedElement,
-      data: { ...selectedElement.data, press_duration: duration }
+      data: {...selectedElement.data, press_duration: duration}
     }
     updateElement(temp, selectedElementId)
   }, [
