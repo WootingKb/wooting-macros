@@ -111,6 +111,7 @@ export interface Macro {
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
+  is_running: boolean
 }
 
 export interface Collection {
