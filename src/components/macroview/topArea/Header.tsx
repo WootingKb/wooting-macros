@@ -25,8 +25,8 @@ interface Props {
   isEditing: boolean
 }
 
-export default function Header({ isEditing }: Props) {
-  const { changeSelectedMacroIndex } = useApplicationContext()
+export default function Header({isEditing}: Props) {
+  const {changeSelectedMacroIndex} = useApplicationContext()
   const {
     macro,
     sequence,
@@ -135,11 +135,13 @@ export default function Header({ isEditing }: Props) {
 
   return (
     <>
-      <HStack
+      <VStack
         zIndex={1}
         bg={useMainBgColour()}
         w="full"
-        h={{ base: '80px', md: '100px', xl: '120px' }}
+
+        // h={{ base: 'full', md: '100px', xl: '120px' }}
+        h="full"
         py={2}
         px={{ base: 2, md: 4, xl: 6 }}
         spacing={4}
@@ -147,62 +149,68 @@ export default function Header({ isEditing }: Props) {
         justifyContent="space-between"
         justifyItems="center"
       >
-        <Flex maxW="400px" h="full" alignItems="center" gap="4">
-          <IconButton
-            aria-label="Back"
-            variant="brand"
-            icon={<ArrowBackIcon />}
-            size="sm"
-            onClick={onBackButtonPress}
-          />
-          <EmojiPopover
-            shortcodeToShow={macro.icon}
-            isEmojiPopoverOpen={isEmojiPopoverOpen}
-            onEmojiPopoverClose={onEmojiPopoverClose}
-            onEmojiPopoverOpen={onEmojiPopoverOpen}
-            onEmojiSelect={onEmojiSelect}
-          />
-          <Input
-            w="full"
-            variant="flushed"
-            placeholder="Macro Name"
-            size="xl"
-            textStyle="name"
-            _placeholder={{ opacity: 1, color: placeholderTextColour }}
-            onChange={(event) => setInputValue(event.target.value)}
-            onBlur={(event) => updateMacroName(event.target.value)}
-            value={inputValue}
-            _focusVisible={{ borderColor: 'primary-accent.500' }}
-          />
-        </Flex>
-        <MacroTypeArea />
-        <Flex maxW="700px" flexGrow={1} gap={4} alignItems="center">
-          <TriggerArea onOpen={onTriggerModalOpen} />
-          <Tooltip
-            variant="brand"
-            label={saveButtonTooltipText}
-            placement="bottom-start"
-            hasArrow
-          >
-            <Box>
-              <Button
-                size={{ base: 'md', lg: 'lg' }}
-                variant="yellowGradient"
-                isDisabled={!canSaveMacro}
-                onClick={updateMacro}
-                aria-label="Save"
-              >
-                Save Macro
-              </Button>
-            </Box>
-          </Tooltip>
-        </Flex>
-      </HStack>
+        <HStack justifyContent="space-between" w="full">
+          <Flex h="full" alignItems="center" gap="4" w="full" >
+            <IconButton
+              aria-label="Back"
+              variant="brand"
+              icon={<ArrowBackIcon/>}
+              size="sm"
+              onClick={onBackButtonPress}
+
+            />
+            <EmojiPopover
+              shortcodeToShow={macro.icon}
+              isEmojiPopoverOpen={isEmojiPopoverOpen}
+              onEmojiPopoverClose={onEmojiPopoverClose}
+              onEmojiPopoverOpen={onEmojiPopoverOpen}
+              onEmojiSelect={onEmojiSelect}
+            />
+            <Input
+              w="full"
+              variant="flushed"
+              placeholder="Macro Name"
+              size="xl"
+              textStyle="name"
+              _placeholder={{opacity: 1, color: placeholderTextColour}}
+              onChange={(event) => setInputValue(event.target.value)}
+              onBlur={(event) => updateMacroName(event.target.value)}
+              value={inputValue}
+              _focusVisible={{borderColor: 'primary-accent.500'}}
+            />
+          </Flex>
+          <Flex gap={4} alignItems="center">
+            <Tooltip
+              variant="brand"
+              label={saveButtonTooltipText}
+              placement="bottom-start"
+              hasArrow
+            >
+              <Box>
+                <Button
+                  size={{base: 'md', lg: 'lg'}}
+                  variant="yellowGradient"
+                  isDisabled={!canSaveMacro}
+                  onClick={updateMacro}
+                  aria-label="Save"
+                >
+                  Save Macro
+                </Button>
+              </Box>
+            </Tooltip>
+          </Flex>
+        </HStack>
+        <HStack justifyContent="center" w="full">
+          <MacroTypeArea/>
+          <TriggerArea onOpen={onTriggerModalOpen}/>
+        </HStack>
+
+      </VStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}
         onClose={onUnsavedChangesModalClose}
       />
-      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose} />
+      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose}/>
     </>
   )
 }

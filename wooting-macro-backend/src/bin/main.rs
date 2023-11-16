@@ -11,7 +11,5 @@ async fn main() {
 
     let backend = MacroBackend::default();
 
-    if let Err(e) = backend.init().await {
-        eprintln!("Initialization error: {}", e);
-    };
+    backend.init().await;
 }

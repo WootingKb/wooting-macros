@@ -23,6 +23,7 @@ use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
 use anyhow::Result;
+use wooting_macro_backend::macros::macro_data::MacroData;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -48,7 +49,7 @@ async fn set_config(
 /// Gets the macro data from current state and sends to frontend.
 /// The state gets it from the config file at bootup.
 async fn get_macros(state: tauri::State<'_, MacroBackend>) -> Result<MacroData, ()> {
-    Ok(state.data.read().await.clone())
+    Ok(state.macro_data.read().await.clone())
 }
 
 #[tauri::command]
@@ -89,9 +90,7 @@ async fn main() {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     // The backend is run only on Windows and Linux, on macOS it won't work.
     info!("Running the macro backend");
-    if let Err(e) = backend.init().await {
-        eprintln!("Initialization error: {}", e);
-    };
+    backend.init().await;
 
     // Read the options from the config.
     let set_autolaunch: bool = backend.config.read().await.auto_start;
