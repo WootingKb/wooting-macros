@@ -178,7 +178,7 @@ type Collections = Vec<Collection>;
 
 #[derive(Debug, Default)]
 /// Hashmap to check the first trigger key of each macro.
-struct MacroLookup {
+pub struct MacroLookup {
     triggers: MacroTrigger,
     id_map: MacroIdList,
 }
@@ -229,13 +229,15 @@ impl MacroData {
                 for macros in &collections.macros {
                     if macros.enabled {
                         // Get uuid also for later use so we don't have to reverse lookup.
-                        let mut uuid = String::default();
+                        let mut unique_id: String;
 
                         loop {
-                            uuid = Uuid::new_v4().to_string();
+                            unique_id = Uuid::new_v4().to_string();
 
-                            if macro_lookup.id_map.get(&uuid).is_none() {
-                                macro_lookup.id_map.insert(uuid.clone(), macros.clone());
+                            if macro_lookup.id_map.get(&unique_id).is_none() {
+                                macro_lookup
+                                    .id_map
+                                    .insert(unique_id.clone(), macros.clone());
                                 break;
                             }
                         }
@@ -256,19 +258,29 @@ impl MacroData {
                                                 ));
                                             }
                                         };
+                                        trace!(
+                                            "Generated UUID {} and inserting macro: {:?}",
+                                            unique_id,
+                                            macros
+                                        );
 
                                         macro_lookup
                                             .triggers
                                             .entry(first_data)
                                             .or_default()
-                                            .push(uuid.clone())
+                                            .push(unique_id.clone())
                                     }
                                     _ => data[..data.len() - 1].iter().for_each(|x| {
+                                        trace!(
+                                            "Generated UUID {} and inserting macro: {:?}",
+                                            unique_id,
+                                            macros
+                                        );
                                         macro_lookup
                                             .triggers
                                             .entry(*x)
                                             .or_default()
-                                            .push(uuid.clone());
+                                            .push(unique_id.clone());
                                     }),
                                 }
                             }
@@ -276,10 +288,10 @@ impl MacroData {
                                 let data: u32 = data.into();
 
                                 match macro_lookup.triggers.get_mut(&data) {
-                                    Some(value) => value.push(uuid.clone()),
+                                    Some(value) => value.push(unique_id.clone()),
                                     None => macro_lookup
                                         .triggers
-                                        .insert_nocheck(data, vec![uuid.clone()]),
+                                        .insert_nocheck(data, vec![unique_id.clone()]),
                                 }
                             }
                         }
@@ -378,21 +390,9 @@ fn macro_executor_receiver(
 
                     if macro_queue.iter().any(|x| x.name == macro_to_execute.name) {
                         macro_queue.retain(|x| x.name != macro_to_execute.name);
+                    } else {
+                        macro_queue.push(macro_to_execute.clone())
                     }
-                    // let new_macro_queue =
-
-                    // let mut remove_index: Vec<usize> = vec![];
-                    // for (index, macro_item) in macro_queue.into_iter().enumerate() {
-                    //     // Check if the macro type is toggle, handle it here.
-                    //     if macro_item.name == macro_to_execute.name
-                    //         && macro_item.macro_type == MacroType::Toggle
-                    //     {
-                    //         // remove_index.push(index);
-                    //         macro_queue.remove(index);
-                    //     } else {
-                    //         macro_queue.push(macro_to_execute.clone())
-                    //     }
-                    // }
                 }
                 None => {
                     error!("Cannot find macro to execute! ID: {}", macro_id);
@@ -403,7 +403,7 @@ fn macro_executor_receiver(
 
         // Execute the queue
         if !macro_queue.is_empty() {
-            for (index, macro_item) in macro_queue.clone().iter().enumerate() {
+            for (_, macro_item) in macro_queue.clone().iter().enumerate() {
                 let channel_clone = schan_keypress_execute.clone();
                 let macro_clone = macro_item.clone();
 
@@ -415,7 +415,7 @@ fn macro_executor_receiver(
                 }
 
                 task::spawn(async move {
-                    for _ in 0..repeat_x {
+                    for _ in 0..=repeat_x {
                         let macro_clone_inner = macro_clone.clone();
                         let channel_clone_inner = channel_clone.clone();
                         execute_macro(macro_clone_inner, channel_clone_inner).await;
@@ -444,29 +444,37 @@ fn macro_executor_receiver(
 /// `channel_sender` - a copy of the channel sender to use later when executing various macros.
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
-    trigger_overview: Vec<Macro>,
+    check_macros: Vec<String>,
+    macro_data: Arc<RwLock<MacroLookup>>,
     macro_channel_sender: UnboundedSender<String>,
 ) -> bool {
-    let trigger_overview_print = trigger_overview.clone();
+    let trigger_overview_print = check_macros.clone();
+    let macro_data_id_map_cloned = macro_data.blocking_read().id_map.clone();
 
     trace!("Got data: {:?}", trigger_overview_print);
     trace!("Got keys: {:?}", pressed_events);
-
     let mut output = false;
-    for macros in &trigger_overview {
+
+    for (macro_id, macros) in check_macros
+        .iter()
+        .map(|id| (id.clone(), macro_data_id_map_cloned.get(id).unwrap()))
+    {
+        // Must be cloned here otherwise Rust will cry
+
+        let macro_sender = macro_channel_sender.clone();
         match &macros.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
                 match data.len() {
                     1 => {
                         if pressed_events == *data {
-                            debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
+                            debug!("MATCHED MACRO single key: {:#?}", pressed_events);
 
-                            // let channel_clone_execute = keypress_channel_sender.clone();
-                            let macro_clone_execute = macros.clone();
+                            let id_cloned = macro_id.clone();
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
+                                macro_sender.send(id_cloned).unwrap();
                                 // execute_macro(macro_clone_execute, channel_clone_execute).await;
                             });
                             output = true;
@@ -479,18 +487,13 @@ fn check_macro_execution_efficiently(
                             .all(|x| pressed_events[..(pressed_events.len() - 1)].contains(x))
                             && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
-                            debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
-
-                            // let channel_clone_execute = keypress_channel_sender.clone();
-                            let macro_clone_execute = macros.clone();
-
-                            // This releases any trigger keys that have been held to make macros more reliable when used with modifier hotkeys.
-                            // Only required for multi-key triggers.
-                            plugin::util::lift_keys(data, &channel_clone_execute)
-                                .unwrap_or_else(|err| error!("Error lifting keys: {}", err));
+                            debug!("MATCHED MACRO multi key: {:#?}", pressed_events);
+                            let id_cloned = macro_id.clone();
+                            // Disabled until a better fix is done
+                            // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
-                                // execute_macro(macro_clone_execute, channel_clone_execute).await;
+                                macro_sender.send(id_cloned).unwrap();
                             });
                             output = true;
                         }
@@ -507,11 +510,10 @@ fn check_macro_execution_efficiently(
                 );
 
                 if event_to_check == pressed_events {
-                    // let channel_clone = keypress_channel_sender.clone();
-                    let macro_clone = macros.clone();
+                    let id_cloned = macro_id.clone();
 
                     task::spawn(async move {
-                        // execute_macro(macro_clone, channel_clone).await;
+                        macro_sender.send(id_cloned).unwrap();
                     });
                     output = true;
                 }
@@ -573,7 +575,6 @@ impl MacroBackend {
 
         //==================================================
 
-        let inner_triggers = self.macro_lookup.clone();
         let inner_is_listening = self.is_listening.clone();
         let inner_keys_pressed = self.keys_pressed.clone();
         let inner_macro_lookup = self.macro_lookup.clone();
@@ -588,11 +589,13 @@ impl MacroBackend {
             keypress_executor_receiver(rchan_keypress_execute);
         });
 
+        let inner_macro_lookup_clone = inner_macro_lookup.clone();
+        //let inner_macro_lookup_clone = inner_macro_lookup.clone();
         // Create the macro executor
         thread::spawn(move || {
             macro_executor_receiver(
                 rchan_macro_execute,
-                inner_macro_lookup,
+                inner_macro_lookup_clone,
                 schan_keypress_execute,
             );
         });
@@ -605,12 +608,11 @@ impl MacroBackend {
                     match event.event_type {
                         rdev::EventType::KeyPress(key) => {
                             debug!("Key Pressed RAW: {:?}", key);
-                            let key_to_push = key;
 
-                            let pressed_keys_copy_converted: Vec<u32> = {
+                            let keys_pressed_internal_hid: Vec<u32> = {
                                 // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
 
-                                inner_keys_pressed.blocking_write().push(key_to_push);
+                                inner_keys_pressed.blocking_write().push(key);
 
                                 *inner_keys_pressed.blocking_write() = inner_keys_pressed
                                     .blocking_read()
@@ -628,11 +630,11 @@ impl MacroBackend {
 
                             debug!(
                                 "Pressed Keys CONVERTED TO HID:  {:?}",
-                                pressed_keys_copy_converted
+                                keys_pressed_internal_hid
                             );
                             debug!(
                                 "Pressed Keys CONVERTED TO RDEV: {:?}",
-                                pressed_keys_copy_converted
+                                keys_pressed_internal_hid
                                     .par_iter()
                                     .map(|x| *SCANCODE_TO_RDEV
                                         .get(x)
@@ -640,39 +642,32 @@ impl MacroBackend {
                                     .collect::<Vec<rdev::Key>>()
                             );
 
-                            let first_key: u32 = pressed_keys_copy_converted
+                            let first_key_pressed: u32 = keys_pressed_internal_hid
                                 .first()
                                 .copied()
                                 .unwrap_or_default();
 
-                            let trigger_list = inner_triggers.blocking_read().triggers.clone();
-
-                            let check_these_macros: Vec<Macro> = trigger_list
-                                .get(&first_key)
-                                .map(|data_found| {
-                                    data_found
-                                        .iter()
-                                        .map(|id| {
-                                            inner_triggers
-                                                .blocking_read()
-                                                .id_map
-                                                .get(id)
-                                                .unwrap()
-                                                .clone()
-                                        })
-                                        .collect()
-                                })
-                                .unwrap_or_else(Vec::new);
+                            let check_these_macros: Vec<String> = inner_macro_lookup
+                                .blocking_read()
+                                .triggers
+                                .get(&first_key_pressed)
+                                .cloned()
+                                .unwrap_or_default()
+                                .to_vec();
 
                             // ? up the pressed keys here right away?
 
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
                                     let macro_channel_clone = schan_macro_execute.clone();
+                                    let macro_data_list_clone = inner_macro_lookup.clone();
+                                    // let macro_id_list_clone =
+                                    //     inner_macro_lookup.blocking_read().triggers.clone();
 
                                     check_macro_execution_efficiently(
-                                        pressed_keys_copy_converted,
+                                        keys_pressed_internal_hid,
                                         check_these_macros,
+                                        macro_data_list_clone,
                                         macro_channel_clone,
                                     )
                                 } else {
@@ -701,30 +696,22 @@ impl MacroBackend {
                             let converted_button_to_u32: u32 =
                                 BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                            let trigger_list = inner_triggers.blocking_read().triggers.clone();
-
-                            let check_these_macros: Vec<Macro> = trigger_list
-                                .get(&converted_button_to_u32)
-                                .map(|data_found| {
-                                    data_found
-                                        .iter()
-                                        .map(|id| {
-                                            inner_triggers
-                                                .blocking_read()
-                                                .id_map
-                                                .get(id)
-                                                .unwrap()
-                                                .clone()
-                                        })
-                                        .collect()
-                                })
-                                .unwrap_or_else(Vec::new);
-
+                            // Clone for the checking function
                             let macro_channel_clone = schan_macro_execute.clone();
+                            let macro_data_list_clone = inner_macro_lookup.clone();
+
+                            let check_these_macros: Vec<String> = inner_macro_lookup
+                                .blocking_read()
+                                .triggers
+                                .get(&converted_button_to_u32)
+                                .cloned()
+                                .unwrap_or_default()
+                                .to_vec();
 
                             let should_grab = check_macro_execution_efficiently(
                                 vec![converted_button_to_u32],
                                 check_these_macros,
+                                macro_data_list_clone,
                                 macro_channel_clone,
                             );
 
