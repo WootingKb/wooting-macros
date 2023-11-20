@@ -5440,6 +5440,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e395fcf16a7a3d8127ec99782007af141946b4795001f876d54fb0d55978560"
 dependencies = [
  "getrandom 0.2.11",
+ "rand 0.8.5",
+ "uuid-macro-internal",
+]
+
+[[package]]
+name = "uuid-macro-internal"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57fccbdae4ed44e1ea6c1aae832af19cd3487ee186953f721b46d1c441176050"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.39",
 ]
 
 [[package]]
@@ -6301,6 +6314,7 @@ dependencies = [
  "tokio",
  "tokio-serde",
  "url",
+ "uuid",
 ]
 
 [[package]]
