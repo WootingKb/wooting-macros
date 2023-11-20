@@ -214,6 +214,26 @@ impl Default for MacroData {
 }
 
 impl MacroData {
+    pub fn link_macro_to_id(&self) -> MacroIdList {
+        let mut macro_id_list: MacroIdList = HashMap::default();
+        let macro_list: &Collections = &self.data;
+
+        for collection in macro_list {
+            for macro_item in &collection.macros {
+                // This ensures only unique UUID gets inserted (conflict check)
+                loop {
+                    let uuid = Uuid::new_v4().to_string();
+
+                    if macro_id_list.get(&uuid).is_none() {
+                        macro_id_list.insert(uuid, macro_item.clone());
+                        break;
+                    }
+                }
+            }
+        }
+
+        macro_id_list
+    }
     /// Extracts the first trigger data from the macros.
     pub fn extract_triggers(&self) -> Result<MacroTriggerLookup> {
         let mut output_hashmap = MacroTriggerLookup::new();
@@ -324,12 +344,12 @@ async fn execute_macro(
 
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
-fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
+fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
         let received_event = match &rchan_execute.blocking_recv() {
             Some(event) => *event,
             None => {
-                error!("Failed to receive an event!");
+                trace!("Failed to receive an event!");
                 continue;
             }
         };
@@ -343,6 +363,20 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
         // Windows execution delay can be set lower.
         #[cfg(target_os = "windows")]
         thread::sleep(time::Duration::from_millis(1));
+    }
+}
+
+fn macro_executor_receiver(mut rchan_execute: UnboundedReceiver<String>) {
+    loop {
+        let received_event = match &rchan_execute.blocking_recv() {
+            Some(event) => event.clone(),
+            None => {
+                trace!("Failed to receive an event!");
+                continue;
+            }
+        };
+
+        // TODO: Do this part
     }
 }
 
@@ -446,26 +480,6 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
-    pub fn link_macro_to_id(&self) -> MacroIdList {
-        let mut macro_id_list: MacroIdList = HashMap::default();
-        let macro_list: &Collections = &self.data.blocking_read().data;
-
-        for collection in macro_list {
-            for macro_item in &collection.macros {
-                loop {
-                    let uuid = Uuid::new_v4().to_string();
-
-                    if macro_id_list.get(&uuid).is_none() {
-                        macro_id_list.insert(uuid, macro_item.clone());
-                        break;
-                    }
-                }
-            }
-        }
-
-        macro_id_list
-    }
-
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() -> Result<()> {
         #[cfg(not(debug_assertions))]
@@ -492,6 +506,13 @@ impl MacroBackend {
     pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
         macros.write_to_file()?;
         *self.triggers.write().await = macros.extract_triggers()?;
+        *self.macro_id_list.write().await = macros.link_macro_to_id();
+
+        debug!(
+            "Listing macros ID list:\n{:#?}",
+            *self.macro_id_list.read().await
+        );
+
         *self.data.write().await = macros;
         Ok(())
     }
@@ -515,11 +536,18 @@ impl MacroBackend {
         let inner_keys_pressed = self.keys_pressed.clone();
 
         // Spawn the channels
-        let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
+        let (schan_keypress_execute, rchan_keypress_execute) =
+            tokio::sync::mpsc::unbounded_channel();
+        let (schan_macro_execute, rchan_macro_execute) = tokio::sync::mpsc::unbounded_channel();
 
-        // Create the executor
+        // Create the keypress executor
         thread::spawn(move || {
-            keypress_executor_sender(rchan_execute);
+            keypress_executor_receiver(rchan_keypress_execute);
+        });
+
+        // Create the macro executor
+        thread::spawn(move || {
+            macro_executor_receiver(rchan_macro_execute);
         });
 
         let _grabber = task::spawn_blocking(move || {
@@ -582,7 +610,7 @@ impl MacroBackend {
 
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
-                                    let channel_copy_send = schan_execute.clone();
+                                    let channel_copy_send = schan_keypress_execute.clone();
                                     let inner_keys_pressed_copy = inner_keys_pressed.clone();
                                     check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
@@ -626,7 +654,7 @@ impl MacroBackend {
                                     Some(data_found) => data_found.to_vec(),
                                 };
 
-                            let channel_clone = schan_execute.clone();
+                            let channel_clone = schan_keypress_execute.clone();
 
                             let should_grab = check_macro_execution_efficiently(
                                 vec![converted_button_to_u32],
@@ -667,13 +695,16 @@ impl Default for MacroBackend {
         let triggers = macro_data
             .extract_triggers()
             .expect("error extracting triggers");
+
+        let macro_id_list = macro_data.link_macro_to_id();
+
         MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
             config: Arc::new(RwLock::from(
                 ApplicationConfig::read_data().expect("error reading config"),
             )),
             triggers: Arc::new(RwLock::from(triggers)),
-            macro_id_list: Arc::new(RwLock::from(HashMap::default())),
+            macro_id_list: Arc::new(RwLock::from(macro_id_list)),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(vec![])),
         }
