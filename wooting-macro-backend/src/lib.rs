@@ -177,8 +177,15 @@ impl Macro {
 /// Collections are groups of macros.
 type Collections = Vec<Collection>;
 
+#[derive(Debug, Default)]
 /// Hashmap to check the first trigger key of each macro.
-type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
+struct MacroLookup {
+    triggers: MacroTrigger,
+    id_map: MacroIdList,
+}
+
+/// Macro trigger list to lookup macro IDs via their trigger.
+type MacroTrigger = HashMap<u32, Vec<String>>;
 
 /// Macro ID list to lookup macros uniquely and fast.
 pub type MacroIdList = HashMap<String, Macro>;
@@ -188,8 +195,7 @@ pub type MacroIdList = HashMap<String, Macro>;
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
-    pub triggers: Arc<RwLock<MacroTriggerLookup>>,
-    pub macro_id_list: Arc<RwLock<MacroIdList>>,
+    pub triggers: Arc<RwLock<MacroLookup>>,
     pub is_listening: Arc<AtomicBool>,
     pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 }
@@ -214,34 +220,28 @@ impl Default for MacroData {
 }
 
 impl MacroData {
-    pub fn link_macro_to_id(&self) -> MacroIdList {
-        let mut macro_id_list: MacroIdList = HashMap::default();
+    /// Extracts the first trigger data from the macros, and pairs UUIDs to macros
+    pub fn new_lookup(&self) -> Result<MacroLookup> {
+        let mut macro_lookup = MacroLookup::default();
+
         let macro_list: &Collections = &self.data;
-
-        for collection in macro_list {
-            for macro_item in &collection.macros {
-                // This ensures only unique UUID gets inserted (conflict check)
-                loop {
-                    let uuid = Uuid::new_v4().to_string();
-
-                    if macro_id_list.get(&uuid).is_none() {
-                        macro_id_list.insert(uuid, macro_item.clone());
-                        break;
-                    }
-                }
-            }
-        }
-
-        macro_id_list
-    }
-    /// Extracts the first trigger data from the macros.
-    pub fn extract_triggers(&self) -> Result<MacroTriggerLookup> {
-        let mut output_hashmap = MacroTriggerLookup::new();
 
         for collections in &self.data {
             if collections.enabled {
                 for macros in &collections.macros {
                     if macros.enabled {
+                        // Get uuid also for later use so we don't have to reverse lookup.
+                        let mut uuid = String::default();
+
+                        loop {
+                            uuid = Uuid::new_v4().to_string();
+
+                            if macro_lookup.id_map.get(&uuid).is_none() {
+                                macro_lookup.id_map.insert(uuid, macros.clone());
+                                break;
+                            }
+                        }
+
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
@@ -258,24 +258,32 @@ impl MacroData {
                                                 ));
                                             }
                                         };
-                                        output_hashmap
+
+                                        let matching_macros = {};
+
+                                        macro_lookup
+                                            .triggers
                                             .entry(first_data)
                                             .or_default()
-                                            .push(macros.clone())
+                                            .push(uuid.clone())
                                     }
                                     _ => data[..data.len() - 1].iter().for_each(|x| {
-                                        output_hashmap.entry(*x).or_default().push(macros.clone());
+                                        macro_lookup
+                                            .triggers
+                                            .entry(*x)
+                                            .or_default()
+                                            .push(uuid.clone());
                                     }),
                                 }
                             }
                             TriggerEventType::MouseEvent { data } => {
                                 let data: u32 = data.into();
 
-                                match output_hashmap.get_mut(&data) {
-                                    Some(value) => value.push(macros.clone()),
-                                    None => {
-                                        output_hashmap.insert_nocheck(data, vec![macros.clone()])
-                                    }
+                                match macro_lookup.triggers.get_mut(&data) {
+                                    Some(value) => value.push(uuid.clone()),
+                                    None => macro_lookup
+                                        .triggers
+                                        .insert_nocheck(data, vec![uuid.clone()]),
                                 }
                             }
                         }
@@ -284,7 +292,7 @@ impl MacroData {
             }
         }
 
-        Ok(output_hashmap)
+        Ok(macro_lookup)
     }
 }
 
@@ -517,8 +525,7 @@ impl MacroBackend {
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
         macros.write_to_file()?;
-        *self.triggers.write().await = macros.extract_triggers()?;
-        *self.macro_id_list.write().await = macros.link_macro_to_id();
+        *self.triggers.write().await = macros.new_lookup()?;
 
         debug!(
             "Listing macros ID list:\n{:#?}",
@@ -623,7 +630,6 @@ impl MacroBackend {
                                 .unwrap_or_default()
                                 .to_vec();
 
-
                             // ? up the pressed keys here right away?
 
                             let should_grab = {
@@ -712,10 +718,8 @@ impl Default for MacroBackend {
             MacroData::read_data().unwrap_or_else(|err| panic!("Cannot get macro data! {}", err));
 
         let triggers = macro_data
-            .extract_triggers()
-            .expect("error extracting triggers");
-
-        let macro_id_list = macro_data.link_macro_to_id();
+            .new_lookup()
+            .expect("error making a new Macro Lookup map");
 
         MacroBackend {
             data: Arc::new(RwLock::from(macro_data)),
@@ -723,7 +727,6 @@ impl Default for MacroBackend {
                 ApplicationConfig::read_data().expect("error reading config"),
             )),
             triggers: Arc::new(RwLock::from(triggers)),
-            macro_id_list: Arc::new(RwLock::from(macro_id_list)),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(vec![])),
         }
