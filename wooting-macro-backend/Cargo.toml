@@ -31,6 +31,7 @@ log = "0.4"
 env_logger = "0.10"
 rayon = "1.8"
 url = "2.4.1"
+uuid = { version = "1.6", features = ["fast-rng", "v4", "macro-diagnostics"] }
 
 [profile.release]
 lto = true

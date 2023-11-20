@@ -5154,11 +5154,24 @@ checksum = "5190c9442dcdaf0ddd50f37420417d219ae5261bbf5db120d0f9bab996c9cba1"
 
 [[package]]
 name = "uuid"
-version = "1.5.0"
+version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88ad59a7560b41a70d191093a945f0b87bc1deeda46fb237479708a1d6b6cdfc"
+checksum = "c58fe91d841bc04822c9801002db4ea904b9e4b8e6bbad25127b46eff8dc516b"
 dependencies = [
  "getrandom 0.2.11",
+ "rand 0.8.5",
+ "uuid-macro-internal",
+]
+
+[[package]]
+name = "uuid-macro-internal"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57fccbdae4ed44e1ea6c1aae832af19cd3487ee186953f721b46d1c441176050"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.39",
 ]
 
 [[package]]
@@ -5930,6 +5943,7 @@ dependencies = [
  "tokio",
  "tokio-serde",
  "url",
+ "uuid",
 ]
 
 [[package]]
