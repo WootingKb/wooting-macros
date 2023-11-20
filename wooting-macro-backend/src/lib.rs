@@ -365,12 +365,24 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
     }
 }
 
-fn macro_executor_receiver(mut rchan_execute: UnboundedReceiver<String>) {
+fn macro_executor_receiver(
+    mut rchan_execute: UnboundedReceiver<String>,
+    schan_keypress_execute: UnboundedSender<rdev::EventType>,
+    macro_id_list: Arc<RwLock<MacroIdList>>,
+) {
     loop {
-        let received_event = match &rchan_execute.blocking_recv() {
+        let macro_id = match &rchan_execute.blocking_recv() {
             Some(event) => event.clone(),
             None => {
                 trace!("Failed to receive an event!");
+                continue;
+            }
+        };
+
+        let macro_to_execute = match macro_id_list.blocking_read().get(&macro_id) {
+            Some(&macro_value) => &macro_value,
+            None => {
+                error!("Cannot find macro with ID: {}", macro_id);
                 continue;
             }
         };
@@ -535,6 +547,7 @@ impl MacroBackend {
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
         let inner_keys_pressed = self.keys_pressed.clone();
+        let inner_macro_id_list = self.macro_id_list.clone();
 
         // Spawn the channels
         let (schan_keypress_execute, rchan_keypress_execute) =
@@ -548,7 +561,11 @@ impl MacroBackend {
 
         // Create the macro executor
         thread::spawn(move || {
-            macro_executor_receiver(rchan_macro_execute);
+            macro_executor_receiver(
+                rchan_macro_execute,
+                schan_keypress_execute,
+                inner_macro_id_list,
+            );
         });
 
         let _grabber = task::spawn_blocking(move || {
@@ -601,17 +618,19 @@ impl MacroBackend {
 
                             let trigger_list = inner_triggers.blocking_read().clone();
 
-                            let check_these_macros = trigger_list
+                            let macro_list_to_check = trigger_list
                                 .get(&first_key)
                                 .cloned()
                                 .unwrap_or_default()
                                 .to_vec();
+
 
                             // ? up the pressed keys here right away?
 
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
                                     let channel_copy_send = schan_keypress_execute.clone();
+                                    let macro_id_copy_send = schan_macro_execute.clone();
                                     let inner_keys_pressed_copy = inner_keys_pressed.clone();
                                     check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
