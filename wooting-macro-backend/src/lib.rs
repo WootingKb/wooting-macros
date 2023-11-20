@@ -44,7 +44,7 @@ use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
 ///
 /// ! **UNIMPLEMENTED** - Only the `Single` macro type is implemented for now. Feel free to contribute ideas.
@@ -193,9 +193,10 @@ pub type MacroIdList = HashMap<String, Macro>;
 /// State of the application in RAM (RWlock).
 #[derive(Debug)]
 pub struct MacroBackend {
-    pub data: Arc<RwLock<MacroData>>,
+    pub macro_data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
-    pub triggers: Arc<RwLock<MacroLookup>>,
+    pub macro_lookup: Arc<RwLock<MacroLookup>>,
+    // pub macro_execute_queue: Arc<RwLock<Vec<String>>>,
     pub is_listening: Arc<AtomicBool>,
     pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 }
@@ -224,8 +225,6 @@ impl MacroData {
     pub fn new_lookup(&self) -> Result<MacroLookup> {
         let mut macro_lookup = MacroLookup::default();
 
-        let macro_list: &Collections = &self.data;
-
         for collections in &self.data {
             if collections.enabled {
                 for macros in &collections.macros {
@@ -237,7 +236,7 @@ impl MacroData {
                             uuid = Uuid::new_v4().to_string();
 
                             if macro_lookup.id_map.get(&uuid).is_none() {
-                                macro_lookup.id_map.insert(uuid, macros.clone());
+                                macro_lookup.id_map.insert(uuid.clone(), macros.clone());
                                 break;
                             }
                         }
@@ -258,8 +257,6 @@ impl MacroData {
                                                 ));
                                             }
                                         };
-
-                                        let matching_macros = {};
 
                                         macro_lookup
                                             .triggers
@@ -308,11 +305,7 @@ pub struct Collection {
 /// Executes a given macro (according to its type).
 ///
 /// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
-async fn execute_macro(
-    mut macros: Macro,
-    channel: UnboundedSender<rdev::EventType>,
-    keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
-) {
+async fn execute_macro(mut macros: Macro, channel: UnboundedSender<rdev::EventType>) {
     match macros.macro_type {
         MacroType::Single => {
             info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
@@ -376,25 +369,72 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
 
 fn macro_executor_receiver(
     mut rchan_execute: UnboundedReceiver<String>,
+    macro_id_list: Arc<RwLock<MacroLookup>>,
     schan_keypress_execute: UnboundedSender<rdev::EventType>,
-    macro_id_list: Arc<RwLock<MacroIdList>>,
 ) {
-    loop {
-        let macro_id = match &rchan_execute.blocking_recv() {
-            Some(event) => event.clone(),
-            None => {
-                trace!("Failed to receive an event!");
-                continue;
-            }
-        };
+    let mut macro_queue: Vec<Macro> = Vec::default();
 
-        let macro_to_execute = match macro_id_list.blocking_read().get(&macro_id) {
-            Some(&macro_value) => &macro_value,
-            None => {
-                error!("Cannot find macro with ID: {}", macro_id);
-                continue;
+    loop {
+        if let Ok(macro_id) = &rchan_execute.try_recv() {
+            match macro_id_list.blocking_read().id_map.get(macro_id) {
+                Some(macro_to_execute) => {
+                    // If a macro is already there, remove it. This should remove a togggle macro correctly.
+                    // Single and repeat types should be removed after execution.
+
+                    if macro_queue.iter().any(|x| x.name == macro_to_execute.name) {
+                        macro_queue.retain(|x| x.name != macro_to_execute.name);
+                    }
+                    // let new_macro_queue =
+
+                    // let mut remove_index: Vec<usize> = vec![];
+                    // for (index, macro_item) in macro_queue.into_iter().enumerate() {
+                    //     // Check if the macro type is toggle, handle it here.
+                    //     if macro_item.name == macro_to_execute.name
+                    //         && macro_item.macro_type == MacroType::Toggle
+                    //     {
+                    //         // remove_index.push(index);
+                    //         macro_queue.remove(index);
+                    //     } else {
+                    //         macro_queue.push(macro_to_execute.clone())
+                    //     }
+                    // }
+                }
+                None => {
+                    error!("Cannot find macro to execute! ID: {}", macro_id);
+                    continue;
+                }
+            };
+        }
+
+        // Execute the queue
+        if !macro_queue.is_empty() {
+            for (index, macro_item) in macro_queue.clone().iter().enumerate() {
+                let channel_clone = schan_keypress_execute.clone();
+                let macro_clone = macro_item.clone();
+
+                // TODO: This is currently unimplemented
+                let mut repeat_x = 1;
+
+                if macro_item.macro_type == MacroType::RepeatX {
+                    repeat_x = 3;
+                }
+
+                task::spawn(async move {
+                    for _ in 0..repeat_x {
+                        let macro_clone_inner = macro_clone.clone();
+                        let channel_clone_inner = channel_clone.clone();
+                        execute_macro(macro_clone_inner, channel_clone_inner).await;
+                    }
+                });
+
+                // If the macro is not a toggle macro, remove it from the queue.
+                if macro_item.macro_type == MacroType::Single
+                    || macro_item.macro_type == MacroType::RepeatX
+                {
+                    macro_queue.retain(|x| x.name != macro_item.name);
+                }
             }
-        };
+        }
 
         // TODO: Do this part
     }
@@ -410,8 +450,7 @@ fn macro_executor_receiver(
 fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
-    channel_sender: UnboundedSender<rdev::EventType>,
-    inner_pressed: Arc<RwLock<Vec<rdev::Key>>>,
+    macro_channel_sender: UnboundedSender<String>,
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
@@ -427,19 +466,13 @@ fn check_macro_execution_efficiently(
                         if pressed_events == *data {
                             debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
 
-                            let channel_clone_execute = channel_sender.clone();
+                            // let channel_clone_execute = keypress_channel_sender.clone();
                             let macro_clone_execute = macros.clone();
-                            let inner_clone_pressed = inner_pressed.clone();
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
-                                execute_macro(
-                                    macro_clone_execute,
-                                    channel_clone_execute,
-                                    inner_clone_pressed,
-                                )
-                                .await;
+                                // execute_macro(macro_clone_execute, channel_clone_execute).await;
                             });
                             output = true;
                         }
@@ -453,20 +486,14 @@ fn check_macro_execution_efficiently(
                         {
                             debug!("MATCHED MACRO multikey: {:#?}", pressed_events);
 
-                            let channel_clone_execute = channel_sender.clone();
+                            // let channel_clone_execute = keypress_channel_sender.clone();
                             let macro_clone_execute = macros.clone();
-                            let inner_clone_pressed = inner_pressed.clone();
 
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
-                                execute_macro(
-                                    macro_clone_execute,
-                                    channel_clone_execute,
-                                    inner_clone_pressed,
-                                )
-                                .await;
+                                // execute_macro(macro_clone_execute, channel_clone_execute).await;
                             });
                             output = true;
                         }
@@ -483,12 +510,11 @@ fn check_macro_execution_efficiently(
                 );
 
                 if event_to_check == pressed_events {
-                    let channel_clone = channel_sender.clone();
+                    // let channel_clone = keypress_channel_sender.clone();
                     let macro_clone = macros.clone();
 
                     task::spawn(async move {
-                        execute_macro(macro_clone, channel_clone, Arc::new(RwLock::from(vec![])))
-                            .await;
+                        // execute_macro(macro_clone, channel_clone).await;
                     });
                     output = true;
                 }
@@ -525,14 +551,14 @@ impl MacroBackend {
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
         macros.write_to_file()?;
-        *self.triggers.write().await = macros.new_lookup()?;
+        *self.macro_lookup.write().await = macros.new_lookup()?;
 
         debug!(
             "Listing macros ID list:\n{:#?}",
-            *self.macro_id_list.read().await
+            self.macro_lookup.read().await.id_map
         );
 
-        *self.data.write().await = macros;
+        *self.macro_data.write().await = macros;
         Ok(())
     }
 
@@ -550,10 +576,10 @@ impl MacroBackend {
 
         //==================================================
 
-        let inner_triggers = self.triggers.clone();
+        let inner_triggers = self.macro_lookup.clone();
         let inner_is_listening = self.is_listening.clone();
         let inner_keys_pressed = self.keys_pressed.clone();
-        let inner_macro_id_list = self.macro_id_list.clone();
+        let inner_macro_lookup = self.macro_lookup.clone();
 
         // Spawn the channels
         let (schan_keypress_execute, rchan_keypress_execute) =
@@ -569,8 +595,8 @@ impl MacroBackend {
         thread::spawn(move || {
             macro_executor_receiver(
                 rchan_macro_execute,
+                inner_macro_lookup,
                 schan_keypress_execute,
-                inner_macro_id_list,
             );
         });
 
@@ -622,26 +648,35 @@ impl MacroBackend {
                                 .copied()
                                 .unwrap_or_default();
 
-                            let trigger_list = inner_triggers.blocking_read().clone();
+                            let trigger_list = inner_triggers.blocking_read().triggers.clone();
 
-                            let macro_list_to_check = trigger_list
+                            let check_these_macros: Vec<Macro> = trigger_list
                                 .get(&first_key)
-                                .cloned()
-                                .unwrap_or_default()
-                                .to_vec();
+                                .map(|data_found| {
+                                    data_found
+                                        .iter()
+                                        .map(|id| {
+                                            inner_triggers
+                                                .blocking_read()
+                                                .id_map
+                                                .get(id)
+                                                .unwrap()
+                                                .clone()
+                                        })
+                                        .collect()
+                                })
+                                .unwrap_or_else(Vec::new);
 
                             // ? up the pressed keys here right away?
 
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
-                                    let channel_copy_send = schan_keypress_execute.clone();
-                                    let macro_id_copy_send = schan_macro_execute.clone();
-                                    let inner_keys_pressed_copy = inner_keys_pressed.clone();
+                                    let macro_channel_clone = schan_macro_execute.clone();
+
                                     check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
-                                        channel_copy_send,
-                                        inner_keys_pressed_copy,
+                                        macro_channel_clone,
                                     )
                                 } else {
                                     false
@@ -669,23 +704,31 @@ impl MacroBackend {
                             let converted_button_to_u32: u32 =
                                 BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
 
-                            let trigger_list = inner_triggers.blocking_read().clone();
+                            let trigger_list = inner_triggers.blocking_read().triggers.clone();
 
-                            let check_these_macros =
-                                match trigger_list.get(&converted_button_to_u32) {
-                                    None => {
-                                        vec![]
-                                    }
-                                    Some(data_found) => data_found.to_vec(),
-                                };
+                            let check_these_macros: Vec<Macro> = trigger_list
+                                .get(&converted_button_to_u32)
+                                .map(|data_found| {
+                                    data_found
+                                        .iter()
+                                        .map(|id| {
+                                            inner_triggers
+                                                .blocking_read()
+                                                .id_map
+                                                .get(id)
+                                                .unwrap()
+                                                .clone()
+                                        })
+                                        .collect()
+                                })
+                                .unwrap_or_else(Vec::new);
 
-                            let channel_clone = schan_keypress_execute.clone();
+                            let macro_channel_clone = schan_macro_execute.clone();
 
                             let should_grab = check_macro_execution_efficiently(
                                 vec![converted_button_to_u32],
                                 check_these_macros,
-                                channel_clone,
-                                Arc::new(RwLock::from(vec![])),
+                                macro_channel_clone,
                             );
 
                             if should_grab {
@@ -717,16 +760,17 @@ impl Default for MacroBackend {
         let macro_data =
             MacroData::read_data().unwrap_or_else(|err| panic!("Cannot get macro data! {}", err));
 
-        let triggers = macro_data
+        let lookup = macro_data
             .new_lookup()
             .expect("error making a new Macro Lookup map");
 
         MacroBackend {
-            data: Arc::new(RwLock::from(macro_data)),
+            macro_data: Arc::new(RwLock::from(macro_data)),
             config: Arc::new(RwLock::from(
                 ApplicationConfig::read_data().expect("error reading config"),
             )),
-            triggers: Arc::new(RwLock::from(triggers)),
+            macro_lookup: Arc::new(RwLock::from(lookup)),
+            // macro_execute_queue: Arc::new(RwLock::new(vec![])),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(vec![])),
         }
