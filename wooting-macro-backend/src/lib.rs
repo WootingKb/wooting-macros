@@ -402,7 +402,7 @@ async fn macro_executor_receiver(
             };
         }
 
-        warn!("Macro queue currently: {:#?}", macro_queue);
+        // warn!("Macro queue currently: {:#?}", macro_queue);
 
         // Execute the queue
         if !macro_queue.is_empty() {
@@ -417,21 +417,25 @@ async fn macro_executor_receiver(
                     repeat_x = 3;
                 }
 
-                task::spawn(async move {
-                    for _ in 0..repeat_x {
-                        let macro_clone_inner = macro_clone.clone();
-                        let channel_clone_inner = channel_clone.clone();
+                // task::spawn(async move {
+                for _ in 0..repeat_x {
+                    let macro_clone_inner = macro_clone.clone();
+                    let channel_clone_inner = channel_clone.clone();
 
-                        info!("Executing macro {}", macro_clone_inner.name);
+                    info!("Executing macro {}", macro_clone_inner.name);
 
+                    task::spawn(async move {
                         macro_clone_inner
                             .execute(channel_clone_inner)
                             .await
                             .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+                    })
+                    .await
+                    .unwrap();
 
-                        // execute_macro(macro_clone_inner, channel_clone_inner).await;
-                    }
-                });
+                    // execute_macro(macro_clone_inner, channel_clone_inner).await;
+                }
+                // }).await.expect("TODO: panic message");
 
                 // If the macro is not a toggle macro, remove it from the queue.
                 if macro_item.macro_type == MacroType::Single
@@ -441,8 +445,6 @@ async fn macro_executor_receiver(
                 }
             }
         }
-
-        tokio::time::sleep(time::Duration::from_millis(20)).await;
 
         // thread::sleep(time::Duration::from_millis(10));
     }
