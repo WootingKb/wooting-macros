@@ -314,46 +314,44 @@ pub struct Collection {
     pub enabled: bool,
 }
 
-/// Executes a given macro (according to its type).
-///
-/// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
-async fn execute_macro(mut macros: Macro, channel: UnboundedSender<rdev::EventType>) {
-    match macros.macro_type {
-        MacroType::Single => {
-            info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
-
-            let cloned_channel = channel;
-
-            task::spawn(async move {
-                macros
-                    .execute(cloned_channel)
-                    .await
-                    .unwrap_or_else(|err| error!("Error executing macro: {}", err));
-            });
-        }
-        MacroType::Toggle => {
-            if macros.is_running == false {
-                macros.is_running = true;
-                let cloned_channel = channel;
-
-                task::spawn(async move {
-                    macros
-                        .execute(cloned_channel)
-                        .await
-                        .unwrap_or_else(|err| error!("Error executing macro: {}", err));
-                });
-            }
-        }
-
-        MacroType::OnHold => {
-            //Postponed
-            //execute_macro_onhold(&macros).await;
-        }
-        MacroType::RepeatX => {
-            //Postponed
-        }
-    }
-}
+// /// Executes a given macro (according to its type).
+// ///
+// /// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
+// async fn execute_macro(mut macros: Macro, channel: UnboundedSender<rdev::EventType>) {
+//     match macros.macro_type {
+//         MacroType::Single => {
+//             info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
+//
+//             let cloned_channel = channel;
+//
+//             task::spawn(async move {
+//                 macros
+//                     .execute(cloned_channel)
+//                     .await
+//                     .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+//             });
+//         }
+//         MacroType::Toggle => {
+//             if macros.is_running == false {
+//                 let cloned_channel = channel;
+//                 task::spawn(async move {
+//                     macros
+//                         .execute(cloned_channel)
+//                         .await
+//                         .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+//                 });
+//             }
+//         }
+//
+//         MacroType::OnHold => {
+//             //Postponed
+//             //execute_macro_onhold(&macros).await;
+//         }
+//         MacroType::RepeatX => {
+//             //Postponed
+//         }
+//     }
+// }
 
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
@@ -379,24 +377,27 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
     }
 }
 
-fn macro_executor_receiver(
+async fn macro_executor_receiver(
     mut rchan_execute: UnboundedReceiver<String>,
     macro_id_list: Arc<RwLock<MacroLookup>>,
     schan_keypress_execute: UnboundedSender<rdev::EventType>,
 ) {
+    debug!("Macro executor receiver started!");
     let mut macro_queue: Vec<Macro> = Vec::default();
 
     loop {
         if let Ok(macro_id) = &rchan_execute.try_recv() {
-            match macro_id_list.blocking_read().id_map.get(macro_id) {
+            match macro_id_list.read().await.id_map.get(macro_id) {
                 Some(macro_to_execute) => {
                     // If a macro is already there, remove it. This should remove a togggle macro correctly.
                     // Single and repeat types should be removed after execution.
 
                     if macro_queue.iter().any(|x| x.name == macro_to_execute.name) {
+                        info!("Removing existing macro from queue: {}", macro_id);
                         macro_queue.retain(|x| x.name != macro_to_execute.name);
                     } else {
-                        macro_queue.push(macro_to_execute.clone())
+                        info!("Added macro to queue: {}", macro_to_execute.name);
+                        macro_queue.push(macro_to_execute.clone());
                     }
                 }
                 None => {
@@ -405,6 +406,8 @@ fn macro_executor_receiver(
                 }
             };
         }
+
+        warn!("Macro queue currently: {:#?}", macro_queue);
 
         // Execute the queue
         if !macro_queue.is_empty() {
@@ -420,10 +423,18 @@ fn macro_executor_receiver(
                 }
 
                 task::spawn(async move {
-                    for _ in 0..=repeat_x {
+                    for _ in 0..repeat_x {
                         let macro_clone_inner = macro_clone.clone();
                         let channel_clone_inner = channel_clone.clone();
-                        execute_macro(macro_clone_inner, channel_clone_inner).await;
+
+                        info!("Executing macro {}", macro_clone_inner.name);
+
+                        macro_clone_inner
+                            .execute(channel_clone_inner)
+                            .await
+                            .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+
+                        // execute_macro(macro_clone_inner, channel_clone_inner).await;
                     }
                 });
 
@@ -436,7 +447,9 @@ fn macro_executor_receiver(
             }
         }
 
-        // TODO: Do this part
+        tokio::time::sleep(time::Duration::from_millis(20)).await;
+
+        // thread::sleep(time::Duration::from_millis(10));
     }
 }
 
@@ -471,17 +484,17 @@ fn check_macro_execution_efficiently(
             TriggerEventType::KeyPressEvent { data, .. } => {
                 match data.len() {
                     1 => {
-                        if pressed_events == *data {
+                        if pressed_events.iter().any(|x| data.contains(x)) {
                             debug!("MATCHED MACRO single key: {:#?}", pressed_events);
 
                             let id_cloned = macro_id.clone();
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
-                            task::spawn(async move {
-                                macro_sender.send(id_cloned).unwrap();
-                                // execute_macro(macro_clone_execute, channel_clone_execute).await;
+                            macro_sender.send(id_cloned).unwrap_or_else(|err| {
+                                error!("Error sending macro ID to execute: {}", err)
                             });
+
                             output = true;
                         }
                     }
@@ -497,9 +510,10 @@ fn check_macro_execution_efficiently(
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
-                            task::spawn(async move {
-                                macro_sender.send(id_cloned).unwrap();
+                            macro_sender.send(id_cloned).unwrap_or_else(|err| {
+                                error!("Error sending macro ID to execute: {}", err)
                             });
+
                             output = true;
                         }
                     }
@@ -517,9 +531,10 @@ fn check_macro_execution_efficiently(
                 if event_to_check == pressed_events {
                     let id_cloned = macro_id.clone();
 
-                    task::spawn(async move {
-                        macro_sender.send(id_cloned).unwrap();
-                    });
+                    macro_sender
+                        .send(id_cloned)
+                        .unwrap_or_else(|err| error!("Error sending macro ID to execute: {}", err));
+
                     output = true;
                 }
             }
@@ -558,8 +573,12 @@ impl MacroBackend {
         *self.macro_lookup.write().await = macros.new_lookup()?;
 
         debug!(
-            "Listing macros ID list:\n{:#?}",
+            "Listing macro lookup ID list:\n{:#?}",
             self.macro_lookup.read().await.id_map
+        );
+        debug!(
+            "Listing macro lookup trigger list:\n{:#?}",
+            self.macro_lookup.read().await.triggers
         );
 
         *self.macro_data.write().await = macros;
@@ -598,11 +617,15 @@ impl MacroBackend {
         //let inner_macro_lookup_clone = inner_macro_lookup.clone();
         // Create the macro executor
         thread::spawn(move || {
-            macro_executor_receiver(
-                rchan_macro_execute,
-                inner_macro_lookup_clone,
-                schan_keypress_execute,
-            );
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                macro_executor_receiver(
+                    rchan_macro_execute,
+                    inner_macro_lookup_clone,
+                    schan_keypress_execute,
+                )
+                .await;
+            });
         });
 
         let _grabber = task::spawn_blocking(move || {
@@ -612,20 +635,29 @@ impl MacroBackend {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
                         rdev::EventType::KeyPress(key) => {
-                            debug!("Key Pressed RAW: {:?}", key);
+                            debug!("Key Pressed RAW: {:?}", &key);
 
                             let keys_pressed_internal_hid: Vec<u32> = {
                                 // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
 
-                                inner_keys_pressed.blocking_write().push(key);
+                                inner_keys_pressed.blocking_write().push(key.clone());
 
-                                *inner_keys_pressed.blocking_write() = inner_keys_pressed
-                                    .blocking_read()
-                                    .clone()
-                                    .into_iter()
-                                    .unique()
-                                    .collect();
+                                debug!(
+                                    "Wrote key to keys_pressed: {:?}",
+                                    inner_keys_pressed.blocking_read()
+                                );
 
+                                let cloned_pressed_keys =
+                                    inner_keys_pressed.blocking_read().clone();
+
+                                debug!("Cloned keys pressed: {:?}", cloned_pressed_keys);
+
+                                *inner_keys_pressed.blocking_write() =
+                                    cloned_pressed_keys.into_iter().unique().collect();
+
+                                debug!("Unique keys: {:?}", inner_keys_pressed.blocking_read());
+
+                                debug!("Will map scancodes to match");
                                 inner_keys_pressed
                                     .blocking_read()
                                     .iter()
@@ -660,6 +692,8 @@ impl MacroBackend {
                                 .unwrap_or_default()
                                 .to_vec();
 
+                            warn!("Check these macros: {:?}", check_these_macros);
+
                             // ? up the pressed keys here right away?
 
                             let should_grab = {
@@ -668,6 +702,10 @@ impl MacroBackend {
                                     let macro_data_list_clone = inner_macro_lookup.clone();
                                     // let macro_id_list_clone =
                                     //     inner_macro_lookup.blocking_read().triggers.clone();
+                                    error!(
+                                        "sending check macros: {:?} to check.\n Keys pressed: {:?}",
+                                        check_these_macros, keys_pressed_internal_hid
+                                    );
 
                                     check_macro_execution_efficiently(
                                         keys_pressed_internal_hid,
