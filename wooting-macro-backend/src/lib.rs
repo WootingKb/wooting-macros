@@ -16,7 +16,17 @@ use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::RwLock;
 use tokio::task;
 
+use uuid::Uuid;
+
+use halfbrown::HashMap;
+
 use config::{ApplicationConfig, ConfigFile};
+#[cfg(not(debug_assertions))]
+use dirs;
+#[cfg(not(debug_assertions))]
+use std::path::PathBuf;
+
+use anyhow::{Error, Result};
 
 // This has to be imported for release build
 #[allow(unused_imports)]
@@ -173,12 +183,16 @@ type Collections = Vec<Collection>;
 /// Hashmap to check the first trigger key of each macro.
 type MacroTriggerLookup = HashMap<u32, Vec<Macro>>;
 
+/// Macro ID list to lookup macros uniquely and fast.
+pub type MacroIdList = HashMap<String, Macro>;
+
 /// State of the application in RAM (RWlock).
 #[derive(Debug)]
 pub struct MacroBackend {
     pub data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
+    pub macro_id_list: Arc<RwLock<MacroIdList>>,
     pub is_listening: Arc<AtomicBool>,
     pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
 }
@@ -434,6 +448,26 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
+    pub fn link_macro_to_id(&self) -> MacroIdList {
+        let mut macro_id_list: MacroIdList = HashMap::default();
+        let macro_list: &Collections = &self.data.blocking_read().data;
+
+        for collection in macro_list {
+            for macro_item in &collection.macros {
+                loop {
+                    let uuid = Uuid::new_v4().to_string();
+
+                    if macro_id_list.get(&uuid).is_none() {
+                        macro_id_list.insert(uuid, macro_item.clone());
+                        break;
+                    }
+                }
+            }
+        }
+
+        macro_id_list
+    }
+
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() -> Result<()> {
         #[cfg(not(debug_assertions))]
@@ -642,6 +676,7 @@ impl Default for MacroBackend {
                 ApplicationConfig::read_data().expect("error reading config"),
             )),
             triggers: Arc::new(RwLock::from(triggers)),
+            macro_id_list: Arc::new(RwLock::from(HashMap::default())),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(vec![])),
         }
