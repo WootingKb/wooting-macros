@@ -40,12 +40,13 @@ pub async fn direct_send_hotkey(
 
 // Disabled until a better fix is done
 // /// Lifts the keys pressed
-// pub fn lift_keys(pressed_events: &Vec<u32>, channel_sender: &UnboundedSender<rdev::EventType>) {
-//     for x in pressed_events {
-//         channel_sender
-//             .send(rdev::EventType::KeyRelease(
-//                 super::super::SCANCODE_TO_RDEV[x],
-//             ))
-//             .unwrap();
-//     }
-// }
+pub fn lift_trigger_key(
+    key_to_release: u32,
+    channel_sender: &UnboundedSender<rdev::EventType>,
+) -> Result<()> {
+    channel_sender.send(rdev::EventType::KeyRelease(
+        super::super::SCANCODE_TO_RDEV[&key_to_release],
+    ))?;
+
+    Ok(())
+}
