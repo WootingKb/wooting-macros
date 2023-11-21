@@ -377,6 +377,51 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
     }
 }
 
+async fn macro_executor(
+    macro_queue: &mut Vec<Macro>,
+    schan_keypress_execute: UnboundedSender<rdev::EventType>,
+) {
+    if !macro_queue.is_empty() {
+        for macro_item in macro_queue.clone().iter() {
+            let channel_clone = schan_keypress_execute.clone();
+            let macro_clone = macro_item.clone();
+
+            // TODO: This is currently unimplemented
+            let mut repeat_x = 1;
+
+            if macro_item.macro_type == MacroType::RepeatX {
+                repeat_x = 3;
+            }
+
+            // task::spawn(async move {
+            for _ in 0..repeat_x {
+                let macro_clone_inner = macro_clone.clone();
+                let channel_clone_inner = channel_clone.clone();
+
+                info!("Executing macro {}", macro_clone_inner.name);
+
+                task::spawn(async move {
+                    macro_clone_inner
+                        .execute(channel_clone_inner)
+                        .await
+                        .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+                })
+                .await
+                .unwrap();
+
+                // execute_macro(macro_clone_inner, channel_clone_inner).await;
+            }
+
+            // If the macro is not a toggle macro, remove it from the queue.
+            if macro_item.macro_type == MacroType::Single
+                || macro_item.macro_type == MacroType::RepeatX
+            {
+                macro_queue.retain(|x| x.name != macro_item.name);
+            }
+        }
+    }
+}
+
 async fn macro_executor_receiver(
     mut rchan_execute: UnboundedReceiver<String>,
     macro_id_list: Arc<RwLock<MacroLookup>>,
@@ -386,71 +431,34 @@ async fn macro_executor_receiver(
     let mut macro_queue: Vec<Macro> = Vec::default();
 
     loop {
-        if let Ok(macro_id) = &rchan_execute.try_recv() {
-            match macro_id_list.read().await.id_map.get(macro_id) {
-                Some(macro_to_execute) => {
-                    // If a macro is already there, remove it. This should remove a togggle macro correctly.
-                    // Single and repeat types should be removed after execution.
+        match &rchan_execute.try_recv() {
+            Ok(macro_id) => {
+                match macro_id_list.read().await.id_map.get(macro_id) {
+                    Some(macro_to_execute) => {
+                        // If a macro is already there, remove it. This should remove a togggle macro correctly.
+                        // Single and repeat types should be removed after execution.
 
-                    if macro_queue.iter().any(|x| x.name == macro_to_execute.name) {
-                        info!("Removing existing macro from queue: {}", macro_id);
-                        macro_queue.retain(|x| x.name != macro_to_execute.name);
-                    } else {
-                        info!("Added macro to queue: {}", macro_to_execute.name);
-                        macro_queue.push(macro_to_execute.clone());
+                        if macro_queue.iter().any(|x| x.name == macro_to_execute.name) {
+                            info!("Removing existing macro from queue: {}", macro_id);
+                            macro_queue.retain(|x| x.name != macro_to_execute.name);
+                        } else {
+                            info!("Added macro to queue: {}", macro_to_execute.name);
+                            macro_queue.push(macro_to_execute.clone());
+                        }
+                        let channel_clone = schan_keypress_execute.clone();
+                        macro_executor(&mut macro_queue, channel_clone).await;
                     }
-                }
-                None => {
-                    error!("Cannot find macro to execute! ID: {}", macro_id);
-                    continue;
-                }
-            };
-        }
-
-        // warn!("Macro queue currently: {:#?}", macro_queue);
-
-        // Execute the queue
-        if !macro_queue.is_empty() {
-            for (_, macro_item) in macro_queue.clone().iter().enumerate() {
+                    None => {
+                        error!("Cannot find macro to execute! ID: {}", macro_id);
+                        continue;
+                    }
+                };
+            }
+            Err(_) => {
                 let channel_clone = schan_keypress_execute.clone();
-                let macro_clone = macro_item.clone();
-
-                // TODO: This is currently unimplemented
-                let mut repeat_x = 1;
-
-                if macro_item.macro_type == MacroType::RepeatX {
-                    repeat_x = 3;
-                }
-
-                // task::spawn(async move {
-                for _ in 0..repeat_x {
-                    let macro_clone_inner = macro_clone.clone();
-                    let channel_clone_inner = channel_clone.clone();
-
-                    info!("Executing macro {}", macro_clone_inner.name);
-
-                    task::spawn(async move {
-                        macro_clone_inner
-                            .execute(channel_clone_inner)
-                            .await
-                            .unwrap_or_else(|err| error!("Error executing macro: {}", err));
-                    })
-                    .await
-                    .unwrap();
-
-                    // execute_macro(macro_clone_inner, channel_clone_inner).await;
-                }
-                // }).await.expect("TODO: panic message");
-
-                // If the macro is not a toggle macro, remove it from the queue.
-                if macro_item.macro_type == MacroType::Single
-                    || macro_item.macro_type == MacroType::RepeatX
-                {
-                    macro_queue.retain(|x| x.name != macro_item.name);
-                }
+                macro_executor(&mut macro_queue, channel_clone).await
             }
         }
-
         // thread::sleep(time::Duration::from_millis(10));
     }
 }
