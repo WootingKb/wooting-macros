@@ -10,7 +10,7 @@ import {
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../constants/HIDmap'
 import { mouseEnumLookup } from '../../../constants/MouseMap'
-import ToggleSetting from "../../settings/ToggleSetting";
+
 import React from "react";
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function TriggerArea({onOpen}: Props) {
-  const {macro, updateShowNotification} = useMacroContext()
+  const {macro} = useMacroContext()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('sm', 'white-sm')
 
@@ -38,12 +38,6 @@ export default function TriggerArea({onOpen}: Props) {
       <Text fontWeight="semibold" fontSize={['xs', 'sm']} whiteSpace="nowrap">
         Trigger Keys
       </Text>
-      <ToggleSetting
-        title="Show notification"
-        description="Running this macro will show a notification."
-        value={macro.show_notification}
-        onChange={updateShowNotification}
-      />
       <HStack
         gap={2}
         w="full"
