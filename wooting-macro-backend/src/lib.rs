@@ -116,7 +116,7 @@ pub struct Macro {
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
     pub enabled: bool,
-    pub is_running: bool,
+    pub repeat_amount: u32,
 }
 
 impl Macro {
@@ -389,7 +389,7 @@ async fn macro_executor(
         let channel_clone = schan_keypress_execute.clone();
         let macro_clone = macro_item.clone();
 
-        //TODO: This shouldn't run when its on toggle (or only once)
+        // TODO: This shouldn't run when its on toggle (or only once)
         match &macro_item.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => match data.len() {
                 1 => {
@@ -410,7 +410,7 @@ async fn macro_executor(
         let mut repeat_x = 1;
 
         if macro_item.macro_type == MacroType::RepeatX {
-            repeat_x = 3;
+            repeat_x = macro_item.repeat_amount;
         }
 
         // task::spawn(async move {
