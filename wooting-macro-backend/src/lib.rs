@@ -389,6 +389,7 @@ async fn macro_executor(
         let channel_clone = schan_keypress_execute.clone();
         let macro_clone = macro_item.clone();
 
+        //TODO: This shouldn't run when its on toggle (or only once)
         match &macro_item.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => match data.len() {
                 1 => {
