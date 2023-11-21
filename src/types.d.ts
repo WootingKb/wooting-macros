@@ -38,7 +38,7 @@ export type MacroState = {
   willCauseTriggerLooping: boolean
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
-  updateMacroType: (newType: MacroType) => void
+  updateMacroType: (newType: MacroType, repeat_amount: number) => void
   updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
   onElementAdd: (newElement: ActionEventType) => void
@@ -69,10 +69,10 @@ export type SettingsState = {
 // Input Event Types
 export type TriggerEventType =
   | {
-      type: 'KeyPressEvent'
-      data: number[]
-      allow_while_other_keys: boolean
-    }
+  type: 'KeyPressEvent'
+  data: number[]
+  allow_while_other_keys: boolean
+}
   | { type: 'MouseEvent'; data: MouseButton }
 
 export type KeyPressEventAction = {
@@ -115,7 +115,7 @@ export interface Macro {
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
-  is_running: boolean
+  repeat_amount: number
 }
 
 export interface Collection {
@@ -168,7 +168,7 @@ export type SystemAction =
   | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-  // | { type: 'Brightness'; action: MonitorBrightnessAction }
+// | { type: 'Brightness'; action: MonitorBrightnessAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -199,6 +199,7 @@ export interface KeyboardKeyCategory {
   name: string
   elements: HidInfo[]
 }
+
 export interface PluginCategory {
   name: string
   elements: PluginEventInfo[]

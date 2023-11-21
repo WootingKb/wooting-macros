@@ -1,22 +1,7 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { MacroType, ViewState } from '../constants/enums'
 import { checkIfElementIsEditable } from '../constants/utils'
-import {
-  ActionEventType,
-  KeyPressEventAction,
-  Macro,
-  MacroState,
-  MouseEventAction,
-  TriggerEventType
-} from '../types'
+import { ActionEventType, KeyPressEventAction, Macro, MacroState, MouseEventAction, TriggerEventType } from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
@@ -42,7 +27,7 @@ const macroDefault: Macro = {
   macro_type: 'Single',
   trigger: {type: 'KeyPressEvent', data: [], allow_while_other_keys: false},
   sequence: [],
-  is_running: false,
+  repeat_amount: 1,
 }
 
 function MacroProvider({children}: MacroProviderProps) {
@@ -176,7 +161,10 @@ function MacroProvider({children}: MacroProviderProps) {
   )
 
   const updateMacroType = useCallback(
-    (newType: MacroType) => {
+    (newType: MacroType, repeat_amount: number) => {
+      if (newType === MacroType.RepeatX) {
+        setMacro({...macro, macro_type: MacroType[newType], repeat_amount})
+      }
       setMacro({...macro, macro_type: MacroType[newType]})
     },
     [macro, setMacro]

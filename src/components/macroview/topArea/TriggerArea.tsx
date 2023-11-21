@@ -16,8 +16,8 @@ interface Props {
   onOpen: () => void
 }
 
-export default function TriggerArea({ onOpen }: Props) {
-  const { macro } = useMacroContext()
+export default function TriggerArea({onOpen}: Props) {
+  const {macro} = useMacroContext()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('sm', 'white-sm')
 
@@ -29,7 +29,7 @@ export default function TriggerArea({ onOpen }: Props) {
       px={4}
       spacing={0}
       gap={2}
-      divider={<StackDivider />}
+      divider={<StackDivider/>}
       shadow={shadowColour}
       rounded={borderRadiusStandard}
       justifyContent="space-between"
@@ -40,6 +40,7 @@ export default function TriggerArea({ onOpen }: Props) {
       <HStack
         gap={2}
         w="full"
+
         h="27px"
         justifyContent="center"
         bg={secondBg}
@@ -63,7 +64,7 @@ export default function TriggerArea({ onOpen }: Props) {
         variant="brandRecord"
         size="sm"
         px={6}
-        leftIcon={<EditIcon />}
+        leftIcon={<EditIcon/>}
         onClick={onOpen}
       >
         Edit
