@@ -398,6 +398,12 @@ async fn macro_executor_receiver(
                 let matching_macro = id_map_clone.get(&macro_id).unwrap().clone();
                 let macro_type = matching_macro.macro_type.clone();
                 let schan_keypress_clone = schan_keypress_execute.clone();
+                let schan_keyrelease_clone = schan_keypress_execute.clone();
+
+                if let TriggerEventType::KeyPressEvent { ref data, .. } = matching_macro.trigger {
+                    plugin::util::lift_trigger_key(*data.first().unwrap(), &schan_keyrelease_clone)
+                        .unwrap();
+                }
 
                 let task = task::spawn({
                     let matching_macro = matching_macro.clone();
