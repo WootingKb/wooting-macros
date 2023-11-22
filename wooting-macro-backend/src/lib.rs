@@ -27,6 +27,7 @@ use dirs;
 use std::path::PathBuf;
 
 use anyhow::{Error, Result};
+use plugin::delay::DEFAULT_DELAY;
 use tokio::sync::mpsc::error::TryRecvError;
 
 // This has to be imported for release build
@@ -146,18 +147,30 @@ impl Macro {
                             send_channel.send(rdev::EventType::KeyPress(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))?;
+                            // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
+                            //     SCANCODE_TO_RDEV[&data.keypress],
+                            // ))?;
+                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                         }
                         key_press::KeyType::Up => {
                             // One key lift up
                             send_channel.send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))?;
+                            // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
+                            //     SCANCODE_TO_RDEV[&data.keypress],
+                            // ))?;
+                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                         }
                         key_press::KeyType::DownUp => {
                             // Key press
                             send_channel.send(rdev::EventType::KeyPress(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))?;
+                            // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
+                            //     SCANCODE_TO_RDEV[&data.keypress],
+                            // ))?;
+                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
 
                             // Wait the set delay by user
                             tokio::time::sleep(time::Duration::from_millis(data.press_duration))
@@ -167,6 +180,10 @@ impl Macro {
                             send_channel.send(rdev::EventType::KeyRelease(
                                 SCANCODE_TO_RDEV[&data.keypress],
                             ))?;
+                            // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
+                            //     SCANCODE_TO_RDEV[&data.keypress],
+                            // ))?;
+                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                         }
                     },
                     ActionEventType::PhillipsHueEventAction { .. } => {}
@@ -180,11 +197,13 @@ impl Macro {
                         let action_copy = data.clone();
                         let channel_copy = send_channel.clone();
                         task::spawn(async move { action_copy.execute(channel_copy).await });
+                        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                     }
                     ActionEventType::MouseEventAction { data } => {
                         let action_copy = data.clone();
                         let channel_copy = send_channel.clone();
                         task::spawn(async move { action_copy.execute(channel_copy).await });
+                        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                     }
                 }
             }
@@ -356,7 +375,7 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
 
         // Windows execution delay can be set lower.
         #[cfg(target_os = "windows")]
-        thread::sleep(time::Duration::from_millis(20));
+        thread::sleep(time::Duration::from_millis(DEFAULT_DELAY));
     }
 }
 
@@ -467,7 +486,7 @@ async fn macro_executor_receiver(
                 }
             },
         }
-        tokio::time::sleep(time::Duration::from_millis(20)).await;
+        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
     }
 }
 
