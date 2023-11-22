@@ -314,45 +314,6 @@ pub struct Collection {
     pub enabled: bool,
 }
 
-// /// Executes a given macro (according to its type).
-// ///
-// /// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
-// async fn execute_macro(mut macros: Macro, channel: UnboundedSender<rdev::EventType>) {
-//     match macros.macro_type {
-//         MacroType::Single => {
-//             info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
-//
-//             let cloned_channel = channel;
-//
-//             task::spawn(async move {
-//                 macros
-//                     .execute(cloned_channel)
-//                     .await
-//                     .unwrap_or_else(|err| error!("Error executing macro: {}", err));
-//             });
-//         }
-//         MacroType::Toggle => {
-//             if macros.is_running == false {
-//                 let cloned_channel = channel;
-//                 task::spawn(async move {
-//                     macros
-//                         .execute(cloned_channel)
-//                         .await
-//                         .unwrap_or_else(|err| error!("Error executing macro: {}", err));
-//                 });
-//             }
-//         }
-//
-//         MacroType::OnHold => {
-//             //Postponed
-//             //execute_macro_onhold(&macros).await;
-//         }
-//         MacroType::RepeatX => {
-//             //Postponed
-//         }
-//     }
-// }
-
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
@@ -373,133 +334,75 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
     }
 }
 
-async fn macro_executor(
-    macro_queue: Arc<RwLock<Vec<Macro>>>,
-    schan_keypress_execute: UnboundedSender<rdev::EventType>,
-) {
-    let mut running_macro_queue = macro_queue.read().await.clone();
-    let mut macros_to_remove = vec![];
-
-    for macro_item in running_macro_queue.iter() {
-        let channel_clone = schan_keypress_execute.clone();
-        let macro_clone = macro_item.clone();
-
-        // TODO: This shouldn't run when its on toggle (or only once)
-        match &macro_item.trigger {
-            TriggerEventType::KeyPressEvent { data, .. } => match data.len() {
-                1 => {
-                    plugin::util::lift_trigger_key(*data.first().unwrap(), &schan_keypress_execute)
-                        .unwrap()
-                }
-
-                2..=4 => data.iter().for_each(|x| {
-                    plugin::util::lift_trigger_key(*x, &schan_keypress_execute).unwrap()
-                }),
-
-                _ => (),
-            },
-            _ => (),
-        }
-
-        // TODO: This is currently unimplemented
-        let mut repeat_x = 1;
-
-        if macro_item.macro_type == MacroType::RepeatX {
-            repeat_x = macro_item.repeat_amount;
-        }
-
-        // task::spawn(async move {
-        for _ in 0..repeat_x {
-            let macro_clone_inner = macro_clone.clone();
-            let channel_clone_inner = channel_clone.clone();
-
-            info!("Executing macro {}", macro_clone_inner.name);
-
-            // task::spawn(async move {
-            macro_clone_inner
-                .execute(channel_clone_inner)
-                .await
-                .unwrap_or_else(|err| error!("Error executing macro: {}", err));
-            // })
-            // .await
-            // .unwrap();
-
-            if macro_item.macro_type == MacroType::Single
-                || macro_item.macro_type == MacroType::RepeatX
-            {
-                macros_to_remove.push(macro_item.clone());
-            }
-            // execute_macro(macro_clone_inner, channel_clone_inner).await;
-        }
-
-        // If the macro is not a toggle or onhold macro, remove it from the queue.
-    }
-    for macro_remove in macros_to_remove.iter() {
-        running_macro_queue.retain(|x| x.name != macro_remove.name);
-    }
-
-    *macro_queue.write().await = running_macro_queue;
-}
-
 async fn macro_executor_receiver(
     mut rchan_execute: UnboundedReceiver<String>,
     macro_id_list: Arc<RwLock<MacroLookup>>,
     schan_keypress_execute: UnboundedSender<rdev::EventType>,
 ) {
-    debug!("Macro executor receiver started!");
-    let macro_queue: Arc<RwLock<Vec<Macro>>> = Arc::new(RwLock::new(Vec::default()));
+    trace!("Macro executor receiver started!");
+    let mut worker_queue: HashMap<String, task::JoinHandle<()>> = HashMap::new();
 
     loop {
-        match &rchan_execute.try_recv() {
+        match rchan_execute.try_recv() {
             Ok(macro_id) => {
-                match macro_id_list.read().await.id_map.get(macro_id) {
-                    Some(macro_to_execute) => {
-                        let mut new_macro_queue = macro_queue.read().await.clone();
-                        // If a macro is already there, remove it. This should remove a toggle macro correctly.
-                        // Single and repeat types should be removed after execution.
+                // clone outside the task spawning
+                let id_map_clone = macro_id_list.read().await.id_map.clone();
 
-                        if new_macro_queue
-                            .iter()
-                            .any(|x| x.name == macro_to_execute.name)
-                        {
-                            info!("Removing existing macro from queue: {}", macro_id);
-                            new_macro_queue.retain(|x| x.name != macro_to_execute.name);
-                        } else {
-                            info!("Added macro to queue: {}", macro_to_execute.name);
-                            new_macro_queue.push(macro_to_execute.clone());
+                if let Some(matching_macro) = id_map_clone.get(&macro_id) {
+                    let schan_keypress_clone = schan_keypress_execute.clone();
+                    let task = task::spawn({
+                        let matching_macro = matching_macro.clone();
+                        let macro_id_clone = macro_id.clone();
+                        async move {
+                            matching_macro
+                                .execute(schan_keypress_clone)
+                                .await
+                                .unwrap_or_else(|err| {
+                                    error!("Error executing macro: {} {}", macro_id_clone, err)
+                                });
                         }
-                        let channel_clone = schan_keypress_execute.clone();
-                        let mutex_arc_clone = macro_queue.clone();
+                    });
 
-                        *macro_queue.write().await = new_macro_queue;
-
-                        macro_executor(mutex_arc_clone, channel_clone).await;
-                        tokio::time::sleep(time::Duration::from_millis(20)).await;
-                    }
-                    None => {
-                        error!("Cannot find macro to execute! ID: {}", macro_id);
-                        continue;
-                    }
-                };
+                    worker_queue.entry(macro_id.clone()).or_insert_with(|| task);
+                }
             }
+
             Err(err) => match err {
                 TryRecvError::Empty => {
-                    if !macro_queue.read().await.is_empty() {
-                        let channel_clone = schan_keypress_execute.clone();
-                        let mutex_arc_clone = macro_queue.clone();
+                    if !worker_queue.is_empty() {
+                        let macro_id_list = macro_id_list.read().await.id_map.clone();
 
-                        macro_executor(mutex_arc_clone, channel_clone).await;
-                        tokio::time::sleep(time::Duration::from_millis(20)).await;
-                    } else {
-                        tokio::time::sleep(time::Duration::from_millis(20)).await;
+                        worker_queue.retain(|id, macro_item| {
+                            let macro_type = &macro_id_list
+                                .get(id)
+                                .unwrap_or_else(|| panic!("Error getting macro type: {}", id))
+                                .macro_type;
+
+                            if *macro_type != MacroType::Toggle {
+                                macro_item.is_finished()
+                            } else {
+                                false
+                            }
+                        });
+
+                        if worker_queue.is_empty() {
+                            continue;
+                        } else {
+                            for (id, macro_item) in worker_queue.iter_mut() {
+                                macro_item.await.unwrap_or_else(|err| {
+                                    panic!("Error running macro id {}: {}", id, err)
+                                });
+                            }
+                        }
                     }
                 }
                 TryRecvError::Disconnected => {
-                    error!("No senders available");
+                    error!("Macro executor receiver channel closed!");
+                    break;
                 }
             },
         }
-        // thread::sleep(time::Duration::from_millis(10));
+        tokio::time::sleep(time::Duration::from_millis(20)).await;
     }
 }
 
