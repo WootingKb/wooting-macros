@@ -353,6 +353,10 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
         //MacOS and Linux require a delay between each macro execution.
         #[cfg(not(target_os = "windows"))]
         thread::sleep(time::Duration::from_millis(10));
+
+        // Windows execution delay can be set lower.
+        #[cfg(target_os = "windows")]
+        thread::sleep(time::Duration::from_millis(1000));
     }
 }
 
@@ -362,8 +366,10 @@ async fn macro_executor_receiver(
     schan_keypress_execute: UnboundedSender<rdev::EventType>,
 ) {
     trace!("Macro executor receiver started!");
-    let mut worker_queue: HashMap<String, task::JoinHandle<()>> = HashMap::new();
+    // let mut worker_queue: HashMap<String, task::JoinHandle<()>> = HashMap::new();
 
+    // The first is UUID, second is if it ran.
+    let mut task_map: HashMap<String, bool> = HashMap::new();
 
     loop {
         match rchan_execute.try_recv() {
@@ -371,28 +377,13 @@ async fn macro_executor_receiver(
                 // clone outside the task spawning
                 let id_map_clone = macro_id_list.read().await.id_map.clone();
 
-                if let Some(matching_macro) = id_map_clone.get(&macro_id) {
-                    let schan_inner_keypress_clone = schan_keypress_execute.clone();
-
-                    let task = task::spawn({
-                        let matching_macro = matching_macro.clone();
-                        let macro_id_clone = macro_id.clone();
-                        async move {
-                            matching_macro
-                                .execute(schan_inner_keypress_clone)
-                                .await
-                                .unwrap_or_else(|err| {
-                                    error!("Error executing macro: {} {}", macro_id_clone, err)
-                                });
-                        }
-                    });
-
-                    match worker_queue.entry(macro_id.clone()) {
+                if let Some(_) = id_map_clone.get(&macro_id) {
+                    match task_map.entry(macro_id.clone()) {
                         Entry::Occupied(entry_exist) => {
                             entry_exist.remove_entry();
                         }
                         Entry::Vacant(_) => {
-                            worker_queue.insert(macro_id.clone(), task);
+                            task_map.insert(macro_id.clone(), false);
                         }
                     }
                 }
@@ -400,69 +391,47 @@ async fn macro_executor_receiver(
 
             Err(err) => match err {
                 TryRecvError::Empty => {
-                    if !worker_queue.is_empty() {
-                        let macro_id_list = macro_id_list.read().await.id_map.clone();
-                        let mut toggle_macros_to_add: Vec<String> = vec![];
-                        warn!("Worker queue: {:?}", worker_queue);
+                    if !task_map.is_empty() {
+                        info!("Got tasks to do: {:?}", task_map);
 
+                        for (id, executed) in task_map.iter_mut() {
+                            let schan_keypress_clone = schan_keypress_execute.clone();
+                            let macro_to_run =
+                                macro_id_list.read().await.id_map.get(id).unwrap().clone();
 
-                        worker_queue.retain(|id, macro_item| {
-                            let macro_type = macro_id_list
-                                .get(id)
-                                .map(|macro_| macro_.macro_type.clone()) // clone() is used to copy the value so it isn't a temporary value
-                                .unwrap_or_else(|| {
-                                    error!("Error getting macro type: {}", id);
-                                    Macro::new().macro_type
-                                });
+                            if *executed == false {
+                                info!("Executing macro {}", id);
 
-                            error!("Macro finished? {}: {}", macro_item.is_finished(), id);
-
-                            if macro_type == MacroType::Toggle && macro_item.is_finished() {
-                                info!("Found a macro to re-add: {}", id);
-                                toggle_macros_to_add.push(id.clone());
+                                task::spawn(async move {
+                                    macro_to_run
+                                        .execute(schan_keypress_clone)
+                                        .await
+                                        .unwrap_or_else(|err| {
+                                            error!("Error executing macro: {}", err)
+                                        });
+                                })
+                                .await
+                                .unwrap();
                             }
 
-                            !macro_item.is_finished() == true
-                        });
-
-                        warn!("Re-add queue: {:?}", toggle_macros_to_add);
-                        if toggle_macros_to_add.is_empty() {
-                            // warn!("Re-add queue is empty");
-                            continue;
-                        } else {
-                            for macro_id in &toggle_macros_to_add {
-                                info!("Macros to read: {:?}", toggle_macros_to_add);
-
-                                let macro_to_readd = macro_id_list.get(macro_id).unwrap().clone();
-                                let schan_keypress_clone = schan_keypress_execute.clone();
-
-                                let task = task::spawn({
-                                    let matching_macro = macro_to_readd.clone();
-                                    let macro_id_clone = macro_id.clone();
-                                    async move {
-                                        matching_macro
-                                            .execute(schan_keypress_clone)
-                                            .await
-                                            .unwrap_or_else(|err| {
-                                                error!("Error executing macro: {} {}", macro_id_clone, err)
-                                            });
-                                    }
-                                });
-
-                                match worker_queue.entry(macro_id.clone()) {
-                                    Entry::Occupied(entry_exist) => {
-                                        entry_exist.remove_entry();
-                                        error!("This should not happen, removing an already supposedly removed entry");
-                                    }
-                                    Entry::Vacant(_) => {
-                                        worker_queue.insert(macro_id.clone(), task);
-                                        error!("Re-added the macro {} to the worker queue", macro_id);
-                                    }
-                                }
-
-                            }
-
+                            *executed = true;
                         }
+
+                        for (id, executed) in task_map.iter_mut() {
+                            if macro_id_list
+                                .read()
+                                .await
+                                .id_map
+                                .get(id)
+                                .unwrap()
+                                .macro_type
+                                == MacroType::Toggle
+                            {
+                                *executed = false;
+                            };
+                        }
+
+                        task_map.retain(|_, executed| *executed == false);
                     }
                 }
                 TryRecvError::Disconnected => {
@@ -487,6 +456,7 @@ fn check_macro_execution_efficiently(
     check_macros: Vec<String>,
     macro_data: Arc<RwLock<MacroLookup>>,
     macro_channel_sender: UnboundedSender<String>,
+    keypress_sender: UnboundedSender<rdev::EventType>,
 ) -> bool {
     let trigger_overview_print = check_macros.clone();
     let macro_data_id_map_cloned = macro_data.blocking_read().id_map.clone();
@@ -517,6 +487,12 @@ fn check_macro_execution_efficiently(
                             let id_cloned = macro_id.clone();
                             // let channel_clone_execute = macro_sender.clone();
                             // Disabled until a better fix is done
+
+                            plugin::util::lift_trigger_key(
+                                *data.first().unwrap(),
+                                &keypress_sender,
+                            )
+                            .unwrap();
 
                             macro_sender.send(id_cloned).unwrap_or_else(|err| {
                                 error!("Error sending macro ID to execute: {}", err)
@@ -692,7 +668,7 @@ impl MacroBackend {
                                     .collect()
                             };
 
-                            debug!(
+                            trace!(
                                 "Pressed Keys CONVERTED TO HID:RDEV:  {:?} {:?}",
                                 keys_pressed_internal_hid,
                                 keys_pressed_internal_hid
@@ -724,6 +700,7 @@ impl MacroBackend {
                                 if !check_these_macros.is_empty() {
                                     let macro_channel_clone = schan_macro_execute.clone();
                                     let macro_data_list_clone = inner_macro_lookup.clone();
+                                    let keypress_execute_clone = inner_keypress_execute.clone();
                                     // let macro_id_list_clone =
                                     //     inner_macro_lookup.blocking_read().triggers.clone();
                                     error!(
@@ -736,6 +713,7 @@ impl MacroBackend {
                                         check_these_macros,
                                         macro_data_list_clone,
                                         macro_channel_clone,
+                                        keypress_execute_clone,
                                     )
                                 } else {
                                     false
@@ -743,11 +721,6 @@ impl MacroBackend {
                             };
 
                             if should_grab {
-                                plugin::util::lift_trigger_key(
-                                    first_key_pressed,
-                                    &inner_keypress_execute,
-                                )
-                                .unwrap();
                                 None
                             } else {
                                 Some(event)
@@ -786,12 +759,13 @@ impl MacroBackend {
                                     "Mouse button found check these macros: {:?}",
                                     check_these_macros
                                 );
-
+                                let keypress_execute_clone = inner_keypress_execute.clone();
                                 should_grab = check_macro_execution_efficiently(
                                     vec![converted_button_to_u32],
                                     check_these_macros,
                                     macro_data_list_clone,
                                     macro_channel_clone,
+                                    keypress_execute_clone,
                                 );
                             }
 
