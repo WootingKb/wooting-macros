@@ -38,7 +38,8 @@ export type MacroState = {
   willCauseTriggerLooping: boolean
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
-  updateMacroType: (newType: MacroType, repeat_amount: number) => void
+  updateMacroType: (newType: MacroType) => void
+  updateMacroRepeatAmount: (newAmount: number) => void
   updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
   onElementAdd: (newElement: ActionEventType) => void

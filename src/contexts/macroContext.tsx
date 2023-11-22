@@ -161,11 +161,15 @@ function MacroProvider({children}: MacroProviderProps) {
   )
 
   const updateMacroType = useCallback(
-    (newType: MacroType, repeat_amount: number) => {
-      if (newType === MacroType.RepeatX) {
-        setMacro({...macro, macro_type: MacroType[newType], repeat_amount})
-      }
+    (newType: MacroType) => {
       setMacro({...macro, macro_type: MacroType[newType]})
+    },
+    [macro, setMacro]
+  )
+
+  const updateMacroRepeatAmount = useCallback(
+    (repeat_amount: number) => {
+      setMacro({...macro, repeat_amount})
     },
     [macro, setMacro]
   )
@@ -344,6 +348,7 @@ function MacroProvider({children}: MacroProviderProps) {
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
+      updateMacroRepeatAmount,
       updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,
@@ -370,6 +375,7 @@ function MacroProvider({children}: MacroProviderProps) {
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
+      updateMacroRepeatAmount,
       updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,

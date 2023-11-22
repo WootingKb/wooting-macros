@@ -1,11 +1,17 @@
 import {
+  Box,
   HStack,
   IconButton,
+  Input,
+  keyframes,
   StackDivider,
   Text,
-  useColorModeValue
+  Tooltip,
+  useColorModeValue,
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react'
-import { HiArrowDownTray, HiArrowPath, HiArrowRight } from 'react-icons/hi2'
+import { HiArrowDownTray, HiArrowPath, HiArrowPathRoundedSquare, HiArrowRight } from 'react-icons/hi2'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { MacroType, MacroTypeDefinitions } from '../../../constants/enums'
 import { checkIfStringIsNonNumeric } from '../../../constants/utils'
@@ -14,7 +20,7 @@ import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { borderRadiusStandard } from '../../../theme/config'
 
 export default function MacroTypeArea() {
-  const {macro, updateMacroType} = useMacroContext()
+  const {macro, updateMacroType, updateMacroRepeatAmount} = useMacroContext()
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const typeIcons = [<HiArrowRight/>, <HiArrowPath/>, <HiArrowDownTray/>, <HiArrowPathRoundedSquare/>]
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -50,6 +56,13 @@ export default function MacroTypeArea() {
       onOpen();
     }
   }, [macro.macro_type, onOpen])
+
+  const updateValue = (newValue: number) => {
+    setRepeatValue(newValue);
+    updateMacroRepeatAmount(newValue);
+  };
+
+
   return (
     <>
       <HStack
@@ -84,7 +97,7 @@ export default function MacroTypeArea() {
 
 
                   onClick={() => {
-                    updateMacroType(index, macro.repeat_amount)
+                    updateMacroType(index)
                     if (value === 'RepeatX') {
                       onOpen()
                     } else {
@@ -120,7 +133,9 @@ export default function MacroTypeArea() {
                   size="xl"
                   textStyle="name"
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setRepeatValue(Number(event.target.value))
+                    const newValue = Number(event.target.value);
+                    updateValue(newValue);
+                    console.error(newValue);
                   }}
                   value={repeatValue > 0 ? repeatValue : 1}
                   _focusVisible={{borderColor: 'primary-accent.500'}}
@@ -130,14 +145,14 @@ export default function MacroTypeArea() {
                     aria-label="Increase Value"
                     variant="yellowGradient"
                     icon={<AddIcon/>}
-                    onClick={() => setRepeatValue(repeatValue > 0 ? repeatValue + 1 : 1)}
+                    onClick={() => updateValue(repeatValue > 0 ? repeatValue + 1 : 1)}
                     size="2"
                   />
                   <IconButton
                     aria-label="Decrease Value"
                     variant="yellowGradient"
                     icon={<MinusIcon/>}
-                    onClick={() => setRepeatValue(repeatValue > 1 ? repeatValue - 1 : 1)}
+                    onClick={() => updateValue(repeatValue > 1 ? repeatValue - 1 : 1)}
                     size="2"
                   />
                 </VStack>
