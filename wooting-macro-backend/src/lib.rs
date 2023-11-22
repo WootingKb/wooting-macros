@@ -18,7 +18,7 @@ use tokio::task;
 
 use uuid::Uuid;
 
-use halfbrown::HashMap;
+use halfbrown::{Entry, HashMap};
 
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
@@ -119,55 +119,77 @@ pub struct Macro {
 }
 
 impl Macro {
+    pub fn new() -> Self {
+        Macro {
+            name: String::new(),
+            icon: "".to_string(),
+            sequence: vec![],
+            macro_type: MacroType::Single,
+            trigger: TriggerEventType::KeyPressEvent {
+                data: vec![],
+                allow_while_other_keys: false,
+            },
+            enabled: false,
+            repeat_amount: 0,
+        }
+    }
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
     /// Make sure to expand this if you implement new action types.
     async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
-        for action in &self.sequence {
-            match action {
-                ActionEventType::KeyPressEventAction { data } => match data.keytype {
-                    key_press::KeyType::Down => {
-                        // One key press down
-                        send_channel
-                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
-                    }
-                    key_press::KeyType::Up => {
-                        // One key lift up
-                        send_channel.send(rdev::EventType::KeyRelease(
-                            SCANCODE_TO_RDEV[&data.keypress],
-                        ))?;
-                    }
-                    key_press::KeyType::DownUp => {
-                        // Key press
-                        send_channel
-                            .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
+        for _ in 0..self.repeat_amount {
+            for action in self.sequence.iter() {
+                match action {
+                    ActionEventType::KeyPressEventAction { data } => match data.key_type {
+                        key_press::KeyType::Down => {
+                            // One key press down
+                            send_channel.send(rdev::EventType::KeyPress(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))?;
+                        }
+                        key_press::KeyType::Up => {
+                            // One key lift up
+                            send_channel.send(rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))?;
+                        }
+                        key_press::KeyType::DownUp => {
+                            // Key press
+                            send_channel.send(rdev::EventType::KeyPress(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))?;
 
-                        // Wait the set delay by user
-                        tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
+                            // Wait the set delay by user
+                            tokio::time::sleep(time::Duration::from_millis(data.press_duration))
+                                .await;
 
-                        // Lift the key
-                        send_channel.send(rdev::EventType::KeyRelease(
-                            SCANCODE_TO_RDEV[&data.keypress],
-                        ))?;
+                            // Lift the key
+                            send_channel.send(rdev::EventType::KeyRelease(
+                                SCANCODE_TO_RDEV[&data.keypress],
+                            ))?;
+                        }
+                    },
+                    ActionEventType::PhillipsHueEventAction { .. } => {}
+                    ActionEventType::OBSEventAction { .. } => {}
+                    ActionEventType::DiscordEventAction { .. } => {}
+                    ActionEventType::DelayEventAction { data } => {
+                        tokio::time::sleep(time::Duration::from_millis(*data)).await;
                     }
-                },
-                ActionEventType::PhillipsHueEventAction { .. } => {}
-                ActionEventType::OBSEventAction { .. } => {}
-                ActionEventType::DiscordEventAction { .. } => {}
-                ActionEventType::DelayEventAction { data } => {
-                    tokio::time::sleep(time::Duration::from_millis(*data)).await;
-                }
 
-                ActionEventType::SystemEventAction { data } => {
-                    let action_copy = data.clone();
-                    let channel_copy = send_channel.clone();
-                    task::spawn(async move { action_copy.execute(channel_copy).await });
+                    ActionEventType::SystemEventAction { data } => {
+                        let action_copy = data.clone();
+                        let channel_copy = send_channel.clone();
+                        task::spawn(async move { action_copy.execute(channel_copy).await });
+                    }
+                    ActionEventType::MouseEventAction { data } => {
+                        let action_copy = data.clone();
+                        let channel_copy = send_channel.clone();
+                        task::spawn(async move { action_copy.execute(channel_copy).await });
+                    }
                 }
-                ActionEventType::MouseEventAction { data } => {
-                    let action_copy = data.clone();
-                    let channel_copy = send_channel.clone();
-                    task::spawn(async move { action_copy.execute(channel_copy).await });
-                }
+            }
+            if self.macro_type != MacroType::RepeatX {
+                break;
             }
         }
         Ok(())
@@ -350,6 +372,8 @@ async fn macro_executor_receiver(
 
                 if let Some(matching_macro) = id_map_clone.get(&macro_id) {
                     let schan_keypress_clone = schan_keypress_execute.clone();
+                    // let schan_release_keypress_clone = schan_keypress_execute.clone();
+
                     let task = task::spawn({
                         let matching_macro = matching_macro.clone();
                         let macro_id_clone = macro_id.clone();
@@ -363,25 +387,36 @@ async fn macro_executor_receiver(
                         }
                     });
 
-                    worker_queue.entry(macro_id.clone()).or_insert_with(|| task);
+                    match worker_queue.entry(macro_id.clone()) {
+                        Entry::Occupied(entry_exist) => {
+                            entry_exist.remove_entry();
+                        }
+                        Entry::Vacant(_) => {
+                            worker_queue.insert(macro_id.clone(), task);
+                        }
+                    }
                 }
             }
 
             Err(err) => match err {
                 TryRecvError::Empty => {
                     if !worker_queue.is_empty() {
+                        warn!("Worker queue: {:?}", worker_queue);
                         let macro_id_list = macro_id_list.read().await.id_map.clone();
 
                         worker_queue.retain(|id, macro_item| {
-                            let macro_type = &macro_id_list
+                            let macro_type = macro_id_list
                                 .get(id)
-                                .unwrap_or_else(|| panic!("Error getting macro type: {}", id))
-                                .macro_type;
+                                .map(|macro_| macro_.macro_type.clone()) // clone() is used to copy the value so it isn't a temporary value
+                                .unwrap_or_else(|| {
+                                    error!("Error getting macro type: {}", id);
+                                    Macro::new().macro_type
+                                });
 
-                            if *macro_type != MacroType::Toggle {
-                                macro_item.is_finished()
+                            if macro_type != MacroType::Toggle {
+                                !macro_item.is_finished()
                             } else {
-                                false
+                                true
                             }
                         });
 
@@ -557,16 +592,15 @@ impl MacroBackend {
         //TODO: implement drop when the application ends to clean up the downed keys
 
         //==================================================
-
-        let inner_is_listening = self.is_listening.clone();
-        let inner_keys_pressed = self.keys_pressed.clone();
-        let inner_macro_lookup = self.macro_lookup.clone();
-
         // Spawn the channels
         let (schan_keypress_execute, rchan_keypress_execute) =
             tokio::sync::mpsc::unbounded_channel();
         let (schan_macro_execute, rchan_macro_execute) = tokio::sync::mpsc::unbounded_channel();
 
+        let inner_is_listening = self.is_listening.clone();
+        let inner_keys_pressed = self.keys_pressed.clone();
+        let inner_macro_lookup = self.macro_lookup.clone();
+        let inner_keypress_execute = schan_keypress_execute.clone();
         // Create the keypress executor
         thread::spawn(move || {
             keypress_executor_receiver(rchan_keypress_execute);
@@ -675,6 +709,11 @@ impl MacroBackend {
                             };
 
                             if should_grab {
+                                plugin::util::lift_trigger_key(
+                                    first_key_pressed,
+                                    &inner_keypress_execute,
+                                )
+                                .unwrap();
                                 None
                             } else {
                                 Some(event)
