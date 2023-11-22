@@ -364,6 +364,7 @@ async fn macro_executor_receiver(
     trace!("Macro executor receiver started!");
     let mut worker_queue: HashMap<String, task::JoinHandle<()>> = HashMap::new();
 
+
     loop {
         match rchan_execute.try_recv() {
             Ok(macro_id) => {
@@ -371,15 +372,14 @@ async fn macro_executor_receiver(
                 let id_map_clone = macro_id_list.read().await.id_map.clone();
 
                 if let Some(matching_macro) = id_map_clone.get(&macro_id) {
-                    let schan_keypress_clone = schan_keypress_execute.clone();
-                    // let schan_release_keypress_clone = schan_keypress_execute.clone();
+                    let schan_inner_keypress_clone = schan_keypress_execute.clone();
 
                     let task = task::spawn({
                         let matching_macro = matching_macro.clone();
                         let macro_id_clone = macro_id.clone();
                         async move {
                             matching_macro
-                                .execute(schan_keypress_clone)
+                                .execute(schan_inner_keypress_clone)
                                 .await
                                 .unwrap_or_else(|err| {
                                     error!("Error executing macro: {} {}", macro_id_clone, err)
@@ -401,8 +401,10 @@ async fn macro_executor_receiver(
             Err(err) => match err {
                 TryRecvError::Empty => {
                     if !worker_queue.is_empty() {
-                        warn!("Worker queue: {:?}", worker_queue);
                         let macro_id_list = macro_id_list.read().await.id_map.clone();
+                        let mut toggle_macros_to_add: Vec<String> = vec![];
+                        warn!("Worker queue: {:?}", worker_queue);
+
 
                         worker_queue.retain(|id, macro_item| {
                             let macro_type = macro_id_list
@@ -413,21 +415,53 @@ async fn macro_executor_receiver(
                                     Macro::new().macro_type
                                 });
 
-                            if macro_type != MacroType::Toggle {
-                                !macro_item.is_finished()
-                            } else {
-                                true
+                            error!("Macro finished? {}: {}", macro_item.is_finished(), id);
+
+                            if macro_type == MacroType::Toggle && macro_item.is_finished() {
+                                info!("Found a macro to re-add: {}", id);
+                                toggle_macros_to_add.push(id.clone());
                             }
+
+                            !macro_item.is_finished() == true
                         });
 
-                        if worker_queue.is_empty() {
+                        warn!("Re-add queue: {:?}", toggle_macros_to_add);
+                        if toggle_macros_to_add.is_empty() {
+                            // warn!("Re-add queue is empty");
                             continue;
                         } else {
-                            for (id, macro_item) in worker_queue.iter_mut() {
-                                macro_item.await.unwrap_or_else(|err| {
-                                    panic!("Error running macro id {}: {}", id, err)
+                            for macro_id in &toggle_macros_to_add {
+                                info!("Macros to read: {:?}", toggle_macros_to_add);
+
+                                let macro_to_readd = macro_id_list.get(macro_id).unwrap().clone();
+                                let schan_keypress_clone = schan_keypress_execute.clone();
+
+                                let task = task::spawn({
+                                    let matching_macro = macro_to_readd.clone();
+                                    let macro_id_clone = macro_id.clone();
+                                    async move {
+                                        matching_macro
+                                            .execute(schan_keypress_clone)
+                                            .await
+                                            .unwrap_or_else(|err| {
+                                                error!("Error executing macro: {} {}", macro_id_clone, err)
+                                            });
+                                    }
                                 });
+
+                                match worker_queue.entry(macro_id.clone()) {
+                                    Entry::Occupied(entry_exist) => {
+                                        entry_exist.remove_entry();
+                                        error!("This should not happen, removing an already supposedly removed entry");
+                                    }
+                                    Entry::Vacant(_) => {
+                                        worker_queue.insert(macro_id.clone(), task);
+                                        error!("Re-added the macro {} to the worker queue", macro_id);
+                                    }
+                                }
+
                             }
+
                         }
                     }
                 }
