@@ -27,7 +27,9 @@ use dirs;
 use std::path::PathBuf;
 
 use anyhow::{Error, Result};
+use lazy_static::lazy_static;
 use plugin::delay::DEFAULT_DELAY;
+use rdev::EventType;
 use tokio::sync::mpsc::error::TryRecvError;
 
 // This has to be imported for release build
@@ -109,7 +111,7 @@ pub enum TriggerEventType {
 
 #[derive(Debug)]
 pub enum MacroTaskEvent {
-    Start(UnboundedSender<rdev::EventType>),
+    Start,
     Stop,
     Abort,
 }
@@ -144,78 +146,10 @@ pub struct Macro {
     pub enabled: bool,
     pub repeat_amount: u32,
     pub task_sender: UnboundedSender<MacroTaskEvent>,
+    pub macro_keypress_sender: UnboundedSender<rdev::EventType>,
 }
 
-// impl Default for Macro {
-// fn default() -> Self {
-//     // Create a new associated task with the macro
-//     let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
-//     MacroTask::new(task_receiver);
-//
-//     // Return the macro
-//     Macro {
-//         name: String::new(),
-//         icon: "".to_string(),
-//         sequence: vec![],
-//         macro_type: MacroType::Single,
-//         trigger: TriggerEventType::KeyPressEvent {
-//             data: vec![],
-//             allow_while_other_keys: false,
-//         },
-//         enabled: false,
-//         repeat_amount: 0,
-//         task_sender,
-//     }
-// }
-// }
-
-pub struct MacroTask {
-    pub task_receiver: UnboundedReceiver<MacroTaskEvent>,
-}
-
-impl MacroTask {
-    pub fn new(mut receive_channel: UnboundedReceiver<MacroTaskEvent>) {
-        tokio::task::spawn(async move {
-            loop {
-                if let Some(message) = receive_channel.blocking_recv() {
-                    warn! {"Received message: {:?}", message};
-                }
-                tokio::time::sleep(time::Duration::from_millis(20)).await;
-            }
-        });
-    }
-}
-
-impl Macro {
-    pub fn new(macro_config: MacroConfig) -> Self {
-        // Create a new associated task with the macro
-        let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
-        MacroTask::new(task_receiver);
-
-        // Return the macro
-        Macro {
-            name: macro_config.name,
-            icon: macro_config.icon,
-            sequence: macro_config.sequence,
-            macro_type: macro_config.macro_type,
-            trigger: macro_config.trigger,
-            enabled: macro_config.enabled,
-            repeat_amount: macro_config.repeat_amount,
-            task_sender,
-        }
-    }
-    async fn on_event(&self, event: MacroTaskEvent) {
-        match event {
-            MacroTaskEvent::Start(keypress_sender) => {
-                self.task_sender
-                    .send(MacroTaskEvent::Start(keypress_sender))
-                    .unwrap();
-            }
-            MacroTaskEvent::Stop => self.task_sender.send(MacroTaskEvent::Stop).unwrap(),
-            MacroTaskEvent::Abort => self.task_sender.send(MacroTaskEvent::Abort).unwrap(),
-        }
-    }
-
+impl MacroConfig {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
     /// Make sure to expand this if you implement new action types.
@@ -296,6 +230,106 @@ impl Macro {
         Ok(())
     }
 }
+// impl Default for Macro {
+// fn default() -> Self {
+//     // Create a new associated task with the macro
+//     let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
+//     MacroTask::new(task_receiver);
+//
+//     // Return the macro
+//     Macro {
+//         name: String::new(),
+//         icon: "".to_string(),
+//         sequence: vec![],
+//         macro_type: MacroType::Single,
+//         trigger: TriggerEventType::KeyPressEvent {
+//             data: vec![],
+//             allow_while_other_keys: false,
+//         },
+//         enabled: false,
+//         repeat_amount: 0,
+//         task_sender,
+//     }
+// }
+// }
+
+pub struct MacroTask {
+    pub task_receiver: UnboundedReceiver<MacroTaskEvent>,
+}
+
+impl MacroTask {
+    pub async fn new(
+        mut receive_channel: UnboundedReceiver<MacroTaskEvent>,
+        macro_data: MacroConfig,
+        send_channel: UnboundedSender<EventType>,
+    ) {
+        let mut is_running = false;
+
+        loop {
+            match receive_channel.try_recv() {
+                Ok(message) => {
+                    warn!("Received message: {:?}", message);
+                    match message {
+                        MacroTaskEvent::Start => {
+                            is_running = true;
+                        }
+                        MacroTaskEvent::Stop => {
+                            is_running = false;
+                        }
+                        MacroTaskEvent::Abort => {}
+                    }
+                }
+                Err(_) => {
+                    if is_running {
+                        let cloned_send_channel = send_channel.clone();
+                        macro_data.execute(cloned_send_channel).await.unwrap();
+                        is_running = false;
+                    }
+                }
+            }
+
+            tokio::time::sleep(time::Duration::from_millis(1000)).await;
+        }
+    }
+}
+
+impl Macro {
+    pub fn new(
+        macro_config: MacroConfig,
+        macro_keypress_sender: UnboundedSender<EventType>,
+    ) -> Self {
+        // Create a new associated task with the macro
+        let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
+        let macro_keypress_sender_clone = macro_keypress_sender.clone();
+        let macro_clone = macro_config.clone();
+        tokio::task::spawn(async move {
+            MacroTask::new(task_receiver, macro_clone, macro_keypress_sender_clone).await;
+        });
+
+        debug!("Created a macro, name: {}", &macro_config.name);
+        // Return the macro
+        Macro {
+            name: macro_config.name,
+            icon: macro_config.icon,
+            sequence: macro_config.sequence,
+            macro_type: macro_config.macro_type,
+            trigger: macro_config.trigger,
+            enabled: macro_config.enabled,
+            repeat_amount: macro_config.repeat_amount,
+            task_sender,
+            macro_keypress_sender,
+        }
+    }
+    async fn on_event(&self, event: MacroTaskEvent) {
+        match event {
+            MacroTaskEvent::Start => {
+                self.task_sender.send(MacroTaskEvent::Start).unwrap();
+            }
+            MacroTaskEvent::Stop => self.task_sender.send(MacroTaskEvent::Stop).unwrap(),
+            MacroTaskEvent::Abort => self.task_sender.send(MacroTaskEvent::Abort).unwrap(),
+        }
+    }
+}
 
 /// Collections are groups of macros.
 type Collections = Vec<Collection>;
@@ -346,6 +380,13 @@ impl Default for MacroData {
 impl MacroData {
     /// Extracts the first trigger data from the macros, and pairs UUIDs to macros
     pub fn new_lookup(&self) -> Result<MacroLookup> {
+        let (schan_keypress_execute, rchan_keypress_execute) =
+            tokio::sync::mpsc::unbounded_channel();
+        // Create the keypress executor
+        thread::spawn(move || {
+            keypress_executor_receiver(rchan_keypress_execute);
+        });
+
         let mut macro_lookup = MacroLookup::default();
 
         for collections in &self.data {
@@ -359,7 +400,9 @@ impl MacroData {
                             unique_id = Uuid::new_v4().to_string();
 
                             if macro_lookup.id_map.get(&unique_id).is_none() {
-                                let macro_to_insert = Macro::new(macros.clone());
+                                // let macro_keypress_sender = schan_keypress_execute.clone();
+                                let macro_to_insert =
+                                    Macro::new(macros.clone(), schan_keypress_execute.clone());
 
                                 macro_lookup
                                     .id_map
@@ -466,42 +509,44 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
 async fn macro_executor(
     mut rchan_execute: UnboundedReceiver<MacroExecutorEvent>,
     macro_id_list: Arc<RwLock<MacroLookup>>,
-    schan_keypress_execute: UnboundedSender<rdev::EventType>,
+    // schan_keypress_execute: UnboundedSender<rdev::EventType>,
 ) {
     loop {
-        if let Some(macro_event) = rchan_execute.blocking_recv() {
+        if let Some(macro_event) = rchan_execute.recv().await {
             let macro_id_list = macro_id_list.read().await;
             let macro_id_list = &macro_id_list.id_map;
 
             match macro_event {
                 MacroExecutorEvent::Start(macro_id) => {
-                    let schan_keypress_execute_clone = schan_keypress_execute.clone();
+                    // let schan_keypress_execute_clone = schan_keypress_execute.clone();
                     macro_id_list
                         .get(&macro_id)
                         .unwrap()
-                        .task_sender
-                        .send(MacroTaskEvent::Start(schan_keypress_execute_clone))
-                        .unwrap()
+                        .on_event(MacroTaskEvent::Start)
+                        .await
                 }
-                MacroExecutorEvent::Stop(macro_id) => macro_id_list
-                    .get(&macro_id)
-                    .unwrap()
-                    .task_sender
-                    .send(MacroTaskEvent::Stop)
-                    .unwrap(),
-
-                MacroExecutorEvent::Abort(macro_id) => macro_id_list
-                    .get(&macro_id)
-                    .unwrap()
-                    .task_sender
-                    .send(MacroTaskEvent::Abort)
-                    .unwrap(),
-
-                MacroExecutorEvent::AbortAll => macro_id_list.iter().for_each(|(_, macro_item)| {
-                    macro_item.task_sender.send(MacroTaskEvent::Abort).unwrap()
-                }),
+                MacroExecutorEvent::Stop(macro_id) => {
+                    macro_id_list
+                        .get(&macro_id)
+                        .unwrap()
+                        .on_event(MacroTaskEvent::Stop)
+                        .await
+                }
+                MacroExecutorEvent::Abort(macro_id) => {
+                    macro_id_list
+                        .get(&macro_id)
+                        .unwrap()
+                        .on_event(MacroTaskEvent::Abort)
+                        .await
+                }
+                MacroExecutorEvent::AbortAll => {
+                    for (_, macro_item) in macro_id_list.iter() {
+                        macro_item.on_event(MacroTaskEvent::Abort).await
+                    }
+                }
             }
         }
+        tokio::time::sleep(time::Duration::from_millis(20)).await;
     }
 }
 
@@ -517,7 +562,7 @@ fn check_macro_execution_efficiently(
     check_macros: Vec<String>,
     macro_data: Arc<RwLock<MacroLookup>>,
     macro_channel_sender: UnboundedSender<MacroExecutorEvent>,
-    keypress_sender: UnboundedSender<rdev::EventType>,
+    // keypress_sender: UnboundedSender<rdev::EventType>,
 ) -> bool {
     let trigger_overview_print = check_macros.clone();
     let macro_data_id_map_cloned = &macro_data.blocking_read().id_map;
@@ -549,11 +594,11 @@ fn check_macro_execution_efficiently(
                             // let channel_clone_execute = macro_sender.clone();
                             // Disabled until a better fix is done
 
-                            plugin::util::lift_trigger_key(
-                                *data.first().unwrap(),
-                                &keypress_sender,
-                            )
-                            .unwrap();
+                            // plugin::util::lift_trigger_key(
+                            //     *data.first().unwrap(),
+                            //     &keypress_sender,
+                            // )
+                            // .unwrap();
 
                             macro_sender
                                 .send(MacroExecutorEvent::Start(id_cloned))
@@ -668,18 +713,13 @@ impl MacroBackend {
 
         //==================================================
         // Spawn the channels
-        let (schan_keypress_execute, rchan_keypress_execute) =
-            tokio::sync::mpsc::unbounded_channel();
+
         let (schan_macro_execute, rchan_macro_execute) = tokio::sync::mpsc::unbounded_channel();
 
         let inner_is_listening = self.is_listening.clone();
         let inner_keys_pressed = self.keys_pressed.clone();
         let inner_macro_lookup = self.macro_lookup.clone();
-        let inner_keypress_execute = schan_keypress_execute.clone();
-        // Create the keypress executor
-        thread::spawn(move || {
-            keypress_executor_receiver(rchan_keypress_execute);
-        });
+        // let inner_keypress_execute = schan_keypress_execute.clone();
 
         let inner_macro_lookup_clone = inner_macro_lookup.clone();
         //let inner_macro_lookup_clone = inner_macro_lookup.clone();
@@ -690,7 +730,7 @@ impl MacroBackend {
                 macro_executor(
                     rchan_macro_execute,
                     inner_macro_lookup_clone,
-                    schan_keypress_execute,
+                    // schan_keypress_execute,
                 )
                 .await;
             });
@@ -765,7 +805,7 @@ impl MacroBackend {
                                 if !check_these_macros.is_empty() {
                                     let macro_channel_clone = schan_macro_execute.clone();
                                     let macro_data_list_clone = inner_macro_lookup.clone();
-                                    let keypress_execute_clone = inner_keypress_execute.clone();
+                                    // let keypress_execute_clone = inner_keypress_execute.clone();
                                     // let macro_id_list_clone =
                                     //     inner_macro_lookup.blocking_read().triggers.clone();
                                     error!(
@@ -778,7 +818,7 @@ impl MacroBackend {
                                         check_these_macros,
                                         macro_data_list_clone,
                                         macro_channel_clone,
-                                        keypress_execute_clone,
+                                        // keypress_execute_clone,
                                     )
                                 } else {
                                     false
@@ -824,13 +864,13 @@ impl MacroBackend {
                                     "Mouse button found check these macros: {:?}",
                                     check_these_macros
                                 );
-                                let keypress_execute_clone = inner_keypress_execute.clone();
+                                // let keypress_execute_clone = inner_keypress_execute.clone();
                                 should_grab = check_macro_execution_efficiently(
                                     vec![converted_button_to_u32],
                                     check_these_macros,
                                     macro_data_list_clone,
                                     macro_channel_clone,
-                                    keypress_execute_clone,
+                                    // keypress_execute_clone,
                                 );
                             }
 
@@ -842,7 +882,7 @@ impl MacroBackend {
                             }
                         }
                         rdev::EventType::ButtonRelease(button) => {
-                            debug!("Button released: {:?}", button);
+                            // debug!("Button released: {:?}", button);
 
                             Some(event)
                         }
