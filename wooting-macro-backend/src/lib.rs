@@ -146,28 +146,28 @@ pub struct Macro {
     pub task_sender: UnboundedSender<MacroTaskEvent>,
 }
 
-impl Default for Macro {
-    fn default() -> Self {
-        // Create a new associated task with the macro
-        let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
-        MacroTask::new(task_receiver);
-
-        // Return the macro
-        Macro {
-            name: String::new(),
-            icon: "".to_string(),
-            sequence: vec![],
-            macro_type: MacroType::Single,
-            trigger: TriggerEventType::KeyPressEvent {
-                data: vec![],
-                allow_while_other_keys: false,
-            },
-            enabled: false,
-            repeat_amount: 0,
-            task_sender,
-        }
-    }
-}
+// impl Default for Macro {
+// fn default() -> Self {
+//     // Create a new associated task with the macro
+//     let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
+//     MacroTask::new(task_receiver);
+//
+//     // Return the macro
+//     Macro {
+//         name: String::new(),
+//         icon: "".to_string(),
+//         sequence: vec![],
+//         macro_type: MacroType::Single,
+//         trigger: TriggerEventType::KeyPressEvent {
+//             data: vec![],
+//             allow_while_other_keys: false,
+//         },
+//         enabled: false,
+//         repeat_amount: 0,
+//         task_sender,
+//     }
+// }
+// }
 
 pub struct MacroTask {
     pub task_receiver: UnboundedReceiver<MacroTaskEvent>,
@@ -187,26 +187,23 @@ impl MacroTask {
 }
 
 impl Macro {
-    // pub fn new() -> Self {
-    // // Create a new associated task with the macro
-    // let (mut task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
-    // MacroTask::new(task_receiver);
-    //
-    // // Return the macro
-    // Macro {
-    //     name: String::new(),
-    //     icon: "".to_string(),
-    //     sequence: vec![],
-    //     macro_type: MacroType::Single,
-    //     trigger: TriggerEventType::KeyPressEvent {
-    //         data: vec![],
-    //         allow_while_other_keys: false,
-    //     },
-    //     enabled: false,
-    //     repeat_amount: 0,
-    //     task_sender,
-    // }
-    // }
+    pub fn new(macro_config: MacroConfig) -> Self {
+        // Create a new associated task with the macro
+        let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
+        MacroTask::new(task_receiver);
+
+        // Return the macro
+        Macro {
+            name: macro_config.name,
+            icon: macro_config.icon,
+            sequence: macro_config.sequence,
+            macro_type: macro_config.macro_type,
+            trigger: macro_config.trigger,
+            enabled: macro_config.enabled,
+            repeat_amount: macro_config.repeat_amount,
+            task_sender,
+        }
+    }
     async fn on_event(&self, event: MacroTaskEvent) {
         match event {
             MacroTaskEvent::Start(keypress_sender) => {
@@ -362,9 +359,11 @@ impl MacroData {
                             unique_id = Uuid::new_v4().to_string();
 
                             if macro_lookup.id_map.get(&unique_id).is_none() {
+                                let macro_to_insert = Macro::new(macros.clone());
+
                                 macro_lookup
                                     .id_map
-                                    .insert(unique_id.clone(), macros.clone().into());
+                                    .insert(unique_id.clone(), macro_to_insert);
                                 break;
                             }
                         }
@@ -428,12 +427,6 @@ impl MacroData {
         }
 
         Ok(macro_lookup)
-    }
-}
-
-impl From<MacroConfig> for Macro {
-    fn from(value: MacroConfig) -> Self {
-        todo!()
     }
 }
 
