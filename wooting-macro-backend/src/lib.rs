@@ -18,7 +18,7 @@ use tokio::task;
 
 use uuid::Uuid;
 
-use halfbrown::{Entry, HashMap};
+use halfbrown::HashMap;
 
 use config::{ApplicationConfig, ConfigFile};
 #[cfg(not(debug_assertions))]
@@ -45,7 +45,7 @@ use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Eq, PartialEq)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
 ///
 /// ! **UNIMPLEMENTED** - Only the `Single` macro type is implemented for now. Feel free to contribute ideas.
@@ -123,6 +123,17 @@ pub enum MacroExecutorEvent {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MacroConfig {
+    pub name: String,
+    pub icon: String,
+    pub sequence: Vec<ActionEventType>,
+    pub macro_type: MacroType,
+    pub trigger: TriggerEventType,
+    pub enabled: bool,
+    pub repeat_amount: u32,
+}
+
+#[derive(Debug)]
 /// This is a macro struct. Includes all information a macro needs to run.
 pub struct Macro {
     pub name: String,
@@ -132,9 +143,32 @@ pub struct Macro {
     pub trigger: TriggerEventType,
     pub enabled: bool,
     pub repeat_amount: u32,
-    #[serde(skip_deserializing, skip_serializing)]
     pub task_sender: UnboundedSender<MacroTaskEvent>,
 }
+
+impl Default for Macro {
+    fn default() -> Self {
+        // Create a new associated task with the macro
+        let (task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
+        MacroTask::new(task_receiver);
+
+        // Return the macro
+        Macro {
+            name: String::new(),
+            icon: "".to_string(),
+            sequence: vec![],
+            macro_type: MacroType::Single,
+            trigger: TriggerEventType::KeyPressEvent {
+                data: vec![],
+                allow_while_other_keys: false,
+            },
+            enabled: false,
+            repeat_amount: 0,
+            task_sender,
+        }
+    }
+}
+
 pub struct MacroTask {
     pub task_receiver: UnboundedReceiver<MacroTaskEvent>,
 }
@@ -153,26 +187,26 @@ impl MacroTask {
 }
 
 impl Macro {
-    pub fn new() -> Self {
-        // Create a new associated task with the macro
-        let (mut task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
-        MacroTask::new(task_receiver);
-
-        // Return the macro
-        Macro {
-            name: String::new(),
-            icon: "".to_string(),
-            sequence: vec![],
-            macro_type: MacroType::Single,
-            trigger: TriggerEventType::KeyPressEvent {
-                data: vec![],
-                allow_while_other_keys: false,
-            },
-            enabled: false,
-            repeat_amount: 0,
-            task_sender,
-        }
-    }
+    // pub fn new() -> Self {
+    // // Create a new associated task with the macro
+    // let (mut task_sender, task_receiver) = tokio::sync::mpsc::unbounded_channel();
+    // MacroTask::new(task_receiver);
+    //
+    // // Return the macro
+    // Macro {
+    //     name: String::new(),
+    //     icon: "".to_string(),
+    //     sequence: vec![],
+    //     macro_type: MacroType::Single,
+    //     trigger: TriggerEventType::KeyPressEvent {
+    //         data: vec![],
+    //         allow_while_other_keys: false,
+    //     },
+    //     enabled: false,
+    //     repeat_amount: 0,
+    //     task_sender,
+    // }
+    // }
     async fn on_event(&self, event: MacroTaskEvent) {
         match event {
             MacroTaskEvent::Start(keypress_sender) => {
@@ -330,7 +364,7 @@ impl MacroData {
                             if macro_lookup.id_map.get(&unique_id).is_none() {
                                 macro_lookup
                                     .id_map
-                                    .insert(unique_id.clone(), macros.clone());
+                                    .insert(unique_id.clone(), macros.clone().into());
                                 break;
                             }
                         }
@@ -397,12 +431,18 @@ impl MacroData {
     }
 }
 
+impl From<MacroConfig> for Macro {
+    fn from(value: MacroConfig) -> Self {
+        todo!()
+    }
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Collection struct that defines what a group of macros looks like and what properties it carries
 pub struct Collection {
     pub name: String,
     pub icon: String,
-    pub macros: Vec<Macro>,
+    pub macros: Vec<MacroConfig>,
     pub enabled: bool,
 }
 
@@ -487,7 +527,7 @@ fn check_macro_execution_efficiently(
     keypress_sender: UnboundedSender<rdev::EventType>,
 ) -> bool {
     let trigger_overview_print = check_macros.clone();
-    let macro_data_id_map_cloned = macro_data.blocking_read().id_map.clone();
+    let macro_data_id_map_cloned = &macro_data.blocking_read().id_map;
 
     warn!("calling function check_macro_execution_efficiently");
 
@@ -496,7 +536,7 @@ fn check_macro_execution_efficiently(
 
     for (macro_id, macros) in check_macros
         .iter()
-        .map(|id| (id.clone(), macro_data_id_map_cloned.get(id).unwrap()))
+        .map(|id| (id.clone(), (*macro_data_id_map_cloned).get(id).unwrap()))
     {
         // Must be cloned here otherwise Rust will cry
 
