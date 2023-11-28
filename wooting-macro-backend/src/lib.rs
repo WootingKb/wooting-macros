@@ -145,6 +145,7 @@ pub struct Macro {
     pub trigger: TriggerEventType,
     pub enabled: bool,
     pub repeat_amount: u32,
+    pub is_running: bool,
     pub task_sender: UnboundedSender<MacroTaskEvent>,
     pub macro_keypress_sender: UnboundedSender<rdev::EventType>,
 }
@@ -264,6 +265,7 @@ impl MacroTask {
         send_channel: UnboundedSender<EventType>,
     ) {
         let mut is_running = false;
+        let mut abort = false;
 
         loop {
             match receive_channel.try_recv() {
@@ -271,6 +273,16 @@ impl MacroTask {
                     warn!("Received message: {:?}", message);
                     match message {
                         MacroTaskEvent::Start => {
+                            if let TriggerEventType::KeyPressEvent { ref data, .. } =
+                                macro_data.trigger
+                            {
+                                plugin::util::lift_trigger_key(
+                                    *data.first().unwrap(),
+                                    &send_channel,
+                                )
+                                .unwrap();
+                            };
+
                             is_running = true;
                         }
                         MacroTaskEvent::Stop => {
@@ -283,12 +295,15 @@ impl MacroTask {
                     if is_running {
                         let cloned_send_channel = send_channel.clone();
                         macro_data.execute(cloned_send_channel).await.unwrap();
-                        is_running = false;
+
+                        if macro_data.macro_type != MacroType::Toggle {
+                            is_running = false;
+                        }
                     }
                 }
             }
 
-            tokio::time::sleep(time::Duration::from_millis(1000)).await;
+            tokio::time::sleep(time::Duration::from_millis(20)).await;
         }
     }
 }
@@ -316,17 +331,56 @@ impl Macro {
             trigger: macro_config.trigger,
             enabled: macro_config.enabled,
             repeat_amount: macro_config.repeat_amount,
+            is_running: false,
             task_sender,
             macro_keypress_sender,
         }
     }
-    async fn on_event(&self, event: MacroTaskEvent) {
-        match event {
-            MacroTaskEvent::Start => {
-                self.task_sender.send(MacroTaskEvent::Start).unwrap();
+    async fn on_event(&mut self, event: MacroTaskEvent) {
+        if MacroType::Toggle == self.macro_type {
+            match self.is_running {
+                true => match event {
+                    MacroTaskEvent::Start => {
+                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+                        self.is_running = false;
+                    }
+                    MacroTaskEvent::Stop => {
+                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+                        self.is_running = false;
+                    }
+                    MacroTaskEvent::Abort => {
+                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+                        self.is_running = false;
+                    }
+                },
+
+                false => match event {
+                    MacroTaskEvent::Start => {
+                        self.task_sender.send(MacroTaskEvent::Start).unwrap();
+                        self.is_running = true;
+                    }
+                    MacroTaskEvent::Stop => {
+                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+                        self.is_running = false;
+                    }
+                    MacroTaskEvent::Abort => {
+                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+                        self.is_running = false
+                    }
+                },
             }
-            MacroTaskEvent::Stop => self.task_sender.send(MacroTaskEvent::Stop).unwrap(),
-            MacroTaskEvent::Abort => self.task_sender.send(MacroTaskEvent::Abort).unwrap(),
+        } else {
+            match event {
+                MacroTaskEvent::Start => {
+                    self.task_sender.send(MacroTaskEvent::Start).unwrap();
+                }
+                MacroTaskEvent::Stop => {
+                    self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+                }
+                MacroTaskEvent::Abort => {
+                    self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+                }
+            }
         }
     }
 }
@@ -513,34 +567,34 @@ async fn macro_executor(
 ) {
     loop {
         if let Some(macro_event) = rchan_execute.recv().await {
-            let macro_id_list = macro_id_list.read().await;
-            let macro_id_list = &macro_id_list.id_map;
+            let mut macro_id_list = macro_id_list.write().await;
+            let mut macro_id_list = &mut macro_id_list.id_map;
 
             match macro_event {
                 MacroExecutorEvent::Start(macro_id) => {
                     // let schan_keypress_execute_clone = schan_keypress_execute.clone();
                     macro_id_list
-                        .get(&macro_id)
+                        .get_mut(&macro_id)
                         .unwrap()
                         .on_event(MacroTaskEvent::Start)
                         .await
                 }
                 MacroExecutorEvent::Stop(macro_id) => {
                     macro_id_list
-                        .get(&macro_id)
+                        .get_mut(&macro_id)
                         .unwrap()
                         .on_event(MacroTaskEvent::Stop)
                         .await
                 }
                 MacroExecutorEvent::Abort(macro_id) => {
                     macro_id_list
-                        .get(&macro_id)
+                        .get_mut(&macro_id)
                         .unwrap()
                         .on_event(MacroTaskEvent::Abort)
                         .await
                 }
                 MacroExecutorEvent::AbortAll => {
-                    for (_, macro_item) in macro_id_list.iter() {
+                    for (_, macro_item) in macro_id_list.iter_mut() {
                         macro_item.on_event(MacroTaskEvent::Abort).await
                     }
                 }
