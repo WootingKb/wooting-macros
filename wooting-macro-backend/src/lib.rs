@@ -91,6 +91,74 @@ pub enum ActionEventType {
     },
 }
 
+impl ActionEventType {
+    /// This function is used to execute a macro. It is called by the macro checker.
+    /// It spawns async tasks to execute said events specifically.
+    /// Make sure to expand this if you implement new action types.
+    async fn execute(&self, send_channel: &UnboundedSender<rdev::EventType>) -> Result<()> {
+        match self {
+            ActionEventType::KeyPressEventAction { data } => match data.key_type {
+                key_press::KeyType::Down => {
+                    // One key press down
+                    send_channel
+                        .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
+                    // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
+                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    // ))?;
+                    tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+                }
+                key_press::KeyType::Up => {
+                    // One key lift up
+                    send_channel.send(rdev::EventType::KeyRelease(
+                        SCANCODE_TO_RDEV[&data.keypress],
+                    ))?;
+                    // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
+                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    // ))?;
+                    tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+                }
+                key_press::KeyType::DownUp => {
+                    // Key press
+                    send_channel
+                        .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
+                    // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
+                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    // ))?;
+                    tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+
+                    // Wait the set delay by user
+                    tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
+
+                    // Lift the key
+                    send_channel.send(rdev::EventType::KeyRelease(
+                        SCANCODE_TO_RDEV[&data.keypress],
+                    ))?;
+                    // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
+                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    // ))?;
+                    tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+                }
+            },
+            ActionEventType::PhillipsHueEventAction { .. } => {}
+            ActionEventType::OBSEventAction { .. } => {}
+            ActionEventType::DiscordEventAction { .. } => {}
+            ActionEventType::DelayEventAction { data } => {
+                tokio::time::sleep(time::Duration::from_millis(*data)).await;
+            }
+            ActionEventType::SystemEventAction { data } => {
+                data.execute(&send_channel).await?;
+                tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+            }
+            ActionEventType::MouseEventAction { data } => {
+                data.execute(&send_channel).await?;
+                tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+            }
+        }
+
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution.
@@ -110,8 +178,19 @@ pub enum TriggerEventType {
 
 #[derive(Debug)]
 pub enum MacroTaskEvent {
-    Start,
-    Stop,
+    OneShot,
+    RepeatStart,
+    RepeatStop,
+    RepeatX(u32),
+    Toggle,
+    Abort,
+    Kill,
+}
+
+#[derive(Debug)]
+pub enum MacroTriggerEvent {
+    Pressed,
+    Released,
     Abort,
 }
 
@@ -134,102 +213,16 @@ pub struct MacroConfig {
     pub repeat_amount: u32,
 }
 
+//TODO: put the MacroConfig inside the Macro
+
 #[derive(Debug)]
 /// This is a macro struct. Includes all information a macro needs to run.
 pub struct Macro {
-    pub name: String,
-    pub icon: String,
-    pub sequence: Vec<ActionEventType>,
-    pub macro_type: MacroType,
-    pub trigger: TriggerEventType,
-    pub enabled: bool,
-    pub repeat_amount: u32,
-    pub is_running: bool,
+    pub config: MacroConfig,
     pub task_sender: UnboundedSender<MacroTaskEvent>,
     pub macro_keypress_sender: UnboundedSender<rdev::EventType>,
 }
 
-impl MacroConfig {
-    /// This function is used to execute a macro. It is called by the macro checker.
-    /// It spawns async tasks to execute said events specifically.
-    /// Make sure to expand this if you implement new action types.
-    async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
-        for _ in 0..self.repeat_amount {
-            for action in self.sequence.iter() {
-                match action {
-                    ActionEventType::KeyPressEventAction { data } => match data.key_type {
-                        key_press::KeyType::Down => {
-                            // One key press down
-                            send_channel.send(rdev::EventType::KeyPress(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))?;
-                            // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
-                            //     SCANCODE_TO_RDEV[&data.keypress],
-                            // ))?;
-                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
-                        }
-                        key_press::KeyType::Up => {
-                            // One key lift up
-                            send_channel.send(rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))?;
-                            // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
-                            //     SCANCODE_TO_RDEV[&data.keypress],
-                            // ))?;
-                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
-                        }
-                        key_press::KeyType::DownUp => {
-                            // Key press
-                            send_channel.send(rdev::EventType::KeyPress(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))?;
-                            // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
-                            //     SCANCODE_TO_RDEV[&data.keypress],
-                            // ))?;
-                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
-
-                            // Wait the set delay by user
-                            tokio::time::sleep(time::Duration::from_millis(data.press_duration))
-                                .await;
-
-                            // Lift the key
-                            send_channel.send(rdev::EventType::KeyRelease(
-                                SCANCODE_TO_RDEV[&data.keypress],
-                            ))?;
-                            // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
-                            //     SCANCODE_TO_RDEV[&data.keypress],
-                            // ))?;
-                            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
-                        }
-                    },
-                    ActionEventType::PhillipsHueEventAction { .. } => {}
-                    ActionEventType::OBSEventAction { .. } => {}
-                    ActionEventType::DiscordEventAction { .. } => {}
-                    ActionEventType::DelayEventAction { data } => {
-                        tokio::time::sleep(time::Duration::from_millis(*data)).await;
-                    }
-
-                    ActionEventType::SystemEventAction { data } => {
-                        let action_copy = data.clone();
-                        let channel_copy = send_channel.clone();
-                        task::spawn(async move { action_copy.execute(channel_copy).await });
-                        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
-                    }
-                    ActionEventType::MouseEventAction { data } => {
-                        let action_copy = data.clone();
-                        let channel_copy = send_channel.clone();
-                        task::spawn(async move { action_copy.execute(channel_copy).await });
-                        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
-                    }
-                }
-            }
-            if self.macro_type != MacroType::RepeatX {
-                break;
-            }
-        }
-        Ok(())
-    }
-}
 // impl Default for Macro {
 // fn default() -> Self {
 //     // Create a new associated task with the macro
@@ -260,57 +253,89 @@ pub struct MacroTask {
 impl MacroTask {
     pub async fn new(
         mut receive_channel: UnboundedReceiver<MacroTaskEvent>,
+        // Only sequence probably needed here
+        // TODO: Config will be a part of the Macro itself
         macro_data: MacroConfig,
         send_channel: UnboundedSender<EventType>,
     ) {
         let mut is_running = false;
-        let mut abort = false;
+        let mut stop_after_running: Option<u32> = None;
 
-        loop {
+        'task_loop: loop {
             match receive_channel.try_recv() {
-                Ok(message) => {
-                    warn!("Received message: {:?}", message);
-                    match message {
-                        MacroTaskEvent::Start => {
-                            is_running = true;
-                        }
-                        MacroTaskEvent::Stop => {
-                            is_running = false;
-                        }
-                        MacroTaskEvent::Abort => {}
+                Ok(message) => match message {
+                    MacroTaskEvent::OneShot => {
+                        is_running = true;
+                        stop_after_running = Some(1);
+                    }
+                    MacroTaskEvent::RepeatX(amount) => {
+                        is_running = true;
+                        stop_after_running = Some(amount);
+                    }
+                    MacroTaskEvent::RepeatStart => {
+                        is_running = true;
+                        stop_after_running = None;
+                    }
+                    MacroTaskEvent::RepeatStop => {
+                        is_running = false;
+                    }
+                    MacroTaskEvent::Toggle => {
+                        is_running = !is_running;
+                        stop_after_running = None;
+                    }
+                    MacroTaskEvent::Abort => {
+                        // TODO: look into aborting earlier in macro execution
+                        is_running = false;
+                    }
+                    MacroTaskEvent::Kill => {
+                        break 'task_loop;
+                    }
+                },
+                Err(e) => match e {
+                    TryRecvError::Disconnected => {
+                        break 'task_loop;
+                    }
+
+                    TryRecvError::Empty => {
+                        // If the channel is empty, we don't want to do anything explicit here.
+                    }
+                },
+            }
+            if is_running {
+                // if let TriggerEventType::KeyPressEvent { ref data, .. } = macro_data.trigger {
+                //     //TODO: this is very experimental and not final
+                //
+                // if MacroType::OnHold != macro_data.macro_type
+                //     || MacroType::Toggle != macro_data.macro_type
+                // {
+                //     {
+                //         plugin::util::lift_trigger_key(*data.first().unwrap(), &send_channel)
+                //             .unwrap();
+                //     };
+                // }
+                // }
+
+                for action in macro_data.sequence.iter() {
+                    action.execute(&send_channel).await.unwrap();
+                }
+
+                if let Some(amount) = stop_after_running {
+                    if amount - 1 == 0 {
+                        is_running = false;
+                        stop_after_running = None;
+                    } else {
+                        stop_after_running = Some(amount - 1);
                     }
                 }
-                Err(_) => {
-                    if is_running {
-                        let cloned_send_channel = send_channel.clone();
-                        if let TriggerEventType::KeyPressEvent { ref data, .. } = macro_data.trigger
-                        {
-                            if MacroType::OnHold != macro_data.macro_type
-                                || MacroType::Toggle != macro_data.macro_type
-                            {
-                                {
-                                    plugin::util::lift_trigger_key(
-                                        *data.first().unwrap(),
-                                        &send_channel,
-                                    )
-                                    .unwrap();
-                                };
-                            }
-                        }
-                        macro_data.execute(cloned_send_channel).await.unwrap();
-
-                        match macro_data.macro_type {
-                            MacroType::Single | MacroType::RepeatX => {
-                                is_running = false;
-                            }
-                            _ => (),
-                        }
+                match macro_data.macro_type {
+                    MacroType::Single | MacroType::RepeatX => {
+                        is_running = false;
                     }
+                    _ => (),
                 }
             }
-
-            tokio::time::sleep(time::Duration::from_millis(20)).await;
         }
+        // TODO: Consider maybe doing some cleanup here
     }
 }
 
@@ -330,87 +355,46 @@ impl Macro {
         debug!("Created a macro, name: {}", &macro_config.name);
         // Return the macro
         Macro {
-            name: macro_config.name,
-            icon: macro_config.icon,
-            sequence: macro_config.sequence,
-            macro_type: macro_config.macro_type,
-            trigger: macro_config.trigger,
-            enabled: macro_config.enabled,
-            repeat_amount: macro_config.repeat_amount,
-            is_running: false,
+            config: macro_config,
             task_sender,
             macro_keypress_sender,
         }
     }
-    async fn on_event(&mut self, event: MacroTaskEvent) {
-        match self.macro_type {
-            MacroType::Toggle => match self.is_running {
-                true => match event {
-                    MacroTaskEvent::Start => {
-                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
-                        self.is_running = false;
-                    }
-                    MacroTaskEvent::Stop => {
-                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
-                        self.is_running = false;
-                    }
-                    MacroTaskEvent::Abort => {
-                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
-                        self.is_running = false;
-                    }
-                },
-                false => match event {
-                    MacroTaskEvent::Start => {
-                        self.task_sender.send(MacroTaskEvent::Start).unwrap();
-                        self.is_running = true;
-                    }
-                    MacroTaskEvent::Stop => {
-                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
-                        self.is_running = false;
-                    }
-                    MacroTaskEvent::Abort => {
-                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
-                        self.is_running = false
-                    }
-                },
-            },
-            MacroType::OnHold => match self.is_running {
-                false => match event {
-                    MacroTaskEvent::Start => {
-                        self.task_sender.send(MacroTaskEvent::Start).unwrap();
-                        self.is_running = true;
-                    }
-                    MacroTaskEvent::Stop => {
-                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
-                    }
-                    MacroTaskEvent::Abort => {
-                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
-                    }
-                },
-                true => match event {
-                    MacroTaskEvent::Start => {}
-                    MacroTaskEvent::Stop => {
-                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
-                        self.is_running = false;
-                    }
-                    MacroTaskEvent::Abort => {
-                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
-                        self.is_running = false
-                    }
-                },
-            },
+    async fn on_event(&mut self, event: MacroTriggerEvent) {
+        info!("Event: {:?}", event);
 
-            _ => match event {
-                MacroTaskEvent::Start => {
-                    self.task_sender.send(MacroTaskEvent::Start).unwrap();
+        if let MacroTriggerEvent::Abort = event {
+            self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+            return;
+        }
+
+        match self.config.macro_type {
+            MacroType::Single => {
+                if let MacroTriggerEvent::Pressed = event {
+                    self.task_sender.send(MacroTaskEvent::OneShot).unwrap();
                 }
-                MacroTaskEvent::Stop => {
-                    self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+            }
+            MacroType::Toggle => {
+                if let MacroTriggerEvent::Pressed = event {
+                    self.task_sender.send(MacroTaskEvent::Toggle).unwrap();
                 }
-                MacroTaskEvent::Abort => {
-                    self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+            }
+            MacroType::OnHold => match event {
+                MacroTriggerEvent::Pressed => {
+                    self.task_sender.send(MacroTaskEvent::RepeatStart).unwrap();
                 }
+                MacroTriggerEvent::Released => {
+                    self.task_sender.send(MacroTaskEvent::RepeatStop).unwrap();
+                }
+                _ => {}
             },
+            MacroType::RepeatX => {
+                if let MacroTriggerEvent::Pressed = event {
+                    self.task_sender
+                        .send(MacroTaskEvent::RepeatX(self.config.repeat_amount))
+                        .unwrap();
+                }
+            }
         }
     }
 }
@@ -606,26 +590,26 @@ async fn macro_executor(
                     macro_id_list
                         .get_mut(&macro_id)
                         .unwrap()
-                        .on_event(MacroTaskEvent::Start)
+                        .on_event(MacroTriggerEvent::Pressed)
                         .await
                 }
                 MacroExecutorEvent::Stop(macro_id) => {
                     macro_id_list
                         .get_mut(&macro_id)
                         .unwrap()
-                        .on_event(MacroTaskEvent::Stop)
+                        .on_event(MacroTriggerEvent::Released)
                         .await
                 }
                 MacroExecutorEvent::Abort(macro_id) => {
                     macro_id_list
                         .get_mut(&macro_id)
                         .unwrap()
-                        .on_event(MacroTaskEvent::Abort)
+                        .on_event(MacroTriggerEvent::Abort)
                         .await
                 }
                 MacroExecutorEvent::AbortAll => {
                     for (_, macro_item) in macro_id_list.iter_mut() {
-                        macro_item.on_event(MacroTaskEvent::Abort).await
+                        macro_item.on_event(MacroTriggerEvent::Abort).await
                     }
                 }
             }
@@ -664,7 +648,7 @@ fn check_macro_execution_efficiently(
         // Must be cloned here otherwise Rust will cry
 
         let macro_sender = macro_channel_sender.clone();
-        match &macros.trigger {
+        match &macros.config.trigger {
             TriggerEventType::KeyPressEvent { data, .. } => {
                 match data.len() {
                     1 => {
@@ -674,13 +658,13 @@ fn check_macro_execution_efficiently(
                                 *data.first().unwrap(),
                                 pressed_events
                             );
-                            if identical_keys
-                                && macros.is_running
-                                && macros.macro_type != MacroType::Toggle
-                            {
-                                info!("Ignoring the macro, just consuming");
-                                return true;
-                            }
+                            // if identical_keys
+                            //     && macros.config.is_running
+                            //     && macros.config.macro_type != MacroType::Toggle
+                            // {
+                            //     info!("Ignoring the macro, just consuming");
+                            //     return true;
+                            // }
 
                             let id_cloned = macro_id.clone();
                             // let channel_clone_execute = macro_sender.clone();
@@ -693,24 +677,16 @@ fn check_macro_execution_efficiently(
                             // .unwrap();
 
                             let event = match event_type {
+
                                 // TODO: This can be a more generic event that can also have ABORT as its command,
                                 // tho we can also bypass this function and abort directly to the executor (preferred way imo)
-                                EventType::KeyPress { .. } => {
-                                    if macros.macro_type == MacroType::OnHold && macros.is_running {
-                                        return true;
-                                    } else {
-                                        MacroExecutorEvent::Start(id_cloned)
-                                    }
+                                EventType::KeyPress { .. } => MacroExecutorEvent::Start(id_cloned),
+                                EventType::KeyRelease { .. } => MacroExecutorEvent::Stop(id_cloned),
+                                _ => {
+                                    todo!("not implemented yet.");
                                 }
-                                EventType::KeyRelease { .. } => {
-                                    if macros.macro_type == MacroType::OnHold {
-                                        MacroExecutorEvent::Stop(id_cloned)
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                                _ => MacroExecutorEvent::Start(id_cloned),
                             };
+
                             macro_sender.send(event).unwrap_or_else(|err| {
                                 error!("Error sending macro ID to execute: {}", err)
                             });
@@ -738,21 +714,11 @@ fn check_macro_execution_efficiently(
                             let event = match event_type {
                                 // TODO: This can be a more generic event that can also have ABORT as its command,
                                 // tho we can also bypass this function and abort directly to the executor (preferred way imo)
-                                EventType::KeyPress { .. } => {
-                                    if macros.macro_type == MacroType::OnHold && macros.is_running {
-                                        return true;
-                                    } else {
-                                        MacroExecutorEvent::Start(id_cloned)
-                                    }
+                                EventType::KeyPress { .. } => MacroExecutorEvent::Start(id_cloned),
+                                EventType::KeyRelease { .. } => MacroExecutorEvent::Stop(id_cloned),
+                                _ => {
+                                    todo!("not implemented yet.");
                                 }
-                                EventType::KeyRelease { .. } => {
-                                    if macros.macro_type == MacroType::OnHold {
-                                        MacroExecutorEvent::Stop(id_cloned)
-                                    } else {
-                                        return false;
-                                    }
-                                }
-                                _ => MacroExecutorEvent::Start(id_cloned),
                             };
                             macro_sender.send(event).unwrap_or_else(|err| {
                                 error!("Error sending macro ID to execute: {}", err)
@@ -875,17 +841,17 @@ impl MacroBackend {
                         rdev::EventType::KeyPress(key) => {
                             // debug!("Key Pressed RAW: {:?}", &key);
                             let mut identical_keys = false;
+                            let keys_pressed_internal_hid_previous =
+                                    inner_keys_pressed.blocking_read().clone();
 
                             let keys_pressed_internal_hid: Vec<u32> = {
-                                let keys_pressed_internal_hid_previous =
-                                    inner_keys_pressed.blocking_read().clone();
                                 // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
                                 inner_keys_pressed.blocking_write().push(key.clone());
 
-                                debug!(
-                                    "Wrote key to keys_pressed: {:?}",
-                                    inner_keys_pressed.blocking_read()
-                                );
+                                // debug!(
+                                //     "Wrote key to keys_pressed: {:?}",
+                                //     inner_keys_pressed.blocking_read()
+                                // );
 
                                 let cloned_pressed_keys =
                                     inner_keys_pressed.blocking_read().clone();
@@ -986,7 +952,7 @@ impl MacroBackend {
                             let keys_pressed_internal_hid: Vec<u32> = {
                                 // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
 
-                                debug!("Pressed keys: {:?}", inner_keys_pressed.blocking_read());
+                                // debug!("Pressed keys: {:?}", inner_keys_pressed.blocking_read());
 
                                 // debug!("Unique keys: {:?}", inner_keys_pressed.blocking_read());
                                 if keys_pressed_internal_hid_previous
@@ -1109,7 +1075,7 @@ impl MacroBackend {
                                 (false, _) => Some(event),
                             }
                         }
-                        rdev::EventType::ButtonRelease(button) => {
+                        rdev::EventType::ButtonRelease(_) => {
                             // debug!("Button released: {:?}", button);
 
                             Some(event)

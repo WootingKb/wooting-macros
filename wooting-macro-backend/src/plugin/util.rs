@@ -11,20 +11,19 @@ pub fn direct_send_event(event_type: &rdev::EventType) -> Result<()> {
     Ok(())
 }
 /// Sends a vector of keys to get processed
-pub async fn direct_send_key(
+pub fn direct_send_key(
     send_channel: &UnboundedSender<rdev::EventType>,
     key: Vec<rdev::Key>,
 ) -> Result<()> {
     for press in key.iter() {
         send_channel.send(rdev::EventType::KeyPress(*press))?;
-
         send_channel.send(rdev::EventType::KeyRelease(*press))?;
     }
     Ok(())
 }
 
 /// Sends a vector of hotkeys to get processed
-pub async fn direct_send_hotkey(
+pub fn direct_send_hotkey(
     send_channel: &UnboundedSender<rdev::EventType>,
     key: Vec<rdev::Key>,
 ) -> Result<()> {
