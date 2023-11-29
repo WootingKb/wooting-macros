@@ -34,7 +34,6 @@ use crate::config::CONFIG_DIR;
 use crate::hid_table::*;
 
 //Plugin imports
-use crate::plugin::delay;
 #[allow(unused_imports)]
 use crate::plugin::discord;
 use crate::plugin::key_press;
@@ -43,6 +42,7 @@ use crate::plugin::mouse;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
+use crate::plugin::{delay, util};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
@@ -112,6 +112,7 @@ pub struct Macro {
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
     pub active: bool,
+    pub show_notification: bool,
 }
 
 impl Macro {
@@ -271,18 +272,32 @@ pub struct Collection {
 /// Executes a given macro (according to its type).
 ///
 /// ! **UNIMPLEMENTED** - Only Single macro type is implemented for now.
-async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>) {
+async fn execute_macro(
+    macros: Macro,
+    channel: UnboundedSender<rdev::EventType>,
+    app_identifier: Option<String>,
+) {
     match macros.macro_type {
         MacroType::Single => {
             info!("\nEXECUTING A SINGLE MACRO: {:#?}", macros.name);
 
             let cloned_channel = channel;
+            let cloned_app_identifier = app_identifier.clone();
+            let cloned_macro_name = macros.name.clone();
 
             task::spawn(async move {
                 macros
+                    .show_notification(cloned_app_identifier.clone())
                     .execute(cloned_channel)
                     .await
-                    .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+                    .unwrap_or_else(|err| {
+                        error!("Error executing macro: {}", &err);
+                        util::show_error_notification(
+                            cloned_macro_name,
+                            cloned_app_identifier,
+                            err.to_string(),
+                        );
+                    });
             });
         }
         MacroType::Toggle => {
@@ -298,17 +313,31 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 
 /// Receives and executes a macro based on the trigger event.
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
-fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
+fn keypress_executor_receiver(
+    mut rchan_execute: UnboundedReceiver<rdev::EventType>,
+    app_identifier: Option<String>,
+) {
     loop {
         let received_event = match &rchan_execute.blocking_recv() {
             Some(event) => *event,
             None => {
+                util::show_error_notification(
+                    "Keystroke receiver".to_string(),
+                    app_identifier.clone(),
+                    "Failed to receive an event!".to_string(),
+                );
                 error!("Failed to receive an event!");
                 continue;
             }
         };
-        plugin::util::direct_send_event(&received_event)
-            .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
+        plugin::util::direct_send_event(&received_event).unwrap_or_else(|err| {
+            error!("Error directly sending an event to keyboard: {}", err);
+            util::show_error_notification(
+                "Keystroke receiver error".to_string(),
+                app_identifier.clone(),
+                err.to_string(),
+            );
+        });
 
         // MacOS and Linux require some delays.
         #[cfg(not(target_os = "windows"))]
@@ -331,6 +360,7 @@ fn check_macro_execution_efficiently(
     pressed_events: Vec<u32>,
     trigger_overview: Vec<Macro>,
     channel_sender: UnboundedSender<rdev::EventType>,
+    app_identifier: Option<String>,
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
@@ -348,12 +378,18 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
+                            let app_identifier_cloned = app_identifier.clone();
 
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
-                                execute_macro(macro_clone_execute, channel_clone_execute).await;
+                                execute_macro(
+                                    macro_clone_execute,
+                                    channel_clone_execute,
+                                    app_identifier_cloned,
+                                )
+                                .await;
                             });
                             output = true;
                         }
@@ -369,12 +405,18 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
+                            let app_identifier_cloned = app_identifier.clone();
 
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
                             task::spawn(async move {
-                                execute_macro(macro_clone_execute, channel_clone_execute).await;
+                                execute_macro(
+                                    macro_clone_execute,
+                                    channel_clone_execute,
+                                    app_identifier_cloned,
+                                )
+                                .await;
                             });
                             output = true;
                         }
@@ -393,9 +435,10 @@ fn check_macro_execution_efficiently(
                 if event_to_check == pressed_events {
                     let channel_clone = channel_sender.clone();
                     let macro_clone = macros.clone();
+                    let app_identifier_cloned = app_identifier.clone();
 
                     task::spawn(async move {
-                        execute_macro(macro_clone, channel_clone).await;
+                        execute_macro(macro_clone, channel_clone, app_identifier_cloned).await;
                     });
                     output = true;
                 }
@@ -459,7 +502,7 @@ impl MacroBackend {
     }
 
     /// Initializes the entire backend and gets the whole grabbing system running.
-    pub async fn init(&self) -> Result<()> {
+    pub async fn init(&self, app_identifier: Option<String>) -> Result<()> {
         //? : io-uring async read files and write files
         //TODO: implement drop when the application ends to clean up the downed keys
 
@@ -467,13 +510,15 @@ impl MacroBackend {
 
         let inner_triggers = self.triggers.clone();
         let inner_is_listening = self.is_listening.clone();
+        let inner_app_identifier_sender = app_identifier.clone();
+        let inner_app_identifier_receiver = app_identifier.clone();
 
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
 
         // Create the executor
         thread::spawn(move || {
-            keypress_executor_sender(rchan_execute);
+            keypress_executor_receiver(rchan_execute, inner_app_identifier_receiver.clone());
         });
 
         let _grabber = task::spawn_blocking(move || {
@@ -531,10 +576,12 @@ impl MacroBackend {
                             let should_grab = {
                                 if !check_these_macros.is_empty() {
                                     let channel_copy_send = schan_execute.clone();
+                                    let cloned_app_identifier = inner_app_identifier_sender.clone();
                                     check_macro_execution_efficiently(
                                         pressed_keys_copy_converted,
                                         check_these_macros,
                                         channel_copy_send,
+                                        cloned_app_identifier,
                                     )
                                 } else {
                                     false
@@ -573,11 +620,13 @@ impl MacroBackend {
                                 };
 
                             let channel_clone = schan_execute.clone();
+                            let inner_app_identifier_cloned = inner_app_identifier_sender.clone();
 
                             let should_grab = check_macro_execution_efficiently(
                                 vec![converted_button_to_u32],
                                 check_these_macros,
                                 channel_clone,
+                                inner_app_identifier_cloned,
                             );
 
                             if should_grab {
@@ -599,15 +648,21 @@ impl MacroBackend {
                 }
             })
         });
-        Err(anyhow::Error::msg("Error in grabbing thread!"))
+
+        let error = anyhow::Error::msg("Error in grabbing thread!");
+        util::show_error_notification(
+            "Keystroke analysis error".to_string(),
+            app_identifier,
+            error.to_string(),
+        );
+        Err(error)
     }
 }
 
 impl Default for MacroBackend {
     /// Generates a new state.
     fn default() -> Self {
-        let macro_data =
-            MacroData::read_data().unwrap_or_else(|err| panic!("Cannot get macro data! {}", err));
+        let macro_data = MacroData::read_data().expect("Cannot get macro data!");
 
         let triggers = macro_data
             .extract_triggers()

@@ -13,9 +13,9 @@ import {
   Kbd,
   Flex,
   useColorModeValue,
-  Switch
+  Switch, Heading
 } from '@chakra-ui/react'
-import { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingTrigger from '../../../hooks/useRecordingTrigger'
 import { HIDLookup } from '../../../constants/HIDmap'
@@ -25,15 +25,16 @@ import {
   checkIfMouseButtonArray
 } from '../../../constants/utils'
 import { RecordIcon, StopIcon } from '../../icons'
+import ToggleSetting from "../../settings/ToggleSetting";
 
 interface Props {
   isOpen: boolean
   onClose: () => void
 }
 
-export default function TriggerModal({ isOpen, onClose }: Props) {
-  const { macro, updateTrigger } = useMacroContext()
-  const { recording, startRecording, stopRecording, items, resetItems } =
+export default function TriggerModal({isOpen, onClose}: Props) {
+  const {macro, updateTrigger, updateShowNotification} = useMacroContext()
+  const {recording, startRecording, stopRecording, items, resetItems} =
     useRecordingTrigger(macro.trigger.data)
   const isTriggerMousepress = useMemo(() => {
     if (items.length === 0) {
@@ -43,6 +44,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
   }, [items])
   const [isAllowed, setIsAllowed] = useState(false) // Currently not used
   const secondBg = useColorModeValue('blue.50', 'gray.800')
+
 
   const getTriggerCanSave = useMemo((): boolean => {
     if (items.length === 0) {
@@ -70,7 +72,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
       })
     } else {
       if (macro.trigger.type === 'KeyPressEvent') {
-        updateTrigger({ ...macro.trigger, data: items })
+        updateTrigger({...macro.trigger, data: items})
       } else {
         updateTrigger({
           ...macro.trigger,
@@ -125,13 +127,13 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
       onClose={onClose}
       isCentered
     >
-      <ModalOverlay />
+      <ModalOverlay/>
       <ModalContent p={2}>
         <ModalHeader>Trigger Keys</ModalHeader>
-        <Divider w="90%" alignSelf="center" />
+        <Divider w="90%" alignSelf="center"/>
         <ModalBody>
           <VStack w="full" justifyContent="space-between">
-            <VStack w="full">
+            <VStack w="full" alignItems="flex-start">
               <Flex
                 w="full"
                 gap="4px"
@@ -159,13 +161,24 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                   variant="brandRecord"
                   size="sm"
                   px={4}
-                  leftIcon={recording ? <StopIcon /> : <RecordIcon />}
+                  leftIcon={recording ? <StopIcon/> : <RecordIcon/>}
                   onClick={recording ? stopRecording : startRecording}
                   isActive={recording}
                 >
                   {recording ? 'Stop' : 'Record'}
                 </Button>
               </HStack>
+              {/*<Divider w="full" alignSelf="center" my={['4', '8']} />*/}
+              <Heading size="sm" mt="4">
+                Advanced settings
+              </Heading>
+              <Divider w="full" alignSelf="center" my={['1', '1']}/>
+              <ToggleSetting
+                title="Show notification"
+                description="Running this macro will show a notification."
+                value={macro.show_notification}
+                onChange={updateShowNotification}
+              />
             </VStack>
           </VStack>
           {/* <Divider w="full" alignSelf="center" my={['4', '8']} />

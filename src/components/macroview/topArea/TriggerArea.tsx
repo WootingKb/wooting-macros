@@ -11,12 +11,14 @@ import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../constants/HIDmap'
 import { mouseEnumLookup } from '../../../constants/MouseMap'
 
+import React from "react";
+
 interface Props {
   onOpen: () => void
 }
 
-export default function TriggerArea({ onOpen }: Props) {
-  const { macro } = useMacroContext()
+export default function TriggerArea({onOpen}: Props) {
+  const {macro} = useMacroContext()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('sm', 'white-sm')
 
@@ -28,7 +30,7 @@ export default function TriggerArea({ onOpen }: Props) {
       px={4}
       spacing={0}
       gap={2}
-      divider={<StackDivider />}
+      divider={<StackDivider/>}
       shadow={shadowColour}
       rounded="md"
       justifyContent="space-between"
@@ -62,7 +64,7 @@ export default function TriggerArea({ onOpen }: Props) {
         variant="brandAccent"
         size="sm"
         px={6}
-        leftIcon={<EditIcon />}
+        leftIcon={<EditIcon/>}
         onClick={onOpen}
       >
         Edit

@@ -40,11 +40,12 @@ const macroDefault: Macro = {
   icon: ':smile:',
   active: true,
   macro_type: 'Single',
-  trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
-  sequence: []
+  trigger: {type: 'KeyPressEvent', data: [], allow_while_other_keys: false},
+  sequence: [],
+  show_notification: true
 }
 
-function MacroProvider({ children }: MacroProviderProps) {
+function MacroProvider({children}: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>(macroDefault)
   const [sequence, setSequence] = useState<ActionEventType[]>([])
   const [ids, setIds] = useState<number[]>([])
@@ -61,7 +62,7 @@ function MacroProvider({ children }: MacroProviderProps) {
     onCollectionUpdate,
     changeSelectedMacroIndex
   } = useApplicationContext()
-  const { config } = useSettingsContext()
+  const {config} = useSettingsContext()
 
   const keypressesInSequence = useMemo(() => {
     return sequence
@@ -139,7 +140,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         macro.trigger.data.length === 0) ||
       (macro.trigger.type === 'MouseEvent' &&
         macro.trigger.data === undefined) ||
-      sequence.length === 0 
+      sequence.length === 0
     ) {
       return false
     }
@@ -163,38 +164,44 @@ function MacroProvider({ children }: MacroProviderProps) {
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      setMacro({ ...macro, name: newName })
+      setMacro({...macro, name: newName})
     },
     [macro, setMacro]
   )
   const updateMacroIcon = useCallback(
     (newIcon: string) => {
-      setMacro({ ...macro, icon: newIcon })
+      setMacro({...macro, icon: newIcon})
     },
     [macro, setMacro]
   )
 
   const updateMacroType = useCallback(
     (newType: MacroType) => {
-      setMacro({ ...macro, macro_type: MacroType[newType] })
+      setMacro({...macro, macro_type: MacroType[newType]})
     },
     [macro, setMacro]
   )
 
   const updateTrigger = useCallback(
     (newElement: TriggerEventType) => {
-      setMacro({ ...macro, trigger: newElement })
+      setMacro({...macro, trigger: newElement})
     },
     [macro, setMacro]
   )
 
   const updateAllowWhileOtherKeys = useCallback(
     (value: boolean) => {
-      const temp = { ...macro, trigger: macro.trigger }
+      const temp = {...macro, trigger: macro.trigger}
       if (temp.trigger.type === 'KeyPressEvent') {
         temp.trigger.allow_while_other_keys = value
       }
       setMacro(temp)
+    },
+    [macro, setMacro]
+  )
+  const updateShowNotification = useCallback(
+    (value: boolean) => {
+      setMacro({...macro, show_notification: value})
     },
     [macro, setMacro]
   )
@@ -312,7 +319,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       }
     }
 
-    const newCollection = { ...currentCollection }
+    const newCollection = {...currentCollection}
     if (
       viewState === ViewState.Editview &&
       selection.macroIndex !== undefined
@@ -368,7 +375,8 @@ function MacroProvider({ children }: MacroProviderProps) {
       overwriteIds,
       updateSelectedElementId,
       updateMacro,
-      changeIsUpdatingMacro
+      changeIsUpdatingMacro,
+      updateShowNotification,
     }),
     [
       macro,
@@ -394,7 +402,8 @@ function MacroProvider({ children }: MacroProviderProps) {
       overwriteIds,
       updateSelectedElementId,
       updateMacro,
-      changeIsUpdatingMacro
+      changeIsUpdatingMacro,
+      updateShowNotification,
     ]
   )
 
