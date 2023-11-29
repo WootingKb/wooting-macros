@@ -22,6 +22,8 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
+  searchValue: string
+  setSearchValue: (term: string) => void
 }
 
 export type MacroState = {
