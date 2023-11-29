@@ -8,6 +8,7 @@ import {
   Text,
   Tooltip,
   useToast,
+  Box, Input
   VStack
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
@@ -19,23 +20,50 @@ import { useCallback, useState } from 'react'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
+import { error } from "tauri-plugin-log"
 import { error } from 'tauri-plugin-log'
 
 interface Props {
   onOpenSettingsModal: () => void
 }
 
-export default function LeftPanel({ onOpenSettingsModal }: Props) {
+function SearchBar({searchValue, changeSearchValue, setDisplaySearchResults}) {
+  const handleInput = (event) => {
+    changeSearchValue(event.target.value.toLocaleLowerCase());
+    if (event.target.value !== "") {
+      setDisplaySearchResults(true);
+    } else {
+      setDisplaySearchResults(false);
+    }
+  };
+
+  return (
+    <Input
+      placeholder="Search..."
+      size="md"
+      value={searchValue}
+      onChange={handleInput}
+    />
+  );
+}
+
+export default function LeftPanel({onOpenSettingsModal}: Props) {
+  const [displaySearchResults, setDisplaySearchResults] = useState(false);
+
+
   const {
     collections,
     selection,
     onCollectionAdd,
     onCollectionUpdate,
-    changeSelectedCollectionIndex
+    changeSelectedCollectionIndex,
+    changeSearchValue,
+    searchValue,
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
+
 
   const onNewCollectionButtonPress = useCallback(() => {
     onCollectionAdd({
@@ -101,18 +129,25 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
               </Box>
             </Tooltip>
           </HStack>
-          <Divider />
+          <SearchBar
+            searchValue={searchValue}
+            changeSearchValue={changeSearchValue}
+            setDisplaySearchResults={setDisplaySearchResults}
+          />
+          <Divider/>
+
           <Button
             size="lg"
             w="full"
             variant="yellowGradient"
             p={2}
-            leftIcon={<AddIcon />}
+            leftIcon={<AddIcon/>}
             fontSize="md"
             onClick={onNewCollectionButtonPress}
           >
             New Collection
           </Button>
+          <Divider/>
         </VStack>
         <VStack
           w="full"
@@ -123,7 +158,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {collections.map((collection: Collection, index: number) => (
+          {!displaySearchResults && collections.map((collection: Collection, index: number) => (
             <CollectionButton
               collection={collection}
               index={index}
@@ -149,7 +184,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           w="full"
           variant="brandAccent"
           size="sm"
-          leftIcon={<SettingsIcon />}
+          leftIcon={<SettingsIcon/>}
           onClick={onOpenSettingsModal}
         >
           <Text fontSize={['sm', 'md']}>Settings</Text>

@@ -35,6 +35,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [viewState, setViewState] = useState<ViewState>(ViewState.Overview)
   const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
+  const [searchValue, setSearchValue] = useState("");
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
     macroIndex: undefined
@@ -105,6 +106,12 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [setSelection]
   )
 
+  const changeSearchValue = useCallback(
+    (term: string) => {
+      setSearchValue(term)
+    }, [setSearchValue]
+  )
+
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       let newIndex = 0
@@ -152,7 +159,9 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex
+      changeSelectedMacroIndex,
+      searchValue,
+      changeSearchValue,
     }),
     [
       viewState,
@@ -164,7 +173,9 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex
+      changeSelectedMacroIndex,
+      searchValue,
+      changeSearchValue,
     ]
   )
 
