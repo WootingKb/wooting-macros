@@ -11,7 +11,7 @@ use std::env::current_exe;
 use std::str::FromStr;
 use std::time;
 
-use byte_unit::{Byte, ByteUnit};
+use byte_unit::{Byte, Unit};
 
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
@@ -251,7 +251,7 @@ async fn main() {
                         .debug(Color::Magenta)
                         .trace(Color::White),
                 )
-                .max_file_size(Byte::from_unit(16_f64, ByteUnit::KiB).unwrap().into())
+                .max_file_size(Byte::from_f64_with_unit(16_f64, Unit::KiB).unwrap().into())
                 .targets([
                     tauri_plugin_log::LogTarget::Folder(
                         LogDirPath::file_name().expect("error getting log folder name"),

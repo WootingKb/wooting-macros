@@ -25,12 +25,12 @@ copypasta = { version = "0.10", features = ["smithay-clipboard"] }
 serde_repr = "0.1"
 fastrand = "2.0"
 dirs = "5.0"
-itertools = "0.11"
+itertools = "0.12"
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.10"
 rayon = "1.8"
-url = "2.4"
+url = "2.5"
 
 [profile.release]
 lto = true

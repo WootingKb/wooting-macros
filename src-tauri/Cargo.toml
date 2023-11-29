@@ -22,7 +22,7 @@ wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.5"
 log = "0.4"
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features= ["colored"] }
-byte-unit = "4.0"
+byte-unit = "5.0"
 anyhow = "1.0.75"
 
 [features]
