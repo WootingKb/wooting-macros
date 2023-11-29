@@ -285,9 +285,18 @@ impl MacroTask {
                         let cloned_send_channel = send_channel.clone();
                         if let TriggerEventType::KeyPressEvent { ref data, .. } = macro_data.trigger
                         {
-                            plugin::util::lift_trigger_key(*data.first().unwrap(), &send_channel)
-                                .unwrap();
-                        };
+                            if MacroType::OnHold != macro_data.macro_type
+                                || MacroType::Toggle != macro_data.macro_type
+                            {
+                                {
+                                    plugin::util::lift_trigger_key(
+                                        *data.first().unwrap(),
+                                        &send_channel,
+                                    )
+                                    .unwrap();
+                                };
+                            }
+                        }
                         macro_data.execute(cloned_send_channel).await.unwrap();
 
                         match macro_data.macro_type {
@@ -365,16 +374,30 @@ impl Macro {
                     }
                 },
             },
-            MacroType::OnHold => match event {
-                MacroTaskEvent::Start => {
-                    self.task_sender.send(MacroTaskEvent::Start).unwrap();
-                }
-                MacroTaskEvent::Stop => {
-                    self.task_sender.send(MacroTaskEvent::Stop).unwrap();
-                }
-                MacroTaskEvent::Abort => {
-                    self.task_sender.send(MacroTaskEvent::Abort).unwrap();
-                }
+            MacroType::OnHold => match self.is_running {
+                false => match event {
+                    MacroTaskEvent::Start => {
+                        self.task_sender.send(MacroTaskEvent::Start).unwrap();
+                        self.is_running = true;
+                    }
+                    MacroTaskEvent::Stop => {
+                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+                    }
+                    MacroTaskEvent::Abort => {
+                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+                    }
+                },
+                true => match event {
+                    MacroTaskEvent::Start => {}
+                    MacroTaskEvent::Stop => {
+                        self.task_sender.send(MacroTaskEvent::Stop).unwrap();
+                        self.is_running = false;
+                    }
+                    MacroTaskEvent::Abort => {
+                        self.task_sender.send(MacroTaskEvent::Abort).unwrap();
+                        self.is_running = false
+                    }
+                },
             },
 
             _ => match event {
@@ -624,7 +647,7 @@ fn check_macro_execution_efficiently(
     macro_data: Arc<RwLock<MacroLookup>>,
     macro_channel_sender: UnboundedSender<MacroExecutorEvent>,
     event_type: rdev::EventType,
-    // keypress_sender: UnboundedSender<rdev::EventType>,
+    identical_keys: bool, // keypress_sender: UnboundedSender<rdev::EventType>,
 ) -> bool {
     let trigger_overview_print = check_macros.clone();
     let macro_data_id_map_cloned = &macro_data.blocking_read().id_map;
@@ -651,6 +674,13 @@ fn check_macro_execution_efficiently(
                                 *data.first().unwrap(),
                                 pressed_events
                             );
+                            if identical_keys
+                                && macros.is_running
+                                && macros.macro_type != MacroType::Toggle
+                            {
+                                info!("Ignoring the macro, just consuming");
+                                return true;
+                            }
 
                             let id_cloned = macro_id.clone();
                             // let channel_clone_execute = macro_sender.clone();
@@ -681,7 +711,6 @@ fn check_macro_execution_efficiently(
                                 }
                                 _ => MacroExecutorEvent::Start(id_cloned),
                             };
-
                             macro_sender.send(event).unwrap_or_else(|err| {
                                 error!("Error sending macro ID to execute: {}", err)
                             });
@@ -698,15 +727,36 @@ fn check_macro_execution_efficiently(
                             && pressed_events[pressed_events.len() - 1] == data[data.len() - 1]
                         {
                             debug!("MATCHED MACRO multi key: {:#?}", pressed_events);
+                            if identical_keys {
+                                info!("Ignoring the macro, just consuming");
+                                return true;
+                            }
                             let id_cloned = macro_id.clone();
                             // Disabled until a better fix is done
                             // plugin::util::lift_keys(data, &channel_clone_execute);
 
-                            macro_sender
-                                .send(MacroExecutorEvent::Start(id_cloned))
-                                .unwrap_or_else(|err| {
-                                    error!("Error sending macro ID to execute: {}", err)
-                                });
+                            let event = match event_type {
+                                // TODO: This can be a more generic event that can also have ABORT as its command,
+                                // tho we can also bypass this function and abort directly to the executor (preferred way imo)
+                                EventType::KeyPress { .. } => {
+                                    if macros.macro_type == MacroType::OnHold && macros.is_running {
+                                        return true;
+                                    } else {
+                                        MacroExecutorEvent::Start(id_cloned)
+                                    }
+                                }
+                                EventType::KeyRelease { .. } => {
+                                    if macros.macro_type == MacroType::OnHold {
+                                        MacroExecutorEvent::Stop(id_cloned)
+                                    } else {
+                                        return false;
+                                    }
+                                }
+                                _ => MacroExecutorEvent::Start(id_cloned),
+                            };
+                            macro_sender.send(event).unwrap_or_else(|err| {
+                                error!("Error sending macro ID to execute: {}", err)
+                            });
 
                             return true;
                         }
@@ -824,6 +874,7 @@ impl MacroBackend {
                     match event.event_type {
                         rdev::EventType::KeyPress(key) => {
                             // debug!("Key Pressed RAW: {:?}", &key);
+                            let mut identical_keys = false;
 
                             let keys_pressed_internal_hid: Vec<u32> = {
                                 let keys_pressed_internal_hid_previous =
@@ -848,9 +899,15 @@ impl MacroBackend {
                                 if keys_pressed_internal_hid_previous
                                     == *inner_keys_pressed.blocking_read()
                                 {
-                                    vec![]
+                                    identical_keys = true;
+                                    inner_keys_pressed
+                                        .blocking_read()
+                                        .iter()
+                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .collect()
                                 } else {
                                     // debug!("Will map scancodes to match");
+
                                     inner_keys_pressed
                                         .blocking_read()
                                         .iter()
@@ -905,6 +962,7 @@ impl MacroBackend {
                                         macro_data_list_clone,
                                         macro_channel_clone,
                                         EventType::KeyPress(key), // keypress_execute_clone,
+                                        identical_keys,
                                     )
                                 } else {
                                     false
@@ -919,22 +977,42 @@ impl MacroBackend {
                         }
 
                         rdev::EventType::KeyRelease(key) => {
+                            let keys_pressed_internal_hid_previous =
+                                inner_keys_pressed.blocking_read().clone();
                             inner_keys_pressed.blocking_write().retain(|x| *x != key);
-                            // debug!("Key Pressed RAW: {:?}", &key);
 
+                            // debug!("Key Pressed RAW: {:?}", &key);
+                            let mut identical_keys = false;
                             let keys_pressed_internal_hid: Vec<u32> = {
                                 // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
 
                                 debug!("Pressed keys: {:?}", inner_keys_pressed.blocking_read());
 
                                 // debug!("Unique keys: {:?}", inner_keys_pressed.blocking_read());
+                                if keys_pressed_internal_hid_previous
+                                    == *inner_keys_pressed.blocking_read()
+                                {
+                                    identical_keys = true;
+                                    inner_keys_pressed
+                                        .blocking_read()
+                                        .iter()
+                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .collect()
+                                } else {
+                                    // debug!("Will map scancodes to match");
 
+                                    inner_keys_pressed
+                                        .blocking_read()
+                                        .iter()
+                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .collect()
+                                }
                                 // debug!("Will map scancodes to match");
-                                inner_keys_pressed
-                                    .blocking_read()
-                                    .iter()
-                                    .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                    .collect()
+                                // inner_keys_pressed
+                                //     .blocking_read()
+                                //     .iter()
+                                //     .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                //     .collect()
                             };
 
                             trace!(
@@ -982,6 +1060,7 @@ impl MacroBackend {
                                     macro_data_list_clone,
                                     macro_channel_clone,
                                     EventType::KeyRelease(key), // keypress_execute_clone,
+                                    identical_keys,
                                 );
                             }
 
@@ -1019,6 +1098,7 @@ impl MacroBackend {
                                     macro_data_list_clone,
                                     macro_channel_clone,
                                     EventType::ButtonPress(button), // keypress_execute_clone,
+                                    false,
                                 );
                             }
 
