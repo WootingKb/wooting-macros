@@ -677,7 +677,6 @@ fn check_macro_execution_efficiently(
                             // .unwrap();
 
                             let event = match event_type {
-
                                 // TODO: This can be a more generic event that can also have ABORT as its command,
                                 // tho we can also bypass this function and abort directly to the executor (preferred way imo)
                                 EventType::KeyPress { .. } => MacroExecutorEvent::Start(id_cloned),
@@ -839,102 +838,37 @@ impl MacroBackend {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
                         rdev::EventType::KeyPress(key) => {
-                            // debug!("Key Pressed RAW: {:?}", &key);
-                            let mut identical_keys = false;
-                            let keys_pressed_internal_hid_previous =
-                                    inner_keys_pressed.blocking_read().clone();
+                            let keys_pressed_internal_hid_previous: Vec<rdev::Key> =
+                                inner_keys_pressed.blocking_read().clone();
 
-                            let keys_pressed_internal_hid: Vec<u32> = {
+                            let keys_pressed_internal_hid: Vec<rdev::Key> = {
                                 // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
                                 inner_keys_pressed.blocking_write().push(key.clone());
-
-                                // debug!(
-                                //     "Wrote key to keys_pressed: {:?}",
-                                //     inner_keys_pressed.blocking_read()
-                                // );
 
                                 let cloned_pressed_keys =
                                     inner_keys_pressed.blocking_read().clone();
 
-                                // debug!("Cloned keys pressed: {:?}", cloned_pressed_keys);
-
                                 *inner_keys_pressed.blocking_write() =
                                     cloned_pressed_keys.into_iter().unique().collect();
 
-                                // debug!("Unique keys: {:?}", inner_keys_pressed.blocking_read());
-                                if keys_pressed_internal_hid_previous
-                                    == *inner_keys_pressed.blocking_read()
-                                {
-                                    identical_keys = true;
-                                    inner_keys_pressed
-                                        .blocking_read()
-                                        .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .collect()
-                                } else {
-                                    // debug!("Will map scancodes to match");
+                                // inner_keys_pressed
+                                //     .blocking_read()
+                                //     .iter()
+                                //     .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                //     .collect()
 
-                                    inner_keys_pressed
-                                        .blocking_read()
-                                        .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .collect()
-                                }
+                                inner_keys_pressed.blocking_read().clone()
                             };
 
-                            trace!(
-                                "Pressed Keys CONVERTED TO HID:RDEV:  {:?} {:?}",
-                                keys_pressed_internal_hid,
-                                keys_pressed_internal_hid
-                                    .par_iter()
-                                    .map(|x| *SCANCODE_TO_RDEV
-                                        .get(x)
-                                        .unwrap_or(&rdev::Key::Unknown(0)))
-                                    .collect::<Vec<rdev::Key>>()
-                            );
+                            //TODO: Search all the macros
+                            //TODO: is this macro trigger fulfilled by the previous one?
+                            //TODO: is this trigger fulfilled by the current one?
 
-                            let first_key_pressed: u32 = keys_pressed_internal_hid
-                                .first()
-                                .copied()
-                                .unwrap_or_default();
+                            //TODO: if its the same nothing happens
+                            //TODO: if it was fulfilled before it releases
+                            //TODO: if it was fulfilled now it presses
 
-                            let check_these_macros: Vec<String> = inner_macro_lookup
-                                .blocking_read()
-                                .triggers
-                                .get(&first_key_pressed)
-                                .cloned()
-                                .unwrap_or_default()
-                                .to_vec();
-
-                            //warn!("Check these macros: {:?}", check_these_macros);
-
-                            // ? up the pressed keys here right away?
-
-                            let should_grab = {
-                                if !check_these_macros.is_empty() {
-                                    let macro_channel_clone = schan_macro_execute.clone();
-                                    let macro_data_list_clone = inner_macro_lookup.clone();
-                                    // let keypress_execute_clone = inner_keypress_execute.clone();
-                                    // let macro_id_list_clone =
-                                    //     inner_macro_lookup.blocking_read().triggers.clone();
-                                    error!(
-                                        "sending check macros: {:?} to check.\n Keys pressed: {:?}",
-                                        check_these_macros, keys_pressed_internal_hid
-                                    );
-
-                                    check_macro_execution_efficiently(
-                                        keys_pressed_internal_hid,
-                                        check_these_macros,
-                                        macro_data_list_clone,
-                                        macro_channel_clone,
-                                        EventType::KeyPress(key), // keypress_execute_clone,
-                                        identical_keys,
-                                    )
-                                } else {
-                                    false
-                                }
-                            };
-
+                            let should_grab = false;
                             if should_grab {
                                 None
                             } else {
@@ -945,90 +879,8 @@ impl MacroBackend {
                         rdev::EventType::KeyRelease(key) => {
                             let keys_pressed_internal_hid_previous =
                                 inner_keys_pressed.blocking_read().clone();
+
                             inner_keys_pressed.blocking_write().retain(|x| *x != key);
-
-                            // debug!("Key Pressed RAW: {:?}", &key);
-                            let mut identical_keys = false;
-                            let keys_pressed_internal_hid: Vec<u32> = {
-                                // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
-
-                                // debug!("Pressed keys: {:?}", inner_keys_pressed.blocking_read());
-
-                                // debug!("Unique keys: {:?}", inner_keys_pressed.blocking_read());
-                                if keys_pressed_internal_hid_previous
-                                    == *inner_keys_pressed.blocking_read()
-                                {
-                                    identical_keys = true;
-                                    inner_keys_pressed
-                                        .blocking_read()
-                                        .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .collect()
-                                } else {
-                                    // debug!("Will map scancodes to match");
-
-                                    inner_keys_pressed
-                                        .blocking_read()
-                                        .iter()
-                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                        .collect()
-                                }
-                                // debug!("Will map scancodes to match");
-                                // inner_keys_pressed
-                                //     .blocking_read()
-                                //     .iter()
-                                //     .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                //     .collect()
-                            };
-
-                            trace!(
-                                "Pressed Keys CONVERTED TO HID:RDEV:  {:?} {:?}",
-                                keys_pressed_internal_hid,
-                                keys_pressed_internal_hid
-                                    .par_iter()
-                                    .map(|x| *SCANCODE_TO_RDEV
-                                        .get(x)
-                                        .unwrap_or(&rdev::Key::Unknown(0)))
-                                    .collect::<Vec<rdev::Key>>()
-                            );
-
-                            let first_key_pressed: u32 = keys_pressed_internal_hid
-                                .first()
-                                .copied()
-                                .unwrap_or_default();
-
-                            let check_these_macros: Vec<String> = inner_macro_lookup
-                                .blocking_read()
-                                .triggers
-                                .get(&first_key_pressed)
-                                .cloned()
-                                .unwrap_or_default()
-                                .to_vec();
-
-                            //warn!("Check these macros: {:?}", check_these_macros);
-
-                            // ? up the pressed keys here right away?
-
-                            if !check_these_macros.is_empty() {
-                                let macro_channel_clone = schan_macro_execute.clone();
-                                let macro_data_list_clone = inner_macro_lookup.clone();
-                                // let keypress_execute_clone = inner_keypress_execute.clone();
-                                // let macro_id_list_clone =
-                                //     inner_macro_lookup.blocking_read().triggers.clone();
-                                error!(
-                                    "sending check macros: {:?} to check.\n Keys pressed: {:?}",
-                                    check_these_macros, keys_pressed_internal_hid
-                                );
-
-                                let _ = check_macro_execution_efficiently(
-                                    keys_pressed_internal_hid,
-                                    check_these_macros,
-                                    macro_data_list_clone,
-                                    macro_channel_clone,
-                                    EventType::KeyRelease(key), // keypress_execute_clone,
-                                    identical_keys,
-                                );
-                            }
 
                             Some(event)
                         }
