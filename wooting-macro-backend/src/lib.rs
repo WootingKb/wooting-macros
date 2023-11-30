@@ -265,34 +265,42 @@ impl MacroTask {
             match receive_channel.try_recv() {
                 Ok(message) => match message {
                     MacroTaskEvent::OneShot => {
+                        error!("Executing oneshot macro");
                         is_running = true;
                         stop_after_running = Some(1);
                     }
                     MacroTaskEvent::RepeatX(amount) => {
+                        error!("Executing repeat macro, {} times", amount);
                         is_running = true;
                         stop_after_running = Some(amount);
                     }
                     MacroTaskEvent::RepeatStart => {
+                        error!("Executing starting a repeat macro");
                         is_running = true;
                         stop_after_running = None;
                     }
                     MacroTaskEvent::RepeatStop => {
+                        error!("Executing stopping a repeat macro");
                         is_running = false;
                     }
                     MacroTaskEvent::Toggle => {
+                        error!("Executing toggling a macro");
                         is_running = !is_running;
                         stop_after_running = None;
                     }
                     MacroTaskEvent::Abort => {
+                        error!("Executing aborting a macro");
                         // TODO: look into aborting earlier in macro execution
                         is_running = false;
                     }
                     MacroTaskEvent::Kill => {
+                        error!("EXECUTING KILLING OF THE TASK OF A MACRO");
                         break 'task_loop;
                     }
                 },
                 Err(e) => match e {
                     TryRecvError::Disconnected => {
+                        error!("RECEIVING CHANNEL DISCONNECTED");
                         break 'task_loop;
                     }
 
@@ -301,6 +309,7 @@ impl MacroTask {
                     }
                 },
             }
+
             if is_running {
                 // if let TriggerEventType::KeyPressEvent { ref data, .. } = macro_data.trigger {
                 //     //TODO: this is very experimental and not final
@@ -314,12 +323,12 @@ impl MacroTask {
                 //     };
                 // }
                 // }
-
                 for action in macro_data.sequence.iter() {
                     action.execute(&send_channel).await.unwrap();
                 }
 
                 if let Some(amount) = stop_after_running {
+                    error!("Macro will run {} times", amount);
                     if amount - 1 == 0 {
                         is_running = false;
                         stop_after_running = None;
@@ -328,11 +337,13 @@ impl MacroTask {
                     }
                 }
                 match macro_data.macro_type {
-                    MacroType::Single | MacroType::RepeatX => {
+                    MacroType::Single => {
                         is_running = false;
                     }
                     _ => (),
                 }
+            } else {
+                tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
             }
         }
         // TODO: Consider maybe doing some cleanup here
@@ -371,25 +382,30 @@ impl Macro {
         match self.config.macro_type {
             MacroType::Single => {
                 if let MacroTriggerEvent::Pressed = event {
+                    warn!("Sending oneshot macro");
                     self.task_sender.send(MacroTaskEvent::OneShot).unwrap();
                 }
             }
             MacroType::Toggle => {
                 if let MacroTriggerEvent::Pressed = event {
+                    warn!("Toggling");
                     self.task_sender.send(MacroTaskEvent::Toggle).unwrap();
                 }
             }
             MacroType::OnHold => match event {
                 MacroTriggerEvent::Pressed => {
+                    warn!("Starting repeat of onhold macro");
                     self.task_sender.send(MacroTaskEvent::RepeatStart).unwrap();
                 }
                 MacroTriggerEvent::Released => {
+                    warn!("Stopping repeat of onhold macro");
                     self.task_sender.send(MacroTaskEvent::RepeatStop).unwrap();
                 }
                 _ => {}
             },
             MacroType::RepeatX => {
                 if let MacroTriggerEvent::Pressed = event {
+                    warn!("Starting a repeatX macro");
                     self.task_sender
                         .send(MacroTaskEvent::RepeatX(self.config.repeat_amount))
                         .unwrap();
@@ -838,11 +854,14 @@ impl MacroBackend {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
                         rdev::EventType::KeyPress(key) => {
-                            let keys_pressed_internal_hid_previous: Vec<rdev::Key> =
-                                inner_keys_pressed.blocking_read().clone();
+                            let keys_pressed_internal_hid_previous: Vec<u32> = inner_keys_pressed
+                                .blocking_read()
+                                .clone()
+                                .iter()
+                                .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                .collect();
 
-                            let keys_pressed_internal_hid: Vec<rdev::Key> = {
-                                // keys_pressed.blocking_write = keys_pressed.0.blocking_write();
+                            let keys_pressed_internal_hid: Vec<u32> = {
                                 inner_keys_pressed.blocking_write().push(key.clone());
 
                                 let cloned_pressed_keys =
@@ -851,14 +870,62 @@ impl MacroBackend {
                                 *inner_keys_pressed.blocking_write() =
                                     cloned_pressed_keys.into_iter().unique().collect();
 
-                                // inner_keys_pressed
-                                //     .blocking_read()
-                                //     .iter()
-                                //     .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                //     .collect()
-
-                                inner_keys_pressed.blocking_read().clone()
+                                inner_keys_pressed
+                                    .blocking_read()
+                                    .iter()
+                                    .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                    .collect()
                             };
+                            let mut should_grab = false;
+
+                            inner_macro_lookup.blocking_read().id_map.iter().for_each(
+                                |(macro_id, macro_item)| {
+                                    if let TriggerEventType::KeyPressEvent { data, .. } =
+                                        &macro_item.config.trigger
+                                    {
+                                        match (
+                                            data,
+                                            &keys_pressed_internal_hid,
+                                            &keys_pressed_internal_hid_previous,
+                                        ) {
+                                            (data, pressed, pressed_previous)
+                                                if data.iter().any(|x| pressed.contains(x))
+                                                    && data != pressed_previous =>
+                                            {
+                                                info!("Pressing a macro: {}", macro_id);
+                                                should_grab = true;
+                                                schan_macro_execute
+                                                    .send(MacroExecutorEvent::Start(
+                                                        macro_id.clone(),
+                                                    ))
+                                                    .unwrap();
+                                            }
+                                            (data, pressed, pressed_previous)
+                                                if data
+                                                    .iter()
+                                                    .any(|x| pressed_previous.contains(x))
+                                                    && data != pressed =>
+                                            {
+                                                info!("Releasing a macro: {}", macro_id);
+                                                // should_grab = true;
+                                                schan_macro_execute
+                                                    .send(MacroExecutorEvent::Stop(
+                                                        macro_id.clone(),
+                                                    ))
+                                                    .unwrap();
+                                            }
+                                            (data, pressed, pressed_previous)
+                                                if data.iter().all(|x| pressed.contains(x))
+                                                    && pressed == pressed_previous =>
+                                            {
+                                                should_grab = true
+                                            }
+
+                                            _ => {}
+                                        }
+                                    }
+                                },
+                            );
 
                             //TODO: Search all the macros
                             //TODO: is this macro trigger fulfilled by the previous one?
@@ -868,7 +935,6 @@ impl MacroBackend {
                             //TODO: if it was fulfilled before it releases
                             //TODO: if it was fulfilled now it presses
 
-                            let should_grab = false;
                             if should_grab {
                                 None
                             } else {
@@ -877,8 +943,8 @@ impl MacroBackend {
                         }
 
                         rdev::EventType::KeyRelease(key) => {
-                            let keys_pressed_internal_hid_previous =
-                                inner_keys_pressed.blocking_read().clone();
+                            // let keys_pressed_internal_hid_previous =
+                            //     inner_keys_pressed.blocking_read().clone();
 
                             inner_keys_pressed.blocking_write().retain(|x| *x != key);
 
