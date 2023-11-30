@@ -630,7 +630,7 @@ async fn macro_executor(
                 }
             }
         }
-        tokio::time::sleep(time::Duration::from_millis(20)).await;
+        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
     }
 }
 
@@ -829,6 +829,7 @@ impl MacroBackend {
 
         let inner_is_listening = self.is_listening.clone();
         let inner_keys_pressed = self.keys_pressed.clone();
+        let inner_keys_pressed_previous = Arc::new(RwLock::new(vec![]));
         let inner_macro_lookup = self.macro_lookup.clone();
         // let inner_keypress_execute = schan_keypress_execute.clone();
 
@@ -849,19 +850,21 @@ impl MacroBackend {
 
         let _grabber = task::spawn_blocking(move || {
             *inner_keys_pressed.blocking_write() = vec![];
+            *inner_keys_pressed_previous.blocking_write() = vec![];
 
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
                         rdev::EventType::KeyPress(key) => {
-                            let keys_pressed_internal_hid_previous: Vec<u32> = inner_keys_pressed
-                                .blocking_read()
-                                .clone()
-                                .iter()
-                                .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
-                                .collect();
+                            let mut keys_pressed_internal_hid_previous: Vec<u32> =
+                                inner_keys_pressed_previous
+                                    .blocking_read()
+                                    .clone()
+                                    .iter()
+                                    .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                    .collect();
 
-                            let keys_pressed_internal_hid: Vec<u32> = {
+                            let mut keys_pressed_internal_hid: Vec<u32> = {
                                 inner_keys_pressed.blocking_write().push(key.clone());
 
                                 let cloned_pressed_keys =
@@ -878,47 +881,118 @@ impl MacroBackend {
                             };
                             let mut should_grab = false;
 
+                            // debug!("Previous keys: {:?}", keys_pressed_internal_hid_previous);
+                            // debug!("Current keys: {:?}", keys_pressed_internal_hid);
+
                             inner_macro_lookup.blocking_read().id_map.iter().for_each(
                                 |(macro_id, macro_item)| {
-                                    if let TriggerEventType::KeyPressEvent { data, .. } =
-                                        &macro_item.config.trigger
+                                    if let TriggerEventType::KeyPressEvent {
+                                        data: trigger_combo,
+                                        ..
+                                    } = &macro_item.config.trigger
                                     {
                                         match (
-                                            data,
-                                            &keys_pressed_internal_hid,
-                                            &keys_pressed_internal_hid_previous,
+                                            trigger_combo,
+                                            &mut keys_pressed_internal_hid,
+                                            &mut keys_pressed_internal_hid_previous,
                                         ) {
-                                            (data, pressed, pressed_previous)
-                                                if data.iter().any(|x| pressed.contains(x))
-                                                    && data != pressed_previous =>
-                                            {
-                                                info!("Pressing a macro: {}", macro_id);
-                                                should_grab = true;
-                                                schan_macro_execute
-                                                    .send(MacroExecutorEvent::Start(
-                                                        macro_id.clone(),
-                                                    ))
-                                                    .unwrap();
-                                            }
-                                            (data, pressed, pressed_previous)
-                                                if data
+                                            (trigger_combo, pressed, pressed_previous)
+                                                if trigger_combo
                                                     .iter()
-                                                    .any(|x| pressed_previous.contains(x))
-                                                    && data != pressed =>
+                                                    .any(|x| pressed.contains(x)) =>
                                             {
-                                                info!("Releasing a macro: {}", macro_id);
-                                                // should_grab = true;
-                                                schan_macro_execute
-                                                    .send(MacroExecutorEvent::Stop(
-                                                        macro_id.clone(),
-                                                    ))
-                                                    .unwrap();
+                                                for sequence_key in
+                                                    macro_item.config.sequence.iter()
+                                                {
+                                                    if let ActionEventType::KeyPressEventAction {
+                                                        data,
+                                                        ..
+                                                    } = sequence_key
+                                                    {
+                                                        info!("removing {}", data.keypress);
+                                                        keys_pressed_internal_hid
+                                                            .retain(|x| data.keypress != *x);
+                                                        keys_pressed_internal_hid_previous
+                                                            .retain(|x| data.keypress != *x);
+                                                    }
+                                                }
+
+                                                if *trigger_combo
+                                                    != *keys_pressed_internal_hid_previous
+                                                {
+                                                    info!("Pressing a macro: {}", macro_id);
+                                                    info!(
+                                                        "status of both {:?} and previous {:?}",
+                                                        keys_pressed_internal_hid,
+                                                        keys_pressed_internal_hid_previous
+                                                    );
+                                                    should_grab = true;
+                                                    schan_macro_execute
+                                                        .send(MacroExecutorEvent::Start(
+                                                            macro_id.clone(),
+                                                        ))
+                                                        .unwrap();
+                                                }
+                                            }
+                                            (trigger_combo, pressed, pressed_previous)
+                                                if trigger_combo
+                                                    .iter()
+                                                    .any(|x| pressed_previous.contains(x)) =>
+                                            {
+                                                for sequence_key in
+                                                    macro_item.config.sequence.iter()
+                                                {
+                                                    if let ActionEventType::KeyPressEventAction {
+                                                        data,
+                                                        ..
+                                                    } = sequence_key
+                                                    {
+                                                        info!("removing {}", data.keypress);
+                                                        keys_pressed_internal_hid
+                                                            .retain(|x| data.keypress != *x);
+                                                        keys_pressed_internal_hid_previous
+                                                            .retain(|x| data.keypress != *x);
+                                                    }
+                                                }
+                                                if *trigger_combo != keys_pressed_internal_hid {
+                                                    info!("Releasing a macro: {}", macro_id);
+                                                    info!(
+                                                        "status of both {:?} and previous {:?}",
+                                                        keys_pressed_internal_hid,
+                                                        keys_pressed_internal_hid_previous
+                                                    );
+                                                    // should_grab = true;
+                                                    schan_macro_execute
+                                                        .send(MacroExecutorEvent::Stop(
+                                                            macro_id.clone(),
+                                                        ))
+                                                        .unwrap();
+                                                }
                                             }
                                             (data, pressed, pressed_previous)
-                                                if data.iter().all(|x| pressed.contains(x))
-                                                    && pressed == pressed_previous =>
+                                                if data.iter().all(|x| pressed.contains(x)) =>
                                             {
-                                                should_grab = true
+                                                for sequence_key in
+                                                    macro_item.config.sequence.iter()
+                                                {
+                                                    if let ActionEventType::KeyPressEventAction {
+                                                        data,
+                                                        ..
+                                                    } = sequence_key
+                                                    {
+                                                        info!("removing {}", data.keypress);
+                                                        keys_pressed_internal_hid
+                                                            .retain(|x| data.keypress != *x);
+                                                        keys_pressed_internal_hid_previous
+                                                            .retain(|x| data.keypress != *x);
+                                                    }
+                                                }
+
+                                                if keys_pressed_internal_hid
+                                                    == keys_pressed_internal_hid_previous
+                                                {
+                                                    should_grab = true
+                                                }
                                             }
 
                                             _ => {}
@@ -943,10 +1017,16 @@ impl MacroBackend {
                         }
 
                         rdev::EventType::KeyRelease(key) => {
-                            // let keys_pressed_internal_hid_previous =
-                            //     inner_keys_pressed.blocking_read().clone();
-
+                            *inner_keys_pressed_previous.blocking_write() =
+                                inner_keys_pressed.blocking_read().clone();
+                            //TODO: This makes it very difficult to properly get
                             inner_keys_pressed.blocking_write().retain(|x| *x != key);
+
+                            // warn!(
+                            //     "RELEASING Previous: {:?} after release: {:?}",
+                            //     inner_keys_pressed_previous.blocking_read(),
+                            //     inner_keys_pressed.blocking_read()
+                            // );
 
                             Some(event)
                         }
