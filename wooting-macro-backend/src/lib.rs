@@ -16,6 +16,8 @@ use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::RwLock;
 use tokio::task;
 
+use multiinput::*;
+
 use uuid::Uuid;
 
 use halfbrown::HashMap;
@@ -45,6 +47,30 @@ use crate::plugin::mouse;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
+
+pub fn check_keypress_simon() {
+    thread::sleep(time::Duration::from_millis(10000));
+    let mut manager = RawInputManager::new().unwrap();
+    manager.register_devices(DeviceType::Joysticks(XInputInclude::True));
+    manager.register_devices(DeviceType::Keyboards);
+    manager.register_devices(DeviceType::Mice);
+    warn!("{:#?}", manager.get_device_list());
+    loop {
+        if let Some(event) = manager.get_event() {
+            match event {
+                RawEvent::MouseButtonEvent(_, _, _) => {}
+                RawEvent::MouseMoveEvent(_, _, _) => {}
+                RawEvent::MouseWheelEvent(_, _) => {}
+                RawEvent::KeyboardEvent(_, _, _) => {
+                    info!("{:?}", event);
+                }
+                RawEvent::JoystickButtonEvent(_, _, _) => {}
+                RawEvent::JoystickAxisEvent(_, _, _) => {}
+                RawEvent::JoystickHatSwitchEvent(_, _) => {}
+            }
+        }
+    }
+}
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Eq, PartialEq)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
@@ -848,6 +874,8 @@ impl MacroBackend {
             });
         });
 
+        thread::spawn(move || check_keypress_simon());
+
         let _grabber = task::spawn_blocking(move || {
             *inner_keys_pressed.blocking_write() = vec![];
             *inner_keys_pressed_previous.blocking_write() = vec![];
@@ -980,7 +1008,7 @@ impl MacroBackend {
                                                         ..
                                                     } = sequence_key
                                                     {
-                                                        info!("removing {}", data.keypress);
+                                                        // info!("removing {}", data.keypress);
                                                         keys_pressed_internal_hid
                                                             .retain(|x| data.keypress != *x);
                                                         keys_pressed_internal_hid_previous

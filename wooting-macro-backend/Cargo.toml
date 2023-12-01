@@ -32,6 +32,8 @@ env_logger = "0.10"
 rayon = "1.8"
 url = "2.5"
 uuid = { version = "1.6", features = ["fast-rng", "v4", "macro-diagnostics"] }
+multiinput = { git = "https://github.com/simon-wh/multiinput-rust", branch = "master" }
+
 
 [profile.release]
 lto = true
