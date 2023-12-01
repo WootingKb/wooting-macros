@@ -45,7 +45,7 @@ pub fn lift_trigger_key(
     channel_sender: &UnboundedSender<rdev::EventType>,
 ) -> Result<()> {
     channel_sender.send(rdev::EventType::KeyRelease(
-        super::super::SCANCODE_TO_RDEV[&key_to_release],
+        super::super::HID_TO_RDEV[&key_to_release],
     ))?;
 
     Ok(())

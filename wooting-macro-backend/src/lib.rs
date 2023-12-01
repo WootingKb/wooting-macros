@@ -126,29 +126,25 @@ impl ActionEventType {
             ActionEventType::KeyPressEventAction { data } => match data.key_type {
                 key_press::KeyType::Down => {
                     // One key press down
-                    send_channel
-                        .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
+                    send_channel.send(rdev::EventType::KeyPress(HID_TO_RDEV[&data.keypress]))?;
                     // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
-                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    //     RDEV_TO_HID[&data.keypress],
                     // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                 }
                 key_press::KeyType::Up => {
                     // One key lift up
-                    send_channel.send(rdev::EventType::KeyRelease(
-                        SCANCODE_TO_RDEV[&data.keypress],
-                    ))?;
+                    send_channel.send(rdev::EventType::KeyRelease(HID_TO_RDEV[&data.keypress]))?;
                     // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
-                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    //     RDEV_TO_HID[&data.keypress],
                     // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                 }
                 key_press::KeyType::DownUp => {
                     // Key press
-                    send_channel
-                        .send(rdev::EventType::KeyPress(SCANCODE_TO_RDEV[&data.keypress]))?;
+                    send_channel.send(rdev::EventType::KeyPress(HID_TO_RDEV[&data.keypress]))?;
                     // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
-                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    //     RDEV_TO_HID[&data.keypress],
                     // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
 
@@ -156,11 +152,9 @@ impl ActionEventType {
                     tokio::time::sleep(time::Duration::from_millis(data.press_duration)).await;
 
                     // Lift the key
-                    send_channel.send(rdev::EventType::KeyRelease(
-                        SCANCODE_TO_RDEV[&data.keypress],
-                    ))?;
+                    send_channel.send(rdev::EventType::KeyRelease(HID_TO_RDEV[&data.keypress]))?;
                     // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
-                    //     SCANCODE_TO_RDEV[&data.keypress],
+                    //     RDEV_TO_HID[&data.keypress],
                     // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                 }
@@ -889,7 +883,7 @@ impl MacroBackend {
                                     .blocking_read()
                                     .clone()
                                     .iter()
-                                    .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                    .map(|x| *RDEV_TO_HID.get(x).unwrap_or(&0))
                                     .collect();
 
                             let mut keys_pressed_internal_hid: Vec<u32> = {
@@ -904,7 +898,7 @@ impl MacroBackend {
                                 inner_keys_pressed
                                     .blocking_read()
                                     .iter()
-                                    .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                    .map(|x| *RDEV_TO_HID.get(x).unwrap_or(&0))
                                     .collect()
                             };
                             let mut should_grab = false;
