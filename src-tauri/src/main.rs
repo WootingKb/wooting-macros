@@ -89,9 +89,7 @@ async fn main() {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     // The backend is run only on Windows and Linux, on macOS it won't work.
     info!("Running the macro backend");
-    if let Err(e) = backend.init().await {
-        eprintln!("Initialization error: {}", e);
-    };
+    backend.init().await;
 
     // Read the options from the config.
     let set_autolaunch: bool = backend.config.read().await.auto_start;

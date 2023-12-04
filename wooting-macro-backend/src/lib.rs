@@ -16,7 +16,6 @@ use rdev::EventType;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::RwLock;
-use tokio::task;
 use uuid::Uuid;
 
 use config::{ApplicationConfig, ConfigFile};
@@ -41,26 +40,67 @@ pub mod config;
 mod hid_table;
 pub mod plugin;
 
-pub fn check_keypress_simon() {
-    thread::sleep(time::Duration::from_millis(10000));
+pub async fn check_keypress_simon(
+    inner_is_listening: Arc<AtomicBool>,
+    inner_keys_pressed: Arc<RwLock<Vec<KeyId>>>,
+    schan_macro_execute: UnboundedSender<MacroExecutorEvent>,
+    map: Arc<RwLock<MacroLookup>>,
+) {
+    thread::sleep(time::Duration::from_millis(3000));
     let mut manager = RawInputManager::new().unwrap();
-    manager.register_devices(DeviceType::Joysticks(XInputInclude::True));
+    // manager.register_devices(DeviceType::Joysticks(XInputInclude::True));
     manager.register_devices(DeviceType::Keyboards);
-    manager.register_devices(DeviceType::Mice);
-    // warn!("{:#?}", manager.get_device_list());
+    // manager.register_devices(DeviceType::Mice);
+    warn!("Device list {:#?}", manager.get_device_list());
+
+    for device in manager.get_device_list().keyboards.iter() {
+        warn!("Device status {:#?}", device);
+    }
+
     loop {
-        if let Some(event) = manager.get_event() {
-            match event {
-                RawEvent::MouseButtonEvent(_, _, _) => {}
-                RawEvent::MouseMoveEvent(_, _, _) => {}
-                RawEvent::MouseWheelEvent(_, _) => {}
-                RawEvent::KeyboardEvent(_, _, _) => {
-                    // info!("{:?}", event);
+        if inner_is_listening.load(Ordering::Relaxed) {
+            if let Some(event) = manager.get_event() {
+                match event {
+                    RawEvent::KeyboardEvent(_, key, event) => match event {
+                        State::Pressed => {
+                            {
+                                let mut writer = inner_keys_pressed.write().await;
+                                writer.push(key);
+                                let unique = writer.clone().into_iter().unique().collect();
+                                *writer = unique;
+                            }
+
+                            let triggers = map.read().await;
+
+                            for (macro_id, macro_data) in triggers.id_map.iter() {
+                                if let TriggerEventType::KeyPressEvent {data,..} = &macro_data.config.trigger {
+                                    let current_pressed_keys: Vec<u32> = {
+                                        let keys_library = inner_keys_pressed.read().await.clone();
+                                        keys_library.iter().map(|x| *MULTIINPUT_TO_HID.get(x).unwrap_or(&0)).collect()
+                                    };
+
+                                    if *data == current_pressed_keys{
+                                        schan_macro_execute.send(MacroExecutorEvent::Start(macro_id.clone())).unwrap();
+                                    }
+                                }
+                            }
+
+
+                            debug!("Key status: {:?}", inner_keys_pressed.read().await);
+                        }
+                        State::Released => {
+                            inner_keys_pressed.write().await.retain(|x| *x != key);
+                            debug!("Key status: {:?}", inner_keys_pressed.read().await);
+                        }
+                    },
+                    _ => {}
                 }
-                RawEvent::JoystickButtonEvent(_, _, _) => {}
-                RawEvent::JoystickAxisEvent(_, _, _) => {}
-                RawEvent::JoystickHatSwitchEvent(_, _) => {}
             }
+            tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
+            // thread::sleep(time::Duration::from_millis(DEFAULT_DELAY));
+        } else {
+            // thread::sleep(time::Duration::from_millis(2000));
+            tokio::time::sleep(time::Duration::from_millis(2000)).await;
         }
     }
 }
@@ -384,7 +424,8 @@ impl Macro {
             macro_keypress_sender,
         }
     }
-    async fn on_event(&mut self, event: MacroTriggerEvent) {
+
+    fn on_event(&mut self, event: MacroTriggerEvent) {
         info!("Event: {:?}", event);
 
         if let MacroTriggerEvent::Abort = event {
@@ -452,7 +493,8 @@ pub struct MacroBackend {
     pub macro_lookup: Arc<RwLock<MacroLookup>>,
     // pub macro_execute_queue: Arc<RwLock<Vec<String>>>,
     pub is_listening: Arc<AtomicBool>,
-    pub keys_pressed: Arc<RwLock<Vec<rdev::Key>>>,
+    pub keys_pressed: Arc<RwLock<Vec<KeyId>>>,
+    // pub keys_pressed_simuinput: Arc<RwLock<Vec<multiinput::KeyId>>>,
 }
 
 ///MacroData is the main data structure that contains all macro data.
@@ -593,7 +635,7 @@ fn keypress_executor_receiver(mut rchan_execute: UnboundedReceiver<rdev::EventTy
         plugin::util::direct_send_event(&received_event)
             .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
 
-        //MacOS and Linux require a delay between each macro execution.
+        // MacOS and Linux require some delays.
         #[cfg(not(target_os = "windows"))]
         thread::sleep(time::Duration::from_millis(10));
 
@@ -620,25 +662,25 @@ async fn macro_executor(
                         .get_mut(&macro_id)
                         .unwrap()
                         .on_event(MacroTriggerEvent::Pressed)
-                        .await
+
                 }
                 MacroExecutorEvent::Stop(macro_id) => {
                     macro_id_list
                         .get_mut(&macro_id)
                         .unwrap()
                         .on_event(MacroTriggerEvent::Released)
-                        .await
+
                 }
                 MacroExecutorEvent::Abort(macro_id) => {
                     macro_id_list
                         .get_mut(&macro_id)
                         .unwrap()
                         .on_event(MacroTriggerEvent::Abort)
-                        .await
+
                 }
                 MacroExecutorEvent::AbortAll => {
                     for (_, macro_item) in macro_id_list.iter_mut() {
-                        macro_item.on_event(MacroTriggerEvent::Abort).await
+                        macro_item.on_event(MacroTriggerEvent::Abort)
                     }
                 }
             }
@@ -831,290 +873,36 @@ impl MacroBackend {
     }
 
     /// Initializes the entire backend and gets the whole grabbing system running.
-    pub async fn init(&self) -> Result<()> {
-        //? : io-uring async read files and write files
-        //TODO: implement drop when the application ends to clean up the downed keys
-
-        //==================================================
-        // Spawn the channels
-
+    pub async fn init(&self) {
         let (schan_macro_execute, rchan_macro_execute) = tokio::sync::mpsc::unbounded_channel();
 
         let inner_is_listening = self.is_listening.clone();
         let inner_keys_pressed = self.keys_pressed.clone();
-        let inner_keys_pressed_previous = Arc::new(RwLock::new(vec![]));
+        // let inner_keys_pressed_previous = Arc::new(RwLock::new(vec![]));
         let inner_macro_lookup = self.macro_lookup.clone();
-        // let inner_keypress_execute = schan_keypress_execute.clone();
 
         let inner_macro_lookup_clone = inner_macro_lookup.clone();
         //let inner_macro_lookup_clone = inner_macro_lookup.clone();
         // Create the macro executor
+
+        thread::spawn(move || {
+            let rt = tokio::runtime::Runtime::new().unwrap();
+            rt.block_on(async {
+                check_keypress_simon(inner_is_listening, inner_keys_pressed, schan_macro_execute, inner_macro_lookup)
+                    .await;
+            });
+        });
+
         thread::spawn(move || {
             let rt = tokio::runtime::Runtime::new().unwrap();
             rt.block_on(async {
                 macro_executor(
                     rchan_macro_execute,
                     inner_macro_lookup_clone,
-                    // schan_keypress_execute,
                 )
                 .await;
             });
         });
-
-        thread::spawn(move || check_keypress_simon());
-
-        let _grabber = task::spawn_blocking(move || {
-            *inner_keys_pressed.blocking_write() = vec![];
-            *inner_keys_pressed_previous.blocking_write() = vec![];
-
-            rdev::grab(move |event: rdev::Event| {
-                if inner_is_listening.load(Ordering::Relaxed) {
-                    match event.event_type {
-                        rdev::EventType::KeyPress(key) => {
-                            let mut keys_pressed_internal_hid_previous: Vec<u32> =
-                                inner_keys_pressed_previous
-                                    .blocking_read()
-                                    .clone()
-                                    .iter()
-                                    .map(|x| *RDEV_TO_HID.get(x).unwrap_or(&0))
-                                    .collect();
-
-                            let mut keys_pressed_internal_hid: Vec<u32> = {
-                                inner_keys_pressed.blocking_write().push(key.clone());
-
-                                let cloned_pressed_keys =
-                                    inner_keys_pressed.blocking_read().clone();
-
-                                *inner_keys_pressed.blocking_write() =
-                                    cloned_pressed_keys.into_iter().unique().collect();
-
-                                inner_keys_pressed
-                                    .blocking_read()
-                                    .iter()
-                                    .map(|x| *RDEV_TO_HID.get(x).unwrap_or(&0))
-                                    .collect()
-                            };
-
-                            debug!(
-                                "Key pressed Rdev: {:?} our HID code: {}, SimonLib: {:?}, ",
-                                key,
-                                RDEV_TO_HID.get(&key).unwrap_or_else(|| &0),
-                                HID_TO_MULTIINPUT
-                                    .get(&RDEV_TO_HID.get(&key).unwrap_or_else(|| &0))
-                                    .unwrap_or_else(|| {
-                                        error!("Cannot get proper key from multiinput");
-                                        &KeyId::NumLock
-                                    })
-                            );
-
-                            let mut should_grab = false;
-
-                            // debug!("Previous keys: {:?}", keys_pressed_internal_hid_previous);
-                            // debug!("Current keys: {:?}", keys_pressed_internal_hid);
-
-                            inner_macro_lookup.blocking_read().id_map.iter().for_each(
-                                |(macro_id, macro_item)| {
-                                    if let TriggerEventType::KeyPressEvent {
-                                        data: trigger_combo,
-                                        ..
-                                    } = &macro_item.config.trigger
-                                    {
-                                        match (
-                                            trigger_combo,
-                                            &mut keys_pressed_internal_hid,
-                                            &mut keys_pressed_internal_hid_previous,
-                                        ) {
-                                            (trigger_combo, pressed, pressed_previous)
-                                                if trigger_combo
-                                                    .iter()
-                                                    .any(|x| pressed.contains(x)) =>
-                                            {
-                                                for sequence_key in
-                                                    macro_item.config.sequence.iter()
-                                                {
-                                                    if let ActionEventType::KeyPressEventAction {
-                                                        data,
-                                                        ..
-                                                    } = sequence_key
-                                                    {
-                                                        info!("removing {}", data.keypress);
-                                                        keys_pressed_internal_hid
-                                                            .retain(|x| data.keypress != *x);
-                                                        keys_pressed_internal_hid_previous
-                                                            .retain(|x| data.keypress != *x);
-                                                    }
-                                                }
-
-                                                if *trigger_combo
-                                                    != *keys_pressed_internal_hid_previous
-                                                {
-                                                    info!("Pressing a macro: {}", macro_id);
-                                                    info!(
-                                                        "status of both {:?} and previous {:?}",
-                                                        keys_pressed_internal_hid,
-                                                        keys_pressed_internal_hid_previous
-                                                    );
-                                                    should_grab = true;
-                                                    schan_macro_execute
-                                                        .send(MacroExecutorEvent::Start(
-                                                            macro_id.clone(),
-                                                        ))
-                                                        .unwrap();
-                                                }
-                                            }
-                                            (trigger_combo, pressed, pressed_previous)
-                                                if trigger_combo
-                                                    .iter()
-                                                    .any(|x| pressed_previous.contains(x)) =>
-                                            {
-                                                for sequence_key in
-                                                    macro_item.config.sequence.iter()
-                                                {
-                                                    if let ActionEventType::KeyPressEventAction {
-                                                        data,
-                                                        ..
-                                                    } = sequence_key
-                                                    {
-                                                        info!("removing {}", data.keypress);
-                                                        keys_pressed_internal_hid
-                                                            .retain(|x| data.keypress != *x);
-                                                        keys_pressed_internal_hid_previous
-                                                            .retain(|x| data.keypress != *x);
-                                                    }
-                                                }
-                                                if *trigger_combo != keys_pressed_internal_hid {
-                                                    info!("Releasing a macro: {}", macro_id);
-                                                    info!(
-                                                        "status of both {:?} and previous {:?}",
-                                                        keys_pressed_internal_hid,
-                                                        keys_pressed_internal_hid_previous
-                                                    );
-                                                    // should_grab = true;
-                                                    schan_macro_execute
-                                                        .send(MacroExecutorEvent::Stop(
-                                                            macro_id.clone(),
-                                                        ))
-                                                        .unwrap();
-                                                }
-                                            }
-                                            (data, pressed, pressed_previous)
-                                                if data.iter().all(|x| pressed.contains(x)) =>
-                                            {
-                                                for sequence_key in
-                                                    macro_item.config.sequence.iter()
-                                                {
-                                                    if let ActionEventType::KeyPressEventAction {
-                                                        data,
-                                                        ..
-                                                    } = sequence_key
-                                                    {
-                                                        // info!("removing {}", data.keypress);
-                                                        keys_pressed_internal_hid
-                                                            .retain(|x| data.keypress != *x);
-                                                        keys_pressed_internal_hid_previous
-                                                            .retain(|x| data.keypress != *x);
-                                                    }
-                                                }
-
-                                                if keys_pressed_internal_hid
-                                                    == keys_pressed_internal_hid_previous
-                                                {
-                                                    should_grab = true
-                                                }
-                                            }
-
-                                            _ => {}
-                                        }
-                                    }
-                                },
-                            );
-
-                            //TODO: Search all the macros
-                            //TODO: is this macro trigger fulfilled by the previous one?
-                            //TODO: is this trigger fulfilled by the current one?
-
-                            //TODO: if its the same nothing happens
-                            //TODO: if it was fulfilled before it releases
-                            //TODO: if it was fulfilled now it presses
-
-                            if should_grab {
-                                None
-                            } else {
-                                Some(event)
-                            }
-                        }
-
-                        rdev::EventType::KeyRelease(key) => {
-                            *inner_keys_pressed_previous.blocking_write() =
-                                inner_keys_pressed.blocking_read().clone();
-                            //TODO: This makes it very difficult to properly get
-                            inner_keys_pressed.blocking_write().retain(|x| *x != key);
-
-                            // warn!(
-                            //     "RELEASING Previous: {:?} after release: {:?}",
-                            //     inner_keys_pressed_previous.blocking_read(),
-                            //     inner_keys_pressed.blocking_read()
-                            // );
-
-                            Some(event)
-                        }
-
-                        rdev::EventType::ButtonPress(button) => {
-                            //debug!("Button pressed: {:?}", button);
-
-                            let converted_button_to_u32: u32 =
-                                BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned();
-
-                            // Clone for the checking function
-                            let macro_channel_clone = schan_macro_execute.clone();
-                            let macro_data_list_clone = inner_macro_lookup.clone();
-
-                            let check_these_macros: Vec<String> = inner_macro_lookup
-                                .blocking_read()
-                                .triggers
-                                .get(&converted_button_to_u32)
-                                .cloned()
-                                .unwrap_or_default()
-                                .to_vec();
-
-                            let mut should_grab = false;
-                            if !check_these_macros.is_empty() {
-                                warn!(
-                                    "Mouse button found check these macros: {:?}",
-                                    check_these_macros
-                                );
-                                // let keypress_execute_clone = inner_keypress_execute.clone();
-                                should_grab = check_macro_execution_efficiently(
-                                    vec![converted_button_to_u32],
-                                    check_these_macros,
-                                    macro_data_list_clone,
-                                    macro_channel_clone,
-                                    EventType::ButtonPress(button), // keypress_execute_clone,
-                                    false,
-                                );
-                            }
-
-                            // Left mouse button never gets consumed to allow users to control their PC.
-                            match (should_grab, button) {
-                                (true, rdev::Button::Left) => Some(event),
-                                (true, _) => None,
-                                (false, _) => Some(event),
-                            }
-                        }
-                        rdev::EventType::ButtonRelease(_) => {
-                            // debug!("Button released: {:?}", button);
-
-                            Some(event)
-                        }
-                        rdev::EventType::MouseMove { .. } => Some(event),
-                        rdev::EventType::Wheel { .. } => Some(event),
-                    }
-                } else {
-                    Some(event)
-                }
-            })
-        });
-        Ok(())
     }
 }
 
@@ -1137,6 +925,7 @@ impl Default for MacroBackend {
             // macro_execute_queue: Arc::new(RwLock::new(vec![])),
             is_listening: Arc::new(AtomicBool::new(true)),
             keys_pressed: Arc::new(RwLock::from(vec![])),
+            // keys_pressed_simuinput: Arc::new(RwLock::from(vec![])),
         }
     }
 }
