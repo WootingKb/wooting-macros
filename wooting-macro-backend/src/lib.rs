@@ -1,8 +1,8 @@
+use std::{thread, time};
 #[cfg(not(debug_assertions))]
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::{thread, time};
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use anyhow::{Error, Result};
 #[cfg(not(debug_assertions))]
@@ -10,28 +10,17 @@ use dirs;
 use halfbrown::HashMap;
 use itertools::Itertools;
 use log::*;
+use multiinput::*;
 use rayon::prelude::*;
-use rdev::simulate;
+use rdev::EventType;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
+use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::RwLock;
 use tokio::task;
-
-use multiinput::*;
-
 use uuid::Uuid;
 
-use halfbrown::HashMap;
-
 use config::{ApplicationConfig, ConfigFile};
-#[cfg(not(debug_assertions))]
-use dirs;
-#[cfg(not(debug_assertions))]
-use std::path::PathBuf;
-
-use anyhow::{Error, Result};
 use plugin::delay::DEFAULT_DELAY;
-use rdev::EventType;
-use tokio::sync::mpsc::error::TryRecvError;
 
 // This has to be imported for release build
 #[allow(unused_imports)]
@@ -48,13 +37,17 @@ use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
 
+pub mod config;
+mod hid_table;
+pub mod plugin;
+
 pub fn check_keypress_simon() {
     thread::sleep(time::Duration::from_millis(10000));
     let mut manager = RawInputManager::new().unwrap();
     manager.register_devices(DeviceType::Joysticks(XInputInclude::True));
     manager.register_devices(DeviceType::Keyboards);
     manager.register_devices(DeviceType::Mice);
-    warn!("{:#?}", manager.get_device_list());
+    // warn!("{:#?}", manager.get_device_list());
     loop {
         if let Some(event) = manager.get_event() {
             match event {
@@ -62,7 +55,7 @@ pub fn check_keypress_simon() {
                 RawEvent::MouseMoveEvent(_, _, _) => {}
                 RawEvent::MouseWheelEvent(_, _) => {}
                 RawEvent::KeyboardEvent(_, _, _) => {
-                    info!("{:?}", event);
+                    // info!("{:?}", event);
                 }
                 RawEvent::JoystickButtonEvent(_, _, _) => {}
                 RawEvent::JoystickAxisEvent(_, _, _) => {}
@@ -901,6 +894,19 @@ impl MacroBackend {
                                     .map(|x| *RDEV_TO_HID.get(x).unwrap_or(&0))
                                     .collect()
                             };
+
+                            debug!(
+                                "Key pressed Rdev: {:?} our HID code: {}, SimonLib: {:?}, ",
+                                key,
+                                RDEV_TO_HID.get(&key).unwrap_or_else(|| &0),
+                                HID_TO_MULTIINPUT
+                                    .get(&RDEV_TO_HID.get(&key).unwrap_or_else(|| &0))
+                                    .unwrap_or_else(|| {
+                                        error!("Cannot get proper key from multiinput");
+                                        &KeyId::NumLock
+                                    })
+                            );
+
                             let mut should_grab = false;
 
                             // debug!("Previous keys: {:?}", keys_pressed_internal_hid_previous);
