@@ -1,25 +1,16 @@
 import { DeleteIcon } from '@chakra-ui/icons'
-import {
-  VStack,
-  Flex,
-  HStack,
-  Button,
-  useDisclosure,
-  Input,
-  Tooltip,
-  Box
-} from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, Input, Text, Tooltip, useDisclosure, VStack } from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import DeleteCollectionModal from './DeleteCollectionModal'
 import MacroList from './MacroList'
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import EmojiPopover from '../EmojiPopover'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 
 export default function CollectionPanel() {
-  const { collections, selection, onCollectionUpdate } = useApplicationContext()
+  const {collections, selection, onCollectionUpdate, searchValue} = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const {
     isOpen: isDeleteModalOpen,
@@ -35,6 +26,7 @@ export default function CollectionPanel() {
   const borderColour = useBorderColour()
   const isCollectionUndeletable = collections.length <= 1
 
+
   useEffect(() => {
     setCollectionName(currentCollection.name)
   }, [currentCollection.name])
@@ -45,7 +37,7 @@ export default function CollectionPanel() {
         return
       }
       onCollectionUpdate(
-        { ...currentCollection, icon: emoji.shortcodes },
+        {...currentCollection, icon: emoji.shortcodes},
         selection.collectionIndex
       )
     },
@@ -94,66 +86,70 @@ export default function CollectionPanel() {
         borderBottom="1px"
         borderColor={borderColour}
       >
-        <HStack w="full" justifyContent="space-between">
-          <HStack w="full" spacing={4}>
-            <EmojiPopover
-              shortcodeToShow={currentCollection.icon}
-              isEmojiPopoverOpen={isEmojiPopoverOpen}
-              onEmojiPopoverClose={onEmojiPopoverClose}
-              onEmojiPopoverOpen={onEmojiPopoverOpen}
-              onEmojiSelect={onEmojiSelect}
-            />
-            <Input
-              w="fit"
-              variant="flushed"
-              onChange={(event) => setCollectionName(event.target.value)}
-              onBlur={onCollectionNameChange}
-              value={collectionName}
-              size="xl"
-              textStyle="name"
-              placeholder="Collection Name"
-              _placeholder={{ opacity: 1, color: borderColour }}
-              _focusVisible={{ borderColor: 'primary-accent.500' }}
-            />
-          </HStack>
-          <HStack w="fit">
-            {/* <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
+        {searchValue.length === 0 ?
+
+          <HStack w="full" justifyContent="space-between">
+            <HStack w="full" spacing={4}>
+              <EmojiPopover
+                shortcodeToShow={currentCollection.icon}
+                isEmojiPopoverOpen={isEmojiPopoverOpen}
+                onEmojiPopoverClose={onEmojiPopoverClose}
+                onEmojiPopoverOpen={onEmojiPopoverOpen}
+                onEmojiSelect={onEmojiSelect}
+              />
+              <Input
+                w="fit"
+                variant="flushed"
+                onChange={(event) => setCollectionName(event.target.value)}
+                onBlur={onCollectionNameChange}
+                value={collectionName}
+                size="xl"
+                textStyle="name"
+                placeholder="Collection Name"
+                _placeholder={{opacity: 1, color: borderColour}}
+                _focusVisible={{borderColor: 'primary-accent.500'}}
+              />
+            </HStack>
+            <HStack w="fit">
+              {/* <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Export Collection
             </Button>
             <Button leftIcon={<AddIcon />} size={['xs', 'sm', 'md']} isDisabled>
               Import Macros
             </Button> */}
-            <Tooltip
-              variant="brand"
-              label={
-                isCollectionUndeletable
-                  ? "Can't delete your last collection!"
-                  : ''
-              }
-              hasArrow
-              placement="bottom-start"
-            >
-              <Box>
-                <Button
-                  leftIcon={<DeleteIcon />}
-                  variant="brandWarning"
-                  size="md"
-                  isDisabled={isCollectionUndeletable}
-                  onClick={onDeleteModalOpen}
-                  aria-label="Delete Collection"
-                >
-                  Delete Collection
-                </Button>
-              </Box>
-            </Tooltip>
-          </HStack>
-        </HStack>
+              <Tooltip
+                variant="brand"
+                label={
+                  isCollectionUndeletable
+                    ? "Can't delete your last collection!"
+                    : ''
+                }
+                hasArrow
+                placement="bottom-start"
+              >
+                <Box>
+                  <Button
+                    leftIcon={<DeleteIcon/>}
+                    variant="brandWarning"
+                    size="md"
+                    isDisabled={isCollectionUndeletable}
+                    onClick={onDeleteModalOpen}
+                    aria-label="Delete Collection"
+                  >
+                    Delete Collection
+                  </Button>
+                </Box>
+              </Tooltip>
+            </HStack>
+          </HStack> : <HStack>
+            <Text as="b" fontSize="3xl">Search</Text>
+          </HStack>}
       </Flex>
       <DeleteCollectionModal
         isOpen={isDeleteModalOpen}
         onClose={onDeleteModalClose}
       />
-      <MacroList />
+      <MacroList/>
     </VStack>
   )
 }
