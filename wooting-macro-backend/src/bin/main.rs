@@ -12,5 +12,4 @@ async fn main() {
     let backend = MacroBackend::default();
 
     backend.init().await;
-
 }
