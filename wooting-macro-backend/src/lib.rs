@@ -46,6 +46,7 @@ pub mod config;
 pub mod grabbing;
 mod hid_table;
 pub mod plugin;
+mod macros;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, Eq, PartialEq)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
