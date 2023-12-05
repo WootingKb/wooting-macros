@@ -153,6 +153,7 @@ export default function LeftPanel({onOpenSettingsModal}: Props) {
           w="full"
           h="full"
           overflowY="auto"
+          overflowX="hidden"
           ref={parent}
           px={4}
           spacing={1}
