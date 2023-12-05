@@ -1,5 +1,5 @@
-use crate::MacroExecutorEvent;
-use crate::MacroLookup;
+use crate::grabbing::executor::MacroExecutorEvent;
+use crate::macros::macro_data::MacroLookup;
 use crate::RwLock;
 use crate::UnboundedSender;
 use std::sync::atomic::AtomicBool;
