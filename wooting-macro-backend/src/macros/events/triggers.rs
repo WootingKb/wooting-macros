@@ -26,5 +26,14 @@ pub enum MacroTriggerEvent {
     Abort,
 }
 
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type")]
+pub enum MacroIndividualCommand{
+    Start,
+    Stop,
+    Abort,
+    AbortAll,
+}
+
 /// Macro trigger list to lookup macro IDs via their trigger.
 pub type MacroTrigger = HashMap<u32, Vec<String>>;

@@ -17,9 +17,13 @@ use tauri::{
 };
 use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
-use wooting_macro_backend::*;
-use wooting_macro_backend::config::*;
 
+use anyhow::Result;
+use wooting_macro_backend::config;
+use wooting_macro_backend::config::{ApplicationConfig, ConfigFile, LogDirPath};
+use wooting_macro_backend::MacroBackend;
+use wooting_macro_backend::macros::events::triggers::MacroIndividualCommand;
+use wooting_macro_backend::macros::macro_data::MacroData;
 // This is the debug envvar you may wish to set if you want advanced access to debug info from Wootomation.
 const DEBUG_ENVVAR: &str = "MACRO_LOG_LEVEL";
 
@@ -83,6 +87,15 @@ async fn control_grabbing(
     state.set_is_listening(frontend_bool);
     Ok(())
 }
+
+#[tauri::command]
+/// Allows the frontend to control a macro's state directly
+async fn execute_macro(
+    mut state: tauri::State<'_, MacroBackend>,
+    macro_name: String,
+    action_type: MacroIndividualCommand
+) -> Result<(), String> {
+    state.execute_macro_by_name(macro_name, action_type).await.map_err(|err| err.to_string())
 
 /// Enables or disables the automatic startup of Wootomation at system start.
 fn init_autostart(app_name: &str, set_autolaunch: bool) -> Result<(), Error> {
@@ -160,6 +173,7 @@ async fn main() -> Result<(), Error> {
             get_config,
             set_config,
             control_grabbing,
+            execute_macro
             is_debug
         ])
         .setup(move |app| {

@@ -19,14 +19,15 @@ import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
 import useMainBgColour from '../../../hooks/useMainBgColour'
-import MacroTypeArea from "./MacroTypeArea";
+import MacroTypeArea from './MacroTypeArea'
+import MacroStateControls from './MacroStateButtons'
 
 interface Props {
   isEditing: boolean
 }
 
-export default function Header({isEditing}: Props) {
-  const {changeSelectedMacroIndex} = useApplicationContext()
+export default function Header({ isEditing }: Props) {
+  const { changeSelectedMacroIndex } = useApplicationContext()
   const {
     macro,
     sequence,
@@ -83,7 +84,7 @@ export default function Header({isEditing}: Props) {
     } else {
       return ''
     }
-  }, [canSaveMacro, macro.trigger.data, macro.trigger.type, sequence.length])
+  }, [macro.trigger.data, macro.trigger.type, sequence.length])
 
   const onEmojiSelect = useCallback(
     (emoji: { shortcodes: string }) => {
@@ -127,6 +128,7 @@ export default function Header({isEditing}: Props) {
     hasUserChangedIcon,
     macro.icon,
     macro.name,
+    macro.macro_type,
     macro.sequence,
     macro.trigger,
     onUnsavedChangesModalOpen,
@@ -139,7 +141,6 @@ export default function Header({isEditing}: Props) {
         zIndex={1}
         bg={useMainBgColour()}
         w="full"
-
         // h={{ base: 'full', md: '100px', xl: '120px' }}
         h="full"
         py={2}
@@ -150,14 +151,13 @@ export default function Header({isEditing}: Props) {
         justifyItems="center"
       >
         <HStack justifyContent="space-between" w="full">
-          <Flex h="full" alignItems="center" gap="4" w="full" >
+          <Flex h="full" alignItems="center" gap="4" w="full">
             <IconButton
               aria-label="Back"
               variant="brand"
-              icon={<ArrowBackIcon/>}
+              icon={<ArrowBackIcon />}
               size="sm"
               onClick={onBackButtonPress}
-
             />
             <EmojiPopover
               shortcodeToShow={macro.icon}
@@ -172,11 +172,11 @@ export default function Header({isEditing}: Props) {
               placeholder="Macro Name"
               size="xl"
               textStyle="name"
-              _placeholder={{opacity: 1, color: placeholderTextColour}}
+              _placeholder={{ opacity: 1, color: placeholderTextColour }}
               onChange={(event) => setInputValue(event.target.value)}
               onBlur={(event) => updateMacroName(event.target.value)}
               value={inputValue}
-              _focusVisible={{borderColor: 'primary-accent.500'}}
+              _focusVisible={{ borderColor: 'primary-accent.500' }}
             />
           </Flex>
           <Flex gap={4} alignItems="center">
@@ -188,7 +188,7 @@ export default function Header({isEditing}: Props) {
             >
               <Box>
                 <Button
-                  size={{base: 'md', lg: 'lg'}}
+                  size={{ base: 'md', lg: 'lg' }}
                   variant="yellowGradient"
                   isDisabled={!canSaveMacro}
                   onClick={updateMacro}
@@ -201,16 +201,16 @@ export default function Header({isEditing}: Props) {
           </Flex>
         </HStack>
         <HStack justifyContent="center" w="full">
-          <MacroTypeArea/>
-          <TriggerArea onOpen={onTriggerModalOpen}/>
+          <MacroTypeArea />
+          <TriggerArea onOpen={onTriggerModalOpen} />
+          <MacroStateControls macro_data={macro} />
         </HStack>
-
       </VStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}
         onClose={onUnsavedChangesModalClose}
       />
-      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose}/>
+      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose} />
     </>
   )
 }

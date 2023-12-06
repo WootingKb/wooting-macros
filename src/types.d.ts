@@ -162,6 +162,12 @@ export type MousePressAction =
   | { type: 'Up'; button: MouseButton }
   | { type: 'DownUp'; button: MouseButton; duration: number }
 
+export type MacroIndividualCommand =
+  | {type: "Start" }
+  | {type: "Stop" }
+  | {type: "Abort" }
+  | {type: "AbortAll" };
+
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
