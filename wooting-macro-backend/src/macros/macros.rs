@@ -1,4 +1,4 @@
-use anyhow::Result;
+
 use log::*;
 use rdev::EventType;
 use tokio::sync::mpsc::UnboundedSender;

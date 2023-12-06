@@ -2,7 +2,7 @@ use crate::macros::events::actions::ActionEventType;
 use crate::macros::events::triggers::TriggerEventType;
 use crate::macros::macro_task::MacroTaskEvent;
 use crate::macros::macros::MacroType;
-use anyhow::Result;
+
 use log::*;
 use tokio::sync::mpsc::UnboundedSender;
 

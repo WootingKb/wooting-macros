@@ -1,8 +1,8 @@
 use crate::hid_table::HID_TO_RDEV;
 use crate::plugin::delay::DEFAULT_DELAY;
 use crate::plugin::{delay, key_press, mouse, phillips_hue, system_event};
-use anyhow::Result;
-use log::*;
+
+
 use std::time;
 use tokio::sync::mpsc::UnboundedSender;
 

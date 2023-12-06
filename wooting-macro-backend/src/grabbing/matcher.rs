@@ -1,6 +1,6 @@
 use crate::grabbing::executor::input::MacroExecutorEvent;
-use anyhow::Result;
-use log::*;
+
+
 use log::{debug, error, info, trace, warn};
 use std::sync::Arc;
 use tokio::sync::mpsc::UnboundedSender;

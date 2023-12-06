@@ -1,7 +1,7 @@
 use crate::macros::macro_config::MacroConfig;
 use crate::macros::macros::MacroType;
 use crate::plugin::delay::DEFAULT_DELAY;
-use anyhow::Result;
+
 use log::*;
 use rdev;
 use rdev::EventType;

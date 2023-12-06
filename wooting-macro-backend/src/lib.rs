@@ -6,7 +6,7 @@ pub mod plugin;
 
 #[cfg(not(debug_assertions))]
 use dirs;
-use itertools::Itertools;
+
 use log::*;
 #[cfg(not(debug_assertions))]
 use std::path::PathBuf;
@@ -22,7 +22,7 @@ use crate::grabbing::windows::input;
 
 use crate::config::{ApplicationConfig, ConfigFile};
 use anyhow::Result;
-use rdev;
+
 use tokio::sync::RwLock;
 
 // This has to be imported for release build

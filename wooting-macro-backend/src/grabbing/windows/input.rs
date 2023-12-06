@@ -55,12 +55,12 @@ pub async fn check_keypress_simon(
                                 {
                                     match (data, &current_pressed_keys, &previously_pressed_keys) {
                                         // If the keys are the same, skip checking
-                                        (trigger_combo, pressed, pressed_previous)
+                                        (_trigger_combo, pressed, pressed_previous)
                                             if pressed == pressed_previous
                                                 && macro_data.config.macro_type
                                                     == MacroType::OnHold => {}
                                         // If the keys are different and its a trigger key pressed, start a macro
-                                        (trigger_combo, pressed, pressed_previous)
+                                        (trigger_combo, pressed, _pressed_previous)
                                             if trigger_combo
                                                 .iter()
                                                 .any(|x| pressed.contains(x)) =>
@@ -70,7 +70,7 @@ pub async fn check_keypress_simon(
                                                 .unwrap();
                                         }
                                         // If the keys are different and its a trigger key released, stop a macro
-                                        (trigger_combo, pressed, pressed_previous)
+                                        (trigger_combo, _pressed, pressed_previous)
                                             if trigger_combo
                                                 .iter()
                                                 .any(|x| pressed_previous.contains(x)) =>
