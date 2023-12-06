@@ -18,14 +18,15 @@ import TriggerArea from './TriggerArea'
 import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
 import useMainBgColour from '../../../hooks/useMainBgColour'
-import MacroTypeArea from "./MacroTypeArea";
+import MacroTypeArea from './MacroTypeArea'
+import MacroStateControls from './MacroStateButtons'
 
 interface Props {
   isEditing: boolean
 }
 
-export default function Header({isEditing}: Props) {
-  const {changeSelectedMacroIndex} = useApplicationContext()
+export default function Header({ isEditing }: Props) {
+  const { changeSelectedMacroIndex } = useApplicationContext()
   const {
     macro,
     sequence,
@@ -36,6 +37,7 @@ export default function Header({isEditing}: Props) {
   } = useMacroContext()
   const currentMacro = useSelectedMacro()
   const [hasUserChangedIcon, setHasUserChangedIcon] = useState(false)
+  const [macroIsRunning, setMacroIsRunning] = useState(false)
   const placeholderTextColour = useColorModeValue(
     'primary-light.300',
     'primary-dark.600'
@@ -130,6 +132,7 @@ export default function Header({isEditing}: Props) {
     hasUserChangedIcon,
     macro.icon,
     macro.name,
+    macro.macro_type,
     macro.sequence,
     macro.trigger,
     onUnsavedChangesModalOpen,
@@ -142,7 +145,6 @@ export default function Header({isEditing}: Props) {
         zIndex={1}
         bg={useMainBgColour()}
         w="full"
-
         // h={{ base: 'full', md: '100px', xl: '120px' }}
         h="full"
         py={2}
@@ -157,10 +159,9 @@ export default function Header({isEditing}: Props) {
             <IconButton
               aria-label="Back"
               variant="brand"
-              icon={<ArrowBackIcon/>}
+              icon={<ArrowBackIcon />}
               size="sm"
               onClick={onBackButtonPress}
-
             />
             <EmojiPopover
               shortcodeToShow={macro.icon}
@@ -175,11 +176,11 @@ export default function Header({isEditing}: Props) {
               placeholder="Macro Name"
               size="xl"
               textStyle="name"
-              _placeholder={{opacity: 1, color: placeholderTextColour}}
+              _placeholder={{ opacity: 1, color: placeholderTextColour }}
               onChange={(event) => setInputValue(event.target.value)}
               onBlur={(event) => updateMacroName(event.target.value)}
               value={inputValue}
-              _focusVisible={{borderColor: 'primary-accent.500'}}
+              _focusVisible={{ borderColor: 'primary-accent.500' }}
             />
           </Flex>
           <Flex gap={4} alignItems="center">
@@ -191,7 +192,7 @@ export default function Header({isEditing}: Props) {
             >
               <Box>
                 <Button
-                  size={{base: 'md', lg: 'lg'}}
+                  size={{ base: 'md', lg: 'lg' }}
                   variant="yellowGradient"
                   isDisabled={!canSaveMacro}
                   onClick={updateMacro}
@@ -203,59 +204,17 @@ export default function Header({isEditing}: Props) {
             </Tooltip>
           </Flex>
         </HStack>
-        <HStack justifyContent="center"
-                w="full">
-          <MacroTypeArea/>
-
-          <TriggerArea onOpen={onTriggerModalOpen}/>
-
-
-          <Tooltip
-            variant="brand"
-            label={saveButtonTooltipText}
-            placement="bottom-start"
-            hasArrow
-
-          >
-
-
-            <HStack
-              border="1px"
-              borderColor={borderColour}
-              rounded="md"
-              spacing="16px"
-              p="3"
-              position="relative" // Add relative position
-            >
-              <Button variant="yellowGradient">
-                Start
-              </Button>
-              <Button variant="yellowGradient">
-                Stop
-              </Button>
-              <Box
-                position="absolute"
-                // left="50%"
-                transform="translate(20%, -140%)"
-                fontSize="md"
-                zIndex="1"
-                bgColor={secondBg}
-
-              >
-                {"Macro Controls"}
-              </Box>
-            </HStack>
-
-          </Tooltip>
-
+        <HStack justifyContent="center" w="full">
+          <MacroTypeArea />
+          <TriggerArea onOpen={onTriggerModalOpen} />
+          <MacroStateControls  macro_type={macro.macro_type}/>
         </HStack>
-
       </VStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}
         onClose={onUnsavedChangesModalClose}
       />
-      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose}/>
+      <TriggerModal isOpen={isTriggerModalOpen} onClose={onTriggerModalClose} />
     </>
   )
 }
