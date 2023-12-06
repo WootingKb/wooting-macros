@@ -1,6 +1,12 @@
-use halfbrown::HashMap;
+use crate::grabbing::executor::input::keypress_executor_receiver;
+use crate::macros::collections::{Collection, Collections};
 use crate::macros::events::triggers::{MacroTrigger, TriggerEventType};
-
+use crate::macros::macro_config::Macro;
+use anyhow::{Error, Result};
+use halfbrown::HashMap;
+use log::*;
+use std::thread;
+use uuid::Uuid;
 
 ///MacroData is the main data structure that contains all macro data.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -120,8 +126,8 @@ impl MacroData {
 #[derive(Debug, Default)]
 /// Hashmap to check the first trigger key of each macro.
 pub struct MacroLookup {
-    triggers: MacroTrigger,
-    pub(crate) id_map: MacroIdList,
+    pub triggers: MacroTrigger,
+    pub id_map: MacroIdList,
 }
 
 /// Macro ID list to lookup macros uniquely and fast.

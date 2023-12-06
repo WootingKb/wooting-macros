@@ -1,10 +1,13 @@
-use log::{error, warn};
-use rdev::rdev::EventType;
+use crate::macros::macro_config::MacroConfig;
+use crate::macros::macros::MacroType;
+use crate::plugin::delay::DEFAULT_DELAY;
+use anyhow::Result;
+use log::*;
+use rdev;
+use rdev::EventType;
 use std::time;
 use tokio::sync::mpsc::error::TryRecvError;
-use tokio::sync::mpsc::unbounded::{UnboundedReceiver, UnboundedSender};
-use wooting_macro_backend::MacroType;
-use wooting_macro_backend::plugin::delay::DEFAULT_DELAY;
+use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 
 #[derive(Debug)]
 pub enum MacroTaskEvent {

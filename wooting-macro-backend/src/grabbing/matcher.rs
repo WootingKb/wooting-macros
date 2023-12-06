@@ -1,8 +1,11 @@
-use std::sync::Arc;
-use tokio::sync::RwLock;
-use tokio::sync::mpsc::UnboundedSender;
+use crate::grabbing::executor::input::MacroExecutorEvent;
+use anyhow::Result;
+use log::*;
 use log::{debug, error, info, trace, warn};
-use crate::grabbing::executor::MacroExecutorEvent;
+use std::sync::Arc;
+use tokio::sync::mpsc::UnboundedSender;
+use tokio::sync::RwLock;
+
 use crate::macros::events::triggers::TriggerEventType;
 use crate::macros::macro_data::MacroLookup;
 
@@ -67,8 +70,12 @@ fn check_macro_execution_efficiently(
                             let event = match event_type {
                                 // TODO: This can be a more generic event that can also have ABORT as its command,
                                 // tho we can also bypass this function and abort directly to the executor (preferred way imo)
-                                rdev::EventType::KeyPress { .. } => MacroExecutorEvent::Start(id_cloned),
-                                rdev::EventType::KeyRelease { .. } => MacroExecutorEvent::Stop(id_cloned),
+                                rdev::EventType::KeyPress { .. } => {
+                                    MacroExecutorEvent::Start(id_cloned)
+                                }
+                                rdev::EventType::KeyRelease { .. } => {
+                                    MacroExecutorEvent::Stop(id_cloned)
+                                }
                                 _ => {
                                     todo!("not implemented yet.");
                                 }
@@ -99,8 +106,12 @@ fn check_macro_execution_efficiently(
                             let event = match event_type {
                                 // TODO: This can be a more generic event that can also have ABORT as its command,
                                 // tho we can also bypass this function and abort directly to the executor (preferred way imo)
-                                rdev::EventType::KeyPress { .. } => MacroExecutorEvent::Start(id_cloned),
-                                rdev::EventType::KeyRelease { .. } => MacroExecutorEvent::Stop(id_cloned),
+                                rdev::EventType::KeyPress { .. } => {
+                                    MacroExecutorEvent::Start(id_cloned)
+                                }
+                                rdev::EventType::KeyRelease { .. } => {
+                                    MacroExecutorEvent::Stop(id_cloned)
+                                }
                                 _ => {
                                     todo!("not implemented yet.");
                                 }

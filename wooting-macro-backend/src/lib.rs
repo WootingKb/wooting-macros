@@ -5,28 +5,13 @@ pub mod macros;
 pub mod plugin;
 
 #[cfg(not(debug_assertions))]
-use std::path::PathBuf;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
-use std::thread;
-
-use rdev;
-
-use anyhow::Result;
-use config::{ApplicationConfig, ConfigFile};
-#[cfg(not(debug_assertions))]
 use dirs;
 use itertools::Itertools;
 use log::*;
-use macros::macro_data::MacroLookup;
-use rayon::prelude::*;
-use tokio::sync::mpsc::UnboundedSender;
-use tokio::sync::RwLock;
-use grabbing::executor;
-
-// This has to be imported for release build
-#[allow(unused_imports)]
-use crate::config::CONFIG_DIR;
+#[cfg(not(debug_assertions))]
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 #[cfg(target_os = "linux")]
 use crate::grabbing::linux::input;
@@ -35,12 +20,18 @@ use crate::grabbing::macos::input;
 #[cfg(target_os = "windows")]
 use crate::grabbing::windows::input;
 
-use crate::hid_table::*;
+use crate::config::{ApplicationConfig, ConfigFile};
+use anyhow::Result;
+use rdev;
+use tokio::sync::RwLock;
 
+// This has to be imported for release build
 #[allow(unused_imports)]
-use crate::plugin::discord;
-#[allow(unused_imports)]
-use crate::plugin::obs;
+use crate::config::CONFIG_DIR;
+use crate::grabbing::executor::input::macro_executor;
+
+use crate::hid_table::*;
+use crate::macros::macro_data::{MacroData, MacroLookup};
 
 /// State of the application in RAM (RWlock).
 #[derive(Debug)]
@@ -111,7 +102,7 @@ impl MacroBackend {
         //let inner_macro_lookup_clone = inner_macro_lookup.clone();
         // Create the macro executor
 
-        thread::spawn(move || {
+        std::thread::spawn(move || {
             let rt = tokio::runtime::Runtime::new().unwrap();
             rt.block_on(async {
                 input::check_keypress_simon(
@@ -123,10 +114,10 @@ impl MacroBackend {
             });
         });
 
-        thread::spawn(move || {
+        std::thread::spawn(move || {
             let rt = tokio::runtime::Runtime::new().unwrap();
             rt.block_on(async {
-                executor::macro_executor(rchan_macro_execute, inner_macro_lookup_clone).await;
+                macro_executor(rchan_macro_execute, inner_macro_lookup_clone).await;
             });
         });
     }

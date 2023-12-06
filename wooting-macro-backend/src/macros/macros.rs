@@ -1,8 +1,11 @@
-use log::{debug, info, warn};
+use anyhow::Result;
+use log::*;
 use rdev::EventType;
 use tokio::sync::mpsc::UnboundedSender;
-use crate::{Macro, MacroConfig, MacroTask, MacroTaskEvent};
+
 use crate::macros::events::triggers::MacroTriggerEvent;
+use crate::macros::macro_config::{Macro, MacroConfig};
+use crate::macros::macro_task::{MacroTask, MacroTaskEvent};
 
 impl Macro {
     pub fn new(
@@ -26,7 +29,7 @@ impl Macro {
         }
     }
 
-    fn on_event(&mut self, event: MacroTriggerEvent) {
+    pub fn on_event(&mut self, event: MacroTriggerEvent) {
         info!("Event: {:?}", event);
 
         if let MacroTriggerEvent::Abort = event {

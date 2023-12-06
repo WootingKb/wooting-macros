@@ -1,19 +1,23 @@
-use crate::grabbing::executor::MacroExecutorEvent;
-use crate::macros::macro_data::MacroLookup;
-use crate::RwLock;
-use crate::UnboundedSender;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
+
 use itertools::Itertools;
 use log::*;
 use multiinput::*;
+use tokio::sync::mpsc::UnboundedSender;
+
+use crate::grabbing::executor::input::MacroExecutorEvent;
 use crate::hid_table::*;
+use crate::macros::events::triggers::TriggerEventType;
+use crate::macros::macro_data::MacroLookup;
+use crate::macros::macros::MacroType;
+use crate::plugin::delay::DEFAULT_DELAY;
+use crate::RwLock;
 
 #[cfg(target_os = "windows")]
 pub async fn check_keypress_simon(
     inner_is_listening: Arc<AtomicBool>,
-    nothing: Arc<RwLock<Vec<KeyId>>>,
     schan_macro_execute: UnboundedSender<MacroExecutorEvent>,
     map: Arc<RwLock<MacroLookup>>,
 ) {

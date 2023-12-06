@@ -1,8 +1,10 @@
+use crate::hid_table::HID_TO_RDEV;
+use crate::plugin::delay::DEFAULT_DELAY;
+use crate::plugin::{delay, key_press, mouse, phillips_hue, system_event};
+use anyhow::Result;
+use log::*;
 use std::time;
 use tokio::sync::mpsc::UnboundedSender;
-use crate::hid_table::HID_TO_RDEV;
-use crate::plugin::{delay, key_press, mouse, phillips_hue, system_event};
-use crate::plugin::delay::DEFAULT_DELAY;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
@@ -38,7 +40,10 @@ impl ActionEventType {
     /// This function is used to execute a macro. It is called by the macro checker.
     /// It spawns async tasks to execute said events specifically.
     /// Make sure to expand this if you implement new action types.
-    async fn execute(&self, send_channel: &UnboundedSender<rdev::EventType>) -> anyhow::Result<()> {
+    pub(crate) async fn execute(
+        &self,
+        send_channel: &UnboundedSender<rdev::EventType>,
+    ) -> anyhow::Result<()> {
         match self {
             ActionEventType::KeyPressEventAction { data } => match data.key_type {
                 key_press::KeyType::Down => {
