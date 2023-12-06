@@ -1,42 +1,39 @@
-pub mod config;
-pub mod grabbing;
-pub mod hid_table;
-pub mod macros;
-pub mod plugin;
-
-#[cfg(not(debug_assertions))]
-use dirs;
-
-use log::*;
 #[cfg(not(debug_assertions))]
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
+use anyhow::Result;
+#[cfg(not(debug_assertions))]
+use dirs;
+use log::*;
+use tokio::sync::RwLock;
+
+use crate::config::{ApplicationConfig, ConfigFile};
+// This has to be imported for release build
+#[allow(unused_imports)]
+use crate::config::CONFIG_DIR;
+use crate::grabbing::executor::input::macro_executor;
 #[cfg(target_os = "linux")]
 use crate::grabbing::linux::input;
 #[cfg(target_os = "macos")]
 use crate::grabbing::macos::input;
 #[cfg(target_os = "windows")]
 use crate::grabbing::windows::input;
-
-use crate::config::{ApplicationConfig, ConfigFile};
-use anyhow::Result;
-
-use tokio::sync::RwLock;
-
-// This has to be imported for release build
-#[allow(unused_imports)]
-use crate::config::CONFIG_DIR;
-use crate::grabbing::executor::input::macro_executor;
-
 use crate::hid_table::*;
+use crate::macros::events::triggers::{MacroIndividualCommand, MacroTriggerEvent};
 use crate::macros::macro_data::{MacroData, MacroLookup};
+
+pub mod config;
+pub mod grabbing;
+pub mod hid_table;
+pub mod macros;
+pub mod plugin;
 
 /// State of the application in RAM (RWlock).
 #[derive(Debug)]
 pub struct MacroBackend {
-    pub macro_data: Arc<RwLock<macros::macro_data::MacroData>>,
+    pub macro_data: Arc<RwLock<MacroData>>,
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub macro_lookup: Arc<RwLock<MacroLookup>>,
     pub is_listening: Arc<AtomicBool>,
@@ -80,6 +77,32 @@ impl MacroBackend {
         );
 
         *self.macro_data.write().await = macros;
+        Ok(())
+    }
+
+    /// Execute macro by its name - this is a function used by the frontend.
+    pub async fn execute_macro_by_name(
+        &self,
+        macro_to_control: String,
+        action: MacroIndividualCommand,
+    ) -> Result<()> {
+        for (_, macro_item) in self.macro_lookup.write().await.id_map.iter_mut() {
+            if macro_item.config.name == macro_to_control {
+                match action {
+                    MacroIndividualCommand::Start => {
+                        macro_item.on_event(MacroTriggerEvent::Pressed)
+                    }
+                    MacroIndividualCommand::Stop => {
+                        macro_item.on_event(MacroTriggerEvent::Released)
+                    }
+                    MacroIndividualCommand::Abort => macro_item.on_event(MacroTriggerEvent::Abort),
+                    MacroIndividualCommand::AbortAll => {}
+                }
+            } else if let MacroIndividualCommand::AbortAll = action {
+                macro_item.on_event(MacroTriggerEvent::Abort)
+            }
+        }
+
         Ok(())
     }
 

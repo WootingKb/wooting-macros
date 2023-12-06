@@ -19,10 +19,12 @@ use tauri::{
 };
 use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
-use wooting_macro_backend::config::*;
-use wooting_macro_backend::*;
 
 use anyhow::Result;
+use wooting_macro_backend::config;
+use wooting_macro_backend::config::{ApplicationConfig, ConfigFile, LogDirPath};
+use wooting_macro_backend::MacroBackend;
+use wooting_macro_backend::macros::events::triggers::MacroIndividualCommand;
 use wooting_macro_backend::macros::macro_data::MacroData;
 
 #[tauri::command]
@@ -74,6 +76,17 @@ async fn control_grabbing(
     Ok(())
 }
 
+#[tauri::command]
+/// Allows the frontend to control a macro's state directly
+async fn execute_macro(
+    mut state: tauri::State<'_, MacroBackend>,
+    macro_name: String,
+    action_type: MacroIndividualCommand
+) -> Result<(), String> {
+    state.execute_macro_by_name(macro_name, action_type).await.map_err(|err| err.to_string())
+
+}
+
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 /// Spawn the backend thread.
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
@@ -115,7 +128,8 @@ async fn main() {
             set_macros,
             get_config,
             set_config,
-            control_grabbing
+            control_grabbing,
+            execute_macro
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;
