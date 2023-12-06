@@ -19,10 +19,12 @@ use tauri::{
 };
 use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
-use wooting_macro_backend::config::*;
-use wooting_macro_backend::*;
 
 use anyhow::Result;
+use wooting_macro_backend::config;
+use wooting_macro_backend::config::{ApplicationConfig, ConfigFile, LogDirPath};
+use wooting_macro_backend::MacroBackend;
+use wooting_macro_backend::macros::events::triggers::MacroIndividualCommand;
 use wooting_macro_backend::macros::macro_data::MacroData;
 
 #[tauri::command]
@@ -71,6 +73,17 @@ async fn control_grabbing(
     frontend_bool: bool,
 ) -> Result<(), ()> {
     state.set_is_listening(frontend_bool);
+    Ok(())
+}
+
+#[tauri::command]
+/// Allows the frontend to control a macro's state directly
+async fn execute_macro(
+    mut state: tauri::State<'_, MacroBackend>,
+    macro_name: String,
+    action_type: MacroIndividualCommand
+) -> Result<(), ()> {
+    state.execute_macro_by_name(macro_name, action_type).unwrap();
     Ok(())
 }
 
