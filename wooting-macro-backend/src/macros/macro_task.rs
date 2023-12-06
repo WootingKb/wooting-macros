@@ -4,7 +4,6 @@ use crate::plugin::delay::DEFAULT_DELAY;
 
 use log::*;
 use rdev;
-use rdev::EventType;
 use std::time;
 use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
@@ -30,7 +29,7 @@ impl MacroTask {
         // Only sequence probably needed here
         // TODO: Config will be a part of the Macro itself
         macro_data: MacroConfig,
-        send_channel: UnboundedSender<EventType>,
+        send_channel: UnboundedSender<rdev::EventType>,
     ) {
         let mut is_running = false;
         let mut stop_after_running: Option<u32> = None;

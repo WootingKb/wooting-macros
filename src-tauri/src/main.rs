@@ -23,6 +23,7 @@ use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
 use anyhow::Result;
+use wooting_macro_backend::macros::macro_data::MacroData;
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
