@@ -37,15 +37,10 @@ export default function Header({ isEditing }: Props) {
   } = useMacroContext()
   const currentMacro = useSelectedMacro()
   const [hasUserChangedIcon, setHasUserChangedIcon] = useState(false)
-  const [macroIsRunning, setMacroIsRunning] = useState(false)
   const placeholderTextColour = useColorModeValue(
     'primary-light.300',
     'primary-dark.600'
   )
-
-  const secondBg = useColorModeValue('blue.50', 'gray.900')
-
-  const borderColour = useColorModeValue('gray.400', 'gray.600')
   const shadowColour = useColorModeValue('xs', 'white-xs')
   const {
     isOpen: isTriggerModalOpen,
@@ -88,7 +83,7 @@ export default function Header({ isEditing }: Props) {
     } else {
       return ''
     }
-  }, [canSaveMacro, macro.trigger.data, macro.trigger.type, sequence.length])
+  }, [macro.trigger.data, macro.trigger.type, sequence.length])
 
   const onEmojiSelect = useCallback(
     (emoji: { shortcodes: string }) => {
@@ -207,7 +202,7 @@ export default function Header({ isEditing }: Props) {
         <HStack justifyContent="center" w="full">
           <MacroTypeArea />
           <TriggerArea onOpen={onTriggerModalOpen} />
-          <MacroStateControls  macro_type={macro.macro_type}/>
+          <MacroStateControls  type={macro.macro_type}/>
         </HStack>
       </VStack>
       <UnsavedChangesModal
