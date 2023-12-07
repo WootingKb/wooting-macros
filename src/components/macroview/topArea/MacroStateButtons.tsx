@@ -11,7 +11,7 @@ export interface MacroDataInterface {
 
 function execute(macro_data: Macro, action: MacroIndividualCommand) {
   executeMacro({ macro_data }, action).then(() => {
-    console.error('Running macro: ', macro_data.name)
+    console.error(action.type, 'macro: ', macro_data.name)
   })
 }
 

@@ -30,7 +30,6 @@ export const updateMacroOutput = (value: boolean): Promise<void> => {
   })
 }
 export const executeMacro = ({ macro_data }: MacroDataInterface, action: MacroIndividualCommand): Promise<void> => {
-  console.warn("Macro info:", macro_data.name)
   return invoke<void>('execute_macro', {
     macroName: macro_data.name,
     actionType: action,
