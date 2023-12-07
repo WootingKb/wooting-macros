@@ -21,7 +21,7 @@ pub async fn check_keypress_simon(
     schan_macro_execute: UnboundedSender<MacroExecutorEvent>,
     map: Arc<RwLock<MacroLookup>>,
 ) {
-    thread::sleep(time::Duration::from_millis(3000));
+    tokio::time::sleep(time::Duration::from_millis(3000)).await;
 
     let mut manager = RawInputManager::new().unwrap();
     manager.register_devices(DeviceType::Keyboards);

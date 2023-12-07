@@ -202,7 +202,7 @@ export default function Header({ isEditing }: Props) {
         <HStack justifyContent="center" w="full">
           <MacroTypeArea />
           <TriggerArea onOpen={onTriggerModalOpen} />
-          <MacroStateControls  type={macro.macro_type}/>
+          <MacroStateControls macro_data={macro} />
         </HStack>
       </VStack>
       <UnsavedChangesModal

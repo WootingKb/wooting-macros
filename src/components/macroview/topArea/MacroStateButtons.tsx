@@ -1,14 +1,24 @@
 import { Box, Button, HStack, useColorModeValue } from '@chakra-ui/react'
 import { useState } from 'react'
+import { executeMacro } from '../../../constants/utils'
+import { Macro, MacroIndividualCommand } from '../../../types'
+
+export interface MacroDataInterface {
+  macro_data: Macro
+}
 
 
 
+function execute(macro_data: Macro, action: MacroIndividualCommand) {
+  executeMacro({ macro_data }, action).then(() => {
+    console.error('Running macro: ', macro_data.name)
+  })
+}
 
-export default function MacroStateControls(type: string) {
-  const secondBg = useColorModeValue('blue.50', 'gray.900');
-  const [macroIsRunning, setMacroIsRunning] = useState(false);
-  const borderColour = useColorModeValue('gray.400', 'gray.600');
-  console.warn('type:', typeof type);
+export default function MacroStateControls({ macro_data }: MacroDataInterface) {
+  const secondBg = useColorModeValue('blue.50', 'gray.900')
+  const [macroIsRunning, setMacroIsRunning] = useState(false)
+  const borderColour = useColorModeValue('gray.400', 'gray.600')
 
   function StartStopButtons() {
     return (
@@ -25,6 +35,8 @@ export default function MacroStateControls(type: string) {
           isDisabled={macroIsRunning}
           onClick={() => {
             setMacroIsRunning(true)
+            execute(macro_data, {type: "Start"})
+
           }}
         >
           Start
@@ -35,6 +47,7 @@ export default function MacroStateControls(type: string) {
           isDisabled={!macroIsRunning}
           onClick={() => {
             setMacroIsRunning(false)
+            execute(macro_data,{type: "Stop"})
           }}
         >
           Stop
@@ -50,23 +63,55 @@ export default function MacroStateControls(type: string) {
           {'Macro Controls'}
         </Box>
       </HStack>
-    );
+    )
   }
 
   function StartButton() {
     return (
-      <></>
-    );
+
+      <HStack
+        border="1px"
+        borderColor={borderColour}
+        rounded="md"
+        spacing="16px"
+        p="3"
+        position="relative" // Add relative position
+      >
+        <Button
+          variant="yellowGradient"
+          isDisabled={macroIsRunning}
+          onClick={() => {
+            setMacroIsRunning(true)
+            execute(macro_data, {type: "Start"})
+            setTimeout(() => {
+              setMacroIsRunning(false);
+            }, 3000);
+          }}
+        >
+          Start
+        </Button>
+        <Box
+          position="absolute"
+          // left="50%"
+          transform="translate(6%, -140%)"
+          fontSize="md"
+          zIndex="1"
+          bgColor={secondBg}
+        >
+          {'Controls'}
+        </Box>
+      </HStack>
+
+
+    )
   }
 
   return (
     <>
-      {
-        (type === 'Toggle' || type === 'OnHold') && <StartStopButtons />
-      }
-      {
-        (type === 'Single' || type === 'Repeat') && <StartButton />
-      }
+      {(macro_data.macro_type === 'Toggle' || macro_data.macro_type === 'OnHold') && (
+        <StartStopButtons />
+      )}
+      {(macro_data.macro_type === 'Single' || macro_data.macro_type === 'Repeat') && <StartButton />}
     </>
-  );
+  )
 }

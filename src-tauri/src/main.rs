@@ -82,9 +82,9 @@ async fn execute_macro(
     mut state: tauri::State<'_, MacroBackend>,
     macro_name: String,
     action_type: MacroIndividualCommand
-) -> Result<(), ()> {
-    state.execute_macro_by_name(macro_name, action_type).unwrap();
-    Ok(())
+) -> Result<(), String> {
+    state.execute_macro_by_name(macro_name, action_type).await.map_err(|err| err.to_string())
+
 }
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
@@ -128,7 +128,8 @@ async fn main() {
             set_macros,
             get_config,
             set_config,
-            control_grabbing
+            control_grabbing,
+            execute_macro
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;

@@ -12,12 +12,7 @@ export enum MacroType {
   RepeatX,
 }
 
-export enum MacroAction {
-  Start,
-  Stop,
-  Abort,
-  AbortAll,
-}
+
 
 /** Currently unused */
 export const MacroTypeDefinitions: string[] = [

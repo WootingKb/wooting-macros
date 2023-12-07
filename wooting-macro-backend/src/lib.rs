@@ -81,12 +81,12 @@ impl MacroBackend {
     }
 
     /// Execute macro by its name - this is a function used by the frontend.
-    pub fn execute_macro_by_name(
+    pub async fn execute_macro_by_name(
         &self,
         macro_to_control: String,
         action: MacroIndividualCommand,
     ) -> Result<()> {
-        for (_, mut macro_item) in self.macro_lookup.blocking_write().id_map.iter_mut() {
+        for (_, mut macro_item) in self.macro_lookup.write().await.id_map.iter_mut() {
             if macro_item.config.name == macro_to_control {
                 match action {
                     MacroIndividualCommand::Start => {

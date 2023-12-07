@@ -1,19 +1,17 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { HIDCategory, MacroAction, MouseButton } from './enums'
-import { invoke } from '@tauri-apps/api'
 import { HIDCategory, MouseButton } from './enums'
 import {
   ActionEventType,
   ApplicationConfig,
   Collection,
   Keypress,
-  MacroData,
+  MacroData, MacroIndividualCommand,
   MousePressAction
 } from '../types'
 import { HIDLookup } from './HIDmap'
 import { mouseEnumLookup } from './MouseMap'
 import { sysEventLookup } from './SystemEventMap'
-import { scrollbarRadiusStandard } from '../theme/config'
+import { MacroDataInterface } from "../components/macroview/topArea/MacroStateButtons";
 
 export const updateBackendConfig = (
   collections: Collection[]
@@ -31,10 +29,11 @@ export const updateMacroOutput = (value: boolean): Promise<void> => {
     frontendBool: !value
   })
 }
-export const executeMacro = (name: string, action: MacroAction): Promise<void> => {
+export const executeMacro = ({ macro_data }: MacroDataInterface, action: MacroIndividualCommand): Promise<void> => {
+  console.warn("Macro info:", macro_data.name)
   return invoke<void>('execute_macro', {
-    name,
-    action,
+    macroName: macro_data.name,
+    actionType: action,
   })
 }
 

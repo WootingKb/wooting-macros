@@ -1,4 +1,4 @@
-import { MacroType, ViewState, MouseButton } from './constants/enums'
+import { MacroType, MouseButton, ViewState } from './constants/enums'
 import { HidInfo } from './constants/HIDmap'
 import { PluginEventInfo } from './constants/PluginsEventMap'
 
@@ -162,6 +162,12 @@ export type MousePressAction =
   | { type: 'Down'; button: MouseButton }
   | { type: 'Up'; button: MouseButton }
   | { type: 'DownUp'; button: MouseButton; duration: number }
+
+export type MacroIndividualCommand =
+  | {type: "Start" }
+  | {type: "Stop" }
+  | {type: "Abort" }
+  | {type: "AbortAll" };
 
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 

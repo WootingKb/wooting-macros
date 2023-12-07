@@ -136,12 +136,12 @@ export default function MacroTypeArea() {
             <Box opacity={isOpen ? 1 : 0}
                  transition="opacity 0.5s ease-out"
                  pointerEvents={isOpen ? "auto" : "none"}
+
                  sx={{
                    animation: `${isOpen ? expandAnimation : closeAnimation} 0.5s ease-out forwards`
                  }}
             >
               <HStack>
-
                 <Input
                   w="full"
                   variant="flushed"
