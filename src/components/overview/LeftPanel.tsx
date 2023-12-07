@@ -4,11 +4,11 @@ import {
   Button,
   Divider,
   HStack,
+  Input,
   Switch,
   Text,
   Tooltip,
   useToast,
-  Box, Input
   VStack
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
@@ -20,22 +20,25 @@ import { useCallback, useState } from 'react'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
-import { error } from "tauri-plugin-log"
 import { error } from 'tauri-plugin-log'
 
 interface Props {
   onOpenSettingsModal: () => void
 }
 
-function SearchBar({searchValue, changeSearchValue, setDisplaySearchResults}) {
+function SearchBar({
+  searchValue,
+  changeSearchValue,
+  setDisplaySearchResults
+}) {
   const handleInput = (event) => {
-    changeSearchValue(event.target.value.toLocaleLowerCase());
-    if (event.target.value !== "") {
-      setDisplaySearchResults(true);
+    changeSearchValue(event.target.value.toLocaleLowerCase())
+    if (event.target.value !== '') {
+      setDisplaySearchResults(true)
     } else {
-      setDisplaySearchResults(false);
+      setDisplaySearchResults(false)
     }
-  };
+  }
 
   return (
     <Input
@@ -44,12 +47,11 @@ function SearchBar({searchValue, changeSearchValue, setDisplaySearchResults}) {
       value={searchValue}
       onChange={handleInput}
     />
-  );
+  )
 }
 
-export default function LeftPanel({onOpenSettingsModal}: Props) {
-  const [displaySearchResults, setDisplaySearchResults] = useState(false);
-
+export default function LeftPanel({ onOpenSettingsModal }: Props) {
+  const [displaySearchResults, setDisplaySearchResults] = useState(false)
 
   const {
     collections,
@@ -58,12 +60,11 @@ export default function LeftPanel({onOpenSettingsModal}: Props) {
     onCollectionUpdate,
     changeSelectedCollectionIndex,
     changeSearchValue,
-    searchValue,
+    searchValue
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
-
 
   const onNewCollectionButtonPress = useCallback(() => {
     onCollectionAdd({
@@ -134,20 +135,22 @@ export default function LeftPanel({onOpenSettingsModal}: Props) {
             changeSearchValue={changeSearchValue}
             setDisplaySearchResults={setDisplaySearchResults}
           />
-          <Divider/>
+          <Divider />
 
-          <Button
-            size="lg"
-            w="full"
-            variant="yellowGradient"
-            p={2}
-            leftIcon={<AddIcon/>}
-            fontSize="md"
-            onClick={onNewCollectionButtonPress}
-          >
-            New Collection
-          </Button>
-          <Divider/>
+          {!displaySearchResults && (
+            <Button
+              size="lg"
+              w="full"
+              variant="yellowGradient"
+              p={2}
+              leftIcon={<AddIcon />}
+              fontSize="md"
+              onClick={onNewCollectionButtonPress}
+            >
+              New Collection
+            </Button>
+          )}
+          <Divider />
         </VStack>
         <VStack
           w="full"
@@ -159,25 +162,26 @@ export default function LeftPanel({onOpenSettingsModal}: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {!displaySearchResults && collections.map((collection: Collection, index: number) => (
-            <CollectionButton
-              collection={collection}
-              index={index}
-              key={`${collection.name} + ${index}`}
-              isFocused={index == selection.collectionIndex}
-              isMacroOutputEnabled={isMacroOutputEnabled}
-              setFocus={(index) => changeSelectedCollectionIndex(index)}
-              toggleCollection={() =>
-                onCollectionUpdate(
-                  {
-                    ...collections[index],
-                    active: !collections[index].active
-                  },
-                  index
-                )
-              }
-            />
-          ))}
+          {!displaySearchResults &&
+            collections.map((collection: Collection, index: number) => (
+              <CollectionButton
+                collection={collection}
+                index={index}
+                key={`${collection.name} + ${index}`}
+                isFocused={index == selection.collectionIndex}
+                isMacroOutputEnabled={isMacroOutputEnabled}
+                setFocus={(index) => changeSelectedCollectionIndex(index)}
+                toggleCollection={() =>
+                  onCollectionUpdate(
+                    {
+                      ...collections[index],
+                      active: !collections[index].active
+                    },
+                    index
+                  )
+                }
+              />
+            ))}
         </VStack>
       </VStack>
       <HStack w="full" px={4} pb={4}>
@@ -185,7 +189,7 @@ export default function LeftPanel({onOpenSettingsModal}: Props) {
           w="full"
           variant="brandAccent"
           size="sm"
-          leftIcon={<SettingsIcon/>}
+          leftIcon={<SettingsIcon />}
           onClick={onOpenSettingsModal}
         >
           <Text fontSize={['sm', 'md']}>Settings</Text>
