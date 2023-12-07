@@ -115,13 +115,13 @@ export default function MacroTypeArea() {
           <Box
             position="absolute"
             // left="50%"
-            transform="translate(0%, -140%)"
+            transform="translate(40%, -140%)"
             fontSize="md"
             zIndex="1"
             bgColor={secondBg}
 
           >
-            {"   Macro Type   "}
+            {macro.macro_type}
           </Box>
           <Box
             maxWidth={isOpen ? "150px" : "0px"}
