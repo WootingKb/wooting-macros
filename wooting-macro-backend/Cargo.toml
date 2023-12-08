@@ -12,7 +12,7 @@ publish = false
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.5", features = ["api-all", "icon-png", "system-tray"] }
-rdev = { git = "https://github.com/medzernik/rdev", branch = "main", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify"] }
+rdev = { git = "https://github.com/medzernik/rdev", branch = "main", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
 halfbrown = { version = "0.2", features = ["serde"] }
 lazy_static = "1.4"
 tokio = { version = "1.35", features = ["full"] }

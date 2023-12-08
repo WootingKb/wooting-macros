@@ -3,8 +3,6 @@ pub mod input {
     use std::sync::Arc;
     use std::{thread, time};
 
-    
-    
     use log::{error, trace};
     use tokio::sync::mpsc::UnboundedReceiver;
     use tokio::sync::RwLock;

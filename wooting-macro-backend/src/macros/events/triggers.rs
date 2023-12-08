@@ -1,7 +1,6 @@
 use crate::plugin::mouse;
 use halfbrown::HashMap;
 
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution.
@@ -28,7 +27,7 @@ pub enum MacroTriggerEvent {
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
-pub enum MacroIndividualCommand{
+pub enum MacroIndividualCommand {
     Start,
     Stop,
     Abort,
