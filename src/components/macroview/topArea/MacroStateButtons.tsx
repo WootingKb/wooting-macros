@@ -7,8 +7,6 @@ export interface MacroDataInterface {
   macro_data: Macro
 }
 
-
-
 function execute(macro_data: Macro, action: MacroIndividualCommand) {
   executeMacro({ macro_data }, action).then(() => {
     console.error(action.type, 'macro: ', macro_data.name)
@@ -35,8 +33,7 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
           isDisabled={macroIsRunning}
           onClick={() => {
             setMacroIsRunning(true)
-            execute(macro_data, {type: "Start"})
-
+            execute(macro_data, { type: 'Start' })
           }}
         >
           Start
@@ -47,7 +44,7 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
           isDisabled={!macroIsRunning}
           onClick={() => {
             setMacroIsRunning(false)
-            execute(macro_data,{type: "Stop"})
+            execute(macro_data, { type: 'Stop' })
           }}
         >
           Stop
@@ -68,7 +65,6 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
 
   function StartButton() {
     return (
-
       <HStack
         border="1px"
         borderColor={borderColour}
@@ -82,10 +78,10 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
           isDisabled={macroIsRunning}
           onClick={() => {
             setMacroIsRunning(true)
-            execute(macro_data, {type: "Start"})
+            execute(macro_data, { type: 'Start' })
             setTimeout(() => {
-              setMacroIsRunning(false);
-            }, 3000);
+              setMacroIsRunning(false)
+            }, 3000)
           }}
         >
           Start
@@ -101,17 +97,15 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
           {'Controls'}
         </Box>
       </HStack>
-
-
     )
   }
 
   return (
     <>
-      {(macro_data.macro_type === 'Toggle' || macro_data.macro_type === 'OnHold') && (
-        <StartStopButtons />
-      )}
-      {(macro_data.macro_type === 'Single' || macro_data.macro_type === 'Repeat') && <StartButton />}
+      {macro_data.macro_type === 'OnHold' && <StartStopButtons />}
+      {(macro_data.macro_type === 'Single' ||
+        macro_data.macro_type === 'RepeatX' ||
+        macro_data.macro_type === 'Toggle') && <StartButton />}
     </>
   )
 }
