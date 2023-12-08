@@ -77,8 +77,8 @@ export default function MacroTypeArea() {
         rounded="md"
         spacing="16px"
       >
-        <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-          Macro Type
+        <Text minW="70px" align="center" fontWeight="semibold" fontSize={['sm', 'md']}>
+          {macro.macro_type}
         </Text>
         <HStack>
 
@@ -115,13 +115,13 @@ export default function MacroTypeArea() {
           <Box
             position="absolute"
             // left="50%"
-            transform="translate(40%, -140%)"
+            transform="translate(0%, -125%)"
             fontSize="md"
             zIndex="1"
             bgColor={secondBg}
 
           >
-            {macro.macro_type}
+            {"Macro Type"}
           </Box>
           <Box
             maxWidth={isOpen ? "150px" : "0px"}
