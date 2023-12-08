@@ -12,6 +12,7 @@ import { HIDLookup } from './HIDmap'
 import { mouseEnumLookup } from './MouseMap'
 import { sysEventLookup } from './SystemEventMap'
 import { MacroDataInterface } from "../components/macroview/topArea/MacroStateButtons";
+import { scrollbarRadiusStandard } from "../theme/config";
 
 export const updateBackendConfig = (
   collections: Collection[]

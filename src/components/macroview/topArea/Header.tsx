@@ -7,8 +7,9 @@ import {
   IconButton,
   Input,
   Tooltip,
+  VStack,
   useColorModeValue,
-  useDisclosure
+  useDisclosure, Flex
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../../contexts/applicationContext'
@@ -141,8 +142,6 @@ export default function Header({ isEditing }: Props) {
         zIndex={1}
         bg={useMainBgColour()}
         w="full"
-        // h={{ base: 'full', md: '100px', xl: '120px' }}
-        h="full"
         py={2}
         px={{ base: 2, md: 4, xl: 6 }}
         spacing={4}

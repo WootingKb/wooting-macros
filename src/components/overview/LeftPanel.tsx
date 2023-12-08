@@ -37,7 +37,7 @@ export default function LeftPanel({
 
   const onNewCollectionButtonPress = useCallback(() => {
     onCollectionAdd({
-      active: true,
+      enabled: true,
       icon: `:😍:`,
       macros: [],
       name: `Collection ${collections.length + 1}`
@@ -89,7 +89,7 @@ export default function LeftPanel({
                   onCollectionUpdate(
                     {
                       ...collections[index],
-                      active: !collections[index].active
+                      enabled: !collections[index].enabled
                     },
                     index
                   )
