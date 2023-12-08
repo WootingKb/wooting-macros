@@ -67,12 +67,12 @@ pub mod input {
                                     x != MULTIINPUT_TO_HID.get(&key).unwrap_or_else(|| &0)
                                 });
 
-                                if current_pressed_keys != previously_pressed_keys {
-                                    debug!("RELEASED");
-                                    debug!("Key status Current: {:?}", current_pressed_keys);
-                                    debug!("Key status Previous: {:?}", previously_pressed_keys);
-                                    debug!("----------");
-                                }
+                                // if current_pressed_keys != previously_pressed_keys {
+                                //     debug!("RELEASED");
+                                //     debug!("Key status Current: {:?}", current_pressed_keys);
+                                //     debug!("Key status Previous: {:?}", previously_pressed_keys);
+                                //     debug!("----------");
+                                // }
                             }
                         },
                         _ => {}
