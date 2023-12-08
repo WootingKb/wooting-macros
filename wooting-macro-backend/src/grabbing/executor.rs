@@ -2,8 +2,7 @@
 pub mod input {
     use std::sync::Arc;
     use std::{thread, time};
-
-    use log::{error, trace};
+    use log::*;
     use tokio::sync::mpsc::UnboundedReceiver;
     use tokio::sync::RwLock;
 
@@ -26,8 +25,8 @@ pub mod input {
             let received_event = match &rchan_execute.blocking_recv() {
                 Some(event) => *event,
                 None => {
-                    trace!("Failed to receive an event!");
-                    continue;
+                    warn!("Channel closed!");
+                    return;
                 }
             };
             crate::plugin::util::direct_send_event(&received_event).unwrap_or_else(|err| {
