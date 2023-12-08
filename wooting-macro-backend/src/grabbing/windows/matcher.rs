@@ -27,7 +27,7 @@ pub mod input {
                             && macro_data.config.macro_type == MacroType::OnHold => {}
                     // If the keys are different and its a trigger key pressed, start a macro
                     (trigger_combo, pressed, _pressed_previous)
-                        if trigger_combo.iter().any(|x| pressed.contains(x)) =>
+                        if trigger_combo.iter().all(|x| pressed.contains(x)) =>
                     {
                         schan_macro_execute
                             .send(MacroExecutorEvent::Start(macro_id.clone()))
@@ -35,7 +35,7 @@ pub mod input {
                     }
                     // If the keys are different and its a trigger key released, stop a macro
                     (trigger_combo, _pressed, pressed_previous)
-                        if trigger_combo.iter().any(|x| pressed_previous.contains(x)) =>
+                        if trigger_combo.iter().all(|x| pressed_previous.contains(x)) =>
                     {
                         schan_macro_execute
                             .send(MacroExecutorEvent::Stop(macro_id.clone()))

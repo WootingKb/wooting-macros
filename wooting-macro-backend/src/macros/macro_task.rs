@@ -70,17 +70,19 @@ impl MacroTask {
                     }
                     MacroTaskEvent::Kill => {
                         error!("EXECUTING KILLING OF THE TASK OF A MACRO");
-                        break 'task_loop;
+                        // break 'task_loop;
+                        return;
                     }
                 },
                 Err(e) => match e {
                     TryRecvError::Disconnected => {
-                        warn!("RECEIVING CHANNEL DISCONNECTED");
+                        error!("RECEIVING CHANNEL DISCONNECTED");
                         break 'task_loop;
                     }
 
                     TryRecvError::Empty => {
                         // If the channel is empty, we don't want to do anything explicit here.
+                        tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                     }
                 },
             }
