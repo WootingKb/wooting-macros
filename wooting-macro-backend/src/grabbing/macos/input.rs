@@ -1,6 +1,7 @@
 #[cfg(target_os = "macos")]
 pub mod input {
     use crate::grabbing::executor::MacroExecutorEvent;
+    use crate::grabbing::macos::matcher::input::check_macro_execution_simply;
     use crate::macros::macro_data::MacroLookup;
     use crate::RwLock;
     use crate::UnboundedSender;

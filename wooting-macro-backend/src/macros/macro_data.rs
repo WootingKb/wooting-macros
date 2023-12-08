@@ -128,7 +128,6 @@ impl MacroData {
 pub struct MacroLookup {
     pub triggers: MacroTrigger,
     pub id_map: MacroIdList,
-
 }
 
 /// Macro ID list to lookup macros uniquely and fast.
