@@ -44,7 +44,7 @@ impl ActionEventType {
         send_channel: &UnboundedSender<rdev::EventType>,
     ) -> anyhow::Result<()> {
         match self {
-            ActionEventType::KeyPressEventAction { data } => match data.key_type {
+            ActionEventType::KeyPressEventAction { data } => match data.keytype {
                 key_press::KeyType::Down => {
                     // One key press down
                     send_channel.send(rdev::EventType::KeyPress(HID_TO_RDEV[&data.keypress]))?;

@@ -1,3 +1,4 @@
+use std::time;
 use env_logger::Env;
 use log::*;
 use wooting_macro_backend::MacroBackend;
@@ -12,4 +13,8 @@ async fn main() {
     let backend = MacroBackend::default();
 
     backend.init().await;
+
+    loop {
+        tokio::time::sleep(time::Duration::from_millis(20000)).await
+    }
 }

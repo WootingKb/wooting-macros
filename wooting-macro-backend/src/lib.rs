@@ -24,6 +24,7 @@ use crate::grabbing::windows::input::input;
 use crate::hid_table::*;
 use crate::macros::events::triggers::{MacroIndividualCommand, MacroTriggerEvent};
 use crate::macros::macro_data::{MacroData, MacroLookup};
+use crate::macros::macro_task::MacroTaskEvent;
 
 pub mod config;
 pub mod grabbing;
@@ -65,6 +66,14 @@ impl MacroBackend {
     }
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
+        macros.write_to_file()?;
+        {
+            let read_handle = self.macro_lookup.read().await;
+            for (_, x) in read_handle.id_map.iter() {
+                x.task_sender.send(MacroTaskEvent::Kill)?;
+                warn!("Killed a macro task {}", x.config.name);
+            }
+        }
         macros.write_to_file()?;
         *self.macro_lookup.write().await = macros.new_lookup()?;
 

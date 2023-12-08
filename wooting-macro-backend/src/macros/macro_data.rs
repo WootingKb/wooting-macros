@@ -37,6 +37,8 @@ impl MacroData {
             keypress_executor_receiver(rchan_keypress_execute);
         });
 
+        info!("Spawning a new receiver for a macro");
+
         let mut macro_lookup = MacroLookup::default();
 
         for collections in &self.data {
