@@ -71,8 +71,10 @@ impl MacroBackend {
             let read_handle = self.macro_lookup.read().await;
             for (_, x) in read_handle.id_map.iter() {
                 x.task_sender.send(MacroTaskEvent::Kill)?;
+                warn!("Killed a macro task {}", x.config.name);
             }
         }
+        macros.write_to_file()?;
         *self.macro_lookup.write().await = macros.new_lookup()?;
 
         debug!(
