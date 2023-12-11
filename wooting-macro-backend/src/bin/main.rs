@@ -12,4 +12,8 @@ async fn main() {
     let backend = MacroBackend::default();
 
     backend.init().await;
+
+    loop {
+        tokio::time::sleep(time::Duration::from_millis(20000)).await
+    }
 }
