@@ -51,6 +51,7 @@ export default function CollectionButton({
       >
         <Box
           as="button"
+          
           pos="absolute"
           w="full"
           h="full"
