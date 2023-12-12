@@ -23,6 +23,8 @@ import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
+import { mode } from "@chakra-ui/theme-tools";
+import useMainBgColour from "../../../hooks/useMainBgColour";
 
 interface Props {
   onOpenSettingsModal: () => void
@@ -128,7 +130,7 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
     useRecordingSequence(onItemChanged)
 
   return (
-    <VStack w="41%" h="full">
+    <VStack w="41%" h="full" bg={useMainBgColour()}>
       {/** Header */}
       <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
         <Stack
