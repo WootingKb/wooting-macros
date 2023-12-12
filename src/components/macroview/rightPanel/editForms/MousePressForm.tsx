@@ -1,11 +1,14 @@
 import {
+  Box,
+  Button,
   Divider,
+  Flex,
   Grid,
   GridItem,
-  Flex,
-  Button,
+  HStack,
   Input,
-  Text
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
@@ -13,6 +16,7 @@ import { KeyType } from '../../../../constants/enums'
 import { mouseEnumLookup } from '../../../../constants/MouseMap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
 import { MouseEventAction } from '../../../../types'
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   selectedElementId: number
@@ -23,10 +27,12 @@ export default function MousePressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [headingText, setHeadingText] = useState('')
-  const [mousepressDuration, setMousepressDuration] = useState("1")
+  const [headingText, setHeadingText] = useState<JSX.Element | string>('')
+  const [mousepressDuration, setMousepressDuration] = useState('1')
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
 
   useEffect(() => {
     const typeString: keyof typeof KeyType = selectedElement.data.data
@@ -35,14 +41,33 @@ export default function MousePressForm({
     if (selectedElement.data.data.type === 'DownUp') {
       setMousepressDuration(selectedElement.data.data.duration.toString())
     }
+
     setHeadingText(
-      `${mouseEnumLookup.get(selectedElement.data.data.button)?.displayString}`
+      <HStack justifyContent="center">
+        <Text>Editing element</Text>
+        <Box
+          h="32px"
+          w="fit-content"
+          bg={bg}
+          border="1px solid"
+          py={1}
+          px={3}
+          borderColor={kebabColour}
+          rounded={borderRadiusStandard}
+        >
+          <Text w="fit-content" fontSize="sm" whiteSpace="nowrap">
+            {
+              mouseEnumLookup.get(selectedElement.data.data.button)
+                ?.displayString
+            }
+          </Text>
+        </Box>
+      </HStack>
     )
   }, [selectedElement])
 
   const onMousepressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-
       setMousepressDuration(event.target.value)
     },
     [setMousepressDuration]
@@ -54,9 +79,8 @@ export default function MousePressForm({
     }
     let duration
     if (mousepressDuration === '') {
-      duration = 0;
+      duration = 0
     } else {
-
       duration = parseInt(mousepressDuration)
       if (Number.isNaN(duration)) {
         return

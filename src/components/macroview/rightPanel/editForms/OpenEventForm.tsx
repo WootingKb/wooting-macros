@@ -1,9 +1,19 @@
-import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import {
+  Box,
+  Button,
+  Divider,
+  HStack,
+  Text,
+  Textarea,
+  useColorModeValue,
+  VStack
+} from '@chakra-ui/react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { open } from '@tauri-apps/api/types/dialog'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   selectedElement: SystemEventAction
@@ -15,10 +25,12 @@ export default function OpenEventForm({
   selectedElement
 }: Props) {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()
-  const [headerText, setHeaderText] = useState('')
+  const [headerText, setHeaderText] = useState<JSX.Element | string>('')
   const [subHeaderText, setSubHeaderText] = useState('')
   const [path, setPath] = useState('')
   const { updateElement } = useMacroContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
 
   useEffect(() => {
     if (selectedElement.data.type !== 'Open') return
@@ -40,7 +52,29 @@ export default function OpenEventForm({
         break
     }
     setHeaderText(
-      sysEventLookup.get(selectedElement.data.action.type)?.displayString || ''
+      <HStack justifyContent="center">
+        <Text>Editing element</Text>
+        <Box
+          h="32px"
+          w="fit-content"
+          bg={bg}
+          border="1px solid"
+          py={1}
+          px={3}
+          borderColor={kebabColour}
+          rounded={borderRadiusStandard}
+        >
+          <Text
+            w="fit-content"
+            fontSize="sm"
+            whiteSpace="nowrap"
+            fontWeight="bold"
+          >
+            {sysEventLookup.get(selectedElement.data.action.type)
+              ?.displayString || ''}
+          </Text>
+        </Box>
+      </HStack>
     )
     setPath(selectedElement.data.action.data)
   }, [selectedElement])
