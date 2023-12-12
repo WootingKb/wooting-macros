@@ -220,15 +220,16 @@ export default function SortableItem({
               </Text>
             </Box>
           )}
-        {isEditable && (
-          <IconButton
-            variant="brandSecondary"
-            aria-label="Edit item"
-            icon={<EditIcon />}
-            size={['xs', 'sm']}
-            onClick={onEditButtonPress}
-          />
-        )}
+        {/*This button is not really that useful so disabled it for now*/}
+        {/*{isEditable && (*/}
+        {/*  <IconButton*/}
+        {/*    variant="brandSecondary"*/}
+        {/*    aria-label="Edit item"*/}
+        {/*    icon={<EditIcon />}*/}
+        {/*    size={['xs', 'sm']}*/}
+        {/*    onClick={onEditButtonPress}*/}
+        {/*  />*/}
+        {/*)}*/}
         <Menu variant="brand">
           <MenuButton
             h="24px"

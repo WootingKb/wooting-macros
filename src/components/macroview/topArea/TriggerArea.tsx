@@ -34,7 +34,7 @@ export default function TriggerArea({ onOpen }: Props) {
       rounded={borderRadiusStandard}
       justifyContent="space-between"
     >
-      <Text fontWeight="semibold" fontSize={['xs', 'sm']} whiteSpace="nowrap">
+      <Text fontWeight="semibold" fontSize={['sm', 'md']} whiteSpace="nowrap">
         Trigger Keys
       </Text>
       <HStack
