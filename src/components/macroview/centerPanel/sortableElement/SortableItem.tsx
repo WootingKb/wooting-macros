@@ -27,6 +27,7 @@ import {
 } from '../../../../constants/utils'
 import { KeyType } from '../../../../constants/enums'
 import { borderRadiusStandard } from "../../../../theme/config";
+import useBorderColour from "../../../../hooks/useBorderColour";
 
 interface Props {
   id: number
@@ -117,10 +118,13 @@ export default function SortableItem({
     onElementDelete(id - 1)
   }, [id, isSelected, onElementDelete, updateSelectedElementId])
 
+  const secondBg = useColorModeValue('primary-light.100', 'primary-dark.800')
+
   return (
     <HStack
       w="full"
       h="full"
+      bg={secondBg}
       justifyContent="space-around"
       spacing="0px"
       rounded={borderRadiusStandard}
