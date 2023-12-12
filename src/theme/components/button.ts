@@ -71,18 +71,22 @@ export const Button = defineStyleConfig({
       }
     }),
     yellowGradient: () => ({
-      bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)',
+      // bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)',
+      bg: 'primary-accent.500',
       color: 'bg-dark',
       _hover: {
-        bgGradient: 'linear(to-b, primary-accent.200, primary-accent.400)',
+        // bgGradient: 'linear(to-b, primary-accent.200, primary-accent.400)',
+        bg: 'primary-accent.200',
         _disabled: {
+          // bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)'
+          bg: 'primary-accent.500',
           opacity: 0.5,
-          bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)'
         }
       },
       _disabled: {
+        // bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)'
+        bg: 'primary-accent.500',
         opacity: 0.5,
-        bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)'
       }
     }),
     brandGhost: (props: StyleFunctionProps) => ({
