@@ -52,7 +52,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
         selectedElementId !== undefined && id === selectedElementId + 1
           ? selectedBg
           : bg
-      }
+    }
       shadow={shadowColour}
     >
       <Center
