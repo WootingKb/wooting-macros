@@ -130,9 +130,9 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
     useRecordingSequence(onItemChanged)
 
   return (
-    <VStack w="41%" h="full" bg={useMainBgColour()}>
+    <VStack w="41%" h="full" bg={useMainBgColour()} justifyContent="top">
       {/** Header */}
-      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
+      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]} >
         <Stack
           direction={['column', 'row']}
           w="full"
@@ -140,9 +140,7 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
           justifyContent="space-between"
           alignItems={['start', 'center']}
         >
-          <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-            Sequence
-          </Text>
+
           {willCauseTriggerLooping && (
             <Alert
               status="error"
@@ -160,11 +158,15 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
         </Stack>
       </VStack>
       <HStack
-        justifyContent="right"
+        justifyContent="center"
+
         w="full"
         alignItems="center"
         px={[2, 4, 6]}
       >
+        <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+          Sequence
+        </Text>
         <Button
           variant="brandRecord"
           leftIcon={recording ? <StopIcon /> : <RecordIcon />}
