@@ -1,4 +1,4 @@
-import { TimeIcon, EditIcon } from '@chakra-ui/icons'
+import { EditIcon, TimeIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
@@ -12,7 +12,7 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react'
-import { useMemo, useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { ActionEventType } from '../../../../types'
 import {
@@ -123,7 +123,11 @@ export default function SortableItem({
     <HStack
       w="full"
       h="full"
-      bg={secondBg}
+      bg={
+        selectedElementId !== undefined && id === selectedElementId + 1
+          ? 'inherit'
+          : secondBg
+      }
       justifyContent="space-around"
       spacing="0px"
       rounded={borderRadiusStandard}
