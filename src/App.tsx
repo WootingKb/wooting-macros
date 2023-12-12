@@ -1,4 +1,4 @@
-import { Flex, useDisclosure, Text, Box } from '@chakra-ui/react'
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react'
 import Overview from './views/Overview'
 import { ViewState } from './constants/enums'
 import { useApplicationContext } from './contexts/applicationContext'
@@ -29,7 +29,7 @@ function App() {
           w="full"
           h="full"
           opacity={0.15}
-          backgroundImage="url('/keycapPattern.png')"
+          // backgroundImage="url('/keycapPattern.png')"
         />
         <Text fontSize="4xl" fontWeight="bold">
           Loading...
@@ -46,7 +46,7 @@ function App() {
         w="full"
         h="full"
         opacity={0.15}
-        backgroundImage="url('/keycapPattern.png')"
+        // backgroundImage="url('/keycapPattern.png')"
       />
       {viewState === ViewState.Overview && (
         <Overview onOpenSettingsModal={onOpen} />
