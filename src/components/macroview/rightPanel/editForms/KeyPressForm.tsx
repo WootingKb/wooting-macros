@@ -1,18 +1,22 @@
 import {
+  Box,
+  Button,
   Divider,
+  Flex,
   Grid,
   GridItem,
-  Flex,
-  Button,
+  HStack,
   Input,
-  Text
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
 import { HIDLookup } from '../../../../constants/HIDmap'
 import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   selectedElementId: number
@@ -23,10 +27,12 @@ export default function KeyPressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [headingText, setHeadingText] = useState('')
-  const [keypressDuration, setKeypressDuration] = useState("1")
+  const [headingText, setHeadingText] = useState<JSX.Element | string>('')
+  const [keypressDuration, setKeypressDuration] = useState('1')
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
 
   useEffect(() => {
     if (
@@ -39,7 +45,28 @@ export default function KeyPressForm({
     setKeypressType(KeyType[typeString])
     setKeypressDuration(selectedElement.data.press_duration.toString())
     setHeadingText(
-      `Key ${HIDLookup.get(selectedElement.data.keypress)?.displayString}`
+      <HStack justifyContent="center">
+        <Text>Editing element</Text>
+        <Box
+          h="32px"
+          w="fit-content"
+          bg={bg}
+          border="1px solid"
+          py={1}
+          px={3}
+          borderColor={kebabColour}
+          rounded={borderRadiusStandard}
+        >
+          <Text
+            w="fit-content"
+            fontSize="sm"
+            whiteSpace="nowrap"
+            fontWeight="bold"
+          >
+            {HIDLookup.get(selectedElement.data.keypress)?.displayString}
+          </Text>
+        </Box>
+      </HStack>
     )
   }, [selectedElement])
 
@@ -53,9 +80,8 @@ export default function KeyPressForm({
   const onInputBlur = useCallback(() => {
     let duration
     if (keypressDuration === '') {
-      duration = 0;
+      duration = 0
     } else {
-
       duration = parseInt(keypressDuration)
       if (Number.isNaN(duration)) {
         return
