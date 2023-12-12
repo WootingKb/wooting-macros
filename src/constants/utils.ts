@@ -11,6 +11,7 @@ import {
 import { HIDLookup } from './HIDmap'
 import { mouseEnumLookup } from './MouseMap'
 import { sysEventLookup } from './SystemEventMap'
+import { scrollbarRadiusStandard } from "../theme/config";
 
 export const updateBackendConfig = (
   collections: Collection[]
@@ -135,15 +136,15 @@ export const scrollbarStylesLight = {
   },
   '&::-webkit-scrollbar-track': {
     background: '#D5DAE2',
-    borderRadius: '8px'
+    borderRadius: scrollbarRadiusStandard
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#9EAABD',
-    borderRadius: '8px'
+    borderRadius: scrollbarRadiusStandard
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#8392AA',
-    borderRadius: '8px'
+    borderRadius: scrollbarRadiusStandard
   }
 }
 
@@ -153,14 +154,14 @@ export const scrollbarsStylesDark = {
   },
   '&::-webkit-scrollbar-track': {
     background: '#27272a',
-    borderRadius: '8px'
+    borderRadius: scrollbarRadiusStandard
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#3f3f46',
-    borderRadius: '8px'
+    borderRadius: scrollbarRadiusStandard
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#52525b',
-    borderRadius: '8px'
+    borderRadius: scrollbarRadiusStandard
   }
 }

@@ -26,6 +26,7 @@ import {
   getElementDisplayString
 } from '../../../../constants/utils'
 import { KeyType } from '../../../../constants/enums'
+import { borderRadiusStandard } from "../../../../theme/config";
 
 interface Props {
   id: number
@@ -122,6 +123,7 @@ export default function SortableItem({
       h="full"
       justifyContent="space-around"
       spacing="0px"
+      rounded={borderRadiusStandard}
       cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >
@@ -141,7 +143,7 @@ export default function SortableItem({
           borderColor={kebabColour}
           alignItems="center"
           justifyContent="center"
-          rounded="md"
+          rounded={borderRadiusStandard}
         >
           <Text
             h="fit-content"
@@ -167,7 +169,7 @@ export default function SortableItem({
               py={1}
               px={3}
               borderColor={kebabColour}
-              rounded="md"
+              rounded={borderRadiusStandard}
             >
               <Text
                 w="fit-content"
@@ -194,7 +196,7 @@ export default function SortableItem({
               py={1}
               px={3}
               borderColor={kebabColour}
-              rounded="md"
+              rounded={borderRadiusStandard}
             >
               <Text
                 w="fit-content"
