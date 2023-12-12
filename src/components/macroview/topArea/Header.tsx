@@ -143,7 +143,7 @@ export default function Header({ isEditing }: Props) {
         px={{ base: 2, md: 4, xl: 6 }}
         gap={4}
         shadow={shadowColour}
-        justifyContent="space-between"
+        justifyContent="space-evenly"
       >
         <Flex maxW="400px" h="full" alignItems="center" gap="4">
           <IconButton
@@ -165,6 +165,7 @@ export default function Header({ isEditing }: Props) {
             variant="flushed"
             placeholder="Macro Name"
             size="xl"
+            fontSize="25px"
             textStyle="name"
             _placeholder={{ opacity: 1, color: placeholderTextColour }}
             onChange={(event) => setInputValue(event.target.value)}
