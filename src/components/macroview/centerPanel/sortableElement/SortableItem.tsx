@@ -26,8 +26,7 @@ import {
   getElementDisplayString
 } from '../../../../constants/utils'
 import { KeyType } from '../../../../constants/enums'
-import { borderRadiusStandard } from "../../../../theme/config";
-import useBorderColour from "../../../../hooks/useBorderColour";
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   id: number
