@@ -25,6 +25,7 @@ import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
 import { mode } from "@chakra-ui/theme-tools";
 import useMainBgColour from "../../../hooks/useMainBgColour";
+import { borderRadiusStandard } from "../../../theme/config";
 
 // interface Props {
 //   onOpenSettingsModal: () => void
@@ -136,7 +137,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   return (
     <VStack w="41%" h="full" bg={useMainBgColour()} justifyContent="top">
       {/** Header */}
-      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]} >
+      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
         <Stack
           direction={['column', 'row']}
           w="full"
@@ -144,12 +145,11 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           justifyContent="space-between"
           alignItems={['start', 'center']}
         >
-
           {willCauseTriggerLooping && (
             <Alert
               status="error"
               w={['full', 'fit']}
-              rounded="md"
+              rounded={borderRadiusStandard}
               py="1"
               px={['2', '3']}
             >
@@ -163,7 +163,6 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
       </VStack>
       <HStack
         justifyContent="center"
-
         w="full"
         alignItems="center"
         px={[2, 4, 6]}
