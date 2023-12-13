@@ -121,6 +121,7 @@ export default function SortableItem({
 
   return (
     <HStack
+
       w="full"
       h="full"
       bg={
