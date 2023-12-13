@@ -8,11 +8,21 @@ import data from '@emoji-mart/data'
 import { init } from 'emoji-mart'
 import './App.css'
 import { MacroProvider } from './contexts/macroContext'
-import MacroSettingsModal from "./views/MacroSettingsModal";
+import MacroSettingsModal from './views/MacroSettingsModal'
+import SettingsModal from './views/SettingsModal'
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenSettings,
+    onOpen: onOpenSettings,
+    onClose: onCloseSettings
+  } = useDisclosure()
+  const {
+    isOpen: isOpenMacroSettings,
+    onOpen: onOpenMacroSettings,
+    onClose: onCloseMacroSettings
+  } = useDisclosure()
 
   useEffect(() => {
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
@@ -49,19 +59,29 @@ function App() {
         // backgroundImage="url('/keycapPattern.png')"
       />
       {viewState === ViewState.Overview && (
-        <Overview onOpenSettingsModal={onOpen} />
+        <Overview onOpenSettingsModal={onOpenSettings} />
       )}
       {viewState === ViewState.Addview && (
         <MacroProvider>
-          <Macroview isEditing={false} onOpenMacroSettingsModal={onOpen} />
+          <Macroview
+            isEditing={false}
+            onOpenMacroSettingsModal={onOpenMacroSettings}
+          />
         </MacroProvider>
       )}
       {viewState === ViewState.Editview && (
         <MacroProvider>
-          <Macroview isEditing={true} onOpenMacroSettingsModal={onOpen} />
+          <Macroview
+            isEditing={true}
+            onOpenMacroSettingsModal={onOpenMacroSettings}
+          />
         </MacroProvider>
       )}
-      <MacroSettingsModal isOpen={isOpen} onClose={onClose} />
+      <SettingsModal isOpen={isOpenSettings} onClose={onCloseSettings} />
+      <MacroSettingsModal
+        isOpen={isOpenMacroSettings}
+        onClose={onCloseMacroSettings}
+      />
     </Flex>
   )
 }
