@@ -34,6 +34,7 @@ export enum MouseButton {
 
 export enum SettingsCategory {
   General,
+  Macro,
   Other
 }
 
