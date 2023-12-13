@@ -49,12 +49,12 @@ export default function TriggerArea({ onOpen }: Props) {
       >
         {macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.map((HIDcode) => (
-            <Kbd variant="brand" key={HIDcode}>
+            <Kbd fontSize="md" variant="brand" key={HIDcode}>
               {HIDLookup.get(HIDcode)?.displayString}
             </Kbd>
           ))}
         {macro.trigger.type === 'MouseEvent' && (
-          <Kbd variant="brand">
+          <Kbd fontSize="md" variant="brand">
             {mouseEnumLookup.get(macro.trigger.data)?.displayString}
           </Kbd>
         )}
