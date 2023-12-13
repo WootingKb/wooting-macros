@@ -36,6 +36,25 @@ export const Button = defineStyleConfig({
         opacity: 0.5
       }
     }),
+    brandTertiary: (props: StyleFunctionProps) => ({
+      bg: mode('primary-light.100', 'primary-dark.800')(props),
+      transition: 'ease-out 150ms',
+      _hover: {
+        bg: mode('primary-light.200', 'primary-dark.700')(props),
+        _disabled: {
+          bg: mode('primary-light.100', 'primary-dark.800')(props),
+          opacity: 0.5
+        }
+      },
+      _active: {
+        bg: mode('primary-accent.400', 'primary-accent.400')(props),
+        color: 'bg-dark'
+      },
+      _disabled: {
+        bg: mode('primary-accent.300', 'primary-accent.500')(props),
+        opacity: 0.5
+      }
+    }),
     brandAccent: (props: StyleFunctionProps) => ({
       bg: mode('primary-accent.300', 'primary-accent.500')(props),
       color: 'bg-dark',
@@ -80,13 +99,13 @@ export const Button = defineStyleConfig({
         _disabled: {
           // bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)'
           bg: 'primary-accent.500',
-          opacity: 0.5,
+          opacity: 0.5
         }
       },
       _disabled: {
         // bgGradient: 'linear(to-b, primary-accent.300, primary-accent.500)'
         bg: 'primary-accent.500',
-        opacity: 0.5,
+        opacity: 0.5
       }
     }),
     brandGhost: (props: StyleFunctionProps) => ({
