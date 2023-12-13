@@ -9,6 +9,7 @@ import { HiArrowRight, HiArrowDownTray, HiArrowPath } from 'react-icons/hi2'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { MacroType } from '../../../constants/enums'
 import { checkIfStringIsNonNumeric } from '../../../constants/utils'
+import { borderRadiusStandard } from "../../../theme/config";
 
 export default function MacroTypeArea() {
   const { macro, updateMacroType } = useMacroContext()
@@ -23,7 +24,7 @@ export default function MacroTypeArea() {
       border="1px"
       borderColor={borderColour}
       divider={<StackDivider />}
-      rounded="md"
+      rounded={borderRadiusStandard}
       spacing="16px"
     >
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>
