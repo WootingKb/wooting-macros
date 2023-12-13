@@ -127,7 +127,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     >
       <ModalOverlay />
       <ModalContent p={2}>
-        <ModalHeader fontWeight="bold" alignSelf="center">
+        <ModalHeader fontWeight="bold">
           Trigger Keys
         </ModalHeader>
         <Divider w="90%" alignSelf="center" />
@@ -162,8 +162,8 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </Flex>
               <HStack w="full" justifyContent="space-between">
                 <VStack alignItems="left">
-                  <Text fontSize="xs">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
-                  <Text fontSize="xs">{`non-modifier has to be last.`}</Text>
+                  <Text fontSize="sm">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
+                  <Text fontSize="sm">{`non-modifier key must be the last in sequence.`}</Text>
                 </VStack>
                 <Button
                   variant="brandRecord"
