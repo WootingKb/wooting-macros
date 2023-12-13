@@ -52,7 +52,7 @@ export default function OpenEventForm({
         break
     }
     setHeaderText(
-      <HStack justifyContent="center">
+      <HStack justifyContent="center" p={1}>
         <Text>Editing element</Text>
         <Box
           h="32px"
