@@ -45,7 +45,7 @@ export default function KeyPressForm({
     setKeypressType(KeyType[typeString])
     setKeypressDuration(selectedElement.data.press_duration.toString())
     setHeadingText(
-      <HStack justifyContent="center">
+      <HStack justifyContent="center" p={1}>
         <Text>Editing element</Text>
         <Box
           h="32px"
