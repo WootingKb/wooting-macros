@@ -55,7 +55,11 @@ export default function MousePressForm({
           borderColor={kebabColour}
           rounded={borderRadiusStandard}
         >
-          <Text w="fit-content" fontSize="sm" whiteSpace="nowrap">
+          <Text
+            w="fit-content"
+            fontSize={['sm', 'md', 'md']}
+            whiteSpace="nowrap"
+          >
             {
               mouseEnumLookup.get(selectedElement.data.data.button)
                 ?.displayString

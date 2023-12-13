@@ -66,8 +66,8 @@ export default function OpenEventForm({
         >
           <Text
             w="fit-content"
-            fontSize="sm"
             whiteSpace="nowrap"
+            fontSize={['sm', 'md', 'md']}
             fontWeight="bold"
           >
             {sysEventLookup.get(selectedElement.data.action.type)

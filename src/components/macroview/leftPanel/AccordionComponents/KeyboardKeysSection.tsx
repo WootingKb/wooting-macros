@@ -1,12 +1,12 @@
 import {
-  AccordionItem,
   AccordionButton,
-  Flex,
   AccordionIcon,
+  AccordionItem,
   AccordionPanel,
+  AspectRatio,
+  Flex,
   Grid,
-  GridItem,
-  AspectRatio
+  GridItem
 } from '@chakra-ui/react'
 import { KeyType } from '../../../../constants/enums'
 import { HidInfo } from '../../../../constants/HIDmap'
