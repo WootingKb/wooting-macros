@@ -162,7 +162,7 @@ export default function MousePressForm({
             justifyContent="space-around"
           >
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownUpArrowsIcon />}
               w="full"
               size={['sm', 'md']}
@@ -172,7 +172,7 @@ export default function MousePressForm({
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownArrowIcon />}
               w="full"
               size={['sm', 'md']}
@@ -182,7 +182,7 @@ export default function MousePressForm({
               <Text fontSize={['md', 'md', 'sm']}>Mouse Down</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<UpArrowIcon />}
               w="full"
               size={['sm', 'md']}
