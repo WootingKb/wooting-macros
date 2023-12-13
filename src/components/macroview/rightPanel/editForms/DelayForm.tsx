@@ -94,8 +94,8 @@ export default function DelayForm({
           rounded={borderRadiusStandard}
         >
           <Text
+            fontSize={['sm', 'md', 'md']}
             w="fit-content"
-            fontSize="sm"
             fontWeight="bold"
             whiteSpace="nowrap"
           >
