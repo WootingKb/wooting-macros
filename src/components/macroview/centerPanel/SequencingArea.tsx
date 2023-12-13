@@ -26,11 +26,15 @@ import SortableList from './SortableList'
 import { mode } from "@chakra-ui/theme-tools";
 import useMainBgColour from "../../../hooks/useMainBgColour";
 
+// interface Props {
+//   onOpenSettingsModal: () => void
+// }
+
 interface Props {
-  onOpenSettingsModal: () => void
+  onOpenMacroSettingsModal: () => void
 }
 
-export default function SequencingArea({ onOpenSettingsModal }: Props) {
+export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   const {
     sequence,
     willCauseTriggerLooping,
@@ -198,13 +202,13 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
         >
           Add Delay
         </Button>
-        <Tooltip label="Open Application Settings" hasArrow variant="brand">
+        <Tooltip label="Open Macro Advanced Settings" hasArrow variant="brand">
           <IconButton
             variant="brand"
-            aria-label="Settings"
+            aria-label="MacroSettings"
             icon={<SettingsIcon />}
             size={['xs', 'sm', 'md']}
-            onClick={onOpenSettingsModal}
+            onClick={onOpenMacroSettingsModal}
           />
         </Tooltip>
       </HStack>

@@ -4,11 +4,11 @@ import { ViewState } from './constants/enums'
 import { useApplicationContext } from './contexts/applicationContext'
 import Macroview from './views/Macroview'
 import { useEffect } from 'react'
-import SettingsModal from './views/SettingsModal'
 import data from '@emoji-mart/data'
 import { init } from 'emoji-mart'
 import './App.css'
 import { MacroProvider } from './contexts/macroContext'
+import MacroSettingsModal from "./views/MacroSettingsModal";
 
 function App() {
   const { viewState, initComplete } = useApplicationContext()
@@ -53,15 +53,15 @@ function App() {
       )}
       {viewState === ViewState.Addview && (
         <MacroProvider>
-          <Macroview isEditing={false} onOpenSettingsModal={onOpen} />
+          <Macroview isEditing={false} onOpenMacroSettingsModal={onOpen} />
         </MacroProvider>
       )}
       {viewState === ViewState.Editview && (
         <MacroProvider>
-          <Macroview isEditing={true} onOpenSettingsModal={onOpen} />
+          <Macroview isEditing={true} onOpenMacroSettingsModal={onOpen} />
         </MacroProvider>
       )}
-      <SettingsModal isOpen={isOpen} onClose={onClose} />
+      <MacroSettingsModal isOpen={isOpen} onClose={onClose} />
     </Flex>
   )
 }
