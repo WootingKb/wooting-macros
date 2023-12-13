@@ -1,22 +1,9 @@
-import {
-  VStack,
-  Divider,
-  Text,
-  useColorModeValue,
-  HStack,
-  Flex
-} from '@chakra-ui/react'
-import { openDiscordLink, openGithubLink } from '../../constants/externalLinks'
+import { Flex, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import { SettingsCategory } from '../../constants/enums'
-import { SettingsGroup } from '../../constants/SettingsMap'
-import { type, version } from '@tauri-apps/api/os'
-import { getVersion } from '@tauri-apps/api/app'
-import { useEffect, useState } from 'react'
-import { DiscordIcon, GithubIcon } from '../icons'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
-import {error} from "tauri-plugin-log"
-import SettingsButton from "../settings/SettingsButton";
+import SettingsButton from '../settings/SettingsButton'
+import { MacroSettingsGroup } from "../../constants/MacroSettingsMap";
 
 interface Props {
   pageIndex: number
@@ -24,48 +11,19 @@ interface Props {
 }
 
 export default function MacroSettingsLeftPanel({
-                                            pageIndex,
-                                            onSettingsButtonPress
-                                          }: Props) {
+  pageIndex,
+  onSettingsButtonPress
+}: Props) {
   const panelBg = useColorModeValue('primary-light.50', 'bg-dark')
-  const [osText, setOsText] = useState<string | undefined>(undefined)
-  const [versionText, setVersionText] = useState<string | undefined>(undefined)
-  const applicationTextColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.400'
-  )
-  const strokeColour = useColorModeValue('bg-dark', 'bg-light')
-  const strokeHoverColour = useColorModeValue(
-    'primary-accent.600',
-    'primary-accent.400'
-  )
-
-  useEffect(() => {
-    const getOSType = async () => {
-      const os = await type()
-      const osVersion = await version()
-      switch (os) {
-        case 'Linux':
-          setOsText(`${os} (${osVersion})`)
-          break
-        case 'Darwin':
-          setOsText(`${os} (${osVersion})`)
-          break
-        case 'Windows_NT':
-          setOsText(`Windows (${osVersion})`)
-          break
-
-        default:
-          break
-      }
-    }
-
-    getVersion()
-      .then((version) => setVersionText(version))
-      .catch(error)
-
-    getOSType().catch((err) => error(err))
-  }, [])
+  // const applicationTextColour = useColorModeValue(
+  //   'primary-light.500',
+  //   'primary-dark.400'
+  // )
+  // const strokeColour = useColorModeValue('bg-dark', 'bg-light')
+  // const strokeHoverColour = useColorModeValue(
+  //   'primary-accent.600',
+  //   'primary-accent.400'
+  // )
 
   return (
     <Flex
@@ -85,10 +43,10 @@ export default function MacroSettingsLeftPanel({
       <VStack w="200px" spacing={1}>
         <VStack w="full" spacing={1}>
           <Text w="full" textStyle="miniHeader" ml={4}>
-            General Settings
+            Macro Specific Settings
           </Text>
-          {SettingsGroup.all
-            .filter((setting) => setting.category === SettingsCategory.General)
+          {MacroSettingsGroup.all
+            .filter((setting) => setting.category === SettingsCategory.Macro)
             .map((setting) => (
               <SettingsButton
                 setting={setting}
@@ -98,45 +56,6 @@ export default function MacroSettingsLeftPanel({
                 setFocus={onSettingsButtonPress}
               />
             ))}
-        </VStack>
-        <Divider />
-        <VStack w="full" spacing={1}>
-          <Text w="full" textStyle="miniHeader" ml={4}>
-            Other
-          </Text>
-          {SettingsGroup.all
-            .filter((setting) => setting.category === SettingsCategory.Other)
-            .map((setting) => (
-              <SettingsButton
-                setting={setting}
-                index={setting.pageIndex}
-                key={setting.displayString}
-                isFocused={pageIndex == setting.pageIndex}
-                setFocus={onSettingsButtonPress}
-              />
-            ))}
-        </VStack>
-        <Divider />
-        <VStack w="full" spacing={2} px={1} pt={1}>
-          <Text w="full" fontSize={{ base: 'xs', md: 'sm' }}>
-            Got feedback? Let us know through these channels!
-          </Text>
-          <VStack w="full" spacing={0}>
-            <Text
-              w="full"
-              fontSize={{ base: '2xs', md: 'xs' }}
-              textColor={applicationTextColour}
-            >
-              Version {versionText}
-            </Text>
-            <Text
-              w="full"
-              fontSize={{ base: '2xs', md: 'xs' }}
-              textColor={applicationTextColour}
-            >
-              {osText}
-            </Text>
-          </VStack>
         </VStack>
       </VStack>
     </Flex>

@@ -1,22 +1,24 @@
 import {
+  Divider,
+  Flex,
+  HStack,
   Modal,
-  ModalOverlay,
-  ModalContent,
   ModalBody,
   ModalCloseButton,
-  HStack,
-  VStack,
+  ModalContent,
+  ModalOverlay,
   Text,
   useColorModeValue,
-  Flex
+  VStack
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
-import { settingInfoLookup } from '../constants/SettingsMap'
+
 import useScrollbarStyles from '../hooks/useScrollbarStyles'
 import useMainBgColour from '../hooks/useMainBgColour'
-import NotificationMacroSettingsPanel from "../components/macrosettings/NotificationMacroSettingsPanel";
-import DefaultMacroSettings from "../components/macrosettings/DefaultMacroSettings";
-import MacroSettingsLeftPanel from "../components/macrosettings/MacroSettingsLeftPanel";
+import NotificationMacroSettingsPanel from '../components/macrosettings/NotificationMacroSettingsPanel'
+import DefaultMacroSettings from '../components/macrosettings/DefaultMacroSettings'
+import MacroSettingsLeftPanel from '../components/macrosettings/MacroSettingsLeftPanel'
+import { macroSettingInfoLookup } from "../constants/MacroSettingsMap";
 
 type Props = {
   isOpen: boolean
@@ -83,10 +85,11 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
             sx={useScrollbarStyles()}
           >
             <ModalBody w="full" p={0}>
-              <VStack w="600px" justifyContent="left" spacing={4}>
-                <Text w="full" fontWeight="bold" fontSize="large">
-                  {settingInfoLookup.get(pageIndex)?.displayString}
+              <VStack w="full" justifyContent="center" spacing={2} p={2}>
+                <Text w="full" align="center" fontWeight="bold" fontSize="large">
+                  {macroSettingInfoLookup.get(pageIndex)?.displayString + " Settings"}
                 </Text>
+                <Divider></Divider>
                 {SelectedPageComponent}
               </VStack>
             </ModalBody>
