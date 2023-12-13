@@ -126,7 +126,7 @@ export default function KeyPressForm({
             justifyContent="space-around"
           >
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownUpArrowsIcon />}
               w="full"
               size={['sm', 'md']}
@@ -136,7 +136,7 @@ export default function KeyPressForm({
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownArrowIcon />}
               w="full"
               size={['sm', 'md']}
@@ -146,7 +146,7 @@ export default function KeyPressForm({
               <Text fontSize={['md', 'md', 'sm']}>Key Down</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<UpArrowIcon />}
               w="full"
               size={['sm', 'md']}
