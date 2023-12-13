@@ -5,6 +5,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import useMainBgColour from '../../../../hooks/useMainBgColour'
+import { borderRadiusStandard } from "../../../../theme/config";
 
 interface Props {
   id: number
@@ -46,7 +47,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
       style={style}
       {...attributes}
       w={isSmall ? 'fit-content' : 'full'}
-      rounded="md"
+      rounded={borderRadiusStandard}
       spacing="0px"
       bg={
         selectedElementId !== undefined && id === selectedElementId + 1
@@ -61,7 +62,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
         px={4}
         h="full"
         bg={handleBg}
-        roundedLeft="md"
+        roundedLeft={borderRadiusStandard}
         cursor="grab"
       >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />

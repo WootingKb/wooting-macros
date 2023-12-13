@@ -16,6 +16,7 @@ import { Macro } from '../../types'
 import MacroCard from './MacroCard'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
+import { borderRadiusStandard } from "../../theme/config";
 
 export default function MacroList() {
   const { selection, onCollectionUpdate, changeViewState } =
@@ -55,7 +56,7 @@ export default function MacroList() {
             h="full"
             bg={useMainBgColour()}
             boxShadow={shadowColour}
-            rounded="2xl"
+            rounded={borderRadiusStandard}
             p={3}
             m="auto"
             justifyContent="center"
