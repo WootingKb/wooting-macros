@@ -46,7 +46,7 @@ export default function DragWrapper({ id, element, children }: Props) {
         roundedLeft="md"
         cursor="grab"
       >
-        <DragHandleIcon w={4} h={8} color={handleIconColour} />
+        <DragHandleIcon w={4} h={8} color={handleIconColour}/>
       </Center>
       {children}
     </HStack>
