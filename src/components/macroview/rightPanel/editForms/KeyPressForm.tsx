@@ -58,8 +58,8 @@ export default function KeyPressForm({
           rounded={borderRadiusStandard}
         >
           <Text
+            fontSize={['sm', 'md', 'md']}
             w="fit-content"
-            fontSize="sm"
             whiteSpace="nowrap"
             fontWeight="bold"
           >

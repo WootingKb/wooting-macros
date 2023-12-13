@@ -18,7 +18,7 @@ import useMainBgColour from '../hooks/useMainBgColour'
 import NotificationMacroSettingsPanel from '../components/macrosettings/NotificationMacroSettingsPanel'
 import DefaultMacroSettings from '../components/macrosettings/DefaultMacroSettings'
 import MacroSettingsLeftPanel from '../components/macrosettings/MacroSettingsLeftPanel'
-import { macroSettingInfoLookup } from "../constants/MacroSettingsMap";
+import { macroSettingInfoLookup } from '../constants/MacroSettingsMap'
 
 type Props = {
   isOpen: boolean
@@ -86,8 +86,14 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
           >
             <ModalBody w="full" p={0}>
               <VStack w="full" justifyContent="center" spacing={2} p={2}>
-                <Text w="full" align="center" fontWeight="bold" fontSize="large">
-                  {macroSettingInfoLookup.get(pageIndex)?.displayString + " Settings"}
+                <Text
+                  w="full"
+                  align="center"
+                  fontWeight="bold"
+                  fontSize="large"
+                >
+                  {macroSettingInfoLookup.get(pageIndex)?.displayString +
+                    ' Settings'}
                 </Text>
                 <Divider></Divider>
                 {SelectedPageComponent}
