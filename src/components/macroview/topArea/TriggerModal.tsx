@@ -127,7 +127,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     >
       <ModalOverlay />
       <ModalContent p={2}>
-        <ModalHeader>Trigger Keys</ModalHeader>
+        <ModalHeader fontWeight="bold" alignSelf="center">Trigger Keys</ModalHeader>
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           <VStack w="full" justifyContent="space-between">
@@ -137,14 +137,14 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 gap="4px"
                 minH="42px"
                 bg={secondBg}
-                alignItems="center"
+                justifyContent="center"
                 rounded="md"
                 p="9px"
                 shadow="inner"
               >
                 {items.length === 0 && (
-                  <Text>
-                    Set up to 4 keys* or a mouse button to use as the trigger.
+                  <Text textAlign="center">
+                    {"Set up to 4 keys or a mouse button to use as the trigger"}
                   </Text>
                 )}
                 {items.map((element, index) => (
@@ -154,7 +154,10 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 ))}
               </Flex>
               <HStack w="full" justifyContent="space-between">
-                <Text fontSize="xs">* (1 non-modifer, up to 3 modifiers)</Text>
+                <VStack alignItems="left">
+                <Text fontSize="xs">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
+                <Text fontSize="xs">{`non-modifier has to be last.`}</Text>
+                </VStack>
                 <Button
                   variant="brandRecord"
                   size="sm"
