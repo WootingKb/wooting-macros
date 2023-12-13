@@ -1,19 +1,18 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Text,
-  ModalFooter,
   Button,
   Divider,
-  HStack,
-  VStack,
-  Kbd,
   Flex,
+  HStack,
+  Kbd,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
   useColorModeValue,
-  Switch
+  VStack
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -127,7 +126,9 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     >
       <ModalOverlay />
       <ModalContent p={2}>
-        <ModalHeader fontWeight="bold" alignSelf="center">Trigger Keys</ModalHeader>
+        <ModalHeader fontWeight="bold" alignSelf="center">
+          Trigger Keys
+        </ModalHeader>
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           <VStack w="full" justifyContent="space-between">
@@ -144,19 +145,24 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               >
                 {items.length === 0 && (
                   <Text textAlign="center">
-                    {"Set up to 4 keys or a mouse button to use as the trigger"}
+                    {'Set up to 4 keys or a mouse button to use as the trigger'}
                   </Text>
                 )}
                 {items.map((element, index) => (
-                  <Kbd variant="brand" h="fit-content" key={element}>
+                  <Kbd
+                    fontSize="md"
+                    variant="brand"
+                    h="fit-content"
+                    key={element}
+                  >
                     {displayNames[index]}
                   </Kbd>
                 ))}
               </Flex>
               <HStack w="full" justifyContent="space-between">
                 <VStack alignItems="left">
-                <Text fontSize="xs">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
-                <Text fontSize="xs">{`non-modifier has to be last.`}</Text>
+                  <Text fontSize="xs">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
+                  <Text fontSize="xs">{`non-modifier has to be last.`}</Text>
                 </VStack>
                 <Button
                   variant="brandRecord"
