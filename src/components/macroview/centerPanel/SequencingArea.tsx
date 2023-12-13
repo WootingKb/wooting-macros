@@ -1,16 +1,16 @@
 import {
-  VStack,
-  HStack,
-  Text,
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Button,
   Divider,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Stack,
-  useDisclosure,
+  HStack,
   IconButton,
-  Tooltip
+  Stack,
+  Text,
+  Tooltip,
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react'
 import { DeleteIcon, SettingsIcon, TimeIcon } from '@chakra-ui/icons'
 import { useCallback } from 'react'
@@ -23,9 +23,8 @@ import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
-import { mode } from "@chakra-ui/theme-tools";
-import useMainBgColour from "../../../hooks/useMainBgColour";
-import { borderRadiusStandard } from "../../../theme/config";
+import useMainBgColour from '../../../hooks/useMainBgColour'
+import { borderRadiusStandard } from '../../../theme/config' // interface Props {
 
 // interface Props {
 //   onOpenSettingsModal: () => void
