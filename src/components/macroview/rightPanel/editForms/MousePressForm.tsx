@@ -8,7 +8,8 @@ import {
   HStack,
   Input,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  useToast
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
@@ -28,11 +29,12 @@ export default function MousePressForm({
   selectedElement
 }: Props) {
   const [headingText, setHeadingText] = useState<JSX.Element | string>('')
-  const [mousepressDuration, setMousepressDuration] = useState('1')
+  const [mousepressDuration, setMousepressDuration] = useState('20')
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const toast = useToast()
 
   useEffect(() => {
     const typeString: keyof typeof KeyType = selectedElement.data.data
@@ -81,11 +83,26 @@ export default function MousePressForm({
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    let duration
-    if (mousepressDuration === '') {
-      duration = 0
+    let duration = 20
+
+    if (Number(mousepressDuration) > 20) {
+      duration = Number(mousepressDuration)
+    } else if (mousepressDuration === '') {
+      toast({
+        title: 'Default duration applied',
+        description: 'Applied default duration of 20ms',
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
     } else {
-      duration = parseInt(mousepressDuration)
+      toast({
+        title: 'Minimum duration',
+        description: 'Duration must be at least 20ms',
+        status: 'warning',
+        duration: 4000,
+        isClosable: true
+      })
       if (Number.isNaN(duration)) {
         return
       }
@@ -209,6 +226,7 @@ export default function MousePressForm({
           <GridItem w="full">
             <Input
               type="number"
+              placeholder="20"
               variant="brandAccent"
               value={mousepressDuration}
               onChange={onMousepressDurationChange}
