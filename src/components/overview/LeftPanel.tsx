@@ -83,11 +83,13 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     onCollectionUpdate,
     changeSelectedCollectionIndex,
     setSearchValue,
+    isMacroOutputEnabled,
+    changeMacroOutputEnabled,
     searchValue
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
-  const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
+
 
   const onNewCollectionButtonPress = useCallback(() => {
     onCollectionAdd({
@@ -174,23 +176,22 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           colorScheme={isMacroOutputEnabled ? 'green' : 'red'}
           size="sm"
           onClick={() => {
-            setIsMacroOutputEnabled((value) => {
-              updateMacroOutput(value).catch((e) => {
-                error(e)
-                toast({
-                  title: `Error ${
-                    !value ? 'disabling' : 'enabling'
-                  } macro output`,
-                  description: `Unable to ${
-                    !value ? 'disable' : 'enable'
-                  } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
-                  status: 'error',
-                  duration: 2000,
-                  isClosable: true
-                })
+            const value = !isMacroOutputEnabled;
+            updateMacroOutput(value).catch((e) => {
+              error(e)
+              toast({
+                title: `Error ${
+                  !value ? 'disabling' : 'enabling'
+                } macro output`,
+                description: `Unable to ${
+                  !value ? 'disable' : 'enable'
+                } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
+                status: 'error',
+                duration: 2000,
+                isClosable: true
               })
-              return !value
-            })
+            });
+            changeMacroOutputEnabled(value);
           }}
         >
           <Text fontSize={['sm', 'md']}>
