@@ -165,3 +165,5 @@ export const scrollbarsStylesDark = {
     borderRadius: scrollbarRadiusStandard
   }
 }
+
+export const DefaultMacroDelay = '20'
