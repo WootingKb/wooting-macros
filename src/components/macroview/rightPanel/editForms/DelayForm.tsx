@@ -7,7 +7,8 @@ import {
   HStack,
   Input,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  useToast
 } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
@@ -24,11 +25,12 @@ export default function DelayForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [delayDuration, setDelayDuration] = useState('0')
+  const [delayDuration, setDelayDuration] = useState('20')
   const { updateElement } = useMacroContext()
   const { config } = useSettingsContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const toast = useToast()
 
   useEffect(() => {
     if (
@@ -48,11 +50,27 @@ export default function DelayForm({
   )
 
   const onInputBlur = useCallback(() => {
-    let duration
+    let duration = Number(delayDuration)
+
     if (delayDuration === '') {
-      duration = 0
+      toast({
+        title: 'Default duration applied',
+        description: 'Applied default duration of 20ms',
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
+      duration = 20
+    } else if (Number(delayDuration) < 1) {
+      toast({
+        title: 'Minimum duration applied',
+        description: 'Applied minimum duration of 1ms',
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
+      duration = 1
     } else {
-      duration = parseInt(delayDuration)
       if (Number.isNaN(duration)) {
         return
       }
@@ -111,6 +129,7 @@ export default function DelayForm({
         <GridItem w="full">
           <Input
             type="number"
+            placeholder="20"
             variant="brandAccent"
             value={delayDuration}
             onChange={onDelayDurationChange}
