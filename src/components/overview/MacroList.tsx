@@ -1,5 +1,8 @@
 import { AddIcon } from '@chakra-ui/icons'
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
   Flex,
@@ -69,10 +72,24 @@ export default function MacroList() {
       overflowY="auto"
       sx={useScrollbarStyles()}
     >
+      <  Alert
+        status="info"
+        w={-25}
+        rounded={borderRadiusStandard}
+        py="1"
+        p={2}
+        m={2}
+      >
+        <AlertIcon boxSize={['16px', '20px']} />
+        <AlertDescription fontSize={['md', 'lg']} fontWeight="bold">
+          Macros will not function while Macro output is disabled
+        </AlertDescription>
+      </Alert>
       <Grid
         w="full"
         templateColumns={['repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}
         gap={'25px'}
+        p={2}
       >
         {!searchValue &&
             <>

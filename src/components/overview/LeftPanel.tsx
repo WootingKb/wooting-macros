@@ -1,13 +1,10 @@
 import { AddIcon, SettingsIcon } from '@chakra-ui/icons'
 import {
-  Box,
   Button,
   Divider,
-  HStack,
   Input,
-  Switch,
   Text,
-  Tooltip,
+  useColorModeValue,
   useToast,
   VStack
 } from '@chakra-ui/react'
@@ -21,17 +18,24 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 import { error } from 'tauri-plugin-log'
+import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   onOpenSettingsModal: () => void
+}
+
+type SearchBarProps = {
+  searchValue: string
+  changeSearchValue: (v: string) => void
+  setDisplaySearchResults: (v: boolean) => void
 }
 
 function SearchBar({
   searchValue,
   changeSearchValue,
   setDisplaySearchResults
-}) {
-  const handleInput = (event) => {
+}: SearchBarProps) {
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     changeSearchValue(event.target.value.toLocaleLowerCase())
     if (event.target.value !== '') {
       setDisplaySearchResults(true)
@@ -39,11 +43,30 @@ function SearchBar({
       setDisplaySearchResults(false)
     }
   }
+  const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
+  const borderColour = useColorModeValue(
+    'primary-light.500',
+    'primary-dark.500'
+  )
 
   return (
     <Input
-      placeholder="Search..."
-      size="md"
+      type="search"
+      maxW={['full']}
+      maxH="32px"
+      variant="brand"
+      placeholder="Search"
+      _placeholder={{ opacity: 1, color: borderColour }}
+      sx={{
+        '&::-webkit-search-cancel-button': {
+          WebkitAppearance: 'none',
+          display: 'inline-block',
+          width: '16px',
+          height: '16px',
+          background: `linear-gradient(45deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,${cancelSearchButtonColour} 45%,${cancelSearchButtonColour} 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%), linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,${cancelSearchButtonColour} 45%,${cancelSearchButtonColour} 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%)`,
+          cursor: 'pointer'
+        }
+      }}
       value={searchValue}
       onChange={handleInput}
     />
@@ -59,7 +82,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     onCollectionAdd,
     onCollectionUpdate,
     changeSelectedCollectionIndex,
-    changeSearchValue,
+    setSearchValue,
     searchValue
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
@@ -86,70 +109,15 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     >
       <VStack w="full" h="full" overflowY="auto">
         <VStack w="full" h="fit-content" p={4} gap={2}>
-          <HStack w="full" justifyContent="space-between" px={1}>
-            <Text w="full" fontWeight="bold" fontSize="28px">
-              Collections
-            </Text>
-            <Tooltip
-              hasArrow
-              label={
-                isMacroOutputEnabled
-                  ? 'Disable Macro Output'
-                  : 'Enable Macro Output'
-              }
-              closeOnClick={false}
-              variant="brand"
-            >
-              <Box>
-                <Switch
-                  size="sm"
-                  variant="brand"
-                  defaultChecked={isMacroOutputEnabled}
-                  isChecked={isMacroOutputEnabled}
-                  aria-label="Macro Output Toggle"
-                  onChange={() => {
-                    setIsMacroOutputEnabled((value) => {
-                      updateMacroOutput(value).catch((e) => {
-                        error(e)
-                        toast({
-                          title: `Error ${
-                            !value ? 'disabling' : 'enabling'
-                          } macro output`,
-                          description: `Unable to ${
-                            !value ? 'disable' : 'enable'
-                          } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
-                          status: 'error',
-                          duration: 2000,
-                          isClosable: true
-                        })
-                      })
-                      return !value
-                    })
-                  }}
-                />
-              </Box>
-            </Tooltip>
-          </HStack>
+          <Text w="full" fontWeight="bold" fontSize="28px">
+            Collections
+          </Text>
+
           <SearchBar
             searchValue={searchValue}
-            changeSearchValue={changeSearchValue}
+            changeSearchValue={setSearchValue}
             setDisplaySearchResults={setDisplaySearchResults}
           />
-          <Divider />
-
-          {!displaySearchResults && (
-            <Button
-              size="lg"
-              w="full"
-              variant="yellowGradient"
-              p={2}
-              leftIcon={<AddIcon />}
-              fontSize="md"
-              onClick={onNewCollectionButtonPress}
-            >
-              New Collection
-            </Button>
-          )}
           <Divider />
         </VStack>
         <VStack
@@ -182,9 +150,53 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 }
               />
             ))}
+          {!displaySearchResults && (
+            <Button
+              rounded={borderRadiusStandard}
+              size="md"
+              w="full"
+              variant="yellowGradient"
+              p={1}
+              minH="2.5rem"
+              margin={1}
+              leftIcon={<AddIcon />}
+              fontSize="md"
+              onClick={onNewCollectionButtonPress}
+            >
+              New Collection
+            </Button>
+          )}
         </VStack>
       </VStack>
-      <HStack w="full" px={4} pb={4}>
+      <VStack w="full" px={4} pb={4}>
+        <Button
+          w="full"
+          colorScheme={isMacroOutputEnabled ? 'green' : 'red'}
+          size="sm"
+          onClick={() => {
+            setIsMacroOutputEnabled((value) => {
+              updateMacroOutput(value).catch((e) => {
+                error(e)
+                toast({
+                  title: `Error ${
+                    !value ? 'disabling' : 'enabling'
+                  } macro output`,
+                  description: `Unable to ${
+                    !value ? 'disable' : 'enable'
+                  } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
+                  status: 'error',
+                  duration: 2000,
+                  isClosable: true
+                })
+              })
+              return !value
+            })
+          }}
+        >
+          <Text fontSize={['sm', 'md']}>
+            {isMacroOutputEnabled ? 'Disable' : 'Enable'} Macro Output
+          </Text>
+        </Button>
         <Button
           w="full"
           variant="brandAccent"
@@ -194,7 +206,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
         >
           <Text fontSize={['sm', 'md']}>Settings</Text>
         </Button>
-      </HStack>
+      </VStack>
     </VStack>
   )
 }
