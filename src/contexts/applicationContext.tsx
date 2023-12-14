@@ -161,6 +161,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
       searchValue,
+      setSearchValue,
       changeSearchValue,
     }),
     [
@@ -175,6 +176,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
       searchValue,
+      setSearchValue,
       changeSearchValue,
     ]
   )
