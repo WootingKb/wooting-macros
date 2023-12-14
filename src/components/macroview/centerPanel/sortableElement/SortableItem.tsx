@@ -117,11 +117,10 @@ export default function SortableItem({
     onElementDelete(id - 1)
   }, [id, isSelected, onElementDelete, updateSelectedElementId])
 
-  const secondBg = useColorModeValue('primary-light.100', 'primary-dark.800')
+  const secondBg = useColorModeValue('primary-light.0', 'primary-dark.800')
 
   return (
     <HStack
-
       w="full"
       h="full"
       bg={
@@ -131,7 +130,8 @@ export default function SortableItem({
       }
       justifyContent="space-around"
       spacing="0px"
-      rounded={borderRadiusStandard}
+      roundedRight={borderRadiusStandard}
+      roundedLeft={0}
       cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >
