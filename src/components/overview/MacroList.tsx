@@ -176,6 +176,7 @@ export default function MacroList() {
                   macro={macro}
                   index={index}
                   onDelete={onMacroDelete}
+                  collectionName={collection.name}
                 />
               </GridItem>
             </motion.div>

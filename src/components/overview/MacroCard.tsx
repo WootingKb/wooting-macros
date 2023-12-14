@@ -30,11 +30,21 @@ interface Props {
   macro: Macro
   index: number
   onDelete: (index: number) => void
+  collectionName?: string
 }
 
-export default function MacroCard({ macro, index, onDelete }: Props) {
-  const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
-    useApplicationContext()
+export default function MacroCard({
+  macro,
+  index,
+  onDelete,
+  collectionName
+}: Props) {
+  const {
+    selection,
+    onCollectionUpdate,
+    changeSelectedMacroIndex,
+    searchValue
+  } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('md', 'white-md')
@@ -109,7 +119,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           >
             <KebabVertical />
           </MenuButton>
-          <MenuList p="2" right={0}>
+          <MenuList p="2" right={0} position="relative" zIndex={3}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
@@ -125,6 +135,13 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       </HStack>
       {/** Trigger Keys Display */}
       <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
+        {searchValue.length !== 0 && (
+          <HStack alignSelf="flex-start">
+            <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
+              {collectionName}
+            </Text>
+          </HStack>
+        )}
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
           Trigger Keys
         </Text>
