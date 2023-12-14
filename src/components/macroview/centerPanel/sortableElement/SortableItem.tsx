@@ -1,10 +1,9 @@
-import { EditIcon, TimeIcon } from '@chakra-ui/icons'
+import { TimeIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
   Flex,
   HStack,
-  IconButton,
   Menu,
   MenuButton,
   MenuItem,
