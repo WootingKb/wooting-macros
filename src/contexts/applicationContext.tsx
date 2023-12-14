@@ -35,6 +35,7 @@ function ApplicationProvider({children}: ApplicationProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
   const [searchValue, setSearchValue] = useState("");
+  const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
     macroIndex: undefined
@@ -112,6 +113,12 @@ function ApplicationProvider({children}: ApplicationProviderProps) {
     }, [setSearchValue]
   )
 
+  const changeMacroOutputEnabled = useCallback(
+    (value: boolean) => {
+      setIsMacroOutputEnabled(value)
+    }, [setIsMacroOutputEnabled]
+  )
+
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       let newIndex = 0
@@ -162,6 +169,8 @@ function ApplicationProvider({children}: ApplicationProviderProps) {
       changeSelectedMacroIndex,
       searchValue,
       setSearchValue,
+      isMacroOutputEnabled,
+      changeMacroOutputEnabled,
       changeSearchValue,
     }),
     [
@@ -177,6 +186,8 @@ function ApplicationProvider({children}: ApplicationProviderProps) {
       changeSelectedMacroIndex,
       searchValue,
       setSearchValue,
+      isMacroOutputEnabled,
+      changeMacroOutputEnabled,
       changeSearchValue,
     ]
   )
