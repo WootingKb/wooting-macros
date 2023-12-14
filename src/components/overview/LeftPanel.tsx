@@ -13,7 +13,7 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { updateMacroOutput } from '../../constants/utils'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
@@ -24,30 +24,13 @@ interface Props {
   onOpenSettingsModal: () => void
 }
 
-type SearchBarProps = {
-  searchValue: string
-  changeSearchValue: (v: string) => void
-  setDisplaySearchResults: (v: boolean) => void
-}
-
-function SearchBar({
-  searchValue,
-  changeSearchValue,
-  setDisplaySearchResults
-}: SearchBarProps) {
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    changeSearchValue(event.target.value.toLocaleLowerCase())
-    if (event.target.value !== '') {
-      setDisplaySearchResults(true)
-    } else {
-      setDisplaySearchResults(false)
-    }
-  }
+function SearchBar() {
   const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
   const borderColour = useColorModeValue(
     'primary-light.500',
     'primary-dark.500'
   )
+  const { searchValue, setSearchValue } = useApplicationContext()
 
   return (
     <Input
@@ -68,28 +51,24 @@ function SearchBar({
         }
       }}
       value={searchValue}
-      onChange={handleInput}
+      onChange={(event) => setSearchValue(event.target.value)}
     />
   )
 }
 
 export default function LeftPanel({ onOpenSettingsModal }: Props) {
-  const [displaySearchResults, setDisplaySearchResults] = useState(false)
-
   const {
     collections,
     selection,
     onCollectionAdd,
     onCollectionUpdate,
     changeSelectedCollectionIndex,
-    setSearchValue,
     isMacroOutputEnabled,
     changeMacroOutputEnabled,
     searchValue
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
-
 
   const onNewCollectionButtonPress = useCallback(() => {
     onCollectionAdd({
@@ -115,11 +94,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
             Collections
           </Text>
 
-          <SearchBar
-            searchValue={searchValue}
-            changeSearchValue={setSearchValue}
-            setDisplaySearchResults={setDisplaySearchResults}
-          />
+          <SearchBar />
           <Divider />
         </VStack>
         <VStack
@@ -132,7 +107,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {!displaySearchResults &&
+          {searchValue.length === 0 &&
             collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
@@ -152,7 +127,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 }
               />
             ))}
-          {!displaySearchResults && (
+          {searchValue.length === 0 && (
             <Button
               rounded={borderRadiusStandard}
               size="md"
@@ -176,7 +151,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           colorScheme={isMacroOutputEnabled ? 'green' : 'red'}
           size="sm"
           onClick={() => {
-            const value = !isMacroOutputEnabled;
+            const value = !isMacroOutputEnabled
             updateMacroOutput(value).catch((e) => {
               error(e)
               toast({
@@ -190,8 +165,8 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 duration: 2000,
                 isClosable: true
               })
-            });
-            changeMacroOutputEnabled(value);
+            })
+            changeMacroOutputEnabled(value)
           }}
         >
           <Text fontSize={['sm', 'md']}>
