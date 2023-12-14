@@ -63,6 +63,7 @@ export default function SelectElementButton({
         h="full"
         as="button"
         bg={bg}
+        p={2}
         _hover={{ bg: hoverBg }}
         color={textColor}
         border="1px"
