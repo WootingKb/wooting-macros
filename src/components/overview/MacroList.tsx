@@ -8,6 +8,8 @@ import {
   Flex,
   Grid,
   GridItem,
+  HStack,
+  Text,
   useColorModeValue,
   VStack
 } from '@chakra-ui/react'
@@ -182,6 +184,11 @@ export default function MacroList() {
             </motion.div>
           ))}
       </Grid>
+      {matchingMacros.length === 0 && (
+        <HStack align="center" justifyContent="center">
+          <Text>{`No macros correspond to: "${searchValue}"`}</Text>
+        </HStack>
+      )}
     </Box>
   )
 }
