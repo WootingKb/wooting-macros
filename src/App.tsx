@@ -32,6 +32,7 @@ function App() {
         event.preventDefault();
       }
     });
+    document.addEventListener('selectstart', (event) => event.preventDefault())
     init({ data })
   }, [])
 
