@@ -134,13 +134,12 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
     useRecordingSequence(onItemChanged)
 
   return (
-    <VStack w="41%" h="full" bg={useMainBgColour()}  justifyContent="top">
+    <VStack w="41%" h="full" bg={useMainBgColour()} justifyContent="top">
       {/** Header */}
-      <VStack w="full"  px={[2, 4, 6]} pt={[2, 4]}>
+      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
         <Stack
           direction={['column', 'row']}
           w="full"
-
           textAlign="left"
           justifyContent="space-between"
           alignItems={['start', 'center']}
@@ -162,7 +161,6 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         </Stack>
       </VStack>
       <HStack
-
         justifyContent="center"
         w="full"
         alignItems="center"
@@ -182,17 +180,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           {recording ? 'Stop' : 'Record'}
         </Button>
         <Button
-          variant="brandWarning"
-          leftIcon={<DeleteIcon />}
-          size={['xs', 'sm', 'md']}
-          fontSize={['xs', '13.5', 'lg']}
-          onClick={onOpen}
-          isDisabled={sequence.length === 0}
-        >
-          Clear All
-        </Button>
-        <Button
-          variant="brandAccent"
+          variant="brandRecord"
           leftIcon={<TimeIcon />}
           size={['xs', 'sm', 'md']}
           fontSize={['xs', '13.5', 'lg']}
@@ -205,6 +193,17 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         >
           Add Delay
         </Button>
+        <Button
+          variant="brandWarning"
+          leftIcon={<DeleteIcon />}
+          size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
+          onClick={onOpen}
+          isDisabled={sequence.length === 0}
+        >
+          Clear All
+        </Button>
+
         <Tooltip label="Open Macro Advanced Settings" hasArrow variant="brand">
           <IconButton
             variant="brand"
@@ -222,7 +221,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         stopRecording={stopRecording}
       />
       <Divider w="full" />
-      <SortableList  recording={recording} stopRecording={stopRecording} />
+      <SortableList recording={recording} stopRecording={stopRecording} />
     </VStack>
   )
 }
