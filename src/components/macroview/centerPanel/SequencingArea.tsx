@@ -175,6 +175,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandRecord"
           leftIcon={recording ? <StopIcon /> : <RecordIcon />}
           size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
           isActive={recording}
           onClick={recording ? stopRecording : startRecording}
         >
@@ -184,6 +185,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandWarning"
           leftIcon={<DeleteIcon />}
           size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
           onClick={onOpen}
           isDisabled={sequence.length === 0}
         >
@@ -193,6 +195,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandAccent"
           leftIcon={<TimeIcon />}
           size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
           onClick={() => {
             onElementAdd({
               type: 'DelayEventAction',
