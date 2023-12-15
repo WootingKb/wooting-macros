@@ -9,15 +9,22 @@ import {
   Input,
   Text,
   useColorModeValue,
-  useToast
+  useToast,
+  VStack
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
 import { mouseEnumLookup } from '../../../../constants/MouseMap'
-import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
+import {
+  DownArrowIcon,
+  DownUpArrowsIcon,
+  ResetDefaultIcon,
+  UpArrowIcon
+} from '../../../icons'
 import { MouseEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
+import { DefaultMouseDelay } from '../../../../constants/utils'
 
 interface Props {
   selectedElementId: number
@@ -29,12 +36,14 @@ export default function MousePressForm({
   selectedElement
 }: Props) {
   const [headingText, setHeadingText] = useState<JSX.Element | string>('')
-  const [mousepressDuration, setMousepressDuration] = useState('20')
+  const [mousepressDuration, setMousepressDuration] =
+    useState(DefaultMouseDelay)
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
+  const [resetTriggered, setResetTriggered] = useState(false)
 
   useEffect(() => {
     const typeString: keyof typeof KeyType = selectedElement.data.data
@@ -70,7 +79,7 @@ export default function MousePressForm({
         </Box>
       </HStack>
     )
-  }, [selectedElement])
+  }, [bg, kebabColour, selectedElement])
 
   const onMousepressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +94,7 @@ export default function MousePressForm({
     }
     let duration = 20
 
-    if (Number(mousepressDuration) > 20) {
+    if (Number(mousepressDuration) >= 20) {
       duration = Number(mousepressDuration)
     } else if (mousepressDuration === '') {
       toast({
@@ -95,7 +104,7 @@ export default function MousePressForm({
         duration: 4000,
         isClosable: true
       })
-    } else {
+    } else if (Number(mousepressDuration) < 20) {
       toast({
         title: 'Minimum duration',
         description: 'Duration must be at least 20ms',
@@ -103,9 +112,8 @@ export default function MousePressForm({
         duration: 4000,
         isClosable: true
       })
-      if (Number.isNaN(duration)) {
-        return
-      }
+    } else if (Number.isNaN(duration)) {
+      return
     }
 
     const temp: MouseEventAction = {
@@ -147,7 +155,9 @@ export default function MousePressForm({
                 ...temp.data.data,
                 type: 'DownUp',
                 duration:
-                  temp.data.data.type === 'DownUp' ? temp.data.data.duration : 1
+                  temp.data.data.type === 'DownUp'
+                    ? temp.data.data.duration
+                    : Number(DefaultMouseDelay)
               }
             }
           }
@@ -159,6 +169,18 @@ export default function MousePressForm({
     },
     [selectedElement, selectedElementId, updateElement]
   )
+
+  useEffect(() => {
+    if (resetTriggered) {
+      onInputBlur()
+      setResetTriggered(false)
+    }
+  }, [resetTriggered])
+
+  const onResetClick = () => {
+    setMousepressDuration('')
+    setResetTriggered(true)
+  }
 
   return (
     <>
@@ -223,7 +245,7 @@ export default function MousePressForm({
               Duration (ms)
             </Text>
           </GridItem>
-          <GridItem w="full">
+          <VStack w="full">
             <Input
               type="number"
               placeholder="20"
@@ -233,7 +255,18 @@ export default function MousePressForm({
               onBlur={onInputBlur}
               isInvalid={Number.isNaN(parseInt(mousepressDuration))}
             />
-          </GridItem>
+            <Button
+              variant="brandTertiary"
+              leftIcon={<ResetDefaultIcon />}
+              w="full"
+              value=""
+              m={1}
+              size={['sm', 'md']}
+              onClick={onResetClick}
+            >
+              <Text fontSize={['md', 'md', 'sm']}>Reset to Default</Text>
+            </Button>
+          </VStack>
         </Grid>
       )}
     </>

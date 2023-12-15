@@ -8,13 +8,15 @@ import {
   Input,
   Text,
   useColorModeValue,
-  useToast
+  useToast, VStack
 } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
 import { DelayEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
+import { DefaultDelayDelay } from "../../../../constants/utils";
+import { ResetDefaultIcon } from "../../../icons";
 
 interface Props {
   selectedElementId: number
@@ -25,12 +27,13 @@ export default function DelayForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [delayDuration, setDelayDuration] = useState('20')
+  const [delayDuration, setDelayDuration] = useState(DefaultDelayDelay)
   const { updateElement } = useMacroContext()
   const { config } = useSettingsContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
+  const [resetTriggered, setResetTriggered] = useState(false)
 
   useEffect(() => {
     if (
@@ -70,10 +73,8 @@ export default function DelayForm({
         isClosable: true
       })
       duration = 1
-    } else {
-      if (Number.isNaN(duration)) {
-        return
-      }
+    } else if (Number.isNaN(duration)) {
+      return
     }
 
     const temp: DelayEventAction = {
@@ -83,19 +84,31 @@ export default function DelayForm({
     updateElement(temp, selectedElementId)
   }, [delayDuration, selectedElement, selectedElementId, updateElement])
 
-  const resetDuration = useCallback(() => {
-    setDelayDuration(config.DefaultDelayValue.toString())
-    const temp: DelayEventAction = {
-      ...selectedElement,
-      data: config.DefaultDelayValue
+  // const resetDuration = useCallback(() => {
+  //   setDelayDuration(config.DefaultDelayValue.toString())
+  //   const temp: DelayEventAction = {
+  //     ...selectedElement,
+  //     data: config.DefaultDelayValue
+  //   }
+  //   updateElement(temp, selectedElementId)
+  // }, [
+  //   config.DefaultDelayValue,
+  //   selectedElement,
+  //   selectedElementId,
+  //   updateElement
+  // ])
+
+  useEffect(() => {
+    if (resetTriggered) {
+      onInputBlur()
+      setResetTriggered(false)
     }
-    updateElement(temp, selectedElementId)
-  }, [
-    config.DefaultDelayValue,
-    selectedElement,
-    selectedElementId,
-    updateElement
-  ])
+  }, [resetTriggered])
+
+  const onResetClick = () => {
+    setDelayDuration('')
+    setResetTriggered(true)
+  }
 
   return (
     <>
@@ -126,21 +139,29 @@ export default function DelayForm({
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
         </GridItem>
-        <GridItem w="full">
+        <VStack w="full">
           <Input
             type="number"
-            placeholder="20"
+            placeholder={DefaultDelayDelay}
             variant="brandAccent"
             value={delayDuration}
             onChange={onDelayDurationChange}
             onBlur={onInputBlur}
             isInvalid={Number.isNaN(parseInt(delayDuration))}
           />
-        </GridItem>
+          <Button
+            variant="brandTertiary"
+            leftIcon={<ResetDefaultIcon />}
+            w="full"
+            value=""
+            m={1}
+            size={['sm', 'md']}
+            onClick={onResetClick}
+          >
+            <Text fontSize={['md', 'md', 'sm']}>Reset to Default</Text>
+          </Button>
+        </VStack>
       </Grid>
-      <Button variant="brand" w="fit-content" onClick={resetDuration}>
-        Set to Default
-      </Button>
     </>
   )
 }

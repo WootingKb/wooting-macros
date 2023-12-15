@@ -9,13 +9,13 @@ import {
   Input,
   Text,
   useColorModeValue,
-  useToast
+  useToast, VStack
 } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
 import { HIDLookup } from '../../../../constants/HIDmap'
-import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
+import { DownArrowIcon, DownUpArrowsIcon, ResetDefaultIcon, UpArrowIcon } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
 import { DefaultMacroDelay } from '../../../../constants/utils'
@@ -36,6 +36,7 @@ export default function KeyPressForm({
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
+  const [resetTriggered, setResetTriggered] = useState(false)
 
   useEffect(() => {
     if (
@@ -71,7 +72,7 @@ export default function KeyPressForm({
         </Box>
       </HStack>
     )
-  }, [selectedElement])
+  }, [bg, kebabColour, selectedElement])
 
   const onKeypressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +84,7 @@ export default function KeyPressForm({
   const onInputBlur = useCallback(() => {
     let duration = 20
 
-    if (Number(keypressDuration) > 20) {
+    if (Number(keypressDuration) >= 20) {
       duration = Number(keypressDuration)
     } else if (keypressDuration === '') {
       toast({
@@ -111,7 +112,7 @@ export default function KeyPressForm({
       data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
-  }, [keypressDuration, selectedElement, selectedElementId, updateElement])
+  }, [keypressDuration, selectedElement, selectedElementId, toast, updateElement])
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -124,6 +125,19 @@ export default function KeyPressForm({
     },
     [selectedElement, selectedElementId, updateElement]
   )
+
+  useEffect(() => {
+    if (resetTriggered) {
+      onInputBlur()
+      setResetTriggered(false)
+    }
+  }, [resetTriggered])
+
+  const onResetClick = () => {
+    setKeypressDuration('')
+    setResetTriggered(true)
+  }
+
 
   return (
     <>
@@ -188,7 +202,7 @@ export default function KeyPressForm({
               Duration (ms)
             </Text>
           </GridItem>
-          <GridItem w="full">
+          <VStack w="full">
             <Input
               type="number"
               placeholder="20"
@@ -198,7 +212,18 @@ export default function KeyPressForm({
               onBlur={onInputBlur}
               isInvalid={Number.isNaN(parseInt(keypressDuration))}
             />
-          </GridItem>
+            <Button
+              variant="brandTertiary"
+              leftIcon={<ResetDefaultIcon />}
+              w="full"
+              value=""
+              m={1}
+              size={['sm', 'md']}
+              onClick={onResetClick}
+            >
+              <Text fontSize={['md', 'md', 'sm']}>Reset to Default</Text>
+            </Button>
+          </VStack>
         </Grid>
       )}
     </>
