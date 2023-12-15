@@ -29,7 +29,6 @@ function App() {
     // TODO: Add disable for ctrl+r and f5, but only when in debug mode - envvar RUST_LOG='debug'
     document.addEventListener('keydown', (event) => {
       if (event.ctrlKey && event.key.toLowerCase() === 'f') {
-        console.error('I GOT YOU', event)
         event.preventDefault()
       }
     })
