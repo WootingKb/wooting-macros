@@ -60,7 +60,7 @@ export default function TriggerArea({ onOpen }: Props) {
         )}
       </HStack>
       <Button
-        variant="brandAccent"
+        variant="brandRecord"
         size="sm"
         px={6}
         leftIcon={<EditIcon />}
