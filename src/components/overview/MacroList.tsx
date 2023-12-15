@@ -91,7 +91,7 @@ export default function MacroList() {
           exit={{ scaleY: 0 }}
         >
           <Alert
-            status="info"
+            status="warning"
             w={-25}
             rounded={borderRadiusStandard}
             py="1"
