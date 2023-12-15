@@ -1,4 +1,4 @@
-import { VStack, Text, Box, useColorModeValue } from '@chakra-ui/react'
+import { useColorModeValue, VStack } from '@chakra-ui/react'
 import { useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
@@ -8,14 +8,11 @@ import EmptyForm from './editForms/EmptyForm'
 import KeyPressForm from './editForms/KeyPressForm'
 import MousePressForm from './editForms/MousePressForm'
 import SystemEventActionForm from './editForms/SystemEventActionForm'
-import { borderRadiusStandard } from "../../../theme/config";
-import { HIDLookup } from "../../../constants/HIDmap";
 
 export default function EditArea() {
   const selectedElement = useSelectedElement()
   const { selectedElementId } = useMacroContext()
-  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
-  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  useColorModeValue('primary-light.500', 'primary-dark.500')
 
   const SelectedElementFormComponent = useMemo(() => {
     if (!selectedElement || selectedElementId === undefined) {

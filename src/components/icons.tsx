@@ -11,6 +11,7 @@ import {
 } from 'react-icons/hi2'
 import { HiStop, HiPlay } from 'react-icons/hi'
 import { BsThreeDotsVertical } from 'react-icons/bs'
+import { RepeatClockIcon } from "@chakra-ui/icons";
 
 export const KeyboardIcon = (props: IconProps) => {
   return <Icon as={RxKeyboard} boxSize={5} {...props} />
@@ -48,3 +49,8 @@ export const StopIcon = (props: IconProps) => {
 export const RecordIcon = (props: IconProps) => {
   return <Icon as={HiPlay} boxSize={5} {...props} />
 }
+export const ResetDefaultIcon = (props: IconProps) => {
+  return <Icon as={RepeatClockIcon} boxSize={5} {...props} />
+}
+
+

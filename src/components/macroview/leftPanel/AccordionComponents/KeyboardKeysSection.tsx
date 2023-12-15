@@ -13,6 +13,7 @@ import { HidInfo } from '../../../../constants/HIDmap'
 import { KeyboardKeyCategory } from '../../../../types'
 import { KeyboardIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
+import { DefaultMacroDelay } from "../../../../constants/utils";
 
 interface Props {
   keyboardKeyCategories: KeyboardKeyCategory[]
@@ -56,7 +57,7 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                   <AspectRatio
                     h="full"
                     ratio={
-                      HIDinfo.colSpan !== undefined ? HIDinfo.colSpan / 1 : 1
+                      HIDinfo.colSpan !== undefined ? HIDinfo.colSpan : 1
                     }
                   >
                     <SelectElementButton
@@ -65,7 +66,7 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                         type: 'KeyPressEventAction',
                         data: {
                           keypress: HIDinfo.HIDcode,
-                          press_duration: 1,
+                          press_duration: Number(DefaultMacroDelay),
                           key_type: KeyType[KeyType.DownUp]
                         }
                       }}
