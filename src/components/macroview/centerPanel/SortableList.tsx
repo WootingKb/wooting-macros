@@ -1,14 +1,14 @@
 import { VStack } from '@chakra-ui/react'
 import {
-  DndContext,
   closestCenter,
-  DragOverlay,
-  useSensors,
-  useSensor,
-  PointerSensor,
-  KeyboardSensor,
+  DndContext,
   DragEndEvent,
-  DragStartEvent
+  DragOverlay,
+  DragStartEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
 } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
@@ -76,6 +76,7 @@ export default function SortableList({ recording, stopRecording }: Props) {
     >
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <VStack
+          bg="bg-dark"
           w="full"
           h="full"
           px={4}

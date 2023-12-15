@@ -134,12 +134,13 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
     useRecordingSequence(onItemChanged)
 
   return (
-    <VStack w="41%" h="full" bg={useMainBgColour()} justifyContent="top">
+    <VStack w="41%" h="full" bg={useMainBgColour()}  justifyContent="top">
       {/** Header */}
-      <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
+      <VStack w="full"  px={[2, 4, 6]} pt={[2, 4]}>
         <Stack
           direction={['column', 'row']}
           w="full"
+
           textAlign="left"
           justifyContent="space-between"
           alignItems={['start', 'center']}
@@ -161,6 +162,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         </Stack>
       </VStack>
       <HStack
+
         justifyContent="center"
         w="full"
         alignItems="center"
@@ -217,7 +219,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         stopRecording={stopRecording}
       />
       <Divider w="full" />
-      <SortableList recording={recording} stopRecording={stopRecording} />
+      <SortableList  recording={recording} stopRecording={stopRecording} />
     </VStack>
   )
 }
