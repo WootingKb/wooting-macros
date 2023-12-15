@@ -9,13 +9,19 @@ import {
   Input,
   Text,
   useColorModeValue,
-  useToast, VStack
+  useToast,
+  VStack
 } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
 import { HIDLookup } from '../../../../constants/HIDmap'
-import { DownArrowIcon, DownUpArrowsIcon, ResetDefaultIcon, UpArrowIcon } from '../../../icons'
+import {
+  DownArrowIcon,
+  DownUpArrowsIcon,
+  ResetDefaultIcon,
+  UpArrowIcon
+} from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
 import { DefaultMacroDelay } from '../../../../constants/utils'
@@ -112,7 +118,13 @@ export default function KeyPressForm({
       data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
-  }, [keypressDuration, selectedElement, selectedElementId, toast, updateElement])
+  }, [
+    keypressDuration,
+    selectedElement,
+    selectedElementId,
+    toast,
+    updateElement
+  ])
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -131,13 +143,12 @@ export default function KeyPressForm({
       onInputBlur()
       setResetTriggered(false)
     }
-  }, [resetTriggered])
+  }, [onInputBlur, resetTriggered])
 
   const onResetClick = () => {
     setKeypressDuration('')
     setResetTriggered(true)
   }
-
 
   return (
     <>
