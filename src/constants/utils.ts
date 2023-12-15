@@ -11,7 +11,7 @@ import {
 import { HIDLookup } from './HIDmap'
 import { mouseEnumLookup } from './MouseMap'
 import { sysEventLookup } from './SystemEventMap'
-import { scrollbarRadiusStandard } from "../theme/config";
+import { scrollbarRadiusStandard } from '../theme/config'
 
 export const updateBackendConfig = (
   collections: Collection[]
