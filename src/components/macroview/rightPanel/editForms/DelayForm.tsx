@@ -8,15 +8,16 @@ import {
   Input,
   Text,
   useColorModeValue,
-  useToast, VStack
+  useToast,
+  VStack
 } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
 import { DelayEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
-import { DefaultDelayDelay } from "../../../../constants/utils";
-import { ResetDefaultIcon } from "../../../icons";
+import { DefaultDelayDelay } from '../../../../constants/utils'
+import { ResetDefaultIcon } from '../../../icons'
 
 interface Props {
   selectedElementId: number
@@ -29,7 +30,6 @@ export default function DelayForm({
 }: Props) {
   const [delayDuration, setDelayDuration] = useState(DefaultDelayDelay)
   const { updateElement } = useMacroContext()
-  const { config } = useSettingsContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
@@ -82,7 +82,7 @@ export default function DelayForm({
       data: duration
     }
     updateElement(temp, selectedElementId)
-  }, [delayDuration, selectedElement, selectedElementId, updateElement])
+  }, [delayDuration, selectedElement, selectedElementId, toast, updateElement])
 
   // const resetDuration = useCallback(() => {
   //   setDelayDuration(config.DefaultDelayValue.toString())
@@ -103,7 +103,7 @@ export default function DelayForm({
       onInputBlur()
       setResetTriggered(false)
     }
-  }, [resetTriggered])
+  }, [onInputBlur, resetTriggered])
 
   const onResetClick = () => {
     setDelayDuration('')

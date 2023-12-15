@@ -127,7 +127,13 @@ export default function MousePressForm({
       }
     }
     updateElement(temp, selectedElementId)
-  }, [mousepressDuration, selectedElement, selectedElementId, updateElement])
+  }, [
+    mousepressDuration,
+    selectedElement,
+    selectedElementId,
+    toast,
+    updateElement
+  ])
 
   const onMousepressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -175,7 +181,7 @@ export default function MousePressForm({
       onInputBlur()
       setResetTriggered(false)
     }
-  }, [resetTriggered])
+  }, [onInputBlur, resetTriggered])
 
   const onResetClick = () => {
     setMousepressDuration('')
