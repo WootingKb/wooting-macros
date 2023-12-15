@@ -28,10 +28,11 @@ function App() {
     document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
     // TODO: Add disable for ctrl+r and f5, but only when in debug mode - envvar RUST_LOG='debug'
     document.addEventListener('keydown', (event) => {
-      if((event.key == 'LCtrl' || event.key == 'RCtrl') && event.key == 'F'){
-        event.preventDefault();
+      if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+        console.error('I GOT YOU', event)
+        event.preventDefault()
       }
-    });
+    })
     document.addEventListener('selectstart', (event) => event.preventDefault())
     init({ data })
   }, [])
