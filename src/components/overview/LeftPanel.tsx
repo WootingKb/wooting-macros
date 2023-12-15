@@ -38,7 +38,7 @@ function SearchBar() {
       maxW={['full']}
       maxH="32px"
       variant="brand"
-      placeholder="Search"
+      placeholder="Search for a macro..."
       _placeholder={{ opacity: 1, color: borderColour }}
       sx={{
         '&::-webkit-search-cancel-button': {
