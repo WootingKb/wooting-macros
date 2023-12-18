@@ -590,7 +590,7 @@ impl MacroBackend {
                 }
             })
         });
-        Err(anyhow::Error::msg("Error in grabbing thread!"))
+        Ok(())
     }
 }
 
