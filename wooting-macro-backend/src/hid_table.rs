@@ -55,6 +55,19 @@ impl From<&MouseButton> for u32 {
 }
 
 lazy_static! {
+    pub static ref RDEV_MODIFIER_KEYS: [rdev::Key; 8] = [
+        Key::Alt,
+        Key::AltGr,
+        Key::ControlLeft,
+        Key::ControlRight,
+        Key::ShiftLeft,
+        Key::ShiftRight,
+        Key::MetaLeft,
+        Key::MetaRight
+    ];
+}
+
+lazy_static! {
 ///Conversion from HID codes to the library backend enums.
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
 pub static ref SCANCODE_TO_RDEV: HashMap<u32, Key> = {
