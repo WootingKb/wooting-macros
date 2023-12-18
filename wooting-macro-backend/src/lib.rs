@@ -300,7 +300,7 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
-        let received_event = match &rchan_execute.blocking_recv() {
+         let received_event = match &rchan_execute.blocking_recv() {
             Some(event) => *event,
             None => {
                 error!("Failed to receive an event!");
@@ -309,14 +309,10 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
         };
         plugin::util::direct_send_event(&received_event)
             .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
-
-        // MacOS and Linux require some delays.
+        plugin::util::send(&rchan_execute.blocking_recv().unwrap());
+        //MacOS and Linux require a delay between each macro execution.
         #[cfg(not(target_os = "windows"))]
         thread::sleep(time::Duration::from_millis(10));
-
-        // Windows execution delay can be set lower.
-        #[cfg(target_os = "windows")]
-        thread::sleep(time::Duration::from_millis(1));
     }
 }
 
