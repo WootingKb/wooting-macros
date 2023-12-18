@@ -1,7 +1,7 @@
 import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { open } from '@tauri-apps/api/dialog'
+import { open } from '@tauri-apps/api/types/dialog'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
 
