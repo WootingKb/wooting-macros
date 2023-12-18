@@ -10,13 +10,13 @@ import { openDiscordLink, openGithubLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../constants/enums'
 import { SettingsGroup } from '../../constants/SettingsMap'
 import SettingsButton from './SettingsButton'
-import { type, version } from '@tauri-apps/api/os'
-import { getVersion } from '@tauri-apps/api/app'
-import { useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { DiscordIcon, GithubIcon } from '../icons'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
-import {error} from "tauri-plugin-log"
+import { error } from 'tauri-plugin-log'
+import { type, version } from "@tauri-apps/api/types/os";
+import { getVersion } from "@tauri-apps/api/types/app";
 
 interface Props {
   pageIndex: number
@@ -61,7 +61,9 @@ export default function SettingsLeftPanel({
     }
 
     getVersion()
-      .then((version) => setVersionText(version))
+      .then((version: SetStateAction<string | undefined>) =>
+        setVersionText(version)
+      )
       .catch(error)
 
     getOSType().catch((err) => error(err))

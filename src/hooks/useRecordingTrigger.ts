@@ -1,5 +1,4 @@
 import { useToast } from '@chakra-ui/react'
-import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
@@ -8,7 +7,8 @@ import {
   checkIfModifierKey,
   checkIfKeyShouldContinueTriggerRecording
 } from '../constants/utils'
-import {error} from "tauri-plugin-log"
+import { error } from 'tauri-plugin-log'
+import { invoke } from '@tauri-apps/api'
 
 export default function useRecordingTrigger(
   initialItems: MouseButton | number[]

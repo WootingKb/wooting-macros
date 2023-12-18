@@ -1,4 +1,4 @@
-import { open } from '@tauri-apps/api/shell'
+import { open } from '@tauri-apps/api/types/shell'
 
 export const openDiscordLink = () => {
   open('https://discord.gg/wooting')
