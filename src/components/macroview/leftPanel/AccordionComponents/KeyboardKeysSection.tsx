@@ -13,7 +13,7 @@ import { HidInfo } from '../../../../constants/HIDmap'
 import { KeyboardKeyCategory } from '../../../../types'
 import { KeyboardIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
-import { DefaultMacroDelay } from "../../../../constants/utils";
+import { DefaultMacroDelay } from '../../../../constants/utils'
 
 interface Props {
   keyboardKeyCategories: KeyboardKeyCategory[]
@@ -56,9 +56,7 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                 <GridItem colSpan={HIDinfo.colSpan ?? 1} key={HIDinfo.HIDcode}>
                   <AspectRatio
                     h="full"
-                    ratio={
-                      HIDinfo.colSpan !== undefined ? HIDinfo.colSpan : 1
-                    }
+                    ratio={HIDinfo.colSpan !== undefined ? HIDinfo.colSpan : 1}
                   >
                     <SelectElementButton
                       nameText={HIDinfo.displayString}

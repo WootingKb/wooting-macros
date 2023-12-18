@@ -1,5 +1,15 @@
 import { DeleteIcon } from '@chakra-ui/icons'
-import { Box, Button, Flex, HStack, Input, Text, Tooltip, useDisclosure, VStack } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Input,
+  Text,
+  Tooltip,
+  useDisclosure,
+  VStack
+} from '@chakra-ui/react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import DeleteCollectionModal from './DeleteCollectionModal'
@@ -10,7 +20,13 @@ import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 
 export default function CollectionPanel() {
-  const {collections, selection, onCollectionUpdate, onSelectedCollectionDelete, searchValue} = useApplicationContext()
+  const {
+    collections,
+    selection,
+    onCollectionUpdate,
+    onSelectedCollectionDelete,
+    searchValue
+  } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const {
     isOpen: isDeleteModalOpen,
@@ -26,7 +42,6 @@ export default function CollectionPanel() {
   const borderColour = useBorderColour()
   const isCollectionUndeletable = collections.length <= 1
 
-
   useEffect(() => {
     setCollectionName(currentCollection.name)
   }, [currentCollection.name])
@@ -37,7 +52,7 @@ export default function CollectionPanel() {
         return
       }
       onCollectionUpdate(
-        {...currentCollection, icon: emoji.shortcodes},
+        { ...currentCollection, icon: emoji.shortcodes },
         selection.collectionIndex
       )
     },
@@ -86,8 +101,7 @@ export default function CollectionPanel() {
         borderBottom="1px"
         borderColor={borderColour}
       >
-        {searchValue.length === 0 ?
-
+        {searchValue.length === 0 ? (
           <HStack w="full" justifyContent="space-between">
             <HStack w="full" spacing={4}>
               <EmojiPopover
@@ -107,8 +121,8 @@ export default function CollectionPanel() {
                 fontSize="25px"
                 textStyle="name"
                 placeholder="Collection Name"
-                _placeholder={{opacity: 1, color: borderColour}}
-                _focusVisible={{borderColor: 'primary-accent.500'}}
+                _placeholder={{ opacity: 1, color: borderColour }}
+                _focusVisible={{ borderColor: 'primary-accent.500' }}
               />
             </HStack>
             <HStack w="fit">
@@ -130,11 +144,15 @@ export default function CollectionPanel() {
               >
                 <Box>
                   <Button
-                    leftIcon={<DeleteIcon/>}
+                    leftIcon={<DeleteIcon />}
                     variant="brandWarning"
                     size="md"
                     isDisabled={isCollectionUndeletable}
-                    onClick={currentCollection.macros.length !== 0 ? onDeleteModalOpen : onSelectedCollectionDelete }
+                    onClick={
+                      currentCollection.macros.length !== 0
+                        ? onDeleteModalOpen
+                        : onSelectedCollectionDelete
+                    }
                     aria-label="Delete Collection"
                   >
                     Delete Collection
@@ -142,15 +160,20 @@ export default function CollectionPanel() {
                 </Box>
               </Tooltip>
             </HStack>
-          </HStack> : <HStack>
-            <Text as="b" fontSize="3xl">Search</Text>
-          </HStack>}
+          </HStack>
+        ) : (
+          <HStack>
+            <Text as="b" fontSize="3xl">
+              Search
+            </Text>
+          </HStack>
+        )}
       </Flex>
       <DeleteCollectionModal
         isOpen={isDeleteModalOpen}
         onClose={onDeleteModalClose}
       />
-      <MacroList/>
+      <MacroList />
     </VStack>
   )
 }

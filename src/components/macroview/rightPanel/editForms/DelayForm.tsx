@@ -13,7 +13,6 @@ import {
 } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSettingsContext } from '../../../../contexts/settingsContext'
 import { DelayEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
 import { DefaultDelayDelay } from '../../../../constants/utils'
@@ -83,20 +82,6 @@ export default function DelayForm({
     }
     updateElement(temp, selectedElementId)
   }, [delayDuration, selectedElement, selectedElementId, toast, updateElement])
-
-  // const resetDuration = useCallback(() => {
-  //   setDelayDuration(config.DefaultDelayValue.toString())
-  //   const temp: DelayEventAction = {
-  //     ...selectedElement,
-  //     data: config.DefaultDelayValue
-  //   }
-  //   updateElement(temp, selectedElementId)
-  // }, [
-  //   config.DefaultDelayValue,
-  //   selectedElement,
-  //   selectedElementId,
-  //   updateElement
-  // ])
 
   useEffect(() => {
     if (resetTriggered) {

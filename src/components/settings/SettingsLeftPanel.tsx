@@ -1,10 +1,10 @@
 import {
-  VStack,
   Divider,
+  Flex,
+  HStack,
   Text,
   useColorModeValue,
-  HStack,
-  Flex
+  VStack
 } from '@chakra-ui/react'
 import { openDiscordLink, openGithubLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../constants/enums'
@@ -15,8 +15,6 @@ import { DiscordIcon, GithubIcon } from '../icons'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
 import { error } from 'tauri-plugin-log'
-import { type, version } from "@tauri-apps/api/types/os";
-import { getVersion } from "@tauri-apps/api/types/app";
 
 interface Props {
   pageIndex: number

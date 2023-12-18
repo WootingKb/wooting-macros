@@ -1,9 +1,9 @@
 import {
-  Text,
-  VStack,
+  HStack,
   Input,
+  Text,
   useColorModeValue,
-  HStack
+  VStack
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
@@ -20,7 +20,12 @@ export default function SelectElementArea() {
   return (
     <VStack w="33%" h="full" bg={useMainBgColour()} spacing={0}>
       <HStack w="full" px={[2, 4, 6]} py={[2, 4]} alignItems="center">
-        <Text textAlign="left" p={1} fontWeight="semibold" fontSize={['md', 'lg']}>
+        <Text
+          textAlign="left"
+          p={1}
+          fontWeight="semibold"
+          fontSize={['md', 'lg']}
+        >
           Elements
         </Text>
         <Input

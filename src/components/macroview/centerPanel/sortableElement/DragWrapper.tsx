@@ -4,7 +4,7 @@ import { Center, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../../types'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import useMainBgColour from '../../../../hooks/useMainBgColour'
-import { borderRadiusStandard } from "../../../../theme/config";
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   id: number
@@ -47,7 +47,7 @@ export default function DragWrapper({ id, element, children }: Props) {
         roundedLeft={borderRadiusStandard}
         cursor="grab"
       >
-        <DragHandleIcon w={4} h={8} color={handleIconColour}/>
+        <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Center>
       {children}
     </HStack>

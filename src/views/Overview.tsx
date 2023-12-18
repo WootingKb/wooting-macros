@@ -7,12 +7,9 @@ type Props = {
 }
 
 export default function Overview({ onOpenSettingsModal }: Props) {
-
   return (
     <HStack minH="100vh" spacing="0" overflow="hidden">
-      <LeftPanel
-        onOpenSettingsModal={onOpenSettingsModal}
-      />
+      <LeftPanel onOpenSettingsModal={onOpenSettingsModal} />
       <CollectionPanel />
     </HStack>
   )

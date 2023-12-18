@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSettingsContext } from '../../../contexts/settingsContext'
 import { ActionEventType } from '../../../types'
-import { borderRadiusStandard } from "../../../theme/config";
+import { borderRadiusStandard } from '../../../theme/config'
 
 interface Props {
   properties: ActionEventType

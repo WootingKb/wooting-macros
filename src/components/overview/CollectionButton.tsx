@@ -3,11 +3,11 @@ import {
   HStack,
   Switch,
   Text,
-  useColorModeValue,
-  Tooltip
+  Tooltip,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
-import { borderRadiusStandard } from "../../theme/config";
+import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   collection: Collection

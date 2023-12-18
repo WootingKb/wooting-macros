@@ -1,15 +1,15 @@
 import {
   HStack,
-  VStack,
-  Text,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { borderRadiusStandard } from "../../theme/config";
+import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   title: string

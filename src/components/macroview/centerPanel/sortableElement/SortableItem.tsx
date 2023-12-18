@@ -34,12 +34,7 @@ interface Props {
   stopRecording: () => void
 }
 
-export default function SortableItem({
-  id,
-  element,
-  recording,
-  stopRecording
-}: Props) {
+export default function SortableItem({ id, element, recording }: Props) {
   const isEditable = checkIfElementIsEditable(element)
   const displayText = getElementDisplayString(element)
   const {
@@ -101,13 +96,13 @@ export default function SortableItem({
     if (checkIfElementIsEditable(element)) updateSelectedElementId(id - 1)
   }, [element, id, isSelected, recording, updateSelectedElementId])
 
-  const onEditButtonPress = useCallback(() => {
-    stopRecording()
-    if (isSelected) {
-      return
-    }
-    updateSelectedElementId(id - 1)
-  }, [id, isSelected, stopRecording, updateSelectedElementId])
+  // const onEditButtonPress = useCallback(() => {
+  //   stopRecording()
+  //   if (isSelected) {
+  //     return
+  //   }
+  //   updateSelectedElementId(id - 1)
+  // }, [id, isSelected, stopRecording, updateSelectedElementId])
 
   const onDeleteButtonPress = useCallback(() => {
     if (isSelected) {
@@ -220,16 +215,6 @@ export default function SortableItem({
               </Text>
             </Box>
           )}
-        {/*This button is not really that useful so disabled it for now*/}
-        {/*{isEditable && (*/}
-        {/*  <IconButton*/}
-        {/*    variant="brandSecondary"*/}
-        {/*    aria-label="Edit item"*/}
-        {/*    icon={<EditIcon />}*/}
-        {/*    size={['xs', 'sm']}*/}
-        {/*    onClick={onEditButtonPress}*/}
-        {/*  />*/}
-        {/*)}*/}
         <Menu variant="brand">
           <MenuButton
             h="24px"

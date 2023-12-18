@@ -1,11 +1,11 @@
 import { ReactNode } from 'react'
 import { DragHandleIcon } from '@chakra-ui/icons'
-import { HStack, useColorModeValue, Center } from '@chakra-ui/react'
+import { Center, HStack, useColorModeValue } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import useMainBgColour from '../../../../hooks/useMainBgColour'
-import { borderRadiusStandard } from "../../../../theme/config";
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   id: number
@@ -53,7 +53,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
         selectedElementId !== undefined && id === selectedElementId + 1
           ? selectedBg
           : bg
-    }
+      }
       shadow={shadowColour}
     >
       <Center
