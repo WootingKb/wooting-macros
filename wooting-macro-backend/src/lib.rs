@@ -114,7 +114,7 @@ impl Macro {
     async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
         for action in &self.sequence {
             match action {
-                ActionEventType::KeyPressEventAction { data } => match data.key_type {
+                ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
                         // One key press down
                         send_channel

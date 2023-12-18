@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { KeyType, MouseButton } from '../constants/enums'
-import { webCodeHIDLookup } from '../constants/HIDmap'
+import { webCodeLocationHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
 import { error } from 'tauri-plugin-log'
@@ -48,8 +48,9 @@ export default function useRecordingSequence(
       if (event.repeat) {
         return
       }
+      const HIDIdentifier = event.which + '1' + event.location
 
-      const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+      const HIDcode = webCodeLocationHIDLookup.get(HIDIdentifier)?.HIDcode
       if (HIDcode === undefined) {
         return
       }
@@ -64,7 +65,7 @@ export default function useRecordingSequence(
         const keyup: Keypress = {
           keypress: HIDcode,
           press_duration: 0,
-          key_type: KeyType[KeyType.Up]
+          keytype: KeyType[KeyType.Up]
         }
         setItem(keyup)
         onItemChanged(keyup, item, timeDiff, true)
@@ -75,7 +76,7 @@ export default function useRecordingSequence(
       const keydown: Keypress = {
         keypress: HIDcode,
         press_duration: 0,
-        key_type: KeyType[KeyType.Down]
+        keytype: KeyType[KeyType.Down]
       }
       setItem(keydown)
       onItemChanged(keydown, item, timeDiff, false)

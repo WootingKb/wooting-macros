@@ -65,9 +65,9 @@ export default function SortableItem({ id, element, recording }: Props) {
       case 'DelayEventAction':
         return <TimeIcon />
       case 'KeyPressEventAction':
-        if (element.data.key_type === 'DownUp') {
+        if (element.data.keytype === 'DownUp') {
           return <DownUpArrowsIcon />
-        } else if (element.data.key_type === 'Down') {
+        } else if (element.data.keytype === 'Down') {
           return <DownArrowIcon />
         } else {
           return <UpArrowIcon />
@@ -162,7 +162,7 @@ export default function SortableItem({ id, element, recording }: Props) {
       </HStack>
       <HStack py={2} pr={2} h="full" spacing={0} gap={2} alignItems="flex-end">
         {element.type === 'KeyPressEventAction' &&
-          element.data.key_type === KeyType[KeyType.DownUp] && (
+          element.data.keytype === KeyType[KeyType.DownUp] && (
             <Box
               h="32px"
               w="fit-content"

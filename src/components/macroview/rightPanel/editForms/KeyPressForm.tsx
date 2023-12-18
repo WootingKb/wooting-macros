@@ -51,7 +51,7 @@ export default function KeyPressForm({
     )
       return
 
-    const typeString = selectedElement.data.key_type as keyof typeof KeyType
+    const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
     setKeypressDuration(selectedElement.data.press_duration.toString())
     setHeadingText(
@@ -131,7 +131,7 @@ export default function KeyPressForm({
       setKeypressType(newType)
       const temp: KeyPressEventAction = {
         ...selectedElement,
-        data: { ...selectedElement.data, key_type: KeyType[newType].toString() }
+        data: { ...selectedElement.data, keytype: KeyType[newType].toString() }
       }
       updateElement(temp, selectedElementId)
     },

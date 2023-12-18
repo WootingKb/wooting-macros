@@ -147,7 +147,7 @@ declare global {
 export interface Keypress {
   keypress: number
   press_duration: number
-  key_type: string
+  keytype: string
 }
 
 export interface Monitor {

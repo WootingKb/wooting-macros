@@ -1437,6 +1437,7 @@ export class Hid {
 }
 
 export const webCodeHIDLookup = new Map<string, HidInfo>(
+export const webCodeLocationHIDLookup= new Map<string, HidInfo>(
   // This creates a unique ID: whichID, separated by an extra '1' digit, then locationID.
   Hid.all
     .filter((hid) => hid.whichID !== undefined)

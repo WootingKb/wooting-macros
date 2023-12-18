@@ -1,12 +1,9 @@
 import { useToast } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../constants/enums'
-import { webCodeHIDLookup } from '../constants/HIDmap'
+import { webCodeLocationHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
-import {
-  checkIfModifierKey,
-  checkIfKeyShouldContinueTriggerRecording
-} from '../constants/utils'
+import { checkIfKeyShouldContinueTriggerRecording } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 import { invoke } from '@tauri-apps/api'
 
@@ -46,7 +43,7 @@ export default function useRecordingTrigger(
       // Gets the ID according to the whichID, adds a separator extra digit '1' and then adds location to the end.
       const HIDIdentifier = event.which + '1' + event.location
 
-      const HIDcode = webCodeHIDLookup.get(HIDIdentifier)?.HIDcode
+      const HIDcode = webCodeLocationHIDLookup.get(HIDIdentifier)?.HIDcode
 
       if (HIDcode === undefined) {
         return
@@ -99,7 +96,7 @@ export default function useRecordingTrigger(
 
     window.addEventListener('keydown', addKeypress, true)
     window.addEventListener('mousedown', addMousepress, true)
-    invoke<void>('control_grabbing', {frontendBool: false}).catch((e) => {
+    invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       error(e)
       toast({
         title: 'Error disabling macro output',
@@ -114,7 +111,7 @@ export default function useRecordingTrigger(
     return () => {
       window.removeEventListener('keydown', addKeypress, true)
       window.removeEventListener('mousedown', addMousepress, true)
-      invoke<void>('control_grabbing', {frontendBool: true}).catch((e) => {
+      invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         error(e)
         toast({
           title: 'Error enabling macro output',
