@@ -1,15 +1,12 @@
 import {
   createContext,
   ReactNode,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState
-  useContext,
-  createContext,
-  useCallback,
-  SetStateAction
 } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
