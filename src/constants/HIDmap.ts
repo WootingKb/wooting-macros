@@ -1045,7 +1045,7 @@ export class Hid {
       webKeyId: 'NumpadDivide',
       colSpan: 2,
       whichID: 111,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1057,7 +1057,7 @@ export class Hid {
       webKeyId: 'NumpadMultiply',
       colSpan: 2,
       whichID: 106,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1069,7 +1069,7 @@ export class Hid {
       webKeyId: 'NumpadSubtract',
       colSpan: 2,
       whichID: 109,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1081,7 +1081,7 @@ export class Hid {
       webKeyId: 'NumpadAdd',
       colSpan: 2,
       whichID: 107,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1093,7 +1093,7 @@ export class Hid {
       webKeyId: 'NumpadEnter',
       colSpan: 2,
       whichID: 13,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1104,7 +1104,7 @@ export class Hid {
       displayString: 'NP1',
       webKeyId: 'Numpad1',
       whichID: 97,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1115,7 +1115,7 @@ export class Hid {
       displayString: 'NP2',
       webKeyId: 'Numpad2',
       whichID: 98,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1126,7 +1126,7 @@ export class Hid {
       displayString: 'NP3',
       webKeyId: 'Numpad3',
       whichID: 99,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1137,7 +1137,7 @@ export class Hid {
       displayString: 'NP4',
       webKeyId: 'Numpad4',
       whichID: 100,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1148,7 +1148,7 @@ export class Hid {
       displayString: 'NP5',
       webKeyId: 'Numpad5',
       whichID: 101,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1159,7 +1159,7 @@ export class Hid {
       displayString: 'NP6',
       webKeyId: 'Numpad6',
       whichID: 102,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1170,7 +1170,7 @@ export class Hid {
       displayString: 'NP7',
       webKeyId: 'Numpad7',
       whichID: 103,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1181,7 +1181,7 @@ export class Hid {
       displayString: 'NP8',
       webKeyId: 'Numpad8',
       whichID: 104,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1192,7 +1192,7 @@ export class Hid {
       displayString: 'NP9',
       webKeyId: 'Numpad9',
       whichID: 105,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1203,7 +1203,7 @@ export class Hid {
       displayString: 'NP0',
       webKeyId: 'Numpad0',
       whichID: 96,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
@@ -1215,7 +1215,7 @@ export class Hid {
       webKeyId: 'NumpadDecimal',
       colSpan: 2,
       whichID: 110,
-      locationID: 0,
+      locationID: 3,
     }
   }
 
