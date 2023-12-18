@@ -1,38 +1,27 @@
-pub mod config;
-mod hid_table;
-pub mod plugin;
-
-use rayon::prelude::*;
-
-use log::*;
-
-use itertools::Itertools;
-
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
 use std::{thread, time};
+#[cfg(not(debug_assertions))]
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
+use anyhow::{Error, Result};
+#[cfg(not(debug_assertions))]
+use dirs;
+use halfbrown::HashMap;
+use itertools::Itertools;
+use log::*;
+use rayon::prelude::*;
+use rdev::simulate;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::RwLock;
 use tokio::task;
 
-use halfbrown::HashMap;
-
 use config::{ApplicationConfig, ConfigFile};
-#[cfg(not(debug_assertions))]
-use dirs;
-#[cfg(not(debug_assertions))]
-use std::path::PathBuf;
-
-use rdev::simulate;
-
-use anyhow::{Error, Result};
 
 // This has to be imported for release build
 #[allow(unused_imports)]
 use crate::config::CONFIG_DIR;
 use crate::hid_table::*;
-
 //Plugin imports
 use crate::plugin::delay;
 #[allow(unused_imports)]
@@ -43,6 +32,10 @@ use crate::plugin::mouse;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
+
+pub mod config;
+mod hid_table;
+pub mod plugin;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
@@ -309,7 +302,7 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
         };
         plugin::util::direct_send_event(&received_event)
             .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
-        plugin::util::send(&rchan_execute.blocking_recv().unwrap());
+
         //MacOS and Linux require a delay between each macro execution.
         #[cfg(not(target_os = "windows"))]
         thread::sleep(time::Duration::from_millis(10));
