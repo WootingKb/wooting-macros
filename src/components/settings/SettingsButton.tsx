@@ -1,6 +1,6 @@
 import { Box, Text, useColorModeValue } from '@chakra-ui/react'
 import { SettingInfo } from '../../constants/SettingsMap'
-import { borderRadiusStandard } from "../../theme/config";
+import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   setting: SettingInfo

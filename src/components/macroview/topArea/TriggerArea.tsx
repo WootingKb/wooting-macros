@@ -1,16 +1,16 @@
 import { EditIcon } from '@chakra-ui/icons'
 import {
+  Button,
   HStack,
   Kbd,
-  Button,
+  StackDivider,
   Text,
-  useColorModeValue,
-  StackDivider
+  useColorModeValue
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../constants/HIDmap'
 import { mouseEnumLookup } from '../../../constants/MouseMap'
-import { borderRadiusStandard } from "../../../theme/config";
+import { borderRadiusStandard } from '../../../theme/config'
 
 interface Props {
   onOpen: () => void

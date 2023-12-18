@@ -13,7 +13,7 @@ export default function SystemEventActionForm({
   selectedElement,
   selectedElementId
 }: Props) {
-  const SelectedElementFormComponent = useMemo(() => {
+  return useMemo(() => {
     switch (selectedElement.data.type) {
       case 'Open':
         return (
@@ -39,5 +39,4 @@ export default function SystemEventActionForm({
         return <EmptyForm />
     }
   }, [selectedElement, selectedElementId])
-  return SelectedElementFormComponent
 }

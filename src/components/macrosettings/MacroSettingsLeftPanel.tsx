@@ -3,7 +3,7 @@ import { SettingsCategory } from '../../constants/enums'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
 import SettingsButton from '../settings/SettingsButton'
-import { MacroSettingsGroup } from "../../constants/MacroSettingsMap";
+import { MacroSettingsGroup } from '../../constants/MacroSettingsMap'
 
 interface Props {
   pageIndex: number

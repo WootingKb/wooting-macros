@@ -1,4 +1,4 @@
-import { VStack, HStack } from '@chakra-ui/react'
+import { HStack, VStack } from '@chakra-ui/react'
 import EditArea from '../components/macroview/rightPanel/EditArea'
 import SelectElementArea from '../components/macroview/leftPanel/SelectElementArea'
 import SequencingArea from '../components/macroview/centerPanel/SequencingArea'
@@ -11,7 +11,10 @@ type Props = {
   onOpenMacroSettingsModal: () => void
 }
 
-export default function Macroview({ isEditing, onOpenMacroSettingsModal }: Props) {
+export default function Macroview({
+  isEditing,
+  onOpenMacroSettingsModal
+}: Props) {
   const { changeIsUpdatingMacro } = useMacroContext()
 
   useEffect(() => {

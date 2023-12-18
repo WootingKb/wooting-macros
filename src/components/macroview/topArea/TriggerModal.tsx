@@ -24,7 +24,7 @@ import {
   checkIfMouseButtonArray
 } from '../../../constants/utils'
 import { RecordIcon, StopIcon } from '../../icons'
-import { borderRadiusStandard } from "../../../theme/config";
+import { borderRadiusStandard } from '../../../theme/config'
 
 interface Props {
   isOpen: boolean
@@ -127,9 +127,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     >
       <ModalOverlay />
       <ModalContent p={2}>
-        <ModalHeader fontWeight="bold">
-          Trigger Keys
-        </ModalHeader>
+        <ModalHeader fontWeight="bold">Trigger Keys</ModalHeader>
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           <VStack w="full" justifyContent="space-between">

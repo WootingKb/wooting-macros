@@ -1,21 +1,21 @@
 import {
-  ReactNode,
-  useState,
-  useMemo,
-  useContext,
   createContext,
+  ReactNode,
   useCallback,
-  useEffect
+  useContext,
+  useEffect,
+  useMemo,
+  useState
 } from 'react'
 import { MacroType, ViewState } from '../constants/enums'
 import { checkIfElementIsEditable } from '../constants/utils'
 import {
-  MacroState,
   ActionEventType,
-  Macro,
-  TriggerEventType,
   KeyPressEventAction,
-  MouseEventAction
+  Macro,
+  MacroState,
+  MouseEventAction,
+  TriggerEventType
 } from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
@@ -139,7 +139,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         macro.trigger.data.length === 0) ||
       (macro.trigger.type === 'MouseEvent' &&
         macro.trigger.data === undefined) ||
-      sequence.length === 0 
+      sequence.length === 0
     ) {
       return false
     }

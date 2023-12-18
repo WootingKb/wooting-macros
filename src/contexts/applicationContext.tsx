@@ -1,8 +1,11 @@
 import {
+  createContext,
   ReactNode,
-  useState,
+  useCallback,
+  useContext,
   useEffect,
   useMemo,
+  useState
   useContext,
   createContext,
   useCallback,
@@ -10,7 +13,7 @@ import {
 } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
-import { AppState, Collection, MacroData, CurrentSelection } from '../types'
+import { AppState, Collection, CurrentSelection, MacroData } from '../types'
 import { updateBackendConfig } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 import { invoke } from '@tauri-apps/api'
@@ -35,7 +38,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [viewState, setViewState] = useState<ViewState>(ViewState.Overview)
   const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('')
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
@@ -110,13 +113,15 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const changeSearchValue = useCallback(
     (term: string) => {
       setSearchValue(term)
-    }, [setSearchValue]
+    },
+    [setSearchValue]
   )
 
   const changeMacroOutputEnabled = useCallback(
     (value: boolean) => {
       setIsMacroOutputEnabled(value)
-    }, [setIsMacroOutputEnabled]
+    },
+    [setIsMacroOutputEnabled]
   )
 
   const onCollectionAdd = useCallback(
@@ -171,7 +176,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       setSearchValue,
       isMacroOutputEnabled,
       changeMacroOutputEnabled,
-      changeSearchValue,
+      changeSearchValue
     }),
     [
       viewState,
@@ -188,7 +193,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       setSearchValue,
       isMacroOutputEnabled,
       changeMacroOutputEnabled,
-      changeSearchValue,
+      changeSearchValue
     ]
   )
 

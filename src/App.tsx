@@ -25,7 +25,7 @@ function App() {
   } = useDisclosure()
 
   useEffect(() => {
-    document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables tauri's right click context menu
+    document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables Tauri right click context menu
     // TODO: Add disable for ctrl+r and f5, but only when in debug mode - envvar RUST_LOG='debug'
     document.addEventListener('keydown', (event) => {
       if (event.ctrlKey && event.key.toLowerCase() === 'f') {
@@ -39,14 +39,7 @@ function App() {
   if (!initComplete) {
     return (
       <Flex h="100vh" justifyContent="center" alignItems="center">
-        <Box
-          zIndex={-1}
-          pos="absolute"
-          w="full"
-          h="full"
-          opacity={0.15}
-          // backgroundImage="url('/keycapPattern.png')"
-        />
+        <Box zIndex={-1} pos="absolute" w="full" h="full" opacity={0.15} />
         <Text fontSize="4xl" fontWeight="bold">
           Loading...
         </Text>
@@ -56,14 +49,7 @@ function App() {
 
   return (
     <Flex h="100vh" pos="relative" direction="column">
-      <Box
-        zIndex={-1}
-        pos="absolute"
-        w="full"
-        h="full"
-        opacity={0.15}
-        // backgroundImage="url('/keycapPattern.png')"
-      />
+      <Box zIndex={-1} pos="absolute" w="full" h="full" opacity={0.15} />
       {viewState === ViewState.Overview && (
         <Overview onOpenSettingsModal={onOpenSettings} />
       )}
