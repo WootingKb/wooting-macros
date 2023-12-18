@@ -11,29 +11,26 @@ license = "GPL-3.0-only"
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
-tauri = { version = "1.2", features = ["api-all", "icon-png", "system-tray"] }
-rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
-halfbrown = { version = "0.1", features = ["serde"] }
+tauri = { version = "1.5", features = ["api-all", "icon-png", "system-tray"] }
+rdev = { git = "https://github.com/medzernik/rdev", branch = "main", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
+halfbrown = { version = "0.2", features = ["serde"] }
 lazy_static = "1.4"
-tokio = { version = "1.23", features = ["full"] }
+tokio = { version = "1.35", features = ["full"] }
 tokio-serde = { version = "0.8", features = ["json"] }
-opener = "0.5"
-obws = { version = "0.10" }
-rodio = "0.16"
-copypasta = { version = "0.8", features = ["smithay-clipboard"] }
+opener = "0.6"
+obws = { version = "0.11" }
+rodio = "0.17"
+copypasta = { version = "0.10", features = ["smithay-clipboard"] }
 
 serde_repr = "0.1"
-fastrand = "1.8"
-dirs = "4.0"
-itertools = "0.10"
+fastrand = "2.0"
+dirs = "5.0"
+itertools = "0.12"
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.10"
-rayon = "1.6"
-
-[target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
-brightness = { version = "0.5"}
-futures = "0.3"
+rayon = "1.8"
+url = "2.5"
 
 [profile.release]
 lto = true

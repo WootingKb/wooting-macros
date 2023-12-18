@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
 import { updateSettings } from '../constants/utils'
-import {error} from "tauri-plugin-log"
+import { error } from "tauri-plugin-log"
 
 type SettingsProviderProps = { children: ReactNode }
 
@@ -25,7 +25,7 @@ function useSettingsContext() {
   return context
 }
 
-function SettingsProvider({ children }: SettingsProviderProps) {
+function SettingsProvider({children}: SettingsProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
@@ -38,7 +38,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   })
   const toast = useToast()
 
-  const { setColorMode } = useColorMode()
+  const {setColorMode} = useColorMode()
 
   useEffect(() => {
     invoke<ApplicationConfig>('get_config')
@@ -51,9 +51,9 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         toast({
           title: 'Error loading settings',
           description:
-            'Unable to load settings, please re-open the app. If that does not work, please contact us on Discord.',
+            `Unable to load settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
+          duration: 10000,
           isClosable: true
         })
       })
@@ -66,9 +66,9 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         toast({
           title: 'Error updating settings',
           description:
-            'Unable to update settings, please re-open the app. If that does not work, please contact us on Discord.',
+            `Unable to update settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
+          duration: 10000,
           isClosable: true
         })
       })
@@ -76,38 +76,38 @@ function SettingsProvider({ children }: SettingsProviderProps) {
 
   const updateLaunchOnStartup = useCallback((value: boolean) => {
     setConfig((config) => {
-      return { ...config, AutoStart: value }
+      return {...config, AutoStart: value}
     })
   }, [])
   const updateMinimizeOnStartup = useCallback((value: boolean) => {
     setConfig((config) => {
-      return { ...config, MinimizeAtLaunch: value }
+      return {...config, MinimizeAtLaunch: value}
     })
   }, [])
   const updateMinimizeOnClose = useCallback((value: boolean) => {
     setConfig((config) => {
-      return { ...config, MinimizeToTray: value }
+      return {...config, MinimizeToTray: value}
     })
   }, [])
   const updateAutoAddDelay = useCallback((value: boolean) => {
     setConfig((config) => {
-      return { ...config, AutoAddDelay: value }
+      return {...config, AutoAddDelay: value}
     })
   }, [])
   const updateDefaultDelayVal = useCallback((value: string) => {
     setConfig((config) => {
-      return { ...config, DefaultDelayValue: Number(value) }
+      return {...config, DefaultDelayValue: Number(value)}
     })
   }, [])
   const updateAutoSelectElement = useCallback((value: boolean) => {
     setConfig((config) => {
-      return { ...config, AutoSelectElement: value }
+      return {...config, AutoSelectElement: value}
     })
   }, [])
   const updateTheme = useCallback(
     (value: string) => {
       setConfig((config) => {
-        return { ...config, Theme: value }
+        return {...config, Theme: value}
       })
       setColorMode(value)
     },

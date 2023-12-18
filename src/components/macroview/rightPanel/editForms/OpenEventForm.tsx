@@ -1,7 +1,7 @@
 import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { open } from '@tauri-apps/api/dialog'
+import { dialog } from '@tauri-apps/api'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
 
@@ -67,7 +67,7 @@ export default function OpenEventForm({
   const onButtonPress = useCallback(
     async (isDirectory: boolean) => {
       if (isDirectory) {
-        const dir = await open({
+        const dir = await dialog.open({
           directory: true,
           multiple: false,
           title: 'Select a directory to open'
@@ -85,7 +85,7 @@ export default function OpenEventForm({
         }
         updateElement(temp, selectedElementId)
       } else {
-        const file = await open({
+        const file = await dialog.open({
           multiple: false,
           title: 'Select a file to open'
         })

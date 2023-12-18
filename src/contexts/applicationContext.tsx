@@ -1,4 +1,3 @@
-import { invoke } from '@tauri-apps/api/tauri'
 import {
   ReactNode,
   useState,
@@ -6,13 +5,15 @@ import {
   useMemo,
   useContext,
   createContext,
-  useCallback
+  useCallback,
+  SetStateAction
 } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
 import { AppState, Collection, MacroData, CurrentSelection } from '../types'
 import { updateBackendConfig } from '../constants/utils'
-import { error } from "tauri-plugin-log"
+import { error } from 'tauri-plugin-log'
+import { invoke } from '@tauri-apps/api'
 
 interface ApplicationProviderProps {
   children: ReactNode
@@ -42,18 +43,18 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   useEffect(() => {
     invoke<MacroData>('get_macros')
-      .then((res) => {
+      .then((res: { data: SetStateAction<Collection[]> }) => {
         setCollections(res.data)
         setInitComplete(true)
       })
-      .catch((e) => {
+      .catch((e: string) => {
         error(e)
         toast({
           title: 'Error loading macros',
           description:
             'Unable to load macros, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
-          duration: 2000,
+          duration: 10000,
           isClosable: true
         })
       })
@@ -65,10 +66,10 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         error(e)
         toast({
           title: 'Error updating macro data',
-          description:
-            'Unable to update macro data, please re-open the app. If that does not work, please contact us on Discord.',
+          description: `Unable to update macro data: ${e}. 
+            Your system action filepath or website URL may be incorrect. Alternatively, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
+          duration: 10000,
           isClosable: true
         })
       })

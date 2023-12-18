@@ -1,10 +1,10 @@
-import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
 import { KeyType } from '../constants/enums'
 import { webCodeHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
-import {error} from "tauri-plugin-log"
+import { error } from 'tauri-plugin-log'
+import { invoke } from '@tauri-apps/api'
 
 export default function useRecordingSequence(
   onItemChanged: (
@@ -60,7 +60,7 @@ export default function useRecordingSequence(
         const keyup: Keypress = {
           keypress: HIDcode,
           press_duration: 0,
-          keytype: KeyType[KeyType.Up]
+          key_type: KeyType[KeyType.Up]
         }
         setItem(keyup)
         onItemChanged(keyup, item, timeDiff, true)
@@ -71,7 +71,7 @@ export default function useRecordingSequence(
       const keydown: Keypress = {
         keypress: HIDcode,
         press_duration: 0,
-        keytype: KeyType[KeyType.Down]
+        key_type: KeyType[KeyType.Down]
       }
       setItem(keydown)
       onItemChanged(keydown, item, timeDiff, false)
@@ -134,18 +134,22 @@ export default function useRecordingSequence(
     window.addEventListener('mousedown', addMousepress, false)
     window.addEventListener('keyup', addKeypress, false)
     window.addEventListener('mouseup', addMousepress, false)
-    invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
-      error(e)
-    })
+    invoke<void>('control_grabbing', { frontendBool: false }).catch(
+      (e: string) => {
+        error(e)
+      }
+    )
 
     return () => {
       window.removeEventListener('keydown', addKeypress, false)
       window.removeEventListener('mousedown', addMousepress, false)
       window.removeEventListener('keyup', addKeypress, false)
       window.removeEventListener('mouseup', addMousepress, false)
-      invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
-        error(e)
-      })
+      invoke<void>('control_grabbing', { frontendBool: true }).catch(
+        (e: string) => {
+          error(e)
+        }
+      )
     }
   }, [recording, addKeypress, addMousepress])
 

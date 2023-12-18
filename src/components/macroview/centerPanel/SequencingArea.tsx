@@ -58,7 +58,7 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
                 type: 'KeyPressEventAction',
                 data: {
                   ...prevItem,
-                  keytype: KeyType[KeyType.DownUp],
+                  key_type: KeyType[KeyType.DownUp],
                   press_duration: timeDiff
                 }
               },

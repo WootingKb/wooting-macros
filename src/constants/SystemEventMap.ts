@@ -88,33 +88,6 @@ export class SystemEvent {
       description: "Mutes or unmutes the system audio output."
     }
   }
-  // static get SetBrightness(): SystemEventInfo {
-  //   return {
-  //     type: 'Brightness',
-  //     subtype: 'SetAll',
-  //     displayString: 'Set Brightness',
-  //     defaultData: {
-  //       type: 'Brightness',
-  //       action: { type: 'SetAll', level: 75, }
-  //     }
-  //   }
-  // }
-  // static get IncreaseBrightness(): SystemEventInfo {
-  //   return {
-  //     type: 'Brightness',
-  //     subtype: 'Increase',
-  //     displayString: 'Increase Brightness',
-  //     defaultData: { type: 'Brightness', action: { type: 'Increase' } }
-  //   }
-  // }
-  // static get DecreaseBrightness(): SystemEventInfo {
-  //   return {
-  //     type: 'Brightness',
-  //     subtype: 'Decrease',
-  //     displayString: 'Decrease Brightness',
-  //     defaultData: { type: 'Brightness', action: { type: 'Decrease' } }
-  //   }
-  // }
 
   static readonly all: SystemEventInfo[] = [
     SystemEvent.OpenFile,
@@ -125,9 +98,6 @@ export class SystemEvent {
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
-    // SystemEvent.SetBrightness,
-    // SystemEvent.IncreaseBrightness,
-    // SystemEvent.DecreaseBrightness
   ]
 }
 
