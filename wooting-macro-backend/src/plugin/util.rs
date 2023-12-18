@@ -1,3 +1,4 @@
+use crate::hid_table::RDEV_MODIFIER_KEYS;
 use anyhow::Result;
 use log::*;
 use rdev;
@@ -40,12 +41,23 @@ pub async fn direct_send_hotkey(
 
 // Disabled until a better fix is done
 // /// Lifts the keys pressed
-// pub fn lift_keys(pressed_events: &Vec<u32>, channel_sender: &UnboundedSender<rdev::EventType>) {
-//     for x in pressed_events {
-//         channel_sender
-//             .send(rdev::EventType::KeyRelease(
-//                 super::super::SCANCODE_TO_RDEV[x],
-//             ))
-//             .unwrap();
-//     }
-// }
+pub fn lift_keys(
+    pressed_events: &[u32],
+    channel_sender: &UnboundedSender<rdev::EventType>,
+) -> Result<()> {
+    let mut pressed_events_local = pressed_events.to_owned();
+
+    pressed_events_local.retain(|id_key| {
+        RDEV_MODIFIER_KEYS
+            .iter()
+            .any(|rdev_key| super::super::SCANCODE_TO_RDEV[id_key] == *rdev_key)
+    });
+
+    for key in pressed_events_local.iter() {
+        channel_sender.send(rdev::EventType::KeyRelease(
+            super::super::SCANCODE_TO_RDEV[key],
+        ))?;
+    }
+
+    Ok(())
+}
