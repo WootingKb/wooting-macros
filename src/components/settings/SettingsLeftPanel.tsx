@@ -15,8 +15,7 @@ import { DiscordIcon, GithubIcon } from '../icons'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
 import { error } from 'tauri-plugin-log'
-import { type, version } from "@tauri-apps/api/types/os";
-import { getVersion } from "@tauri-apps/api/types/app";
+import { app, os } from '@tauri-apps/api'
 
 interface Props {
   pageIndex: number
@@ -42,14 +41,14 @@ export default function SettingsLeftPanel({
 
   useEffect(() => {
     const getOSType = async () => {
-      const os = await type()
-      const osVersion = await version()
-      switch (os) {
+      const opersys = await os.type()
+      const osVersion = await os.version()
+      switch (opersys) {
         case 'Linux':
-          setOsText(`${os} (${osVersion})`)
+          setOsText(`${opersys} (${osVersion})`)
           break
         case 'Darwin':
-          setOsText(`${os} (${osVersion})`)
+          setOsText(`${opersys} (${osVersion})`)
           break
         case 'Windows_NT':
           setOsText(`Windows (${osVersion})`)
@@ -60,7 +59,8 @@ export default function SettingsLeftPanel({
       }
     }
 
-    getVersion()
+    app
+      .getVersion()
       .then((version: SetStateAction<string | undefined>) =>
         setVersionText(version)
       )
