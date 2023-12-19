@@ -96,14 +96,6 @@ export default function SortableItem({ id, element, recording }: Props) {
     if (checkIfElementIsEditable(element)) updateSelectedElementId(id - 1)
   }, [element, id, isSelected, recording, updateSelectedElementId])
 
-  // const onEditButtonPress = useCallback(() => {
-  //   stopRecording()
-  //   if (isSelected) {
-  //     return
-  //   }
-  //   updateSelectedElementId(id - 1)
-  // }, [id, isSelected, stopRecording, updateSelectedElementId])
-
   const onDeleteButtonPress = useCallback(() => {
     if (isSelected) {
       updateSelectedElementId(undefined)
