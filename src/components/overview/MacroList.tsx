@@ -42,7 +42,7 @@ export default function MacroList() {
   >([])
 
   useEffect(() => {
-    let newMatchingMacros: { macro: Macro; collection: Collection }[] = []
+    const newMatchingMacros: { macro: Macro; collection: Collection }[] = []
 
     if (searchValue) {
       collections.map((collection) => {
