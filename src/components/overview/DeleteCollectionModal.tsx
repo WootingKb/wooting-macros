@@ -1,12 +1,12 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  Divider
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay
 } from '@chakra-ui/react'
 import { useCallback } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'

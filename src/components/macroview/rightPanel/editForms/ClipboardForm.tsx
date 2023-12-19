@@ -1,16 +1,18 @@
 import {
-  Divider,
-  Textarea,
-  Text,
-  HStack,
   Box,
-  useColorMode
+  Divider,
+  HStack,
+  Text,
+  Textarea,
+  useColorMode,
+  useColorModeValue
 } from '@chakra-ui/react'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { SystemEventAction } from '../../../../types'
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   selectedElementId: number
@@ -26,6 +28,8 @@ export default function ClipboardForm({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const { updateElement } = useMacroContext()
   const { colorMode } = useColorMode()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
 
   useEffect(() => {
     if (
@@ -104,9 +108,28 @@ export default function ClipboardForm({
 
   return (
     <>
-      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
-        Paste Text
-      </Text>
+      <HStack justifyContent="center" p={1}>
+        <Text>Editing element</Text>
+        <Box
+          h="32px"
+          w="fit-content"
+          bg={bg}
+          border="1px solid"
+          py={1}
+          px={3}
+          borderColor={kebabColour}
+          rounded={borderRadiusStandard}
+        >
+          <Text
+            fontSize={['sm', 'md', 'md']}
+            w="fit-content"
+            whiteSpace="nowrap"
+            fontWeight="bold"
+          >
+            {'Clipboard'}
+          </Text>
+        </Box>
+      </HStack>
       <Divider />
       <HStack w="full" justifyContent="space-between">
         <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">

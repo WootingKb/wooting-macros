@@ -1,4 +1,4 @@
-import { HStack, VStack, Text, Switch } from '@chakra-ui/react'
+import { HStack, Switch, Text, VStack } from '@chakra-ui/react'
 
 interface Props {
   title: string
@@ -15,7 +15,6 @@ export default function ToggleSetting({
   onChange,
   didDependencyCheckFail = false
 }: Props) {
-
   return (
     <HStack w="full" justifyContent="space-between" spacing={16}>
       <VStack spacing={0} textAlign="left">

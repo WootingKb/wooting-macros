@@ -3,14 +3,10 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  AspectRatio,
   Flex,
-  Grid,
-  GridItem
+  Grid
 } from '@chakra-ui/react'
-import { PluginEventInfo } from '../../../../constants/PluginsEventMap'
 import { PluginCategory } from '../../../../types'
-import SelectElementButton from '../SelectElementButton'
 
 interface Props {
   pluginCategories: PluginCategory[]

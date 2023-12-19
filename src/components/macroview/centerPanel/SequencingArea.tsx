@@ -1,16 +1,16 @@
 import {
-  VStack,
-  HStack,
-  Text,
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Button,
   Divider,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Stack,
-  useDisclosure,
+  HStack,
   IconButton,
-  Tooltip
+  Stack,
+  Text,
+  Tooltip,
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react'
 import { DeleteIcon, SettingsIcon, TimeIcon } from '@chakra-ui/icons'
 import { useCallback } from 'react'
@@ -23,12 +23,14 @@ import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
+import useMainBgColour from '../../../hooks/useMainBgColour'
+import { borderRadiusStandard } from '../../../theme/config' // interface Props {
 
 interface Props {
-  onOpenSettingsModal: () => void
+  onOpenMacroSettingsModal: () => void
 }
 
-export default function SequencingArea({ onOpenSettingsModal }: Props) {
+export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   const {
     sequence,
     willCauseTriggerLooping,
@@ -128,7 +130,7 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
     useRecordingSequence(onItemChanged)
 
   return (
-    <VStack w="41%" h="full">
+    <VStack w="41%" h="full" bg={useMainBgColour()} justifyContent="top">
       {/** Header */}
       <VStack w="full" px={[2, 4, 6]} pt={[2, 4]}>
         <Stack
@@ -138,14 +140,11 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
           justifyContent="space-between"
           alignItems={['start', 'center']}
         >
-          <Text fontWeight="semibold" fontSize={['sm', 'md']}>
-            Sequence
-          </Text>
           {willCauseTriggerLooping && (
             <Alert
               status="error"
               w={['full', 'fit']}
-              rounded="md"
+              rounded={borderRadiusStandard}
               py="1"
               px={['2', '3']}
             >
@@ -158,33 +157,29 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
         </Stack>
       </VStack>
       <HStack
-        justifyContent="right"
+        justifyContent="center"
         w="full"
         alignItems="center"
         px={[2, 4, 6]}
       >
+        <Text fontWeight="semibold" fontSize={['sm', 'md']}>
+          Sequence
+        </Text>
         <Button
           variant="brandRecord"
           leftIcon={recording ? <StopIcon /> : <RecordIcon />}
           size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
           isActive={recording}
           onClick={recording ? stopRecording : startRecording}
         >
           {recording ? 'Stop' : 'Record'}
         </Button>
         <Button
-          variant="brandWarning"
-          leftIcon={<DeleteIcon />}
-          size={['xs', 'sm', 'md']}
-          onClick={onOpen}
-          isDisabled={sequence.length === 0}
-        >
-          Clear All
-        </Button>
-        <Button
-          variant="brandAccent"
+          variant="brandRecord"
           leftIcon={<TimeIcon />}
           size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
           onClick={() => {
             onElementAdd({
               type: 'DelayEventAction',
@@ -194,13 +189,25 @@ export default function SequencingArea({ onOpenSettingsModal }: Props) {
         >
           Add Delay
         </Button>
-        <Tooltip label="Open Application Settings" hasArrow variant="brand">
+        <Button
+          variant="brandWarning"
+          leftIcon={<DeleteIcon />}
+          size={['xs', 'sm', 'md']}
+          fontSize={['xs', '13.5', 'lg']}
+          onClick={onOpen}
+          isDisabled={sequence.length === 0}
+        >
+          Clear All
+        </Button>
+
+        <Tooltip label="Open Macro Advanced Settings (coming soon)" hasArrow variant="brand">
           <IconButton
             variant="brand"
-            aria-label="Settings"
+            isDisabled={true}
+            aria-label="MacroSettings"
             icon={<SettingsIcon />}
             size={['xs', 'sm', 'md']}
-            onClick={onOpenSettingsModal}
+            // onClick={onOpenMacroSettingsModal}
           />
         </Tooltip>
       </HStack>

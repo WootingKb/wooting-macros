@@ -1,19 +1,19 @@
 import {
+  Box,
   Button,
-  Flex,
-  Text,
-  Switch,
   Divider,
-  VStack,
+  Flex,
+  HStack,
   Kbd,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
+  Switch,
+  Text,
+  Tooltip,
   useColorModeValue,
-  Box,
-  HStack,
-  Tooltip
+  VStack
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
@@ -24,16 +24,27 @@ import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback } from 'react'
 import { KebabVertical } from '../icons'
 import useMainBgColour from '../../hooks/useMainBgColour'
+import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   macro: Macro
   index: number
   onDelete: (index: number) => void
+  collectionName?: string
 }
 
-export default function MacroCard({ macro, index, onDelete }: Props) {
-  const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
-    useApplicationContext()
+export default function MacroCard({
+  macro,
+  index,
+  onDelete,
+  collectionName
+}: Props) {
+  const {
+    selection,
+    onCollectionUpdate,
+    changeSelectedMacroIndex,
+    searchValue
+  } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('md', 'white-md')
@@ -69,7 +80,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       h="full"
       bg={useMainBgColour()}
       boxShadow={shadowColour}
-      rounded="2xl"
+      rounded={borderRadiusStandard}
       p={5}
       m="auto"
       justifyContent="space-between"
@@ -113,7 +124,10 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
             <Divider />
-            <MenuItem onClick={() => onDelete(index)} textColor={deleteTextColour}>
+            <MenuItem
+              onClick={() => onDelete(index)}
+              textColor={deleteTextColour}
+            >
               Delete
             </MenuItem>
           </MenuList>
@@ -121,25 +135,32 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       </HStack>
       {/** Trigger Keys Display */}
       <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
+        {searchValue.length !== 0 && (
+          <HStack alignSelf="flex-start">
+            <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
+              {collectionName}
+            </Text>
+          </HStack>
+        )}
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
-          Trigger Keys:
+          Trigger Keys
         </Text>
         <Flex
           w="full"
           gap="4px"
           bg={secondBg}
-          rounded="md"
+          rounded={borderRadiusStandard}
           p="9px"
           shadow="inner"
         >
           {macro.trigger.type === 'KeyPressEvent' &&
             macro.trigger.data.map((HIDcode) => (
-              <Kbd variant="brand" key={HIDcode}>
+              <Kbd fontSize="md" variant="brand" key={HIDcode}>
                 {HIDLookup.get(HIDcode)?.displayString}
               </Kbd>
             ))}
           {macro.trigger.type === 'MouseEvent' && (
-            <Kbd variant="brand">
+            <Kbd fontSize="md" variant="brand">
               {mouseEnumLookup.get(macro.trigger.data)?.displayString}
             </Kbd>
           )}

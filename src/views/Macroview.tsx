@@ -1,4 +1,4 @@
-import { VStack, HStack } from '@chakra-ui/react'
+import { HStack, VStack } from '@chakra-ui/react'
 import EditArea from '../components/macroview/rightPanel/EditArea'
 import SelectElementArea from '../components/macroview/leftPanel/SelectElementArea'
 import SequencingArea from '../components/macroview/centerPanel/SequencingArea'
@@ -8,10 +8,13 @@ import { useEffect } from 'react'
 
 type Props = {
   isEditing: boolean
-  onOpenSettingsModal: () => void
+  onOpenMacroSettingsModal: () => void
 }
 
-export default function Macroview({ isEditing, onOpenSettingsModal }: Props) {
+export default function Macroview({
+  isEditing,
+  onOpenMacroSettingsModal
+}: Props) {
   const { changeIsUpdatingMacro } = useMacroContext()
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export default function Macroview({ isEditing, onOpenSettingsModal }: Props) {
       >
         {/** Bottom Panels */}
         <SelectElementArea />
-        <SequencingArea onOpenSettingsModal={onOpenSettingsModal} />
+        <SequencingArea onOpenMacroSettingsModal={onOpenMacroSettingsModal} />
         <EditArea />
       </HStack>
     </VStack>

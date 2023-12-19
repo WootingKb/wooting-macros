@@ -1,10 +1,10 @@
 import {
-  VStack,
   Divider,
+  Flex,
+  HStack,
   Text,
   useColorModeValue,
-  HStack,
-  Flex
+  VStack
 } from '@chakra-ui/react'
 import { openDiscordLink, openGithubLink } from '../../constants/externalLinks'
 import { SettingsCategory } from '../../constants/enums'

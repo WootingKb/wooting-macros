@@ -121,7 +121,7 @@ impl Macro {
     async fn execute(&self, send_channel: UnboundedSender<rdev::EventType>) -> Result<()> {
         for action in &self.sequence {
             match action {
-                ActionEventType::KeyPressEventAction { data } => match data.key_type {
+                ActionEventType::KeyPressEventAction { data } => match data.keytype {
                     key_press::KeyType::Down => {
                         // One key press down
                         send_channel
@@ -304,6 +304,7 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
             Some(event) => *event,
             None => {
                 error!("Failed to receive an event!");
+                thread::sleep(time::Duration::from_millis(200));
                 continue;
             }
         };

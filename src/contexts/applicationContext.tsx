@@ -1,16 +1,16 @@
 import {
+  createContext,
   ReactNode,
-  useState,
+  SetStateAction,
+  useCallback,
+  useContext,
   useEffect,
   useMemo,
-  useContext,
-  createContext,
-  useCallback,
-  SetStateAction
+  useState
 } from 'react'
 import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
-import { AppState, Collection, MacroData, CurrentSelection } from '../types'
+import { AppState, Collection, CurrentSelection, MacroData } from '../types'
 import { updateBackendConfig } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 import { invoke } from '@tauri-apps/api'
@@ -35,6 +35,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [viewState, setViewState] = useState<ViewState>(ViewState.Overview)
   const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
+  const [searchValue, setSearchValue] = useState('')
+  const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
     macroIndex: undefined
@@ -105,6 +107,20 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [setSelection]
   )
 
+  const changeSearchValue = useCallback(
+    (term: string) => {
+      setSearchValue(term)
+    },
+    [setSearchValue]
+  )
+
+  const changeMacroOutputEnabled = useCallback(
+    (value: boolean) => {
+      setIsMacroOutputEnabled(!value)
+    },
+    [setIsMacroOutputEnabled]
+  )
+
   const onCollectionAdd = useCallback(
     (newCollection: Collection) => {
       let newIndex = 0
@@ -152,7 +168,12 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex
+      changeSelectedMacroIndex,
+      searchValue,
+      setSearchValue,
+      isMacroOutputEnabled,
+      changeMacroOutputEnabled,
+      changeSearchValue
     }),
     [
       viewState,
@@ -164,7 +185,12 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       onCollectionAdd,
       onCollectionUpdate,
       changeSelectedCollectionIndex,
-      changeSelectedMacroIndex
+      changeSelectedMacroIndex,
+      searchValue,
+      setSearchValue,
+      isMacroOutputEnabled,
+      changeMacroOutputEnabled,
+      changeSearchValue
     ]
   )
 

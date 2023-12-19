@@ -1,16 +1,17 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import {
-  HStack,
-  VStack,
-  Text,
   Divider,
+  HStack,
   Radio,
   RadioGroup,
+  Text,
   useColorMode,
-  useColorModeValue
+  useColorModeValue,
+  VStack
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useSettingsContext } from '../../contexts/settingsContext'
+import { borderRadiusStandard } from '../../theme/config'
 
 export default function AppearanceSettingsPanel() {
   const [value, setValue] = useState('')
@@ -55,12 +56,12 @@ export default function AppearanceSettingsPanel() {
               _hover={{ bg: radioHoverBg }}
               p="4"
               gap={2}
-              rounded="md"
+              rounded={borderRadiusStandard}
               onClick={() => onThemeChange('light')}
             >
               <Radio
                 colorScheme="primary-accent"
-                value='light'
+                value="light"
                 variant="brand"
               />
               <SunIcon />
@@ -73,12 +74,12 @@ export default function AppearanceSettingsPanel() {
               _hover={{ bg: radioHoverBg }}
               p="4"
               gap={2}
-              rounded="md"
+              rounded={borderRadiusStandard}
               onClick={() => onThemeChange('dark')}
             >
               <Radio
                 colorScheme="primary-accent"
-                value='dark'
+                value="dark"
                 variant="brand"
               />
               <MoonIcon />
