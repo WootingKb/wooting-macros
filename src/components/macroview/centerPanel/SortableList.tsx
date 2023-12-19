@@ -1,4 +1,4 @@
-import { VStack } from '@chakra-ui/react'
+import { useColorModeValue, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -38,6 +38,7 @@ export default function SortableList({ recording, stopRecording }: Props) {
       coordinateGetter: sortableKeyboardCoordinates
     })
   )
+  const backgroundColor = useColorModeValue("primary-light.100", "bg-dark")
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -76,10 +77,11 @@ export default function SortableList({ recording, stopRecording }: Props) {
     >
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <VStack
-          bg="bg-dark"
+          bg={backgroundColor}
           w="full"
           h="full"
           px={4}
+          p={2}
           pb={4}
           overflowY="auto"
           overflowX="hidden"
