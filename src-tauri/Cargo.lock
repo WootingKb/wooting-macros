@@ -6198,7 +6198,7 @@ dependencies = [
 
 [[package]]
 name = "wooting-macro-backend"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "copypasta",
@@ -6225,7 +6225,7 @@ dependencies = [
 
 [[package]]
 name = "wooting-macros"
-version = "1.0.2"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "auto-launch",

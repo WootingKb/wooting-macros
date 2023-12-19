@@ -1,6 +1,6 @@
 [package]
 name = "wooting-macro-backend"
-version = "1.0.2"
+version = "1.1.0"
 edition = "2021"
 description = "Macro software backend made by Wooting."
 authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N"]

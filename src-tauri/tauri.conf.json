@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Wootomation",
-    "version": "1.0.2"
+    "version": "1.1.0"
   },
   "tauri": {
     "allowlist": {
@@ -50,16 +50,6 @@
         "frameworks": [],
         "providerShortName": null,
         "signingIdentity": null
-      },
-      "windows": {
-        "wix": {
-          "bannerPath": "icons/install-banner-493x58.png",
-          "dialogImagePath": "icons/dialog-image-493x312.png",
-          "license": "../LICENSE"
-        },
-        "certificateThumbprint": "641751C7EF318C8D5F908AB7DDD34161375BB34B",
-        "digestAlgorithm": "sha256",
-        "timestampUrl": "http://timestamp.sectigo.com"
       },
       "resources": [],
       "shortDescription": "A macro application by Wooting",
