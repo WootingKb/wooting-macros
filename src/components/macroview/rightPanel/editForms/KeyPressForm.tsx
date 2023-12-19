@@ -35,7 +35,6 @@ export default function KeyPressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [headingText, setHeadingText] = useState<JSX.Element | string>('')
   const [keypressDuration, setKeypressDuration] = useState(DefaultMacroDelay)
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
@@ -54,30 +53,6 @@ export default function KeyPressForm({
     const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
     setKeypressDuration(selectedElement.data.press_duration.toString())
-    setHeadingText(
-      <HStack justifyContent="center" p={1}>
-        <Text>Editing element</Text>
-        <Box
-          h="32px"
-          w="fit-content"
-          bg={bg}
-          border="1px solid"
-          py={1}
-          px={3}
-          borderColor={kebabColour}
-          rounded={borderRadiusStandard}
-        >
-          <Text
-            fontSize={['sm', 'md', 'md']}
-            w="fit-content"
-            whiteSpace="nowrap"
-            fontWeight="bold"
-          >
-            {HIDLookup.get(selectedElement.data.keypress)?.displayString}
-          </Text>
-        </Box>
-      </HStack>
-    )
   }, [bg, kebabColour, selectedElement])
 
   const onKeypressDurationChange = useCallback(
@@ -152,9 +127,28 @@ export default function KeyPressForm({
 
   return (
     <>
-      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
-        {headingText}
-      </Text>
+      <HStack justifyContent="center" p={1}>
+        <Text>Editing element</Text>
+        <Box
+          h="32px"
+          w="fit-content"
+          bg={bg}
+          border="1px solid"
+          py={1}
+          px={3}
+          borderColor={kebabColour}
+          rounded={borderRadiusStandard}
+        >
+          <Text
+            fontSize={['sm', 'md', 'md']}
+            w="fit-content"
+            whiteSpace="nowrap"
+            fontWeight="bold"
+          >
+            {HIDLookup.get(selectedElement.data.keypress)?.displayString}
+          </Text>
+        </Box>
+      </HStack>
       <Divider />
       <Grid templateRows={'20px 1fr'} gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
