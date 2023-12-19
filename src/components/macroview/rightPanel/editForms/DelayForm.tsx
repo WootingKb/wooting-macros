@@ -85,7 +85,7 @@ export default function DelayForm({
       data: duration
     }
     updateElement(temp, selectedElementId)
-  }, [delayDuration, selectedElement, selectedElementId, toast, updateElement])
+  }, [config.config.DefaultDelayValue, delayDuration, selectedElement, selectedElementId, toast, updateElement])
 
   useEffect(() => {
     if (resetTriggered) {
