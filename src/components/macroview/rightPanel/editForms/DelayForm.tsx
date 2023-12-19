@@ -17,6 +17,7 @@ import { DelayEventAction } from '../../../../types'
 import { borderRadiusStandard } from '../../../../theme/config'
 import { DefaultDelayDelay } from '../../../../constants/utils'
 import { ResetDefaultIcon } from '../../../icons'
+import { useSettingsContext } from '../../../../contexts/settingsContext'
 
 interface Props {
   selectedElementId: number
@@ -27,7 +28,10 @@ export default function DelayForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [delayDuration, setDelayDuration] = useState(DefaultDelayDelay)
+  const config = useSettingsContext()
+  const [delayDuration, setDelayDuration] = useState(
+    String(config.config.DefaultDelayValue)
+  )
   const { updateElement } = useMacroContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
@@ -57,12 +61,12 @@ export default function DelayForm({
     if (delayDuration === '') {
       toast({
         title: 'Default duration applied',
-        description: 'Applied default duration of 20ms',
+        description: `Applied default duration of ${config.config.DefaultDelayValue} ms`,
         status: 'info',
         duration: 4000,
         isClosable: true
       })
-      duration = 20
+      duration = config.config.DefaultDelayValue
     } else if (Number(delayDuration) < 1) {
       toast({
         title: 'Minimum duration applied',
