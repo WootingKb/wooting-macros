@@ -1,19 +1,18 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Text,
-  ModalFooter,
   Button,
   Divider,
-  HStack,
-  VStack,
-  Kbd,
   Flex,
+  HStack,
+  Kbd,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
   useColorModeValue,
-  Switch
+  VStack
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
@@ -25,6 +24,7 @@ import {
   checkIfMouseButtonArray
 } from '../../../constants/utils'
 import { RecordIcon, StopIcon } from '../../icons'
+import { borderRadiusStandard } from '../../../theme/config'
 
 interface Props {
   isOpen: boolean
@@ -127,7 +127,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
     >
       <ModalOverlay />
       <ModalContent p={2}>
-        <ModalHeader>Trigger Keys</ModalHeader>
+        <ModalHeader fontWeight="bold">Trigger Keys</ModalHeader>
         <Divider w="90%" alignSelf="center" />
         <ModalBody>
           <VStack w="full" justifyContent="space-between">
@@ -137,24 +137,32 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 gap="4px"
                 minH="42px"
                 bg={secondBg}
-                alignItems="center"
-                rounded="md"
+                justifyContent="center"
+                rounded={borderRadiusStandard}
                 p="9px"
                 shadow="inner"
               >
                 {items.length === 0 && (
-                  <Text>
-                    Set up to 4 keys* or a mouse button to use as the trigger.
+                  <Text textAlign="center">
+                    {'Set up to 4 keys or a mouse button to use as the trigger'}
                   </Text>
                 )}
                 {items.map((element, index) => (
-                  <Kbd variant="brand" h="fit-content" key={element}>
+                  <Kbd
+                    fontSize="md"
+                    variant="brand"
+                    h="fit-content"
+                    key={element}
+                  >
                     {displayNames[index]}
                   </Kbd>
                 ))}
               </Flex>
               <HStack w="full" justifyContent="space-between">
-                <Text fontSize="xs">* (1 non-modifer, up to 3 modifiers)</Text>
+                <VStack alignItems="left">
+                  <Text fontSize="sm">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
+                  <Text fontSize="sm">{`non-modifier key must be the last in sequence.`}</Text>
+                </VStack>
                 <Button
                   variant="brandRecord"
                   size="sm"

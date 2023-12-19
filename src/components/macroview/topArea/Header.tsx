@@ -1,16 +1,15 @@
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
+  Box,
+  Button,
   HStack,
-  Flex,
   IconButton,
   Input,
   Tooltip,
-  Button,
   useColorModeValue,
-  useDisclosure,
-  Box
+  useDisclosure
 } from '@chakra-ui/react'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../../contexts/applicationContext'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedMacro } from '../../../contexts/selectors'
@@ -141,60 +140,64 @@ export default function Header({ isEditing }: Props) {
         h={{ base: '80px', md: '100px', xl: '120px' }}
         py={2}
         px={{ base: 2, md: 4, xl: 6 }}
-        gap={4}
+        // gap={4}
+        spacing={4}
         shadow={shadowColour}
         justifyContent="space-between"
+        justifyItems="center"
       >
-        <Flex maxW="400px" h="full" alignItems="center" gap="4">
-          <IconButton
-            aria-label="Back"
-            variant="brand"
-            icon={<ArrowBackIcon />}
-            size="sm"
-            onClick={onBackButtonPress}
-          />
-          <EmojiPopover
-            shortcodeToShow={macro.icon}
-            isEmojiPopoverOpen={isEmojiPopoverOpen}
-            onEmojiPopoverClose={onEmojiPopoverClose}
-            onEmojiPopoverOpen={onEmojiPopoverOpen}
-            onEmojiSelect={onEmojiSelect}
-          />
-          <Input
-            w="full"
-            variant="flushed"
-            placeholder="Macro Name"
-            size="xl"
-            textStyle="name"
-            _placeholder={{ opacity: 1, color: placeholderTextColour }}
-            onChange={(event) => setInputValue(event.target.value)}
-            onBlur={(event) => updateMacroName(event.target.value)}
-            value={inputValue}
-            _focusVisible={{ borderColor: 'primary-accent.500' }}
-          />
-        </Flex>
+        {/*<Flex maxW="500px" flexGrow={1} gap={4} alignItems="flex-start">*/}
+        <IconButton
+          aria-label="Back"
+          variant="brand"
+          icon={<ArrowBackIcon />}
+          size="sm"
+          onClick={onBackButtonPress}
+        />
+        <EmojiPopover
+          shortcodeToShow={macro.icon}
+          isEmojiPopoverOpen={isEmojiPopoverOpen}
+          onEmojiPopoverClose={onEmojiPopoverClose}
+          onEmojiPopoverOpen={onEmojiPopoverOpen}
+          onEmojiSelect={onEmojiSelect}
+        />
+        <Input
+          maxW="400px"
+          w="40%"
+          variant="flushed"
+          placeholder="Macro Name"
+          size="xl"
+          fontSize="25px"
+          textStyle="name"
+          _placeholder={{ opacity: 1, color: placeholderTextColour }}
+          onChange={(event) => setInputValue(event.target.value)}
+          onBlur={(event) => updateMacroName(event.target.value)}
+          value={inputValue}
+          _focusVisible={{ borderColor: 'primary-accent.500' }}
+        />
+        {/*</Flex>*/}
         {/* <MacroTypeArea /> */}
-        <Flex maxW="700px" flexGrow={1} gap={4} alignItems="center">
-          <TriggerArea onOpen={onTriggerModalOpen} />
-          <Tooltip
-            variant="brand"
-            label={saveButtonTooltipText}
-            placement="bottom-start"
-            hasArrow
-          >
-            <Box>
-              <Button
-                size={{ base: 'md', lg: 'lg' }}
-                variant="yellowGradient"
-                isDisabled={!canSaveMacro}
-                onClick={updateMacro}
-                aria-label="Save"
-              >
-                Save Macro
-              </Button>
-            </Box>
-          </Tooltip>
-        </Flex>
+        {/*<Flex maxW="700px" flexGrow={1} gap={4} alignItems="flex-start">*/}
+        <TriggerArea onOpen={onTriggerModalOpen} />
+        <Tooltip
+          variant="brand"
+          label={saveButtonTooltipText}
+          placement="bottom-start"
+          hasArrow
+        >
+          <Box>
+            <Button
+              size={{ base: 'md', lg: 'lg' }}
+              variant="yellowGradient"
+              isDisabled={!canSaveMacro}
+              onClick={updateMacro}
+              aria-label="Save"
+            >
+              Save Macro
+            </Button>
+          </Box>
+        </Tooltip>
+        {/*</Flex>*/}
       </HStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}

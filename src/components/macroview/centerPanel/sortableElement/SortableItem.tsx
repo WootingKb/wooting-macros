@@ -1,10 +1,9 @@
-import { TimeIcon, EditIcon } from '@chakra-ui/icons'
+import { TimeIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
   Flex,
   HStack,
-  IconButton,
   Menu,
   MenuButton,
   MenuItem,
@@ -12,7 +11,7 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react'
-import { useMemo, useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { ActionEventType } from '../../../../types'
 import {
@@ -26,6 +25,7 @@ import {
   getElementDisplayString
 } from '../../../../constants/utils'
 import { KeyType } from '../../../../constants/enums'
+import { borderRadiusStandard } from '../../../../theme/config'
 
 interface Props {
   id: number
@@ -34,12 +34,7 @@ interface Props {
   stopRecording: () => void
 }
 
-export default function SortableItem({
-  id,
-  element,
-  recording,
-  stopRecording
-}: Props) {
+export default function SortableItem({ id, element, recording }: Props) {
   const isEditable = checkIfElementIsEditable(element)
   const displayText = getElementDisplayString(element)
   const {
@@ -70,9 +65,9 @@ export default function SortableItem({
       case 'DelayEventAction':
         return <TimeIcon />
       case 'KeyPressEventAction':
-        if (element.data.key_type === 'DownUp') {
+        if (element.data.keytype === 'DownUp') {
           return <DownUpArrowsIcon />
-        } else if (element.data.key_type === 'Down') {
+        } else if (element.data.keytype === 'Down') {
           return <DownArrowIcon />
         } else {
           return <UpArrowIcon />
@@ -101,14 +96,6 @@ export default function SortableItem({
     if (checkIfElementIsEditable(element)) updateSelectedElementId(id - 1)
   }, [element, id, isSelected, recording, updateSelectedElementId])
 
-  const onEditButtonPress = useCallback(() => {
-    stopRecording()
-    if (isSelected) {
-      return
-    }
-    updateSelectedElementId(id - 1)
-  }, [id, isSelected, stopRecording, updateSelectedElementId])
-
   const onDeleteButtonPress = useCallback(() => {
     if (isSelected) {
       updateSelectedElementId(undefined)
@@ -116,12 +103,21 @@ export default function SortableItem({
     onElementDelete(id - 1)
   }, [id, isSelected, onElementDelete, updateSelectedElementId])
 
+  const secondBg = useColorModeValue('primary-light.0', 'primary-dark.800')
+
   return (
     <HStack
       w="full"
       h="full"
+      bg={
+        selectedElementId !== undefined && id === selectedElementId + 1
+          ? 'inherit'
+          : secondBg
+      }
       justifyContent="space-around"
       spacing="0px"
+      roundedRight={borderRadiusStandard}
+      roundedLeft={0}
       cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >
@@ -141,7 +137,7 @@ export default function SortableItem({
           borderColor={kebabColour}
           alignItems="center"
           justifyContent="center"
-          rounded="md"
+          rounded={borderRadiusStandard}
         >
           <Text
             h="fit-content"
@@ -158,7 +154,7 @@ export default function SortableItem({
       </HStack>
       <HStack py={2} pr={2} h="full" spacing={0} gap={2} alignItems="flex-end">
         {element.type === 'KeyPressEventAction' &&
-          element.data.key_type === KeyType[KeyType.DownUp] && (
+          element.data.keytype === KeyType[KeyType.DownUp] && (
             <Box
               h="32px"
               w="fit-content"
@@ -167,7 +163,7 @@ export default function SortableItem({
               py={1}
               px={3}
               borderColor={kebabColour}
-              rounded="md"
+              rounded={borderRadiusStandard}
             >
               <Text
                 w="fit-content"
@@ -194,7 +190,7 @@ export default function SortableItem({
               py={1}
               px={3}
               borderColor={kebabColour}
-              rounded="md"
+              rounded={borderRadiusStandard}
             >
               <Text
                 w="fit-content"
@@ -211,15 +207,6 @@ export default function SortableItem({
               </Text>
             </Box>
           )}
-        {isEditable && (
-          <IconButton
-            variant="brandSecondary"
-            aria-label="Edit item"
-            icon={<EditIcon />}
-            size={['xs', 'sm']}
-            onClick={onEditButtonPress}
-          />
-        )}
         <Menu variant="brand">
           <MenuButton
             h="24px"

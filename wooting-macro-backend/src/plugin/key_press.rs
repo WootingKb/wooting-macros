@@ -3,7 +3,7 @@
 pub struct KeyPress {
     pub keypress: u32,
     pub press_duration: super::delay::Delay,
-    pub key_type: KeyType,
+    pub keytype: KeyType,
 }
 
 /// Type of a key action. DownUp releases after pressing, others just do the named action.

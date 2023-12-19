@@ -1,4 +1,5 @@
 import {
+  Divider,
   Flex,
   HStack,
   Modal,
@@ -11,23 +12,20 @@ import {
   VStack
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
-import { settingInfoLookup } from '../constants/SettingsMap'
-import AccessibilitySettingsPanel from '../components/settings/AccessibilitySettingsPanel'
-import AppearanceSettingsPanel from '../components/settings/AppearanceSettingsPanel'
-import IntegrationSettingsPanel from '../components/settings/IntegrationSettingsPanel'
-import LanguageSettingsPanel from '../components/settings/LanguageSettingsPanel'
-import ApplicationSettingsPanel from '../components/settings/ApplicationSettingsPanel'
-import PatchNotesPanel from '../components/settings/PatchNotesPanel'
-import SettingsLeftPanel from '../components/settings/SettingsLeftPanel'
+
 import useScrollbarStyles from '../hooks/useScrollbarStyles'
 import useMainBgColour from '../hooks/useMainBgColour'
+import NotificationMacroSettingsPanel from '../components/macrosettings/NotificationMacroSettingsPanel'
+import DefaultMacroSettings from '../components/macrosettings/DefaultMacroSettings'
+import MacroSettingsLeftPanel from '../components/macrosettings/MacroSettingsLeftPanel'
+import { macroSettingInfoLookup } from '../constants/MacroSettingsMap'
 
 type Props = {
   isOpen: boolean
   onClose: () => void
 }
 
-export default function SettingsModal({ isOpen, onClose }: Props) {
+export default function MacroSettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
   const rightPanelBg = useMainBgColour()
   const leftPanelBg = useColorModeValue('primary-light.50', 'bg-dark')
@@ -39,17 +37,9 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   const SelectedPageComponent = useMemo(() => {
     switch (pageIndex) {
       case 0:
-        return <ApplicationSettingsPanel />
+        return <DefaultMacroSettings />
       case 1:
-        return <AppearanceSettingsPanel />
-      case 2:
-        return <AccessibilitySettingsPanel />
-      case 3:
-        return <LanguageSettingsPanel />
-      case 4:
-        return <IntegrationSettingsPanel />
-      case 5:
-        return <PatchNotesPanel />
+        return <NotificationMacroSettingsPanel />
       default:
         return <></>
     }
@@ -58,7 +48,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   return (
     <Modal
       isOpen={isOpen}
-      size={'full'}
+      size={'2xl'}
       variant="brand"
       onClose={onClose}
       scrollBehavior="inside"
@@ -68,14 +58,15 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
       <ModalContent>
         <HStack
           w="full"
-          minH="100vh"
+          minW="100px"
+          minH="100px"
           spacing="0"
           gap={0}
           overflow="hidden"
           justifyContent="center"
           bgGradient={`linear(to-r, ${leftPanelBg}, ${leftPanelBg}, ${rightPanelBg}, ${rightPanelBg})`}
         >
-          <SettingsLeftPanel
+          <MacroSettingsLeftPanel
             pageIndex={pageIndex}
             onSettingsButtonPress={setPageIndex}
           />
@@ -94,10 +85,17 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
             sx={useScrollbarStyles()}
           >
             <ModalBody w="full" p={0}>
-              <VStack w="600px" justifyContent="left" spacing={4}>
-                <Text w="full" fontWeight="bold" fontSize="large">
-                  {settingInfoLookup.get(pageIndex)?.displayString}
+              <VStack w="full" justifyContent="center" spacing={2} p={2}>
+                <Text
+                  w="full"
+                  align="center"
+                  fontWeight="bold"
+                  fontSize="large"
+                >
+                  {macroSettingInfoLookup.get(pageIndex)?.displayString +
+                    ' Settings'}
                 </Text>
+                <Divider></Divider>
                 {SelectedPageComponent}
               </VStack>
             </ModalBody>

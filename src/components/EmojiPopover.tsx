@@ -1,9 +1,9 @@
 import {
   Box,
   Popover,
-  PopoverTrigger,
-  PopoverContent,
   PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   useColorMode
 } from '@chakra-ui/react'
 import data from '@emoji-mart/data'

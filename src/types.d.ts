@@ -22,6 +22,10 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
+  searchValue: string
+  isMacroOutputEnabled: boolean
+  changeMacroOutputEnabled: (value: boolean) => void
+  setSearchValue: (term: string) => void
 }
 
 export type MacroState = {
@@ -143,7 +147,7 @@ declare global {
 export interface Keypress {
   keypress: number
   press_duration: number
-  key_type: string
+  keytype: string
 }
 
 export interface Monitor {

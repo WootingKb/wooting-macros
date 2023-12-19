@@ -9,11 +9,19 @@ interface Props {
   selectedElementId: number
 }
 
-export default function SystemEventActionForm({ selectedElement, selectedElementId }: Props) {
-  const SelectedElementFormComponent = useMemo(() => {
+export default function SystemEventActionForm({
+  selectedElement,
+  selectedElementId
+}: Props) {
+  return useMemo(() => {
     switch (selectedElement.data.type) {
       case 'Open':
-        return <OpenEventForm selectedElementId={selectedElementId} selectedElement={selectedElement}/>
+        return (
+          <OpenEventForm
+            selectedElementId={selectedElementId}
+            selectedElement={selectedElement}
+          />
+        )
       case 'Volume':
         return <EmptyForm />
       case 'Clipboard':
@@ -31,5 +39,4 @@ export default function SystemEventActionForm({ selectedElement, selectedElement
         return <EmptyForm />
     }
   }, [selectedElement, selectedElementId])
-  return SelectedElementFormComponent
 }

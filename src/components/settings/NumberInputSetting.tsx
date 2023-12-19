@@ -1,14 +1,15 @@
 import {
   HStack,
-  VStack,
-  Text,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   title: string
@@ -48,7 +49,7 @@ export default function NumberInputSetting({
       <NumberInput
         w="25%"
         size="sm"
-        rounded="md"
+        rounded={borderRadiusStandard}
         variant="brand"
         step={5}
         value={value}

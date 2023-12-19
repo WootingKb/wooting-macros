@@ -38,8 +38,8 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
           h="fit"
           columns={{
             base: 2,
-            md: 4,
-            xl: 6
+            md: 3,
+            xl: 4
           }}
           px={4}
           spacing={2}
