@@ -116,7 +116,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
 
   const changeMacroOutputEnabled = useCallback(
     (value: boolean) => {
-      setIsMacroOutputEnabled(value)
+      setIsMacroOutputEnabled(!value)
     },
     [setIsMacroOutputEnabled]
   )
