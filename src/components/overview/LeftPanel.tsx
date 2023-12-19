@@ -148,7 +148,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
       <VStack w="full" px={4} pb={4}>
         <Button
           w="full"
-          colorScheme={!isMacroOutputEnabled ? 'green' : 'orange'}
+          colorScheme={isMacroOutputEnabled ? 'green' : 'orange'}
           size="sm"
           onClick={() => {
             updateMacroOutput(isMacroOutputEnabled).catch((e) => {
