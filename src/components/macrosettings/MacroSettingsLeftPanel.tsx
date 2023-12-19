@@ -15,15 +15,6 @@ export default function MacroSettingsLeftPanel({
   onSettingsButtonPress
 }: Props) {
   const panelBg = useColorModeValue('primary-light.50', 'bg-dark')
-  // const applicationTextColour = useColorModeValue(
-  //   'primary-light.500',
-  //   'primary-dark.400'
-  // )
-  // const strokeColour = useColorModeValue('bg-dark', 'bg-light')
-  // const strokeHoverColour = useColorModeValue(
-  //   'primary-accent.600',
-  //   'primary-accent.400'
-  // )
 
   return (
     <Flex
