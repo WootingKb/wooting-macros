@@ -204,13 +204,14 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           Clear All
         </Button>
 
-        <Tooltip label="Open Macro Advanced Settings" hasArrow variant="brand">
+        <Tooltip label="Open Macro Advanced Settings (coming soon)" hasArrow variant="brand">
           <IconButton
             variant="brand"
+            isDisabled={true}
             aria-label="MacroSettings"
             icon={<SettingsIcon />}
             size={['xs', 'sm', 'md']}
-            onClick={onOpenMacroSettingsModal}
+            // onClick={onOpenMacroSettingsModal}
           />
         </Tooltip>
       </HStack>
