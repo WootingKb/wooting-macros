@@ -17,7 +17,7 @@ export default function PatchNotesPanel() {
   return (
     <VStack w="full" spacing={4}>
       <Text w="full" fontWeight="bold" fontSize="sm">
-        January 16th, 2023
+        December 21st, 2023, v. 1.1
       </Text>
       <VStack w="full">
         <Heading w="full" size="lg" textColor={whatsNewTextColour}>
@@ -36,12 +36,9 @@ export default function PatchNotesPanel() {
               fontFamily="Montserrat"
               textColor={highlightedTextColour}
             >
-              Perform keystrokes, open applications, folders, and websites,
-              paste text with emojis, and more.&nbsp;
+              New UI.&nbsp;
             </Text>
-            Create simple macros that can be triggered by specific keyboard keys
-            or a single mouse button. You can also optionally set a name and an
-            icon, and/or delete it later.
+            New, smoother UI with animations and nicer colors.
           </ListItem>
           <ListItem>
             <Text
@@ -49,12 +46,10 @@ export default function PatchNotesPanel() {
               fontFamily="Montserrat"
               textColor={highlightedTextColour}
             >
-              Create groups of macros that can be easily toggled on/off as a
-              group.&nbsp;
+              Macro search.&nbsp;
             </Text>
-            Collections allow you to easily organize and manage your macros.
-            Group by game, task, etc. You can optionally set a name and an icon
-            for the collection, and/or delete it later.
+            You can now search your macros from the main window across all
+            collections.
           </ListItem>
           <ListItem>
             <Text
@@ -62,10 +57,10 @@ export default function PatchNotesPanel() {
               fontFamily="Montserrat"
               textColor={highlightedTextColour}
             >
-              Adjust how the application behaves.&nbsp;
+              Security updates and bugfixes.&nbsp;
             </Text>
-            You can adjust some window settings, as well as some functionality
-            settings that affect your experience creating a macro.
+            We made sure the app is more secure than ever. Now you can also use
+            any layout for a trigger key.
           </ListItem>
           <ListItem>
             <Text
@@ -73,12 +68,10 @@ export default function PatchNotesPanel() {
               fontFamily="Montserrat"
               textColor={highlightedTextColour}
             >
-              Blind your eyes, or don't.&nbsp;
+              Gaming.&nbsp;
             </Text>
-            You can select between one of two themes, light and dark.&nbsp;
-            <Text as="span" fontSize="2xs">
-              Dark mode is better, definitely not biased...
-            </Text>
+            Macros now work in games! Don't use them in multiplayer games
+            though, for your own sake.&nbsp;
           </ListItem>
           <ListItem>
             <Text
@@ -86,17 +79,10 @@ export default function PatchNotesPanel() {
               fontFamily="Montserrat"
               textColor={highlightedTextColour}
             >
-              Enable and disable individual macros, collections, or the entire
-              app without closing it.&nbsp;
+              Keycombos.&nbsp;
             </Text>
-            If you find yourself in a situation where you'd like to turn off one
-            or more macros, you have a breadth of options to choose from.
-            <Text mt={3}>
-              *Be aware that disabling Macro Output (aka the entire app), will
-              not be enough if you plan on using the app and playing certain
-              games. For peace of mind, when playing competitive games, it is
-              recommended that you close the app.
-            </Text>
+            Key combos should now work properly, so you can now do the
+            CTRL+SHIFT+KEY combos you always wanted.
           </ListItem>
         </UnorderedList>
       </VStack>
