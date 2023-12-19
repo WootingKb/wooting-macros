@@ -57,9 +57,10 @@ export default function PatchNotesPanel() {
               fontFamily="Montserrat"
               textColor={highlightedTextColour}
             >
-              Security updates.&nbsp;
+              Security updates and bugfixes.&nbsp;
             </Text>
-            We made sure the app is more secure than ever.
+            We made sure the app is more secure than ever. Now you can also use
+            any layout for a trigger key.
           </ListItem>
           <ListItem>
             <Text
