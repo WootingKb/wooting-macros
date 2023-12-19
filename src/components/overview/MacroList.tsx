@@ -126,7 +126,7 @@ export default function MacroList() {
                   h="full"
                   bg={useMainBgColour()}
                   boxShadow={shadowColour}
-                  rounded="2xl"
+                  rounded={borderRadiusStandard}
                   p={3}
                   m="auto"
                   justifyContent="center"
