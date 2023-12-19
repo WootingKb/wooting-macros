@@ -148,25 +148,24 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
       <VStack w="full" px={4} pb={4}>
         <Button
           w="full"
-          colorScheme={isMacroOutputEnabled ? 'green' : 'orange'}
+          colorScheme={!isMacroOutputEnabled ? 'green' : 'orange'}
           size="sm"
           onClick={() => {
-            const value = !isMacroOutputEnabled
-            updateMacroOutput(value).catch((e) => {
+            updateMacroOutput(isMacroOutputEnabled).catch((e) => {
               error(e)
               toast({
                 title: `Error ${
-                  !value ? 'disabling' : 'enabling'
+                  isMacroOutputEnabled? 'disabling' : 'enabling'
                 } macro output`,
                 description: `Unable to ${
-                  !value ? 'disable' : 'enable'
+                  isMacroOutputEnabled? 'disable' : 'enable'
                 } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
                 status: 'error',
                 duration: 2000,
                 isClosable: true
               })
             })
-            changeMacroOutputEnabled(value)
+            changeMacroOutputEnabled(isMacroOutputEnabled)
           }}
         >
           <Text fontSize={['sm', 'md']}>
