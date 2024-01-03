@@ -5,7 +5,7 @@ edition = "2021"
 description = "Macro software backend made by Wooting."
 authors = ["Jeroen N", "Erik S", "Simon W", "David M <1900179+medzernik@users.noreply.github.com>", "Khang N"]
 license = "GPL-3.0-only"
-
+publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
