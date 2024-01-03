@@ -1,8 +1,8 @@
 [package]
 name = "wooting-macros"
-version = "1.1.0"
+version = "1.1.0-pre-release"
 description = "Macro software made by Wooting."
-authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N"]
+authors = ["Jeroen N", "Erik S", "Simon W", "David M <1900179+medzernik@users.noreply.github.com>", "Khang N", "Pola M"]
 license = "GPL-3.0-only"
 repository = "https://github.com/WootingKb/wooting-macros"
 edition = "2021"
