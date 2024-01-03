@@ -119,7 +119,7 @@ export default function MacroCard({
           >
             <KebabVertical />
           </MenuButton>
-          <MenuList p="2" right={0} position="relative" zIndex={3}>
+          <MenuList p="2" right={0} position="relative">
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
