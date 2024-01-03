@@ -26,10 +26,6 @@ import SortableList from './SortableList'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import { borderRadiusStandard } from '../../../theme/config' // interface Props {
 
-// interface Props {
-//   onOpenSettingsModal: () => void
-// }
-
 interface Props {
   onOpenMacroSettingsModal: () => void
 }
