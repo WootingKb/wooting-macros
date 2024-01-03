@@ -55,7 +55,16 @@ impl From<&MouseButton> for u32 {
 }
 
 lazy_static! {
-    pub static ref RDEV_MODIFIER_KEYS: [rdev::Key; 8] = [Key::Alt, Key::AltGr, Key::ControlLeft, Key::ControlRight, Key::ShiftLeft, Key::ShiftRight, Key::MetaLeft, Key::MetaRight];
+    pub static ref RDEV_MODIFIER_KEYS: [rdev::Key; 8] = [
+        Key::Alt,
+        Key::AltGr,
+        Key::ControlLeft,
+        Key::ControlRight,
+        Key::ShiftLeft,
+        Key::ShiftRight,
+        Key::MetaLeft,
+        Key::MetaRight
+    ];
 }
 
 lazy_static! {
