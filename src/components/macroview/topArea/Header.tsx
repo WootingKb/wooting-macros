@@ -140,7 +140,6 @@ export default function Header({ isEditing }: Props) {
         h={{ base: '80px', md: '100px', xl: '120px' }}
         py={2}
         px={{ base: 2, md: 4, xl: 6 }}
-        // gap={4}
         spacing={4}
         shadow={shadowColour}
         justifyContent="space-between"
@@ -175,9 +174,7 @@ export default function Header({ isEditing }: Props) {
           value={inputValue}
           _focusVisible={{ borderColor: 'primary-accent.500' }}
         />
-        {/*</Flex>*/}
         {/* <MacroTypeArea /> */}
-        {/*<Flex maxW="700px" flexGrow={1} gap={4} alignItems="flex-start">*/}
         <TriggerArea onOpen={onTriggerModalOpen} />
         <Tooltip
           variant="brand"
@@ -197,7 +194,6 @@ export default function Header({ isEditing }: Props) {
             </Button>
           </Box>
         </Tooltip>
-        {/*</Flex>*/}
       </HStack>
       <UnsavedChangesModal
         isOpen={isUnsavedChangesModalOpen}
