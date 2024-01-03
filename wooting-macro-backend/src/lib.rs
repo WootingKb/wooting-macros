@@ -1,8 +1,8 @@
-use std::{thread, time};
 #[cfg(not(debug_assertions))]
 use std::path::PathBuf;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+use std::{thread, time};
 
 use anyhow::{Error, Result};
 #[cfg(not(debug_assertions))]
@@ -293,7 +293,7 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
 /// Puts a mandatory 0-20 ms delay between each macro execution (depending on the platform).
 fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType>) {
     loop {
-         let received_event = match &rchan_execute.blocking_recv() {
+        let received_event = match &rchan_execute.blocking_recv() {
             Some(event) => *event,
             None => {
                 error!("Failed to receive an event!");
