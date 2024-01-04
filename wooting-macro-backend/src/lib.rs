@@ -339,9 +339,6 @@ fn check_macro_execution_efficiently(
                             let channel_clone_execute = channel_sender.clone();
                             let macro_clone_execute = macros.clone();
 
-                            // We don't need this here as there can't be a single key that's a modifier
-                            // plugin::util::lift_keys(data, &channel_clone_execute);
-
                             task::spawn(async move {
                                 execute_macro(macro_clone_execute, channel_clone_execute).await;
                             });
@@ -361,6 +358,7 @@ fn check_macro_execution_efficiently(
                             let macro_clone_execute = macros.clone();
 
                             // This releases any trigger keys that have been held to make macros more reliable when used with modifier hotkeys.
+                            // Only required for multi-key triggers.
                             plugin::util::lift_keys(data, &channel_clone_execute)
                                 .unwrap_or_else(|err| error!("Error lifting keys: {}", err));
 
