@@ -134,7 +134,7 @@ export default function MacroCard({
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
+      <VStack w="full" spacing={1} opacity={macro.enabled? 1 : 0.5}>
         {searchValue.length !== 0 && (
           <HStack alignSelf="flex-start">
             <Text fontSize="sm" fontWeight="thin" color={subtextColour}>

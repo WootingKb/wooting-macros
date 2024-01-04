@@ -6,8 +6,9 @@ import {
   IconButton,
   Input,
   Tooltip,
+  VStack,
   useColorModeValue,
-  useDisclosure
+  useDisclosure, Flex
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../../contexts/applicationContext'
