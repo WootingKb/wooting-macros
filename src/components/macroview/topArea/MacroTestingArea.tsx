@@ -16,8 +16,6 @@ import React from 'react'
 interface DrawerProps {
   isOpen: boolean
   onClose: () => void
-  placement: string
-  setPlacement: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function MacroTestingAreaButton() {
@@ -53,29 +51,40 @@ export default function MacroTestingAreaButton() {
       >
         {'Testing'}
       </Box>
-      <MacroTestingAreaDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        placement={placement}
-        setPlacement={setPlacement}
-      />
+      <MacroTestingAreaDrawer isOpen={isOpen} onClose={onClose} />
     </HStack>
   )
 }
 
-function MacroTestingAreaDrawer({
-  isOpen,
-  onClose,
-  placement,
-  setPlacement
-}: DrawerProps) {
+function MacroTestingAreaDrawer({ isOpen, onClose }: DrawerProps) {
   return (
     <>
-      <Drawer placement={placement} onClose={onClose} isOpen={isOpen}>
+      <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen} size="xl">
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent maxH="75%">
           <DrawerHeader borderBottomWidth="1px">Basic Drawer</DrawerHeader>
           <DrawerBody>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
+            <p>Some contents...</p>
             <p>Some contents...</p>
             <p>Some contents...</p>
             <p>Some contents...</p>
