@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import React from 'react'
+import useScrollbarStyles from '../../../hooks/useScrollbarStyles'
 
 interface DrawerProps {
   isOpen: boolean
@@ -63,7 +64,7 @@ function MacroTestingAreaDrawer({ isOpen, onClose }: DrawerProps) {
         <DrawerOverlay />
         <DrawerContent maxH="75%">
           <DrawerHeader borderBottomWidth="1px">Basic Drawer</DrawerHeader>
-          <DrawerBody>
+          <DrawerBody sx={useScrollbarStyles()}>
             <p>Some contents...</p>
             <p>Some contents...</p>
             <p>Some contents...</p>
