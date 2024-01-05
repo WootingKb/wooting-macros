@@ -23,7 +23,7 @@ export default function TriggerArea({onOpen}: Props) {
 
   return (
     <HStack
-      w="full"
+      w="80%"
       h="fit"
       py={2}
       px={4}

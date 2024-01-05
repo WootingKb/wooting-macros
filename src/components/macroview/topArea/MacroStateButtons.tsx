@@ -2,6 +2,7 @@ import { Box, Button, HStack, useColorModeValue } from '@chakra-ui/react'
 import { useState } from 'react'
 import { executeMacro } from '../../../constants/utils'
 import { Macro, MacroIndividualCommand } from '../../../types'
+import useMainBgColour from '../../../hooks/useMainBgColour'
 
 export interface MacroDataInterface {
   macro_data: Macro
@@ -15,6 +16,7 @@ function execute(macro_data: Macro, action: MacroIndividualCommand) {
 
 export default function MacroStateControls({ macro_data }: MacroDataInterface) {
   const secondBg = useColorModeValue('blue.50', 'gray.900')
+  const primaryBg = useMainBgColour()
   const [macroIsRunning, setMacroIsRunning] = useState(false)
   const borderColour = useColorModeValue('gray.400', 'gray.600')
 
@@ -92,7 +94,7 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
           transform="translate(6%, -140%)"
           fontSize="md"
           zIndex="1"
-          bgColor={secondBg}
+          bgColor={primaryBg}
         >
           {'Controls'}
         </Box>
