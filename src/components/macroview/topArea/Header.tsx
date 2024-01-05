@@ -204,7 +204,7 @@ export default function Header({ isEditing }: Props) {
           <MacroTypeArea />
           <TriggerArea onOpen={onTriggerModalOpen} />
           {/*<MacroStateControls macro_data={macro} />*/}
-          <MacroTestingAreaButton/>
+          <MacroTestingAreaButton macro_data={macro}/>
         </HStack>
       </VStack>
       <UnsavedChangesModal

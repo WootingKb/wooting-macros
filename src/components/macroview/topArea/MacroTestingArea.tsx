@@ -13,18 +13,22 @@ import {
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import React from 'react'
 import useScrollbarStyles from '../../../hooks/useScrollbarStyles'
+import MacroStateControls, { MacroDataInterface } from './MacroStateButtons'
+import { Macro } from '../../../types'
 
 interface DrawerProps {
   isOpen: boolean
   onClose: () => void
+  data: Macro
 }
 
-export default function MacroTestingAreaButton() {
+export default function MacroTestingAreaButton({
+  macro_data
+}: MacroDataInterface) {
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const primaryBg = useMainBgColour()
   // const secondBg = useColorModeValue('blue.50', 'gray.900')
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [placement, setPlacement] = React.useState('bottom')
   return (
     <HStack
       border="1px"
@@ -52,18 +56,24 @@ export default function MacroTestingAreaButton() {
       >
         {'Testing'}
       </Box>
-      <MacroTestingAreaDrawer isOpen={isOpen} onClose={onClose} />
+      <MacroTestingAreaDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        data={macro_data}
+      />
     </HStack>
   )
 }
 
-function MacroTestingAreaDrawer({ isOpen, onClose }: DrawerProps) {
+function MacroTestingAreaDrawer({ isOpen, onClose, data }: DrawerProps) {
   return (
     <>
       <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen} size="xl">
         <DrawerOverlay />
         <DrawerContent maxH="75%">
-          <DrawerHeader borderBottomWidth="1px">Basic Drawer</DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px">
+            <MacroStateControls macro_data={data} />
+          </DrawerHeader>
           <DrawerBody sx={useScrollbarStyles()}>
             <p>Some contents...</p>
             <p>Some contents...</p>
