@@ -22,11 +22,13 @@ import { MacroType, MacroTypeDefinitions } from '../../../constants/enums'
 import { checkIfStringIsNonNumeric } from '../../../constants/utils'
 import React, { useEffect, useState } from 'react'
 import { AddIcon, MinusIcon } from '@chakra-ui/icons'
+import useMainBgColour from "../../../hooks/useMainBgColour";
 
 export default function MacroTypeArea() {
   const { macro, updateMacroType, updateMacroRepeatAmount } = useMacroContext()
   const borderColour = useColorModeValue('gray.400', 'gray.600')
   const secondBg = useColorModeValue('blue.50', 'gray.900')
+  const primaryBg = useMainBgColour()
   const typeIcons = [
     <HiArrowRight />,
     <HiArrowPath />,
@@ -129,12 +131,12 @@ export default function MacroTypeArea() {
             transform="translate(0%, -125%)"
             fontSize="md"
             zIndex="1"
-            bgColor={secondBg}
+            bgColor={primaryBg}
           >
             {'Macro Type'}
           </Box>
           <Box
-            maxWidth={isOpen ? '150px' : '0px'}
+            maxWidth={isOpen ? '350px' : '0px'}
             overflow="hidden"
             transition="maxWidth 0.5s ease-out"
             pointerEvents={isOpen ? 'auto' : 'none'}
