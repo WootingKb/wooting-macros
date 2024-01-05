@@ -1,4 +1,10 @@
-import { Box, Button, HStack, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  HStack,
+  Tooltip,
+  useColorModeValue
+} from '@chakra-ui/react'
 import { useState } from 'react'
 import { executeMacro } from '../../../constants/utils'
 import { Macro, MacroIndividualCommand } from '../../../types'
@@ -30,16 +36,23 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
         p="3"
         position="relative" // Add relative position
       >
-        <Button
-          variant="yellowGradient"
-          isDisabled={macroIsRunning}
-          onClick={() => {
-            setMacroIsRunning(true)
-            execute(macro_data, { type: 'Start' })
-          }}
+        <Tooltip
+          variant="brand"
+          placement="bottom"
+          hasArrow
+          label="Pressing Start will autofocus the textbox automatically"
         >
-          Start
-        </Button>
+          <Button
+            variant="yellowGradient"
+            isDisabled={macroIsRunning}
+            onClick={() => {
+              setMacroIsRunning(true)
+              execute(macro_data, { type: 'Start' })
+            }}
+          >
+            Start
+          </Button>
+        </Tooltip>
         <Button
           display="hidden"
           variant="yellowGradient"
@@ -75,19 +88,28 @@ export default function MacroStateControls({ macro_data }: MacroDataInterface) {
         p="3"
         position="relative" // Add relative position
       >
-        <Button
-          variant="yellowGradient"
-          isDisabled={macroIsRunning}
-          onClick={() => {
-            setMacroIsRunning(true)
-            execute(macro_data, { type: 'Start' })
-            setTimeout(() => {
-              setMacroIsRunning(false)
-            }, 3000)
-          }}
+        <Tooltip
+          variant="brand"
+          placement="bottom"
+          hasArrow
+          p={1}
+          textAlign="center"
+          label="Pressing Start will autofocus the textbox"
         >
-          Start
-        </Button>
+          <Button
+            variant="yellowGradient"
+            isDisabled={macroIsRunning}
+            onClick={() => {
+              setMacroIsRunning(true)
+              execute(macro_data, { type: 'Start' })
+              setTimeout(() => {
+                setMacroIsRunning(false)
+              }, 3000)
+            }}
+          >
+            Start
+          </Button>
+        </Tooltip>
         <Box
           position="absolute"
           // left="50%"

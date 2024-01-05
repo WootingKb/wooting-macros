@@ -7,9 +7,9 @@ import {
   IconButton,
   Input,
   Tooltip,
-  VStack,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../../contexts/applicationContext'
@@ -21,7 +21,8 @@ import TriggerModal from './TriggerModal'
 import UnsavedChangesModal from '../UnsavedChangesModal'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import MacroTypeArea from './MacroTypeArea'
-import MacroStateControls from './MacroStateButtons'
+import MacroTestingAreaModal from './MacroTestingArea'
+import MacroTestingAreaButton from "./MacroTestingArea";
 
 interface Props {
   isEditing: boolean
@@ -202,7 +203,8 @@ export default function Header({ isEditing }: Props) {
         <HStack justifyContent="center" w="full">
           <MacroTypeArea />
           <TriggerArea onOpen={onTriggerModalOpen} />
-          <MacroStateControls macro_data={macro} />
+          {/*<MacroStateControls macro_data={macro} />*/}
+          <MacroTestingAreaButton macro_data={macro}/>
         </HStack>
       </VStack>
       <UnsavedChangesModal
