@@ -134,7 +134,7 @@ export default function MacroTypeArea() {
             {'Macro Type'}
           </Box>
           <Box
-            maxWidth={isOpen ? '150px' : '0px'}
+            maxWidth={isOpen ? '350px' : '0px'}
             overflow="hidden"
             transition="maxWidth 0.5s ease-out"
             pointerEvents={isOpen ? 'auto' : 'none'}
