@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -9,15 +10,18 @@ import {
   HStack,
   InputGroup,
   InputRightElement,
+  Text,
   Textarea,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
+  VStack
 } from '@chakra-ui/react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import React, { ChangeEvent, useState } from 'react'
 import useScrollbarStyles from '../../../hooks/useScrollbarStyles'
 import MacroStateControls, { MacroDataInterface } from './MacroStateButtons'
 import { Macro } from '../../../types'
+import { borderRadiusStandard } from '../../../theme/config'
 
 interface DrawerProps {
   isOpen: boolean
@@ -68,6 +72,41 @@ export default function MacroTestingAreaButton({
   )
 }
 
+function MacroTestResponseArea() {
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+
+  return (
+    <>
+      <Divider p={2} w="full" />
+      <HStack p={0}>
+        <VStack>
+          <Text> Currently pressed keys</Text>
+          <Box
+            h="32px"
+            w="fit-content"
+            bg={bg}
+            border="1px solid"
+            py={1}
+            px={3}
+            borderColor={kebabColour}
+            rounded={borderRadiusStandard}
+          >
+            <Text
+              fontSize={['sm', 'md', 'md']}
+              w="fit-content"
+              whiteSpace="nowrap"
+              fontWeight="bold"
+            >
+              {'Clipboard'}
+            </Text>
+          </Box>
+        </VStack>
+      </HStack>
+    </>
+  )
+}
+
 function MacroTestTypeArea() {
   const [typedInput, setTypedInput] = useState('')
   const handleClick = () => setTypedInput('')
@@ -75,13 +114,13 @@ function MacroTestTypeArea() {
     setTypedInput(event.target.value)
   }
 
+  //TODO: Autofocus this field when start is clicked
   return (
     <InputGroup size="md">
       <Textarea
         size="lg"
         h="250px"
         resize="none"
-        pr="4.5rem"
         value={typedInput}
         onChange={handleInput}
         placeholder="Test your macro here"
@@ -111,32 +150,9 @@ function MacroTestingAreaDrawer({ isOpen, onClose, data }: DrawerProps) {
           <DrawerHeader borderBottomWidth="1px">
             <MacroStateControls macro_data={data} />
           </DrawerHeader>
-          <DrawerBody sx={useScrollbarStyles()}>
+          <DrawerBody overflow="hidden">
             <MacroTestTypeArea />
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
+            <MacroTestResponseArea />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
