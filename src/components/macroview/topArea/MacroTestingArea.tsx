@@ -7,11 +7,14 @@ import {
   DrawerHeader,
   DrawerOverlay,
   HStack,
+  InputGroup,
+  InputRightElement,
+  Textarea,
   useColorModeValue,
   useDisclosure
 } from '@chakra-ui/react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
-import React from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import useScrollbarStyles from '../../../hooks/useScrollbarStyles'
 import MacroStateControls, { MacroDataInterface } from './MacroStateButtons'
 import { Macro } from '../../../types'
@@ -65,6 +68,40 @@ export default function MacroTestingAreaButton({
   )
 }
 
+function MacroTestTypeArea() {
+  const [typedInput, setTypedInput] = useState('')
+  const handleClick = () => setTypedInput('')
+  const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setTypedInput(event.target.value)
+  }
+
+  return (
+    <InputGroup size="md">
+      <Textarea
+        size="lg"
+        h="250px"
+        resize="none"
+        pr="4.5rem"
+        value={typedInput}
+        onChange={handleInput}
+        placeholder="Test your macro here"
+        sx={useScrollbarStyles()}
+      />
+      <InputRightElement width="80px">
+        <Button
+          variant="brandWarning"
+          marginRight="15px"
+          h="30px"
+          size="md"
+          onClick={handleClick}
+        >
+          {'Clear all'}
+        </Button>
+      </InputRightElement>
+    </InputGroup>
+  )
+}
+
 function MacroTestingAreaDrawer({ isOpen, onClose, data }: DrawerProps) {
   return (
     <>
@@ -75,6 +112,7 @@ function MacroTestingAreaDrawer({ isOpen, onClose, data }: DrawerProps) {
             <MacroStateControls macro_data={data} />
           </DrawerHeader>
           <DrawerBody sx={useScrollbarStyles()}>
+            <MacroTestTypeArea />
             <p>Some contents...</p>
             <p>Some contents...</p>
             <p>Some contents...</p>
