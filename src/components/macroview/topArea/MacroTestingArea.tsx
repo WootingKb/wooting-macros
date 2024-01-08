@@ -10,6 +10,7 @@ import {
   HStack,
   InputGroup,
   InputRightElement,
+  ModalCloseButton,
   Text,
   Textarea,
   useColorModeValue,
@@ -81,7 +82,7 @@ function MacroTestResponseArea() {
       <Divider p={2} w="full" />
       <HStack p={0}>
         <VStack>
-          <Text> Currently pressed keys</Text>
+          <Text>Currently pressed keys</Text>
           <Box
             h="32px"
             w="fit-content"
@@ -119,7 +120,7 @@ function MacroTestTypeArea() {
     <InputGroup size="md">
       <Textarea
         size="lg"
-        h="250px"
+        h="200px"
         resize="none"
         value={typedInput}
         onChange={handleInput}
@@ -142,17 +143,26 @@ function MacroTestTypeArea() {
 }
 
 function MacroTestingAreaDrawer({ isOpen, onClose, data }: DrawerProps) {
+  const primaryBg = useMainBgColour()
   return (
     <>
       <Drawer placement={'bottom'} onClose={onClose} isOpen={isOpen} size="xl">
         <DrawerOverlay />
-        <DrawerContent maxH="75%">
-          <DrawerHeader borderBottomWidth="1px">
-            <MacroStateControls macro_data={data} />
+        <DrawerContent bg={primaryBg} maxH="75%">
+          <DrawerHeader borderBottomWidth="1px" p={5}>
+            <HStack>
+              <Text fontWeight="bold" size="20px">
+                Macro Testing Area
+              </Text>
+              <ModalCloseButton />
+            </HStack>
           </DrawerHeader>
           <DrawerBody overflow="hidden">
-            <MacroTestTypeArea />
-            <MacroTestResponseArea />
+            <VStack alignItems="start">
+              <MacroStateControls macro_data={data} />
+              <MacroTestTypeArea />
+              <MacroTestResponseArea />
+            </VStack>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
