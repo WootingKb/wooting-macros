@@ -63,6 +63,7 @@ export type SettingsState = {
   updateMinimizeOnClose: (value: boolean) => void
   updateAutoAddDelay: (value: boolean) => void
   updateDefaultDelayVal: (value: string) => void
+  updateDefaultElementDurationVal: (value: string) => void
   updateAutoSelectElement: (value: boolean) => void
   updateTheme: (value: string) => void
 }
@@ -101,8 +102,9 @@ export interface MacroData {
 
 export interface ApplicationConfig {
   AutoStart: boolean
-  DefaultDelayValue: number
   AutoAddDelay: boolean
+  DefaultDelayValue: number
+  DefaultElementDurationValue: number
   AutoSelectElement: boolean
   MinimizeAtLaunch: boolean
   Theme: string

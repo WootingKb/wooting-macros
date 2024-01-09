@@ -185,6 +185,7 @@ impl Default for ApplicationConfig {
         ApplicationConfig {
             auto_start: false,
             default_delay_value: 20,
+            default_element_duration_value: 20,
             auto_add_delay: false,
             auto_select_element: true,
             minimize_at_launch: false,
@@ -219,6 +220,7 @@ const DATA_FILE: &str = "data_json.json";
 pub struct ApplicationConfig {
     pub auto_start: bool,
     pub default_delay_value: u64,
+    pub default_element_duration_value: u64,
     pub auto_add_delay: bool,
     pub auto_select_element: bool,
     pub minimize_at_launch: bool,
