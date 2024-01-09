@@ -10,7 +10,7 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { updateSettings } from '../constants/utils'
+import { DefaultDelayDelay, DefaultMacroDelay, updateSettings } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 
 type SettingsProviderProps = { children: ReactNode }
@@ -29,8 +29,8 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
-    DefaultDelayValue: 20,
-    DefaultElementDelayValue: 20,
+    DefaultDelayValue: Number(DefaultDelayDelay),
+    DefaultElementDurationValue: Number(DefaultMacroDelay),
     AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,
@@ -100,7 +100,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   }, [])
   const updateDefaultElementDelayVal = useCallback((value: string) => {
     setConfig((config) => {
-      return { ...config, DefaultElementDelayValue: Number(value) }
+      return { ...config, DefaultElementDurationValue: Number(value) }
     })
   }, [])
   const updateAutoSelectElement = useCallback((value: boolean) => {
@@ -126,7 +126,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
       updateMinimizeOnClose,
       updateAutoAddDelay,
       updateDefaultDelayVal,
-      updateDefaultElementDelayVal,
+      updateDefaultElementDurationVal: updateDefaultElementDelayVal,
       updateAutoSelectElement,
       updateTheme
     }),

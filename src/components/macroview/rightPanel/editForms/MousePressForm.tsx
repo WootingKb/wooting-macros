@@ -92,7 +92,7 @@ export default function MousePressForm({
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    let duration = 20
+    let duration = Number(DefaultMouseDelay)
 
     if (Number(mousepressDuration) >= 20) {
       duration = Number(mousepressDuration)
