@@ -23,9 +23,8 @@ import {
   UpArrowIcon
 } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
-import { borderRadiusStandard, config } from '../../../../theme/config'
-import { DefaultMacroDelay } from '../../../../constants/utils'
-import { useSettingsContext } from "../../../../contexts/settingsContext";
+import { borderRadiusStandard } from '../../../../theme/config'
+import { useSettingsContext } from '../../../../contexts/settingsContext'
 
 interface Props {
   selectedElementId: number
@@ -36,10 +35,9 @@ export default function KeyPressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-
   const config = useSettingsContext()
   const [keypressDuration, setKeypressDuration] = useState(
-      String(config.config.DefaultElementDelayValue)
+    String(config.config.DefaultElementDurationValue)
   )
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
@@ -68,14 +66,17 @@ export default function KeyPressForm({
   )
 
   const onInputBlur = useCallback(() => {
-    let duration = 20
+    // Default duration should be used to make sure it applies itself if there is incorrect input
+    let duration = config.config.DefaultElementDurationValue
 
     if (Number(keypressDuration) >= 20) {
       duration = Number(keypressDuration)
     } else if (keypressDuration === '') {
       toast({
         title: 'Default duration applied',
-        description: 'Applied default duration of 20ms',
+        description: `Applied default duration of ${String(
+          config.config.DefaultElementDurationValue
+        )}ms`,
         status: 'info',
         duration: 4000,
         isClosable: true
@@ -95,10 +96,11 @@ export default function KeyPressForm({
 
     const temp: KeyPressEventAction = {
       ...selectedElement,
-      data: {...selectedElement.data, press_duration: duration}
+      data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
   }, [
+    config.config.DefaultElementDurationValue,
     keypressDuration,
     selectedElement,
     selectedElementId,
