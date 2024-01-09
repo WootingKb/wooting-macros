@@ -121,7 +121,7 @@ export class SystemEvent {
     return {
       type: 'Media',
       subtype: 'StopTrack',
-      displayString: 'Stops the playing of a track',
+      displayString: 'Stop Track',
       defaultData: { type: 'Media', action: { type: 'StopTrack' } },
       description: 'Stops the running media track.'
     }
