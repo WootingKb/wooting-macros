@@ -16,13 +16,17 @@ interface Props {
   description: string
   defaultValue: number
   onChange: (value: string) => void
+  minimum: number
+  maximum: number
 }
 
 export default function NumberInputSetting({
   title,
   description,
   defaultValue,
-  onChange
+  onChange,
+  minimum,
+  maximum
 }: Props) {
   const [value, setValue] = useState('')
 
@@ -54,7 +58,8 @@ export default function NumberInputSetting({
         step={5}
         value={value}
         onChange={(valueAsString) => setValue(valueAsString)}
-        min={1}
+        min={minimum}
+        max={maximum}
       >
         <NumberInputField />
         <NumberInputStepper>
