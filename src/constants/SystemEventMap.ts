@@ -15,25 +15,27 @@ export class SystemEvent {
       subtype: 'File',
       displayString: 'Open File',
       defaultData: { type: 'Open', action: { type: 'File', data: '' } },
-      description: "Opens any file on your computer."
+      description: 'Opens any file on your computer.'
     }
   }
+
   static get OpenFolder(): SystemEventInfo {
     return {
       type: 'Open',
       subtype: 'Directory',
       displayString: 'Open Folder',
       defaultData: { type: 'Open', action: { type: 'Directory', data: '' } },
-      description: "Opens up a file explorer window to the specified folder."
+      description: 'Opens up a file explorer window to the specified folder.'
     }
   }
+
   static get OpenWebsite(): SystemEventInfo {
     return {
       type: 'Open',
       subtype: 'Website',
       displayString: 'Open Website',
       defaultData: { type: 'Open', action: { type: 'Website', data: '' } },
-      description: "Opens up a website in your default browser."
+      description: 'Opens up a website in your default browser.'
     }
   }
 
@@ -46,9 +48,11 @@ export class SystemEvent {
         type: 'Clipboard',
         action: { type: 'PasteUserDefinedString', data: '' }
       },
-      description: "Pastes the specified text into a currently selected text input area."
+      description:
+        'Pastes the specified text into a currently selected text input area.'
     }
   }
+
   static get Sarcasm(): SystemEventInfo {
     return {
       type: 'Clipboard',
@@ -58,34 +62,78 @@ export class SystemEvent {
         type: 'Clipboard',
         action: { type: 'Sarcasm' }
       },
-      description: "Randomly capitalizes some letters in the currently highlighted text."
+      description:
+        'Randomly capitalizes some letters in the currently highlighted text.'
     }
   }
+
   static get IncreaseVolume(): SystemEventInfo {
     return {
       type: 'Volume',
       subtype: 'IncreaseVolume',
       displayString: 'Increase Volume',
       defaultData: { type: 'Volume', action: { type: 'IncreaseVolume' } },
-      description: "Increases volume by an OS-specific amount."
+      description: 'Increases volume by an OS-specific amount.'
     }
   }
+
   static get DecreaseVolume(): SystemEventInfo {
     return {
       type: 'Volume',
       subtype: 'LowerVolume',
       displayString: 'Decrease Volume',
       defaultData: { type: 'Volume', action: { type: 'LowerVolume' } },
-      description: "Decreases volume by an OS-specific amount."
+      description: 'Decreases volume by an OS-specific amount.'
     }
   }
+
   static get ToggleMuteVolume(): SystemEventInfo {
     return {
       type: 'Volume',
       subtype: 'ToggleMute',
       displayString: 'Toggle Mute Volume',
       defaultData: { type: 'Volume', action: { type: 'ToggleMute' } },
-      description: "Mutes or unmutes the system audio output."
+      description: 'Mutes or unmutes the system audio output.'
+    }
+  }
+
+  static get NextTrack(): SystemEventInfo {
+    return {
+      type: 'Media',
+      subtype: 'NextTrack',
+      displayString: 'Next Track',
+      defaultData: { type: 'Media', action: { type: 'NextTrack' } },
+      description: 'Selects the next tract as currently playing.'
+    }
+  }
+
+  static get PreviousTrack(): SystemEventInfo {
+    return {
+      type: 'Media',
+      subtype: 'PrevTrack',
+      displayString: 'Previous Track',
+      defaultData: { type: 'Media', action: { type: 'PrevTrack' } },
+      description: 'Selects the previous track as currently playing.'
+    }
+  }
+
+  static get StopTrack(): SystemEventInfo {
+    return {
+      type: 'Media',
+      subtype: 'StopTrack',
+      displayString: 'Stop Track',
+      defaultData: { type: 'Media', action: { type: 'StopTrack' } },
+      description: 'Stops the running media track.'
+    }
+  }
+
+  static get PlayPauseTrack(): SystemEventInfo {
+    return {
+      type: 'Media',
+      subtype: 'PlayPauseTrack',
+      displayString: 'Play/Pause Track',
+      defaultData: { type: 'Media', action: { type: 'PlayPauseTrack' } },
+      description: 'Toggles the playing of a media track.'
     }
   }
 
@@ -98,6 +146,10 @@ export class SystemEvent {
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
+    SystemEvent.NextTrack,
+    SystemEvent.PreviousTrack,
+    SystemEvent.StopTrack,
+    SystemEvent.PlayPauseTrack
   ]
 }
 

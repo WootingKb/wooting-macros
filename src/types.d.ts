@@ -71,10 +71,10 @@ export type SettingsState = {
 // Input Event Types
 export type TriggerEventType =
   | {
-  type: 'KeyPressEvent'
-  data: number[]
-  allow_while_other_keys: boolean
-}
+      type: 'KeyPressEvent'
+      data: number[]
+      allow_while_other_keys: boolean
+    }
   | { type: 'MouseEvent'; data: MouseButton }
 
 export type KeyPressEventAction = {
@@ -154,22 +154,16 @@ export interface Keypress {
   keytype: string
 }
 
-export interface Monitor {
-  device_id: string
-  brightness: number
-  display_name: string
-}
-
 export type MousePressAction =
   | { type: 'Down'; button: MouseButton }
   | { type: 'Up'; button: MouseButton }
   | { type: 'DownUp'; button: MouseButton; duration: number }
 
 export type MacroIndividualCommand =
-  | {type: "Start" }
-  | {type: "Stop" }
-  | {type: "Abort" }
-  | {type: "AbortAll" };
+  | { type: 'Start' }
+  | { type: 'Stop' }
+  | { type: 'Abort' }
+  | { type: 'AbortAll' }
 
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 
@@ -177,7 +171,7 @@ export type SystemAction =
   | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-// | { type: 'Brightness'; action: MonitorBrightnessAction }
+  | { type: 'Media'; action: MediaAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -197,11 +191,11 @@ export type VolumeAction =
   | { type: 'IncreaseVolume' }
   | { type: 'ToggleMute' }
 
-export type MonitorBrightnessAction =
-  | { type: 'SetAll'; level: number }
-  | { type: 'SetSpecific'; level: number; name: string }
-  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
-  | { type: 'ChangeAll'; by_how_much: number }
+export type MediaAction =
+  | { type: 'NextTrack' }
+  | { type: 'PrevTrack' }
+  | { type: 'StopTrack' }
+  | { type: 'PlayPauseTrack' }
 
 /** Misc */
 export interface KeyboardKeyCategory {

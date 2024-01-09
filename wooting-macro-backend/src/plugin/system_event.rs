@@ -1,12 +1,14 @@
-use super::util;
+use std::path::PathBuf;
+use std::vec;
+
 use anyhow::Result;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
 use rdev;
-use std::path::PathBuf;
-use std::vec;
 use tokio::sync::mpsc::UnboundedSender;
 use url::Url;
+
+use super::util;
 
 // Frequently used keys within the code.
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
@@ -27,8 +29,9 @@ pub enum SystemAction {
     Open { action: DirectoryAction },
     Volume { action: VolumeAction },
     Clipboard { action: ClipboardAction },
+    Media { action: TrackAction },
 }
-
+//TODO: Check the direct_send_key for compatibility with windows side multiinput
 impl SystemAction {
     /// Execute the keys themselves.
     pub async fn execute(&self, send_channel: &UnboundedSender<rdev::EventType>) -> Result<()> {
@@ -51,6 +54,20 @@ impl SystemAction {
                 }
                 VolumeAction::IncreaseVolume => {
                     util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp])?;
+                }
+            },
+            SystemAction::Media{ action } => match action {
+                TrackAction::NextTrack => {
+                    util::direct_send_key(&send_channel, vec![rdev::Key::NextTrack])?;
+                }
+                TrackAction::PrevTrack => {
+                    util::direct_send_key(&send_channel, vec![rdev::Key::PrevTrack])?;
+                }
+                TrackAction::StopTrack => {
+                    util::direct_send_key(&send_channel, vec![rdev::Key::StopTrack])?;
+                }
+                TrackAction::PlayPauseTrack => {
+                    util::direct_send_key(&send_channel, vec![rdev::Key::PlayPauseTrack])?;
                 }
             },
             SystemAction::Clipboard { action } => match action {
@@ -143,4 +160,13 @@ pub enum VolumeAction {
     LowerVolume,
     IncreaseVolume,
     ToggleMute,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[serde(tag = "type")]
+pub enum TrackAction {
+    NextTrack,
+    PrevTrack,
+    StopTrack,
+    PlayPauseTrack,
 }
