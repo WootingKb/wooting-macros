@@ -29,7 +29,7 @@ pub enum SystemAction {
     Open { action: DirectoryAction },
     Volume { action: VolumeAction },
     Clipboard { action: ClipboardAction },
-    Track { action: TrackAction },
+    Media { action: TrackAction },
 }
 //TODO: Check the direct_send_key for compatibility with windows side multiinput
 impl SystemAction {
@@ -56,7 +56,7 @@ impl SystemAction {
                     util::direct_send_key(&send_channel, vec![rdev::Key::VolumeUp])?;
                 }
             },
-            SystemAction::Track { action } => match action {
+            SystemAction::Media{ action } => match action {
                 TrackAction::NextTrack => {
                     util::direct_send_key(&send_channel, vec![rdev::Key::NextTrack])?;
                 }
