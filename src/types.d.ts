@@ -152,12 +152,6 @@ export interface Keypress {
   keytype: string
 }
 
-export interface Monitor {
-  device_id: string
-  brightness: number
-  display_name: string
-}
-
 export type MousePressAction =
   | { type: 'Down'; button: MouseButton }
   | { type: 'Up'; button: MouseButton }
@@ -176,7 +170,6 @@ export type SystemAction =
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
   | { type: 'Media'; action: MediaAction }
-// | { type: 'Brightness'; action: MonitorBrightnessAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -201,12 +194,6 @@ export type MediaAction =
   | { type: 'PrevTrack' }
   | { type: 'StopTrack' }
   | { type: 'PlayPauseTrack' }
-
-export type MonitorBrightnessAction =
-  | { type: 'SetAll'; level: number }
-  | { type: 'SetSpecific'; level: number; name: string }
-  | { type: 'ChangeSpecific'; by_how_much: number; name: string }
-  | { type: 'ChangeAll'; by_how_much: number }
 
 /** Misc */
 export interface KeyboardKeyCategory {
