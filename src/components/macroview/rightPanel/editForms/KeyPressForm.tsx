@@ -23,8 +23,9 @@ import {
   UpArrowIcon
 } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
-import { borderRadiusStandard } from '../../../../theme/config'
+import { borderRadiusStandard, config } from '../../../../theme/config'
 import { DefaultMacroDelay } from '../../../../constants/utils'
+import { useSettingsContext } from "../../../../contexts/settingsContext";
 
 interface Props {
   selectedElementId: number
@@ -35,7 +36,11 @@ export default function KeyPressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [keypressDuration, setKeypressDuration] = useState(DefaultMacroDelay)
+
+  const config = useSettingsContext()
+  const [keypressDuration, setKeypressDuration] = useState(
+      String(config.config.DefaultElementDelayValue)
+  )
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
