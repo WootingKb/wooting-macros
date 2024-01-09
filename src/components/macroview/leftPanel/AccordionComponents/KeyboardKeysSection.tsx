@@ -13,13 +13,14 @@ import { HidInfo } from '../../../../constants/HIDmap'
 import { KeyboardKeyCategory } from '../../../../types'
 import { KeyboardIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
-import { DefaultMacroDelay } from '../../../../constants/utils'
+import { useSettingsContext } from '../../../../contexts/settingsContext'
 
 interface Props {
   keyboardKeyCategories: KeyboardKeyCategory[]
 }
 
 export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
+  const config = useSettingsContext()
   return (
     <>
       {keyboardKeyCategories.map((category: KeyboardKeyCategory) => (
@@ -64,7 +65,9 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                         type: 'KeyPressEventAction',
                         data: {
                           keypress: HIDinfo.HIDcode,
-                          press_duration: DefaultMacroDelay,
+                          press_duration: Number(
+                            config.config.DefaultElementDurationValue
+                          ),
                           keytype: KeyType[KeyType.DownUp]
                         }
                       }}

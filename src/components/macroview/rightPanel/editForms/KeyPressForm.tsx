@@ -35,7 +35,10 @@ export default function KeyPressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [keypressDuration, setKeypressDuration] = useState(DefaultMacroDelay)
+  const config = useSettingsContext()
+  const [keypressDuration, setKeypressDuration] = useState(
+    String(config.config.DefaultElementDurationValue)
+  )
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
@@ -81,10 +84,11 @@ export default function KeyPressForm({
 
     const temp: KeyPressEventAction = {
       ...selectedElement,
-      data: {...selectedElement.data, press_duration: duration}
+      data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
   }, [
+    config.config.DefaultElementDurationValue,
     keypressDuration,
     selectedElement,
     selectedElementId,
