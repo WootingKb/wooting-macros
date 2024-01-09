@@ -73,6 +73,8 @@ export default function ApplicationSettingsPanel() {
           description="The value (in ms) that all elements other than Delay will default to when added to the sequence."
           defaultValue={config.DefaultElementDelayValue}
           onChange={updateDefaultElementDelayVal}
+          minimum={20}
+          maximum={20000}
         />
         <Divider />
       </VStack>
