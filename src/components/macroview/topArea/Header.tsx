@@ -9,7 +9,7 @@ import {
   Tooltip,
   VStack,
   useColorModeValue,
-  useDisclosure, Flex
+  useDisclosure
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../../contexts/applicationContext'
