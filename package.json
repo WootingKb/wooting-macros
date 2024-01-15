@@ -36,9 +36,9 @@
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.9",
     "@types/eslint": "^8.56.2",
-    "@types/node": "^20.11.0",
+    "@types/node": "^20.11.1",
     "@types/prettier": "^3.0.0",
-    "@types/react": "^18.2.47",
+    "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
@@ -47,7 +47,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "prettier": "^3.1.1",
+    "prettier": "^3.2.2",
     "typescript": "^5.3.3",
     "vite": "^5.0.11"
   },
