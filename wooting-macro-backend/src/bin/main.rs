@@ -1,6 +1,6 @@
-use std::time;
 use env_logger::Env;
 use log::*;
+use std::time;
 use wooting_macro_backend::MacroBackend;
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]

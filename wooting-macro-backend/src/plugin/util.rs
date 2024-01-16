@@ -1,4 +1,3 @@
-use crate::hid_table::RDEV_MODIFIER_KEYS;
 use anyhow::Result;
 use log::*;
 use rdev;

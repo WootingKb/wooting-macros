@@ -11,7 +11,6 @@ pub mod input {
     use crate::macros::macro_data::MacroLookup;
     use crate::macros::macros::MacroType;
 
-
     pub fn check_macro_execution_simply(
         current_pressed_keys: &Vec<u32>,
         previously_pressed_keys: &Vec<u32>,
@@ -24,24 +23,24 @@ pub mod input {
                 match (data, &current_pressed_keys, &previously_pressed_keys) {
                     // If the keys are the same, skip checking
                     (_trigger_combo, pressed, pressed_previous)
-                    if pressed == pressed_previous
-                        && macro_data.config.macro_type == MacroType::OnHold => {}
+                        if pressed == pressed_previous
+                            && macro_data.config.macro_type == MacroType::OnHold => {}
                     // If the keys are different and its a trigger key pressed, start a macro
                     (trigger_combo, pressed, _pressed_previous)
-                    if trigger_combo.iter().any(|x| pressed.contains(x)) =>
-                        {
-                            schan_macro_execute
-                                .send(MacroExecutorEvent::Start(macro_id.clone()))
-                                .unwrap();
-                        }
+                        if trigger_combo.iter().any(|x| pressed.contains(x)) =>
+                    {
+                        schan_macro_execute
+                            .send(MacroExecutorEvent::Start(macro_id.clone()))
+                            .unwrap();
+                    }
                     // If the keys are different and its a trigger key released, stop a macro
                     (trigger_combo, _pressed, pressed_previous)
-                    if trigger_combo.iter().any(|x| pressed_previous.contains(x)) =>
-                        {
-                            schan_macro_execute
-                                .send(MacroExecutorEvent::Stop(macro_id.clone()))
-                                .unwrap();
-                        }
+                        if trigger_combo.iter().any(|x| pressed_previous.contains(x)) =>
+                    {
+                        schan_macro_execute
+                            .send(MacroExecutorEvent::Stop(macro_id.clone()))
+                            .unwrap();
+                    }
                     // Anything else just ignore
                     _ => {}
                 }
@@ -85,10 +84,10 @@ pub mod input {
                         1 => {
                             if pressed_events.iter().any(|i| *data.first().unwrap() == *i) {
                                 error!(
-                                "MATCHED MACRO single key: {} contains {:?}",
-                                *data.first().unwrap(),
-                                pressed_events
-                            );
+                                    "MATCHED MACRO single key: {} contains {:?}",
+                                    *data.first().unwrap(),
+                                    pressed_events
+                                );
                                 // if identical_keys
                                 //     && macros.config.is_running
                                 //     && macros.config.macro_type != MacroType::Toggle
@@ -170,16 +169,18 @@ pub mod input {
                     let event_to_check: Vec<u32> = vec![data.into()];
 
                     trace!(
-                    "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
-                    event_to_check
-                );
+                        "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
+                        event_to_check
+                    );
 
                     if event_to_check == pressed_events {
                         let id_cloned = macro_id.clone();
 
                         macro_sender
                             .send(MacroExecutorEvent::Start(id_cloned))
-                            .unwrap_or_else(|err| error!("Error sending macro ID to execute: {}", err));
+                            .unwrap_or_else(|err| {
+                                error!("Error sending macro ID to execute: {}", err)
+                            });
 
                         return true;
                     }
