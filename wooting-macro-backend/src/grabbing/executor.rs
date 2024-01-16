@@ -1,8 +1,8 @@
 #[cfg(target_os = "windows")]
 pub mod input {
+    use log::*;
     use std::sync::Arc;
     use std::{thread, time};
-    use log::*;
     use tokio::sync::mpsc::UnboundedReceiver;
     use tokio::sync::RwLock;
 

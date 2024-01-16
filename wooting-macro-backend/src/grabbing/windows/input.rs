@@ -34,15 +34,15 @@ pub mod input {
             warn!("Device status {:#?}", device);
         }
 
-        let mut og_previously_pressed_keys: Arc<RwLock<Vec<u32>>> = Arc::new(RwLock::from(vec![]));
-        let mut og_current_pressed_keys: Arc<RwLock<Vec<u32>>> = Arc::new(RwLock::from(vec![]));
-        let mut previously_pressed_buttons: Vec<u32> = vec![];
-        let mut current_pressed_buttons: Vec<u32> = vec![];
+        let og_previously_pressed_keys: Arc<RwLock<Vec<u32>>> = Arc::new(RwLock::from(vec![]));
+        let og_current_pressed_keys: Arc<RwLock<Vec<u32>>> = Arc::new(RwLock::from(vec![]));
+        // let mut previously_pressed_buttons: Vec<u32> = vec![];
+        // let mut current_pressed_buttons: Vec<u32> = vec![];
 
         let _grabber = tokio::task::spawn_blocking(move || {
             let schan_macro_execute_inner = schan_macro_execute.clone();
-            let mut current_pressed_keys = og_current_pressed_keys.clone();
-            let mut previously_pressed_keys = og_previously_pressed_keys.clone();
+            let current_pressed_keys = og_current_pressed_keys.clone();
+            let previously_pressed_keys = og_previously_pressed_keys.clone();
 
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
