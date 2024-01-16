@@ -59,14 +59,18 @@ pub mod input {
                             *current_pressed_keys.blocking_write() =
                                 current_pressed_keys_clone.into_iter().unique().collect();
 
-                            check_macro_execution_simply(
+                            let consume = check_macro_execution_simply(
                                 &current_pressed_keys.blocking_read(),
                                 &previously_pressed_keys.blocking_read(),
                                 map.clone(),
                                 &schan_macro_execute_inner,
                             );
 
-                            Some(event)
+                            if consume {
+                                None
+                            } else {
+                                Some(event)
+                            }
                         }
                         EventType::KeyRelease(key) => {
                             *previously_pressed_keys.blocking_write() =
