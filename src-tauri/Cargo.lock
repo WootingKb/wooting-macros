@@ -203,9 +203,9 @@ dependencies = [
 
 [[package]]
 name = "async-io"
-version = "2.2.2"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6afaa937395a620e33dc6a742c593c01aced20aa376ffb0f628121198578ccc7"
+checksum = "fb41eb19024a91746eba0773aa5e16036045bbf45733766661099e182ea6a744"
 dependencies = [
  "async-lock 3.3.0",
  "cfg-if",
@@ -274,7 +274,7 @@ version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e47d90f65a225c4527103a8d747001fc56e375203592b25ad103e1ca13124c5"
 dependencies = [
- "async-io 2.2.2",
+ "async-io 2.3.0",
  "async-lock 2.8.0",
  "atomic-waker",
  "cfg-if",
@@ -607,9 +607,9 @@ dependencies = [
 
 [[package]]
 name = "calloop"
-version = "0.12.3"
+version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b50b5a44d59a98c55a9eeb518f39bf7499ba19fd98ee7d22618687f3f10adbf"
+checksum = "fba7adb4dd5aa98e5553510223000e7148f621165ec5f9acd7113f6ca4995298"
 dependencies = [
  "bitflags 2.4.1",
  "log",
@@ -3805,7 +3805,7 @@ dependencies = [
 [[package]]
 name = "rdev"
 version = "0.8.0"
-source = "git+https://github.com/medzernik/rdev?branch=wootomation/1.2#7357816053f434f1b4efbb858618b78395a97008"
+source = "git+https://github.com/medzernik/rdev?branch=wootomation/1.2#ef3768d8852b09c1a7fd0f5af899a4d308da3744"
 dependencies = [
  "cocoa 0.25.0",
  "core-foundation",
@@ -3817,7 +3817,8 @@ dependencies = [
  "lazy_static",
  "libc",
  "serde",
- "windows-sys 0.48.0",
+ "tokio",
+ "windows-sys 0.52.0",
  "x11",
 ]
 
