@@ -143,7 +143,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
             <Alert
               status="error"
               w={['full', 'fit']}
-              rounded={'md'}
+              rounded="md"
               py="1"
               px={['2', '3']}
             >
