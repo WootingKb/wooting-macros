@@ -6,41 +6,42 @@ use lazy_static::lazy_static;
 
 #[cfg(target_os = "windows")]
 use multiinput::KeyId;
-use rdev::{Button, Key};
+use rdev;
+use rdev::Key;
 
 lazy_static! {
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
-pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
+pub static ref BUTTON_TO_HID: HashMap<rdev::Button, u32> = {
     let mut scancode: HashMap<rdev::Button, u32> = HashMap::new();
-        scancode.insert(Button::Left, 0x101);
-        scancode.insert(Button::Right, 0x102);
-        scancode.insert(Button::Middle, 0x103);
-        scancode.insert(Button::Forward, 0x104);
-        scancode.insert(Button::Backward, 0x105);
+        scancode.insert(rdev::Button::Left, 0x101);
+        scancode.insert(rdev::Button::Right, 0x102);
+        scancode.insert(rdev::Button::Middle, 0x103);
+        scancode.insert(rdev::Button::Forward, 0x104);
+        scancode.insert(rdev::Button::Backward, 0x105);
         scancode
 };}
 
-impl From<&Button> for MouseButton {
-    fn from(value: &Button) -> Self {
+impl From<&rdev::Button> for MouseButton {
+    fn from(value: &rdev::Button) -> Self {
         match *value {
-            Button::Left => MouseButton::Left,
-            Button::Right => MouseButton::Right,
-            Button::Middle => MouseButton::Middle,
-            Button::Forward => MouseButton::Mouse4,
-            Button::Backward => MouseButton::Mouse5,
-            Button::Unknown(_) => MouseButton::Left,
+            rdev::Button::Left => MouseButton::Left,
+            rdev::Button::Right => MouseButton::Right,
+            rdev::Button::Middle => MouseButton::Middle,
+            rdev::Button::Forward => MouseButton::Mouse4,
+            rdev::Button::Backward => MouseButton::Mouse5,
+            rdev::Button::Unknown(_) => MouseButton::Left,
         }
     }
 }
 
-impl From<&MouseButton> for Button {
+impl From<&MouseButton> for rdev::Button {
     fn from(item: &MouseButton) -> Self {
         match *item {
-            MouseButton::Left => Button::Left,
-            MouseButton::Right => Button::Right,
-            MouseButton::Middle => Button::Middle,
-            MouseButton::Mouse4 => Button::Forward,
-            MouseButton::Mouse5 => Button::Backward,
+            MouseButton::Left => rdev::Button::Left,
+            MouseButton::Right => rdev::Button::Right,
+            MouseButton::Middle => rdev::Button::Middle,
+            MouseButton::Mouse4 => rdev::Button::Forward,
+            MouseButton::Mouse5 => rdev::Button::Backward,
         }
     }
 }
