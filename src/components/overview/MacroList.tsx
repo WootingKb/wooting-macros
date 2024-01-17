@@ -23,7 +23,6 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import { motion } from 'framer-motion'
 
-import { borderRadiusStandard } from '../../theme/config'
 
 export default function MacroList() {
   // Get the ApplicationContext from your hook.
@@ -93,7 +92,7 @@ export default function MacroList() {
           <Alert
             status="warning"
             w={-25}
-            rounded={borderRadiusStandard}
+            rounded='md'
             py="1"
             p={2}
             m={2}
@@ -126,7 +125,7 @@ export default function MacroList() {
                   h="full"
                   bg={useMainBgColour()}
                   boxShadow={shadowColour}
-                  rounded={borderRadiusStandard}
+                  rounded='md'
                   p={3}
                   m="auto"
                   justifyContent="center"

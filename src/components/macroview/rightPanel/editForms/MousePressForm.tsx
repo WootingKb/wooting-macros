@@ -23,7 +23,7 @@ import {
   UpArrowIcon
 } from '../../../icons'
 import { MouseEventAction } from '../../../../types'
-import { borderRadiusStandard } from '../../../../theme/config'
+
 import { DefaultMouseDelay } from '../../../../constants/utils'
 
 interface Props {
@@ -64,7 +64,7 @@ export default function MousePressForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded={borderRadiusStandard}
+          rounded='md'
         >
           <Text
             w="fit-content"

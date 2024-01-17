@@ -24,7 +24,6 @@ import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
 import useMainBgColour from '../../../hooks/useMainBgColour'
-import { borderRadiusStandard } from '../../../theme/config' // interface Props {
 
 interface Props {
   onOpenMacroSettingsModal: () => void
@@ -144,7 +143,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
             <Alert
               status="error"
               w={['full', 'fit']}
-              rounded={borderRadiusStandard}
+              rounded={'md'}
               py="1"
               px={['2', '3']}
             >

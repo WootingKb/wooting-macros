@@ -13,7 +13,7 @@ import { useMacroContext } from '../../../../contexts/macroContext'
 import { dialog } from '@tauri-apps/api'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
-import { borderRadiusStandard } from '../../../../theme/config'
+
 
 interface Props {
   selectedElement: SystemEventAction
@@ -62,7 +62,7 @@ export default function OpenEventForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded={borderRadiusStandard}
+          rounded='md'
         >
           <Text
             w="fit-content"

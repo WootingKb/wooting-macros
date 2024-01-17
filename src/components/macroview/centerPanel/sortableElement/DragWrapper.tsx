@@ -4,7 +4,7 @@ import { Center, HStack, useColorModeValue } from '@chakra-ui/react'
 import { ActionEventType } from '../../../../types'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import useMainBgColour from '../../../../hooks/useMainBgColour'
-import { borderRadiusStandard } from '../../../../theme/config'
+
 
 interface Props {
   id: number
@@ -30,7 +30,7 @@ export default function DragWrapper({ id, element, children }: Props) {
   return (
     <HStack
       w={element.type === 'DelayEventAction' ? 'fit-content' : 'full'}
-      rounded={borderRadiusStandard}
+      rounded={'md'}
       spacing="0px"
       bg={
         selectedElementId !== undefined && id === selectedElementId + 1
@@ -44,7 +44,6 @@ export default function DragWrapper({ id, element, children }: Props) {
         px={4}
         h="full"
         bg={handleBg}
-        roundedLeft={borderRadiusStandard}
         cursor="grab"
       >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />

@@ -23,7 +23,7 @@ import {
   UpArrowIcon
 } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
-import { borderRadiusStandard } from '../../../../theme/config'
+
 import { DefaultMacroDelay } from '../../../../constants/utils'
 
 interface Props {
@@ -137,7 +137,7 @@ export default function KeyPressForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded={borderRadiusStandard}
+          rounded='md'
         >
           <Text
             fontSize={['sm', 'md', 'md']}

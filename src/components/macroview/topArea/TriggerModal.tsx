@@ -24,7 +24,6 @@ import {
   checkIfMouseButtonArray
 } from '../../../constants/utils'
 import { RecordIcon, StopIcon } from '../../icons'
-import { borderRadiusStandard } from '../../../theme/config'
 
 interface Props {
   isOpen: boolean
@@ -138,7 +137,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
                 minH="42px"
                 bg={secondBg}
                 justifyContent="center"
-                rounded={borderRadiusStandard}
+                rounded='md'
                 p="9px"
                 shadow="inner"
               >

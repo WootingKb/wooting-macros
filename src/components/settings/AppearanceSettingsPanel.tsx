@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useSettingsContext } from '../../contexts/settingsContext'
-import { borderRadiusStandard } from '../../theme/config'
 
 export default function AppearanceSettingsPanel() {
   const [value, setValue] = useState('')
@@ -56,7 +55,7 @@ export default function AppearanceSettingsPanel() {
               _hover={{ bg: radioHoverBg }}
               p="4"
               gap={2}
-              rounded={borderRadiusStandard}
+              rounded='md'
               onClick={() => onThemeChange('light')}
             >
               <Radio
@@ -74,7 +73,7 @@ export default function AppearanceSettingsPanel() {
               _hover={{ bg: radioHoverBg }}
               p="4"
               gap={2}
-              rounded={borderRadiusStandard}
+              rounded='md'
               onClick={() => onThemeChange('dark')}
             >
               <Radio

@@ -12,7 +12,7 @@ import { useMacroContext } from '../../../../contexts/macroContext'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { SystemEventAction } from '../../../../types'
-import { borderRadiusStandard } from '../../../../theme/config'
+
 
 interface Props {
   selectedElementId: number
@@ -118,7 +118,7 @@ export default function ClipboardForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded={borderRadiusStandard}
+          rounded='md'
         >
           <Text
             fontSize={['sm', 'md', 'md']}

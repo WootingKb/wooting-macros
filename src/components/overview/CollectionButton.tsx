@@ -7,7 +7,6 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
-import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   collection: Collection
@@ -38,7 +37,7 @@ export default function CollectionButton({
       w="full"
       bg={isFocused ? buttonBg : ''}
       p="2"
-      rounded={borderRadiusStandard}
+      rounded='md'
       _hover={{ bg: buttonBg }}
       transition="ease-out 150ms"
     >

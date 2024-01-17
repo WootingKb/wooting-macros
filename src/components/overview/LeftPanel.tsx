@@ -18,7 +18,6 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 import { error } from 'tauri-plugin-log'
-import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   onOpenSettingsModal: () => void
@@ -129,7 +128,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
             ))}
           {searchValue.length === 0 && (
             <Button
-              rounded={borderRadiusStandard}
+              rounded='md'
               size="md"
               w="full"
               variant="yellowGradient"

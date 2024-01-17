@@ -1,6 +1,5 @@
-import { Box, Text, useColorModeValue } from '@chakra-ui/react'
+import { Box, Text, theme, useColorModeValue } from '@chakra-ui/react'
 import { SettingInfo } from '../../constants/SettingsMap'
-import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   setting: SettingInfo
@@ -25,7 +24,7 @@ export default function SettingsButton({
       _hover={{ bg: buttonBg }}
       px="2"
       py="1"
-      rounded={borderRadiusStandard}
+      rounded={'md'}
       onClick={() => setFocus(index)}
       cursor="pointer"
       transition="ease-out 150ms"

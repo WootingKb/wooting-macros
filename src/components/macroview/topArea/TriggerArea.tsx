@@ -10,7 +10,6 @@ import {
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../constants/HIDmap'
 import { mouseEnumLookup } from '../../../constants/MouseMap'
-import { borderRadiusStandard } from '../../../theme/config'
 
 interface Props {
   onOpen: () => void
@@ -31,7 +30,7 @@ export default function TriggerArea({ onOpen }: Props) {
       gap={2}
       divider={<StackDivider />}
       shadow={shadowColour}
-      rounded={borderRadiusStandard}
+      rounded='md'
       justifyContent="space-between"
     >
       <Text fontWeight="semibold" fontSize={['sm', 'md']} whiteSpace="nowrap">
@@ -43,7 +42,7 @@ export default function TriggerArea({ onOpen }: Props) {
         h="27px"
         justifyContent="center"
         bg={secondBg}
-        rounded={borderRadiusStandard}
+        rounded='md'
         p="9px"
         shadow="inner"
       >

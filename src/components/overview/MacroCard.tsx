@@ -24,7 +24,6 @@ import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback } from 'react'
 import { KebabVertical } from '../icons'
 import useMainBgColour from '../../hooks/useMainBgColour'
-import { borderRadiusStandard } from '../../theme/config'
 
 interface Props {
   macro: Macro
@@ -80,7 +79,7 @@ export default function MacroCard({
       h="full"
       bg={useMainBgColour()}
       boxShadow={shadowColour}
-      rounded={borderRadiusStandard}
+      rounded='md'
       p={5}
       m="auto"
       justifyContent="space-between"
@@ -149,7 +148,7 @@ export default function MacroCard({
           w="full"
           gap="4px"
           bg={secondBg}
-          rounded={borderRadiusStandard}
+          rounded='md'
           p="9px"
           shadow="inner"
         >

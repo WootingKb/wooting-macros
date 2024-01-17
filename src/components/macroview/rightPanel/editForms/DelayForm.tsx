@@ -6,7 +6,7 @@ import {
   GridItem,
   HStack,
   Input,
-  Text,
+  Text, theme,
   useColorModeValue,
   useToast,
   VStack
@@ -14,7 +14,6 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { DelayEventAction } from '../../../../types'
-import { borderRadiusStandard } from '../../../../theme/config'
 import { DefaultDelayDelay } from '../../../../constants/utils'
 import { ResetDefaultIcon } from '../../../icons'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
@@ -111,7 +110,7 @@ export default function DelayForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded={borderRadiusStandard}
+          rounded='md'
         >
           <Text
             fontSize={['sm', 'md', 'md']}
