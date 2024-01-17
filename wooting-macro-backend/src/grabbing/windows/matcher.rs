@@ -30,6 +30,7 @@ pub mod input {
                             if pressed == pressed_previous
                                 && macro_data.config.macro_type == MacroType::OnHold =>
                         {
+                            // Consumption of the trigger key (when held)
                             return_value = true;
                         }
                         // If the keys are different and its a trigger key pressed, start a macro
@@ -39,6 +40,7 @@ pub mod input {
                             schan_macro_execute
                                 .send(MacroExecutorEvent::Start(macro_id.clone()))
                                 .unwrap();
+                            // Consumption of the trigger key (when macro triggered)
                             return_value = true;
                         }
                         // If the keys are different and its a trigger key released, stop a macro
@@ -48,7 +50,8 @@ pub mod input {
                             schan_macro_execute
                                 .send(MacroExecutorEvent::Stop(macro_id.clone()))
                                 .unwrap();
-                            return_value = true;
+
+                            // We don't consume the value here.
                         }
                         // Anything else just ignore
                         _ => {}

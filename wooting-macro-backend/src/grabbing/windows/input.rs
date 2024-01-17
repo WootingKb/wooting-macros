@@ -61,6 +61,13 @@ pub mod input {
                             *current_pressed_keys.blocking_write() =
                                 current_pressed_keys_clone.into_iter().unique().collect();
 
+                            // if *current_pressed_keys.blocking_read() != *previously_pressed_keys.blocking_read() {
+                            //     debug!("PRESSED {:?}", key);
+                            //     debug!("Key status Current: {:?}", *current_pressed_keys.blocking_read());
+                            //     debug!("Key status Previous: {:?}", *previously_pressed_keys.blocking_read());
+                            //     debug!("----------");
+                            // }
+
                             // Check if the macro corresponds and if to consume the trigger
                             let consume = check_macro_execution_simply(
                                 &current_pressed_keys.blocking_read(),
@@ -71,6 +78,7 @@ pub mod input {
 
                             // Consume trigger if matched a macro, else let all keys pass
                             if consume {
+                                // debug!("CONSUMING {:?}", key);
                                 None
                             } else {
                                 Some(event)
@@ -84,6 +92,13 @@ pub mod input {
                             current_pressed_keys
                                 .blocking_write()
                                 .retain(|x| x != RDEV_TO_HID.get(&key).unwrap_or_else(|| &0));
+
+                            // if *current_pressed_keys.blocking_read() != *previously_pressed_keys.blocking_read() {
+                            //     debug!("RELEASED");
+                            //     debug!("Key status Current: {:?}", *current_pressed_keys.blocking_read());
+                            //     debug!("Key status Previous: {:?}", *previously_pressed_keys.blocking_read());
+                            //     debug!("=========\n");
+                            // }
 
                             Some(event)
                         }
