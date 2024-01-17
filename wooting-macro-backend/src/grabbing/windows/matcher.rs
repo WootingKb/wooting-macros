@@ -31,7 +31,7 @@ pub mod input {
                                 && macro_data.config.macro_type == MacroType::OnHold =>
                         {
                             // Consumption of the trigger key (when held)
-                            return_value = true;
+                            return_value = false;
                         }
                         // If the keys are different and its a trigger key pressed, start a macro
                         (trigger_combo, pressed, _pressed_previous)
