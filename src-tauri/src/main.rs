@@ -129,9 +129,10 @@ async fn main() -> Result<(), Error> {
                     .context("App name is empty, or unsupported OS is used.")?;
 
                 match set_autolaunch {
-                    true => auto_start
-                        .enable()
-                        .context("Registry key failed to write.")?,
+                    true => auto_start.enable().unwrap_or_else(|err| {
+                        error!("error enabling autostart: {}", err.to_string())
+                    }),
+
                     false => {
                         if let Err(e) = auto_start.disable() {
                             match e {
@@ -139,9 +140,9 @@ async fn main() -> Result<(), Error> {
                                     std::io::ErrorKind::NotFound => {
                                         trace!("Autostart is already removed, finished checking.")
                                     }
-                                    _ => error!("{}", err),
+                                    _ => error!("error disabling autostart: {}", err),
                                 },
-                                _ => error!("{}", e),
+                                _ => error!("error disabling autostart: {}", e),
                             }
                         }
                     }
