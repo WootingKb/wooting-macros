@@ -143,7 +143,7 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               >
                 {items.length === 0 && (
                   <Text textAlign="center">
-                    {'Set up to 4 keys or a mouse button to use as the trigger'}
+                    Set up to 4 keys or a mouse button to use as the trigger
                   </Text>
                 )}
                 {items.map((element, index) => (
