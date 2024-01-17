@@ -33,7 +33,7 @@ export default function SelectElementArea() {
           maxW="full"
           maxH="32px"
           variant="brand"
-          placeholder="Search for element..."
+          placeholder="Search for an element..."
           _placeholder={{ opacity: 1, color: borderColour }}
           onChange={(event) => setSearchValue(event.target.value)}
           sx={{
