@@ -8,6 +8,7 @@ extern crate core;
 use log::*;
 
 use std::env::current_exe;
+use std::path::PathBuf;
 use std::str::FromStr;
 use std::time;
 
@@ -73,6 +74,34 @@ async fn control_grabbing(
     Ok(())
 }
 
+/// Enables or disables the automatic startup of Wootomation at system start.
+fn init_autostart(app_name: &str, set_autolaunch: bool, current_exe: PathBuf) -> Result<(), Error> {
+    let auto_start = auto_launch::AutoLaunchBuilder::new()
+        .set_app_name(app_name)
+        .set_app_path(current_exe.as_path().to_str().unwrap())
+        .set_use_launch_agent(true)
+        .build()
+        .context("App name is empty, or unsupported OS is used.")?;
+
+    match set_autolaunch {
+        true => auto_start.enable()?,
+        false => {
+            if let Err(e) = auto_start.disable() {
+                match e {
+                    auto_launch::Error::Io(err) => match err.kind() {
+                        std::io::ErrorKind::NotFound => {
+                            trace!("Autostart is already removed, finished checking.");
+                        }
+                        _ => return Err(err.into()),
+                    },
+                    _ => return Err(e.into()),
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 #[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 /// Spawn the backend thread.
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
@@ -121,34 +150,11 @@ async fn main() -> Result<(), Error> {
         .setup(move |app| {
             let app_name = &app.package_info().name;
             if let Ok(current_exe) = current_exe() {
-                let auto_start = auto_launch::AutoLaunchBuilder::new()
-                    .set_app_name(app_name)
-                    .set_app_path(current_exe.as_path().to_str().unwrap())
-                    .set_use_launch_agent(true)
-                    .build()
-                    .context("App name is empty, or unsupported OS is used.")?;
-
-                match set_autolaunch {
-                    true => auto_start.enable().unwrap_or_else(|err| {
-                        error!("error enabling autostart: {}", err.to_string())
-                    }),
-
-                    false => {
-                        if let Err(e) = auto_start.disable() {
-                            match e {
-                                auto_launch::Error::Io(err) => match err.kind() {
-                                    std::io::ErrorKind::NotFound => {
-                                        trace!("Autostart is already removed, finished checking.")
-                                    }
-                                    _ => error!("error disabling autostart: {}", err),
-                                },
-                                _ => error!("error disabling autostart: {}", e),
-                            }
-                        }
-                    }
-                }
+                init_autostart(&app_name, set_autolaunch, current_exe).unwrap_or_else(|err| {
+                    error!("error changing the autostart options: {}", err.to_string())
+                });
             } else {
-                error!("Current EXE cannot be found, autostart cannot be enabled. ");
+                error!("current EXE cannot be found, autostart cannot be enabled. ");
             }
 
             Ok(())
