@@ -7,8 +7,6 @@ authors = ["Jeroen N", "Erik S", "Simon W", "David M <1900179+medzernik@users.no
 license = "GPL-3.0-only"
 repository = "https://github.com/WootingKb/wooting-macros"
 readme = "../README.md"
-homepage = "https://wooting.io/wootomation"
-keywords = ["input", "macros", "wooting"]
 publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
