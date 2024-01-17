@@ -12,7 +12,6 @@ import SystemEventActionForm from './editForms/SystemEventActionForm'
 export default function EditArea() {
   const selectedElement = useSelectedElement()
   const { selectedElementId } = useMacroContext()
-  useColorModeValue('primary-light.500', 'primary-dark.500')
 
   const SelectedElementFormComponent = useMemo(() => {
     if (!selectedElement || selectedElementId === undefined) {
