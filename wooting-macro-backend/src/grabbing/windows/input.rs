@@ -17,6 +17,7 @@ pub mod input {
     use crate::hid_table::*;
     use crate::macros::macro_data::MacroLookup;
     use crate::plugin::delay::DEFAULT_DELAY;
+    use crate::plugin::mouse;
     use crate::RwLock;
 
     pub async fn check_keypress_simon(
@@ -36,8 +37,6 @@ pub mod input {
 
         let og_previously_pressed_keys: Arc<RwLock<Vec<u32>>> = Arc::new(RwLock::from(vec![]));
         let og_current_pressed_keys: Arc<RwLock<Vec<u32>>> = Arc::new(RwLock::from(vec![]));
-        // let mut previously_pressed_buttons: Vec<u32> = vec![];
-        // let mut current_pressed_buttons: Vec<u32> = vec![];
 
         let _grabber = tokio::task::spawn_blocking(move || {
             let schan_macro_execute_inner = schan_macro_execute.clone();
@@ -47,18 +46,22 @@ pub mod input {
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
                     match event.event_type {
+                        // Only check KeyPress and not SimulatedKeyPress
                         EventType::KeyPress(key) => {
+                            // Add the keys to the array
                             current_pressed_keys
                                 .blocking_write()
                                 .push(*RDEV_TO_HID.get(&key).unwrap_or_else(|| &0));
 
-                            // Need to keep only unique values
+                            // Make a copy of current values to prevent a deadlock
                             let current_pressed_keys_clone =
                                 current_pressed_keys.blocking_read().clone();
 
+                            // Rewrite the current values with unique values
                             *current_pressed_keys.blocking_write() =
                                 current_pressed_keys_clone.into_iter().unique().collect();
 
+                            // Check if the macro corresponds and if to consume the trigger
                             let consume = check_macro_execution_simply(
                                 &current_pressed_keys.blocking_read(),
                                 &previously_pressed_keys.blocking_read(),
@@ -66,12 +69,14 @@ pub mod input {
                                 &schan_macro_execute_inner,
                             );
 
+                            // Consume trigger if matched a macro, else let all keys pass
                             if consume {
                                 None
                             } else {
                                 Some(event)
                             }
                         }
+                        // Only check KeyRelease and not Simulated Key Release
                         EventType::KeyRelease(key) => {
                             *previously_pressed_keys.blocking_write() =
                                 current_pressed_keys.blocking_read().clone();
@@ -82,13 +87,27 @@ pub mod input {
 
                             Some(event)
                         }
-                        EventType::ButtonPress(button) => Some(event),
-                        EventType::ButtonRelease(button) => Some(event),
+                        EventType::ButtonPress(button) => {
+                            let converted_button_hid: Vec<u32> =
+                                vec![BUTTON_TO_HID.get(&button).unwrap_or(&0x101).to_owned()];
+
+                            let consume = check_macro_execution_simply(
+                                &converted_button_hid,
+                                &previously_pressed_keys.blocking_read(),
+                                map.clone(),
+                                &schan_macro_execute_inner,
+                            );
+
+                            if consume && button != rdev::Button::Left {
+                                None
+                            } else {
+                                Some(event)
+                            }
+                        }
+                        EventType::ButtonRelease(_) => Some(event),
                         _ => Some(event),
                     }
-                    // thread::sleep(time::Duration::from_millis(DEFAULT_DELAY));
                 } else {
-                    // thread::sleep(time::Duration::from_millis(2000));
                     Some(event)
                 }
             })
