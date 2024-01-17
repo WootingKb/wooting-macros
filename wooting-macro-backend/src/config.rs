@@ -52,9 +52,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                     Self::default().write_to_file()?;
                     Ok(Self::default())
                 }
-                _ => {
-                    panic!("Filesystem error, cannot proceed. {}", err);
-                }
+                _ => Err(anyhow::format_err!("filesystem error")),
             },
         }
     }

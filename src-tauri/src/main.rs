@@ -214,7 +214,7 @@ async fn main() -> Result<(), Error> {
         .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 if ApplicationConfig::read_data()
-                    .expect("Error reading config")
+                    .unwrap_or_else(|err| panic!("Error reading config data: {}", err.to_string()))
                     .minimize_to_tray
                 {
                     event.window().hide().unwrap();
