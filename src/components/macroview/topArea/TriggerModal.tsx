@@ -160,8 +160,12 @@ export default function TriggerModal({ isOpen, onClose }: Props) {
               </Flex>
               <HStack w="full" justifyContent="space-between">
                 <VStack alignItems="left">
-                  <Text fontSize="sm">{`1x non-modifier, up to 3x modifiers in any order.`}</Text>
-                  <Text fontSize="sm">{`non-modifier key must be the last in sequence.`}</Text>
+                  <Text fontSize="sm">
+                    1x non-modifier, up to 3x modifiers in any order.
+                  </Text>
+                  <Text fontSize="sm">
+                    non-modifier key must be the last in sequence.
+                  </Text>
                 </VStack>
                 <Button
                   variant="brandRecord"
