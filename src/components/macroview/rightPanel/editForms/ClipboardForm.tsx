@@ -126,7 +126,7 @@ export default function ClipboardForm({
             whiteSpace="nowrap"
             fontWeight="bold"
           >
-            {'Clipboard'}
+            Clipboard
           </Text>
         </Box>
       </HStack>
