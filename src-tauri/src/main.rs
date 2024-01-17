@@ -22,7 +22,7 @@ use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
 
-use anyhow::Result;
+use anyhow::{Context, Error, Result};
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -77,12 +77,12 @@ async fn control_grabbing(
 /// Spawn the backend thread.
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
-async fn main() {
+async fn main() -> Result<(), Error> {
     let log_level: log::LevelFilter = option_env!("MACRO_LOG_LEVEL")
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
-    MacroBackend::generate_directories().expect("unable to generate config directories");
+    MacroBackend::generate_directories().context("unable to generate config directories")?;
 
     let backend = MacroBackend::default();
 
@@ -126,10 +126,12 @@ async fn main() {
                     .set_app_path(current_exe.as_path().to_str().unwrap())
                     .set_use_launch_agent(true)
                     .build()
-                    .expect("App name is empty, or unsupported OS is used.");
+                    .context("App name is empty, or unsupported OS is used.")?;
 
                 match set_autolaunch {
-                    true => auto_start.enable().expect("Registry key failed to write."),
+                    true => auto_start
+                        .enable()
+                        .context("Registry key failed to write.")?,
                     false => {
                         if let Err(e) = auto_start.disable() {
                             match e {
@@ -262,5 +264,7 @@ async fn main() {
                 .build(),
         )
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .context("error while running tauri application")?;
+
+    Ok(())
 }
