@@ -296,7 +296,6 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
             Some(event) => *event,
             None => {
                 error!("Failed to receive an event!");
-                thread::sleep(time::Duration::from_millis(200));
                 continue;
             }
         };
