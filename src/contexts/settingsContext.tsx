@@ -52,8 +52,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
           title: 'Error loading settings',
           description: `Unable to load settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 10000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [toast])
@@ -66,8 +65,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
           title: 'Error updating settings',
           description: `Unable to update settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 10000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [config, initComplete, toast])

@@ -160,7 +160,6 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                   isMacroOutputEnabled? 'disable' : 'enable'
                 } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
                 status: 'error',
-                duration: 2000,
                 isClosable: true
               })
             })

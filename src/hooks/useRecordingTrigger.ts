@@ -103,7 +103,6 @@ export default function useRecordingTrigger(
         description:
           'Unable to disable macro output, please re-open the app. If that does not work, please contact us on Discord.',
         status: 'error',
-        duration: 2000,
         isClosable: true
       })
     })
@@ -118,7 +117,6 @@ export default function useRecordingTrigger(
           description:
             'Unable to enable macro output, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
-          duration: 2000,
           isClosable: true
         })
       })

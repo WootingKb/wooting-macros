@@ -56,8 +56,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
           description:
             'Unable to load macros, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
-          duration: 10000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [toast])
@@ -71,7 +70,6 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
           description: `Unable to update macro data: ${e}. 
             Your system action filepath or website URL may be incorrect. Alternatively, please contact us on Discord.`,
           status: 'error',
-          duration: 10000,
           isClosable: true
         })
       })
