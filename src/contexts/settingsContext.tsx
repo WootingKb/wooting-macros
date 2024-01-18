@@ -10,7 +10,7 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { updateSettings } from '../constants/utils'
+import { DefaultDelayDelay, updateSettings } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 
 type SettingsProviderProps = { children: ReactNode }
@@ -29,7 +29,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
-    DefaultDelayValue: 20,
+    DefaultDelayValue: Number(DefaultDelayDelay),
     AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,

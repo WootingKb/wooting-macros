@@ -3,6 +3,7 @@ use anyhow::Result;
 use std::fs::File;
 use std::path::PathBuf;
 
+use crate::plugin::delay::MACRO_EVENT_DELAY;
 use log::*;
 
 /// Trait to get data or write out data from the state to file.
@@ -182,7 +183,7 @@ impl Default for ApplicationConfig {
     fn default() -> Self {
         ApplicationConfig {
             auto_start: false,
-            default_delay_value: 20,
+            default_delay_value: MACRO_EVENT_DELAY,
             auto_add_delay: false,
             auto_select_element: true,
             minimize_at_launch: false,

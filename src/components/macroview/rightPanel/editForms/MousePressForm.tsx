@@ -64,7 +64,7 @@ export default function MousePressForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded='md'
+          rounded="md"
         >
           <Text
             w="fit-content"
@@ -92,9 +92,9 @@ export default function MousePressForm({
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    let duration = 20
+    let duration = Number(DefaultMouseDelay)
 
-    if (Number(mousepressDuration) >= 20) {
+    if (Number(mousepressDuration) >= Number(DefaultMouseDelay)) {
       duration = Number(mousepressDuration)
     } else if (mousepressDuration === '') {
       toast({
@@ -104,7 +104,7 @@ export default function MousePressForm({
         duration: 4000,
         isClosable: true
       })
-    } else if (Number(mousepressDuration) < 20) {
+    } else if (Number(mousepressDuration) < Number(DefaultMouseDelay)) {
       toast({
         title: 'Minimum duration',
         description: 'Duration must be at least 20ms',
@@ -254,7 +254,7 @@ export default function MousePressForm({
           <VStack w="full">
             <Input
               type="number"
-              placeholder="20"
+              placeholder={DefaultMouseDelay}
               variant="brandAccent"
               value={mousepressDuration}
               onChange={onMousepressDurationChange}

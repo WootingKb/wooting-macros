@@ -10,6 +10,7 @@ import {
 import { MouseInputInfo } from '../../../../constants/MouseMap'
 import { MouseIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
+import { DefaultMouseDelay } from '../../../../constants/utils'
 
 interface Props {
   elementsToRender: MouseInputInfo[]
@@ -55,7 +56,7 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
                     data: {
                       type: 'DownUp',
                       button: info.enumVal,
-                      duration: 20
+                      duration: Number(DefaultMouseDelay)
                     }
                   }
                 }}

@@ -311,13 +311,8 @@ fn keypress_executor_sender(mut rchan_execute: UnboundedReceiver<rdev::EventType
         plugin::util::direct_send_event(&received_event)
             .unwrap_or_else(|err| error!("Error directly sending an event to keyboard: {}", err));
 
-        //MacOS requires some strange delays so putting it here just in case.
-        #[cfg(any(target_os = "macos", target_os = "linux"))]
-        thread::sleep(time::Duration::from_millis(10));
-
-        //Windows requires a delay between each macro execution.
-        #[cfg(target_os = "windows")]
-        thread::sleep(time::Duration::from_millis(1));
+        //Every OS requires a delay so the OS can catch up.
+        thread::sleep(time::Duration::from_millis(delay::STANDARD_KEYPRESS_DELAY));
     }
 }
 

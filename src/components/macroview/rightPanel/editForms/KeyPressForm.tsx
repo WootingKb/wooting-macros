@@ -63,9 +63,9 @@ export default function KeyPressForm({
   )
 
   const onInputBlur = useCallback(() => {
-    let duration = 20
+    let duration = Number(DefaultMacroDelay)
 
-    if (Number(keypressDuration) >= 20) {
+    if (Number(keypressDuration) >= Number(DefaultMacroDelay)) {
       duration = Number(keypressDuration)
     } else if (keypressDuration === '') {
       toast({
@@ -137,7 +137,7 @@ export default function KeyPressForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded='md'
+          rounded="md"
         >
           <Text
             fontSize={['sm', 'md', 'md']}
@@ -210,7 +210,7 @@ export default function KeyPressForm({
           <VStack w="full">
             <Input
               type="number"
-              placeholder="20"
+              placeholder={DefaultMacroDelay}
               variant="brandAccent"
               value={keypressDuration}
               onChange={onKeypressDurationChange}
