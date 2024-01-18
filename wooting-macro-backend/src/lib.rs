@@ -4,7 +4,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
 
-use anyhow::{Error, Result};
+use anyhow::{bail, Error, Result};
 #[cfg(not(debug_assertions))]
 use dirs;
 use halfbrown::HashMap;
@@ -211,7 +211,7 @@ impl MacroData {
                                 //TODO: optimize using references
                                 match data.len() {
                                     0 => {
-                                        return Err(Error::msg(format!("A trigger key can't be zero, aborting trigger generation: {:#?}", data).to_string()));
+                                        bail!("a trigger key can't be zero, aborting trigger generation: {:#?}", data);
                                     }
                                     1 => {
                                         let first_data = match data.first() {
