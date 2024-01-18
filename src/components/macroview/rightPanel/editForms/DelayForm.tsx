@@ -123,12 +123,12 @@ export default function DelayForm({
             fontWeight="bold"
             whiteSpace="nowrap"
           >
-            {'Delay'}
+            Delay
           </Text>
         </Box>
       </HStack>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+      <Grid templateRows="20px 1fr" gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
         </GridItem>

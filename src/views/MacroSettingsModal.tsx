@@ -56,7 +56,7 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
   return (
     <Modal
       isOpen={isOpen}
-      size={'2xl'}
+      size="2xl"
       variant="brand"
       onClose={onClose}
       scrollBehavior="inside"

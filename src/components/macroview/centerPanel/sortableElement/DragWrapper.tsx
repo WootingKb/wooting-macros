@@ -5,7 +5,6 @@ import { ActionEventType } from '../../../../types'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import useMainBgColour from '../../../../hooks/useMainBgColour'
 
-
 interface Props {
   id: number
   element: ActionEventType
@@ -30,7 +29,7 @@ export default function DragWrapper({ id, element, children }: Props) {
   return (
     <HStack
       w={element.type === 'DelayEventAction' ? 'fit-content' : 'full'}
-      rounded={'md'}
+      rounded="md"
       spacing="0px"
       bg={
         selectedElementId !== undefined && id === selectedElementId + 1
@@ -39,13 +38,7 @@ export default function DragWrapper({ id, element, children }: Props) {
       }
       shadow={shadowColour}
     >
-      <Center
-        py={2}
-        px={4}
-        h="full"
-        bg={handleBg}
-        cursor="grab"
-      >
+      <Center py={2} px={4} h="full" bg={handleBg} cursor="grab">
         <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Center>
       {children}

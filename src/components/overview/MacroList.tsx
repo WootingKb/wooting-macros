@@ -23,7 +23,6 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import { motion } from 'framer-motion'
 
-
 export default function MacroList() {
   // Get the ApplicationContext from your hook.
   const {
@@ -89,14 +88,7 @@ export default function MacroList() {
           animate={{ scaleY: 1 }}
           exit={{ scaleY: 0 }}
         >
-          <Alert
-            status="warning"
-            w={-25}
-            rounded='md'
-            py="1"
-            p={2}
-            m={2}
-          >
+          <Alert status="warning" w={-25} rounded="md" py="1" p={2} m={2}>
             <AlertIcon boxSize={['16px', '20px']} />
             <AlertDescription fontSize={['md', 'lg']} fontWeight="bold">
               Macros will not function while Macro output is disabled.
@@ -107,7 +99,7 @@ export default function MacroList() {
       <Grid
         w="full"
         templateColumns={['repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}
-        gap={'25px'}
+        gap="25px"
         p={2}
       >
         {!searchValue && (
@@ -125,7 +117,7 @@ export default function MacroList() {
                   h="full"
                   bg={useMainBgColour()}
                   boxShadow={shadowColour}
-                  rounded='md'
+                  rounded="md"
                   p={3}
                   m="auto"
                   justifyContent="center"

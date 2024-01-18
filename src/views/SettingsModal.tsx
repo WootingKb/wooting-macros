@@ -58,7 +58,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   return (
     <Modal
       isOpen={isOpen}
-      size={'full'}
+      size="full"
       variant="brand"
       onClose={onClose}
       scrollBehavior="inside"

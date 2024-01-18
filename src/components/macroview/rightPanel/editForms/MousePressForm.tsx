@@ -193,7 +193,7 @@ export default function MousePressForm({
         {headingText}
       </Text>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+      <Grid templateRows="20px 1fr" gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Type of keystroke
@@ -239,7 +239,7 @@ export default function MousePressForm({
         </GridItem>
       </Grid>
       {mousepressType === KeyType.DownUp && (
-        <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <Grid templateRows="20px 1fr" gap="2" w="full">
           <GridItem
             w="full"
             h="8px"
