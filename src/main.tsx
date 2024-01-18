@@ -8,7 +8,7 @@ import '@fontsource/montserrat/800.css'
 import { attachConsole } from 'tauri-plugin-log'
 
 // with LogTarget::Webview enabled, this function will print logs to the browser console
-attachConsole().then(() => {})
+attachConsole()
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ChakraProvider theme={theme}>
