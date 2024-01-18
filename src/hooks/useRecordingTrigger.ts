@@ -1,7 +1,7 @@
 import { useToast } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../constants/enums'
-import { webCodeLocationHIDLookup } from '../constants/HIDmap'
+import { webCodeLocationHidEncode, webCodeLocationHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
 import { checkIfKeyShouldContinueTriggerRecording } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
@@ -41,7 +41,7 @@ export default function useRecordingTrigger(
       event.stopPropagation()
 
       // Gets the ID according to the whichID, adds a separator extra digit '1' and then adds location to the end.
-      const HIDIdentifier = event.which + '1' + event.location
+      const HIDIdentifier = webCodeLocationHidEncode(event.which, event.location)
 
       const HIDcode = webCodeLocationHIDLookup.get(HIDIdentifier)?.HIDcode
 
