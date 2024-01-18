@@ -1,38 +1,27 @@
-pub mod config;
-mod hid_table;
-pub mod plugin;
-
-use rayon::prelude::*;
-
-use log::*;
-
-use itertools::Itertools;
-
+#[cfg(not(debug_assertions))]
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::{thread, time};
 
+use anyhow::{Error, Result};
+#[cfg(not(debug_assertions))]
+use dirs;
+use halfbrown::HashMap;
+use itertools::Itertools;
+use log::*;
+use rayon::prelude::*;
+use rdev::simulate;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::RwLock;
 use tokio::task;
 
-use halfbrown::HashMap;
-
 use config::{ApplicationConfig, ConfigFile};
-#[cfg(not(debug_assertions))]
-use dirs;
-#[cfg(not(debug_assertions))]
-use std::path::PathBuf;
-
-use rdev::simulate;
-
-use anyhow::{Error, Result};
 
 // This has to be imported for release build
 #[allow(unused_imports)]
 use crate::config::CONFIG_DIR;
 use crate::hid_table::*;
-
 //Plugin imports
 use crate::plugin::delay;
 #[allow(unused_imports)]
@@ -43,6 +32,10 @@ use crate::plugin::mouse;
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
 use crate::plugin::system_event;
+
+pub mod config;
+mod hid_table;
+pub mod plugin;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 /// Type of a macro. Currently only Single is implemented. Others have been postponed for now.
@@ -279,10 +272,9 @@ async fn execute_macro(macros: Macro, channel: UnboundedSender<rdev::EventType>)
             let cloned_channel = channel;
 
             task::spawn(async move {
-                macros
-                    .execute(cloned_channel)
-                    .await
-                    .unwrap_or_else(|err| error!("Error executing macro: {}", err));
+                if let Err(error) = macros.execute(cloned_channel).await {
+                    error!("error executing macro: {}", error);
+                }
             });
         }
         MacroType::Toggle => {
