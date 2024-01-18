@@ -70,8 +70,9 @@ export default function PatchNotesPanel() {
             >
               Gaming.&nbsp;
             </Text>
-            Macros now work in games! Don't use them in multiplayer games
-            though, for your own sake.&nbsp;
+            Macros now work in games! However, we don't support nor endorse
+            their use in multiplayer games, using them in such context is at
+            your own risk!
           </ListItem>
           <ListItem>
             <Text
