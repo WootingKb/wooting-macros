@@ -99,7 +99,7 @@ export default function DelayForm({
   }, [config.config.DefaultDelayValue, onInputBlur, resetTriggered, toast])
 
   const onResetClick = () => {
-    setDelayDuration(DefaultDelayDelay)
+    setDelayDuration(config.config.DefaultDelayValue)
     setResetTriggered(true)
   }
 
