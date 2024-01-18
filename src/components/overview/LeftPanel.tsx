@@ -128,7 +128,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
             ))}
           {searchValue.length === 0 && (
             <Button
-              rounded='md'
+              rounded="md"
               size="md"
               w="full"
               variant="yellowGradient"
@@ -150,20 +150,23 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           colorScheme={isMacroOutputEnabled ? 'green' : 'orange'}
           size="sm"
           onClick={() => {
-            updateMacroOutput(isMacroOutputEnabled).catch((e) => {
-              error(e)
-              toast({
-                title: `Error ${
-                  isMacroOutputEnabled? 'disabling' : 'enabling'
-                } macro output`,
-                description: `Unable to ${
-                  isMacroOutputEnabled? 'disable' : 'enable'
-                } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
-                status: 'error',
-                isClosable: true
+            updateMacroOutput(isMacroOutputEnabled)
+              .then(() => {
+                changeMacroOutputEnabled(isMacroOutputEnabled)
               })
-            })
-            changeMacroOutputEnabled(isMacroOutputEnabled)
+              .catch((e) => {
+                error(e)
+                toast({
+                  title: `Error ${
+                    isMacroOutputEnabled ? 'disabling' : 'enabling'
+                  } macro output`,
+                  description: `Unable to ${
+                    isMacroOutputEnabled ? 'disable' : 'enable'
+                  } macro output, please re-open the app. If that does not work, please contact us on Discord.`,
+                  status: 'error',
+                  isClosable: true
+                })
+              })
           }}
         >
           <Text fontSize={['sm', 'md']}>
