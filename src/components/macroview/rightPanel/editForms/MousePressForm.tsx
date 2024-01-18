@@ -96,14 +96,6 @@ export default function MousePressForm({
 
     if (mousepressDuration >= DefaultMouseDelay) {
       duration = mousepressDuration
-    } else if (mousepressDuration === -1) {
-      toast({
-        title: 'Default duration applied',
-        description: 'Applied default duration of 20ms',
-        status: 'info',
-        duration: 4000,
-        isClosable: true
-      })
     } else if (mousepressDuration < DefaultMouseDelay) {
       toast({
         title: 'Minimum duration',
@@ -178,13 +170,20 @@ export default function MousePressForm({
 
   useEffect(() => {
     if (resetTriggered) {
-      onInputBlur()
+      toast({
+        title: 'Default duration applied',
+        description: `Applied default duration of ${DefaultMouseDelay}ms`,
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
       setResetTriggered(false)
+      onInputBlur()
     }
-  }, [onInputBlur, resetTriggered])
+  }, [resetTriggered, onInputBlur, toast])
 
   const onResetClick = () => {
-    setMousepressDuration(-1)
+    setMousepressDuration(DefaultMouseDelay)
     setResetTriggered(true)
   }
 

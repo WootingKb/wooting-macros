@@ -67,14 +67,6 @@ export default function KeyPressForm({
 
     if (keypressDuration >= DefaultMacroDelay) {
       duration = keypressDuration
-    } else if (keypressDuration === -1) {
-      toast({
-        title: 'Default duration applied',
-        description: 'Applied default duration of 20ms',
-        status: 'info',
-        duration: 4000,
-        isClosable: true
-      })
     } else {
       toast({
         title: 'Minimum duration',
@@ -115,13 +107,20 @@ export default function KeyPressForm({
 
   useEffect(() => {
     if (resetTriggered) {
+      toast({
+        title: 'Default duration applied',
+        description: `Applied default duration of ${DefaultMacroDelay}ms`,
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
       onInputBlur()
       setResetTriggered(false)
     }
-  }, [onInputBlur, resetTriggered])
+  }, [onInputBlur, resetTriggered, toast])
 
   const onResetClick = () => {
-    setKeypressDuration(-1)
+    setKeypressDuration(DefaultMacroDelay)
     setResetTriggered(true)
   }
 

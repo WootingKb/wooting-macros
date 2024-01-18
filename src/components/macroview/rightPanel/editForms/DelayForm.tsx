@@ -6,7 +6,7 @@ import {
   GridItem,
   HStack,
   Input,
-  Text, theme,
+  Text,
   useColorModeValue,
   useToast,
   VStack
@@ -57,16 +57,7 @@ export default function DelayForm({
   const onInputBlur = useCallback(() => {
     let duration = delayDuration
 
-    if (delayDuration === -1) {
-      toast({
-        title: 'Default duration applied',
-        description: `Applied default duration of ${config.config.DefaultDelayValue} ms`,
-        status: 'info',
-        duration: 4000,
-        isClosable: true
-      })
-      duration = config.config.DefaultDelayValue
-    } else if (delayDuration < 1) {
+    if (delayDuration < 1) {
       toast({
         title: 'Minimum duration applied',
         description: 'Applied minimum duration of 1ms',
@@ -84,17 +75,31 @@ export default function DelayForm({
       data: duration
     }
     updateElement(temp, selectedElementId)
-  }, [config.config.DefaultDelayValue, delayDuration, selectedElement, selectedElementId, toast, updateElement])
+  }, [
+    config.config.DefaultDelayValue,
+    delayDuration,
+    selectedElement,
+    selectedElementId,
+    toast,
+    updateElement
+  ])
 
   useEffect(() => {
     if (resetTriggered) {
+      toast({
+        title: 'Default duration applied',
+        description: `Applied default duration of ${config.config.DefaultDelayValue}ms`,
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
       onInputBlur()
       setResetTriggered(false)
     }
-  }, [onInputBlur, resetTriggered])
+  }, [config.config.DefaultDelayValue, onInputBlur, resetTriggered, toast])
 
   const onResetClick = () => {
-    setDelayDuration(-1)
+    setDelayDuration(DefaultDelayDelay)
     setResetTriggered(true)
   }
 
@@ -110,7 +115,7 @@ export default function DelayForm({
           py={1}
           px={3}
           borderColor={kebabColour}
-          rounded='md'
+          rounded="md"
         >
           <Text
             fontSize={['sm', 'md', 'md']}
