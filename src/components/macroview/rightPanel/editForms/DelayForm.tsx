@@ -29,7 +29,7 @@ export default function DelayForm({
 }: Props) {
   const config = useSettingsContext()
   const [delayDuration, setDelayDuration] = useState(
-    String(config.config.DefaultDelayValue)
+    config.config.DefaultDelayValue
   )
   const { updateElement } = useMacroContext()
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
@@ -44,20 +44,20 @@ export default function DelayForm({
     )
       return
 
-    setDelayDuration(selectedElement.data.toString())
+    setDelayDuration(selectedElement.data)
   }, [selectedElement])
 
   const onDelayDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setDelayDuration(event.target.value)
+      setDelayDuration(Number(event.target.value))
     },
     [setDelayDuration]
   )
 
   const onInputBlur = useCallback(() => {
-    let duration = Number(delayDuration)
+    let duration = delayDuration
 
-    if (delayDuration === '') {
+    if (delayDuration === -1) {
       toast({
         title: 'Default duration applied',
         description: `Applied default duration of ${config.config.DefaultDelayValue} ms`,
@@ -66,7 +66,7 @@ export default function DelayForm({
         isClosable: true
       })
       duration = config.config.DefaultDelayValue
-    } else if (Number(delayDuration) < 1) {
+    } else if (delayDuration < 1) {
       toast({
         title: 'Minimum duration applied',
         description: 'Applied minimum duration of 1ms',
@@ -94,7 +94,7 @@ export default function DelayForm({
   }, [onInputBlur, resetTriggered])
 
   const onResetClick = () => {
-    setDelayDuration('')
+    setDelayDuration(-1)
     setResetTriggered(true)
   }
 
@@ -130,12 +130,12 @@ export default function DelayForm({
         <VStack w="full">
           <Input
             type="number"
-            placeholder={DefaultDelayDelay}
+            placeholder={String(DefaultDelayDelay)}
             variant="brandAccent"
             value={delayDuration}
             onChange={onDelayDurationChange}
             onBlur={onInputBlur}
-            isInvalid={Number.isNaN(parseInt(delayDuration))}
+            isInvalid={Number.isNaN(delayDuration)}
           />
           <Button
             variant="brandTertiary"

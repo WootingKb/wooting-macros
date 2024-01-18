@@ -29,7 +29,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
-    DefaultDelayValue: Number(DefaultDelayDelay),
+    DefaultDelayValue: DefaultDelayDelay,
     AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,

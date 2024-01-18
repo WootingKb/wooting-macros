@@ -56,7 +56,7 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
                     data: {
                       type: 'DownUp',
                       button: info.enumVal,
-                      duration: Number(DefaultMouseDelay)
+                      duration: DefaultMouseDelay
                     }
                   }
                 }}

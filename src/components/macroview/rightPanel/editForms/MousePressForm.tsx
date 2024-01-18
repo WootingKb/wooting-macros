@@ -50,7 +50,7 @@ export default function MousePressForm({
       .type as keyof typeof KeyType
     setMousepressType(KeyType[typeString])
     if (selectedElement.data.data.type === 'DownUp') {
-      setMousepressDuration(selectedElement.data.data.duration.toString())
+      setMousepressDuration(selectedElement.data.data.duration)
     }
 
     setHeadingText(
@@ -83,7 +83,7 @@ export default function MousePressForm({
 
   const onMousepressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setMousepressDuration(event.target.value)
+      setMousepressDuration(Number(event.target.value))
     },
     [setMousepressDuration]
   )
@@ -92,11 +92,11 @@ export default function MousePressForm({
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    let duration = Number(DefaultMouseDelay)
+    let duration = DefaultMouseDelay
 
-    if (Number(mousepressDuration) >= Number(DefaultMouseDelay)) {
-      duration = Number(mousepressDuration)
-    } else if (mousepressDuration === '') {
+    if (mousepressDuration >= DefaultMouseDelay) {
+      duration = mousepressDuration
+    } else if (mousepressDuration === -1) {
       toast({
         title: 'Default duration applied',
         description: 'Applied default duration of 20ms',
@@ -104,7 +104,7 @@ export default function MousePressForm({
         duration: 4000,
         isClosable: true
       })
-    } else if (Number(mousepressDuration) < Number(DefaultMouseDelay)) {
+    } else if (mousepressDuration < DefaultMouseDelay) {
       toast({
         title: 'Minimum duration',
         description: 'Duration must be at least 20ms',
@@ -163,7 +163,7 @@ export default function MousePressForm({
                 duration:
                   temp.data.data.type === 'DownUp'
                     ? temp.data.data.duration
-                    : Number(DefaultMouseDelay)
+                    : DefaultMouseDelay
               }
             }
           }
@@ -184,7 +184,7 @@ export default function MousePressForm({
   }, [onInputBlur, resetTriggered])
 
   const onResetClick = () => {
-    setMousepressDuration('')
+    setMousepressDuration(-1)
     setResetTriggered(true)
   }
 
@@ -254,12 +254,12 @@ export default function MousePressForm({
           <VStack w="full">
             <Input
               type="number"
-              placeholder={DefaultMouseDelay}
+              placeholder={String(DefaultMouseDelay)}
               variant="brandAccent"
               value={mousepressDuration}
               onChange={onMousepressDurationChange}
               onBlur={onInputBlur}
-              isInvalid={Number.isNaN(parseInt(mousepressDuration))}
+              isInvalid={Number.isNaN(mousepressDuration)}
             />
             <Button
               variant="brandTertiary"

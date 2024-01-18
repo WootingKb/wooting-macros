@@ -52,22 +52,22 @@ export default function KeyPressForm({
 
     const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
-    setKeypressDuration(selectedElement.data.press_duration.toString())
+    setKeypressDuration(selectedElement.data.press_duration)
   }, [bg, kebabColour, selectedElement])
 
   const onKeypressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setKeypressDuration(event.target.value)
+      setKeypressDuration(Number(event.target.value))
     },
     [setKeypressDuration]
   )
 
   const onInputBlur = useCallback(() => {
-    let duration = Number(DefaultMacroDelay)
+    let duration = DefaultMacroDelay
 
-    if (Number(keypressDuration) >= Number(DefaultMacroDelay)) {
-      duration = Number(keypressDuration)
-    } else if (keypressDuration === '') {
+    if (keypressDuration >= DefaultMacroDelay) {
+      duration = keypressDuration
+    } else if (keypressDuration === -1) {
       toast({
         title: 'Default duration applied',
         description: 'Applied default duration of 20ms',
@@ -121,7 +121,7 @@ export default function KeyPressForm({
   }, [onInputBlur, resetTriggered])
 
   const onResetClick = () => {
-    setKeypressDuration('')
+    setKeypressDuration(-1)
     setResetTriggered(true)
   }
 
@@ -210,12 +210,12 @@ export default function KeyPressForm({
           <VStack w="full">
             <Input
               type="number"
-              placeholder={DefaultMacroDelay}
+              placeholder={String(DefaultMacroDelay)}
               variant="brandAccent"
               value={keypressDuration}
               onChange={onKeypressDurationChange}
               onBlur={onInputBlur}
-              isInvalid={Number.isNaN(parseInt(keypressDuration))}
+              isInvalid={Number.isNaN(keypressDuration)}
             />
             <Button
               variant="brandTertiary"

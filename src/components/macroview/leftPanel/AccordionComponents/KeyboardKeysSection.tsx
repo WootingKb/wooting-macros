@@ -64,7 +64,7 @@ export default function KeyboardKeysSection({ keyboardKeyCategories }: Props) {
                         type: 'KeyPressEventAction',
                         data: {
                           keypress: HIDinfo.HIDcode,
-                          press_duration: Number(DefaultMacroDelay),
+                          press_duration: DefaultMacroDelay,
                           keytype: KeyType[KeyType.DownUp]
                         }
                       }}
