@@ -18,13 +18,21 @@ import useMainBgColour from '../hooks/useMainBgColour'
 import NotificationMacroSettingsPanel from '../components/macrosettings/NotificationMacroSettingsPanel'
 import DefaultMacroSettings from '../components/macrosettings/DefaultMacroSettings'
 import MacroSettingsLeftPanel from '../components/macrosettings/MacroSettingsLeftPanel'
-import { macroSettingInfoLookup } from '../constants/MacroSettingsMap'
+import {
+  MacroSettingInfo,
+  MacroSettingsGroup
+} from '../constants/MacroSettingsMap'
 
 type Props = {
   isOpen: boolean
   onClose: () => void
 }
 
+export const macroSettingInfoLookup = new Map<number, MacroSettingInfo>(
+  MacroSettingsGroup.all
+    .filter((setting) => setting.pageIndex !== undefined)
+    .map((setting) => [setting.pageIndex!, setting])
+)
 export default function MacroSettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
   const rightPanelBg = useMainBgColour()

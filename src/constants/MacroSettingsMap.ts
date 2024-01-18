@@ -14,6 +14,7 @@ export class MacroSettingsGroup {
       displayString: 'Notifications'
     }
   }
+
   static get SequenceDefaults(): MacroSettingInfo {
     return {
       pageIndex: 1,
@@ -22,15 +23,8 @@ export class MacroSettingsGroup {
     }
   }
 
-
   static readonly all: MacroSettingInfo[] = [
     MacroSettingsGroup.Notifications,
-    MacroSettingsGroup.SequenceDefaults,
+    MacroSettingsGroup.SequenceDefaults
   ]
 }
-
-export const macroSettingInfoLookup = new Map<number, MacroSettingInfo>(
-  MacroSettingsGroup.all
-    .filter((setting) => setting.pageIndex !== undefined)
-    .map((setting) => [setting.pageIndex!, setting])
-)
