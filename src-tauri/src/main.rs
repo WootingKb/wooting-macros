@@ -75,7 +75,9 @@ async fn control_grabbing(
 }
 
 /// Enables or disables the automatic startup of Wootomation at system start.
-fn init_autostart(app_name: &str, set_autolaunch: bool, current_exe: PathBuf) -> Result<(), Error> {
+fn init_autostart(app_name: &str, set_autolaunch: bool) -> Result<(), Error> {
+    let current_exe = std::env::current_exe().context("current EXE not found")?;
+
     let auto_start = auto_launch::AutoLaunchBuilder::new()
         .set_app_name(app_name)
         .set_app_path(current_exe.as_path().to_str().unwrap())
@@ -149,13 +151,9 @@ async fn main() -> Result<(), Error> {
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;
-            if let Ok(current_exe) = current_exe() {
-                init_autostart(&app_name, set_autolaunch, current_exe).unwrap_or_else(|err| {
-                    error!("error changing the autostart options: {}", err.to_string())
-                });
-            } else {
-                error!("current EXE cannot be found, autostart cannot be enabled. ");
-            }
+            init_autostart(&app_name, set_autolaunch).unwrap_or_else(|err| {
+                error!("error changing the autostart options: {}", err.to_string())
+            });
 
             Ok(())
         })
