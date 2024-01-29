@@ -5,25 +5,23 @@
 
 extern crate core;
 
-use log::*;
-
-use std::env::current_exe;
-use std::path::PathBuf;
 use std::str::FromStr;
 use std::time;
 
+use anyhow::{Context, Error, Result};
 use byte_unit::{Byte, Unit};
-
+use log::*;
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
     WindowEvent,
 };
 use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
-use wooting_macro_backend::config::*;
 use wooting_macro_backend::*;
+use wooting_macro_backend::config::*;
 
-use anyhow::{Context, Error, Result};
+// This is the debug envvar you may wish to set if you want advanced access to debug info from Wootomation.
+const DEBUG_ENVVAR: &str = "MACRO_LOG_LEVEL";
 
 #[tauri::command]
 /// Gets the application config from the current state and sends to frontend.
@@ -62,6 +60,15 @@ async fn set_macros(
         .set_macros(frontend_data)
         .await
         .map_err(|err| err.to_string())
+}
+
+#[tauri::command]
+async fn is_debug() -> bool {
+    if let Ok(result) = std::env::var(DEBUG_ENVVAR) {
+        return log::LevelFilter::from_str(result.as_str()).unwrap() >= log::LevelFilter::Debug;
+    } else {
+        false
+    }
 }
 
 #[tauri::command]
@@ -109,6 +116,7 @@ fn init_autostart(app_name: &str, set_autolaunch: bool) -> Result<(), Error> {
 /// Note: this doesn't work on macOS since we cannot give the thread the proper permissions
 /// (will crash on key grab/listen)
 async fn main() -> Result<(), Error> {
+    // The optionENV only takes a string literal and can't be forced to take a const of any type.
     let log_level: log::LevelFilter = option_env!("MACRO_LOG_LEVEL")
         .and_then(|s| log::LevelFilter::from_str(s).ok())
         .unwrap_or(log::LevelFilter::Info);
@@ -147,7 +155,8 @@ async fn main() -> Result<(), Error> {
             set_macros,
             get_config,
             set_config,
-            control_grabbing
+            control_grabbing,
+            is_debug
         ])
         .setup(move |app| {
             let app_name = &app.package_info().name;

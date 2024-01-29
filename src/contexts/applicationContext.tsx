@@ -11,7 +11,7 @@ import {
 import { useToast } from '@chakra-ui/react'
 import { ViewState } from '../constants/enums'
 import { AppState, Collection, CurrentSelection, MacroData } from '../types'
-import { updateBackendConfig } from '../constants/utils'
+import { isDebug, updateBackendConfig } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 import { invoke } from '@tauri-apps/api'
 
@@ -41,6 +41,19 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     collectionIndex: 0,
     macroIndex: undefined
   })
+  const [appDebugMode, setAppDebugMode] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    isDebug()
+      .then((value: boolean) => {
+        console.error('THIS IS THE VALUE FROM RUST: ', value)
+        setAppDebugMode(value)
+      })
+      .catch((error) => {
+        console.log('Debug mode disabled: ', error)
+      })
+  })
+
   const toast = useToast()
 
   useEffect(() => {
@@ -171,7 +184,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       setSearchValue,
       isMacroOutputEnabled,
       changeMacroOutputEnabled,
-      changeSearchValue
+      changeSearchValue,
+      appDebugMode
     }),
     [
       viewState,
@@ -188,7 +202,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       setSearchValue,
       isMacroOutputEnabled,
       changeMacroOutputEnabled,
-      changeSearchValue
+      changeSearchValue,
+      appDebugMode
     ]
   )
 

@@ -41,7 +41,11 @@ export default function KeyPressForm({
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
-  const [resetTriggered, setResetTriggered] = useState(false)
+
+  // const setKeypressDurationDebug = (value) => {
+  //   console.log(`setKeypressDuration is called with value: ${value}`);
+  //   setKeypressDuration(value);
+  // };
 
   useEffect(() => {
     if (
@@ -52,8 +56,8 @@ export default function KeyPressForm({
 
     const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
-    setKeypressDuration(selectedElement.data.press_duration)
-  }, [bg, kebabColour, selectedElement])
+    setKeypressDuration(keypressDuration)
+  }, [bg, kebabColour, selectedElement, keypressDuration])
 
   const onKeypressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,13 +89,23 @@ export default function KeyPressForm({
       data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
-  }, [
-    keypressDuration,
-    selectedElement,
-    selectedElementId,
-    toast,
-    updateElement
-  ])
+  }, [keypressDuration, selectedElement, selectedElementId, toast, updateElement])
+
+  const onResetClick = useCallback(() => {
+    toast({
+      title: 'Default duration applied',
+      description: `Applied default duration of ${DefaultMacroDelay}ms`,
+      status: 'info',
+      duration: 4000,
+      isClosable: true
+    })
+    setKeypressDuration(DefaultMacroDelay)
+    const temp: KeyPressEventAction = {
+      ...selectedElement,
+      data: { ...selectedElement.data, press_duration: DefaultMacroDelay }
+    }
+    updateElement(temp, selectedElementId)
+  }, [toast, selectedElement, updateElement, selectedElementId])
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -104,25 +118,6 @@ export default function KeyPressForm({
     },
     [selectedElement, selectedElementId, updateElement]
   )
-
-  useEffect(() => {
-    if (resetTriggered) {
-      toast({
-        title: 'Default duration applied',
-        description: `Applied default duration of ${DefaultMacroDelay}ms`,
-        status: 'info',
-        duration: 4000,
-        isClosable: true
-      })
-      onInputBlur()
-      setResetTriggered(false)
-    }
-  }, [onInputBlur, resetTriggered, toast])
-
-  const onResetClick = () => {
-    setKeypressDuration(DefaultMacroDelay)
-    setResetTriggered(true)
-  }
 
   return (
     <>

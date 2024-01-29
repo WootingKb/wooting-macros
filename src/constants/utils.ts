@@ -28,6 +28,9 @@ export const updateMacroOutput = (value: boolean): Promise<void> => {
     frontendBool: !value
   })
 }
+export const isDebug = (): Promise<boolean> => {
+  return invoke<boolean>('is_debug', {})
+}
 
 export const checkIfMouseButtonArray = (
   items: number[] | MouseButton[]

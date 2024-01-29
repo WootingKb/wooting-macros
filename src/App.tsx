@@ -12,7 +12,7 @@ import MacroSettingsModal from './views/MacroSettingsModal'
 import SettingsModal from './views/SettingsModal'
 
 function App() {
-  const { viewState, initComplete } = useApplicationContext()
+  const { viewState, initComplete, appDebugMode } = useApplicationContext()
   const {
     isOpen: isOpenSettings,
     onOpen: onOpenSettings,
@@ -24,17 +24,28 @@ function App() {
     onClose: onCloseMacroSettings
   } = useDisclosure()
 
-  useEffect(() => {
-    document.addEventListener('contextmenu', (event) => event.preventDefault()) // disables Tauri right click context menu
-    // TODO: Add disable for ctrl+r and f5, but only when in debug mode - envvar RUST_LOG='debug'
+  if (appDebugMode !== null && !appDebugMode) {
+    // Disables Tauri right click context menu
+    document.addEventListener('contextmenu', (event) => event.preventDefault())
+    // Ctrl + f is disabled with this event listener to whether the debug mode is on
     document.addEventListener('keydown', (event) => {
       if (event.ctrlKey && event.key.toLowerCase() === 'f') {
         event.preventDefault()
       }
+      if (event.ctrlKey && event.key.toLowerCase() === 'r') {
+        event.preventDefault()
+      }
+      if (event.key.toLowerCase() === 'f5') {
+        event.preventDefault()
+      }
     })
     document.addEventListener('selectstart', (event) => event.preventDefault())
+    console.log("prevented default action because debug is: ", appDebugMode)
+  }
+
+  useEffect(() => {
     init({ data })
-  }, [])
+  })
 
   if (!initComplete) {
     return (
