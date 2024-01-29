@@ -213,16 +213,16 @@ async fn main() -> Result<(), Error> {
         })
         .on_page_load(move |window, _| {
             if set_launch_minimized {
-                window.hide().unwrap();
+                window.hide().expect("Couldn't hide window");
             }
         })
         .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { api, .. } = event.event() {
                 if ApplicationConfig::read_data()
-                    .unwrap_or_else(|err| panic!("Error reading config data: {}", err.to_string()))
+                    .expect("error reading config data, can't determine if app is to be terminated or hidden")
                     .minimize_to_tray
                 {
-                    event.window().hide().unwrap();
+                    event.window().hide().expect("Couldn't hide window");
                     api.prevent_close();
                 }
             }
