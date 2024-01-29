@@ -225,7 +225,7 @@ export default function KeyPressForm({
               size={['sm', 'md']}
               onClick={onResetClick}
             >
-              <Text fontSize={['md', 'md', 'sm']}>Reset to Default</Text>
+              <Text fontSize={['sm', 'md']}>Reset to Default</Text>
             </Button>
           </VStack>
         </Grid>
