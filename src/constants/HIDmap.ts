@@ -1345,7 +1345,7 @@ export const webCodeLocationHIDLookup = new Map<string, HidInfo>(
   Hid.all
     .filter((hid) => hid.whichID !== undefined)
     .map((hid) => [
-      hid.whichID.toString() + '|' + (hid.locationID?.toString() ?? 0),
+      webCodeLocationHidEncode(hid.whichID, hid.locationID ?? 0),
       hid
     ])
 )
