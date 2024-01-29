@@ -39,6 +39,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   } = useMacroContext()
   const { config } = useSettingsContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const fontSize = '0.844rem' //REM size for the font (13.5 px)
 
   const onItemChanged = useCallback(
     (
@@ -168,7 +169,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandRecord"
           leftIcon={recording ? <StopIcon /> : <RecordIcon />}
           size={['xs', 'sm', 'md']}
-          fontSize={['xs', '13.5', 'lg']}
+          fontSize={['xs', fontSize, 'lg']}
           isActive={recording}
           onClick={recording ? stopRecording : startRecording}
         >
@@ -178,7 +179,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandRecord"
           leftIcon={<TimeIcon />}
           size={['xs', 'sm', 'md']}
-          fontSize={['xs', '13.5', 'lg']}
+          fontSize={['xs', fontSize, 'lg']}
           onClick={() => {
             onElementAdd({
               type: 'DelayEventAction',
@@ -192,14 +193,18 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandWarning"
           leftIcon={<DeleteIcon />}
           size={['xs', 'sm', 'md']}
-          fontSize={['xs', '13.5', 'lg']}
+          fontSize={['xs', fontSize, 'lg']}
           onClick={onOpen}
           isDisabled={sequence.length === 0}
         >
           Clear All
         </Button>
 
-        <Tooltip label="Open Macro Advanced Settings (coming soon)" hasArrow variant="brand">
+        <Tooltip
+          label="Open Macro Advanced Settings (coming soon)"
+          hasArrow
+          variant="brand"
+        >
           <IconButton
             variant="brand"
             isDisabled={true}
