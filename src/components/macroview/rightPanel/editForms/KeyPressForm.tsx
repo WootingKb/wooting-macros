@@ -42,11 +42,6 @@ export default function KeyPressForm({
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
 
-  // const setKeypressDurationDebug = (value) => {
-  //   console.log(`setKeypressDuration is called with value: ${value}`);
-  //   setKeypressDuration(value);
-  // };
-
   useEffect(() => {
     if (
       selectedElement === undefined ||
@@ -89,7 +84,13 @@ export default function KeyPressForm({
       data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
-  }, [keypressDuration, selectedElement, selectedElementId, toast, updateElement])
+  }, [
+    keypressDuration,
+    selectedElement,
+    selectedElementId,
+    toast,
+    updateElement
+  ])
 
   const onResetClick = useCallback(() => {
     toast({
@@ -99,7 +100,9 @@ export default function KeyPressForm({
       duration: 4000,
       isClosable: true
     })
+
     setKeypressDuration(DefaultMacroDelay)
+
     const temp: KeyPressEventAction = {
       ...selectedElement,
       data: { ...selectedElement.data, press_duration: DefaultMacroDelay }

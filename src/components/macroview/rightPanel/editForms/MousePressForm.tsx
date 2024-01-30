@@ -43,7 +43,6 @@ export default function MousePressForm({
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
-  const [resetTriggered, setResetTriggered] = useState(false)
 
   useEffect(() => {
     const typeString: keyof typeof KeyType = selectedElement.data.data
@@ -168,24 +167,33 @@ export default function MousePressForm({
     [selectedElement, selectedElementId, updateElement]
   )
 
-  useEffect(() => {
-    if (resetTriggered) {
-      toast({
-        title: 'Default duration applied',
-        description: `Applied default duration of ${DefaultMouseDelay}ms`,
-        status: 'info',
-        duration: 4000,
-        isClosable: true
-      })
-      setResetTriggered(false)
-      onInputBlur()
+  const onResetClick = useCallback(() => {
+    if (selectedElement.data.data.type !== 'DownUp') {
+      return
     }
-  }, [resetTriggered, onInputBlur, toast])
 
-  const onResetClick = () => {
+    toast({
+      title: 'Default duration applied',
+      description: `Applied default duration of ${DefaultMouseDelay}ms`,
+      status: 'info',
+      duration: 4000,
+      isClosable: true
+    })
+
     setMousepressDuration(DefaultMouseDelay)
-    setResetTriggered(true)
-  }
+
+    const temp: MouseEventAction = {
+      ...selectedElement,
+      data: {
+        ...selectedElement.data,
+        data: {
+          ...selectedElement.data.data,
+          duration: DefaultMouseDelay
+        }
+      }
+    }
+    updateElement(temp, selectedElementId)
+  }, [toast, selectedElement, updateElement, selectedElementId])
 
   return (
     <>

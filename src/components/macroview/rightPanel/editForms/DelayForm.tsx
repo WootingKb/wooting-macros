@@ -35,7 +35,6 @@ export default function DelayForm({
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
   const toast = useToast()
-  const [resetTriggered, setResetTriggered] = useState(false)
 
   useEffect(() => {
     if (
@@ -75,33 +74,29 @@ export default function DelayForm({
       data: duration
     }
     updateElement(temp, selectedElementId)
-  }, [
-    config.config.DefaultDelayValue,
-    delayDuration,
-    selectedElement,
-    selectedElementId,
-    toast,
-    updateElement
-  ])
+  }, [delayDuration, selectedElement, selectedElementId, toast, updateElement])
 
-  useEffect(() => {
-    if (resetTriggered) {
-      toast({
-        title: 'Default duration applied',
-        description: `Applied default duration of ${config.config.DefaultDelayValue}ms`,
-        status: 'info',
-        duration: 4000,
-        isClosable: true
-      })
-      onInputBlur()
-      setResetTriggered(false)
-    }
-  }, [config.config.DefaultDelayValue, onInputBlur, resetTriggered, toast])
-
-  const onResetClick = () => {
+  const onResetClick = useCallback(() => {
+    toast({
+      title: 'Default duration applied',
+      description: `Applied default duration of ${config.config.DefaultDelayValue}ms`,
+      status: 'info',
+      duration: 4000,
+      isClosable: true
+    })
     setDelayDuration(config.config.DefaultDelayValue)
-    setResetTriggered(true)
-  }
+    const temp: DelayEventAction = {
+      ...selectedElement,
+      data: config.config.DefaultDelayValue
+    }
+    updateElement(temp, selectedElementId)
+  }, [
+    toast,
+    config.config.DefaultDelayValue,
+    selectedElement,
+    updateElement,
+    selectedElementId
+  ])
 
   return (
     <>
