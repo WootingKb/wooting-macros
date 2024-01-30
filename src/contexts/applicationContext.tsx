@@ -46,7 +46,6 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   useEffect(() => {
     isDebug()
       .then((value: boolean) => {
-        console.error('THIS IS THE VALUE FROM RUST: ', value)
         setAppDebugMode(value)
       })
       .catch((error) => {
