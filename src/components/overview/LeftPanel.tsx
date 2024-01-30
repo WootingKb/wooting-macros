@@ -29,7 +29,7 @@ function SearchBar() {
     'primary-light.500',
     'primary-dark.500'
   )
-  const { searchValue, setSearchValue } = useApplicationContext()
+  const { changeSearchValue } = useApplicationContext()
 
   return (
     <Input
@@ -49,8 +49,7 @@ function SearchBar() {
           cursor: 'pointer'
         }
       }}
-      value={searchValue}
-      onChange={(event) => setSearchValue(event.target.value)}
+      onChange={(event) => changeSearchValue(event.target.value)}
     />
   )
 }
@@ -64,7 +63,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     changeSelectedCollectionIndex,
     isMacroOutputEnabled,
     changeMacroOutputEnabled,
-    searchValue
+    isSearching
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
@@ -106,12 +105,12 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {searchValue.length === 0 &&
+          {isSearching &&
             collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
                 index={index}
-                key={`${collection.name} + ${index}`}
+                key={`${collection.name.toLowerCase().trim()} + ${index}`}
                 isFocused={index == selection.collectionIndex}
                 isMacroOutputEnabled={isMacroOutputEnabled}
                 setFocus={(index) => changeSelectedCollectionIndex(index)}
@@ -126,7 +125,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 }
               />
             ))}
-          {searchValue.length === 0 && (
+          {isSearching && (
             <Button
               rounded="md"
               size="md"

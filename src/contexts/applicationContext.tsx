@@ -36,6 +36,7 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [collections, setCollections] = useState<Collection[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [isSearching, setIsSearching] = useState<boolean>(false)
   const [isMacroOutputEnabled, setIsMacroOutputEnabled] = useState(true)
   const [selection, setSelection] = useState<CurrentSelection>({
     collectionIndex: 0,
@@ -117,12 +118,14 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
     [setSelection]
   )
 
-  const changeSearchValue = useCallback(
-    (term: string) => {
-      setSearchValue(term)
-    },
-    [setSearchValue]
-  )
+  const changeSearchValue = useCallback((term: string) => {
+    setSearchValue(term.toLowerCase().trim())
+    if (term.trim().length !== 0) {
+      setIsSearching(true)
+    } else {
+      setIsSearching(false)
+    }
+  }, [])
 
   const changeMacroOutputEnabled = useCallback(
     (value: boolean) => {
@@ -180,10 +183,10 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
       searchValue,
-      setSearchValue,
+      isSearching,
+      changeSearchValue,
       isMacroOutputEnabled,
       changeMacroOutputEnabled,
-      changeSearchValue,
       appDebugMode
     }),
     [
@@ -198,10 +201,10 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       changeSelectedCollectionIndex,
       changeSelectedMacroIndex,
       searchValue,
-      setSearchValue,
+      isSearching,
+      changeSearchValue,
       isMacroOutputEnabled,
       changeMacroOutputEnabled,
-      changeSearchValue,
       appDebugMode
     ]
   )

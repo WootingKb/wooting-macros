@@ -25,7 +25,7 @@ export default function CollectionPanel() {
     selection,
     onCollectionUpdate,
     onSelectedCollectionDelete,
-    searchValue
+    isSearching
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const {
@@ -101,7 +101,7 @@ export default function CollectionPanel() {
         borderBottom="1px"
         borderColor={borderColour}
       >
-        {searchValue.length === 0 ? (
+        {isSearching ? (
           <HStack w="full" justifyContent="space-between">
             <HStack w="full" spacing={4}>
               <EmojiPopover

@@ -5,17 +5,17 @@ import {
   useColorModeValue,
   VStack
 } from '@chakra-ui/react'
-import { useState } from 'react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import SelectAreaAccordion from './AccordionComponents/SelectAreaAccordion'
+import { useApplicationContext } from '../../../contexts/applicationContext'
 
 export default function SelectElementArea() {
-  const [searchValue, setSearchValue] = useState('')
   const borderColour = useColorModeValue(
     'primary-light.500',
     'primary-dark.500'
   )
   const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
+  const { changeSearchValue, searchValue } = useApplicationContext()
 
   return (
     <VStack w="33%" h="full" bg={useMainBgColour()} spacing={0}>
@@ -35,7 +35,7 @@ export default function SelectElementArea() {
           variant="brand"
           placeholder="Search for an element..."
           _placeholder={{ opacity: 1, color: borderColour }}
-          onChange={(event) => setSearchValue(event.target.value)}
+          onChange={(event) => changeSearchValue(event.target.value)}
           sx={{
             '&::-webkit-search-cancel-button': {
               WebkitAppearance: 'none',
@@ -48,7 +48,7 @@ export default function SelectElementArea() {
           }}
         />
       </HStack>
-      <SelectAreaAccordion searchValue={searchValue.toLowerCase()} />
+      <SelectAreaAccordion searchValue={searchValue} />
     </VStack>
   )
 }
