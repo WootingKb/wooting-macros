@@ -13,7 +13,7 @@ import {
   useColorModeValue,
   VStack
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../constants/enums'
@@ -39,7 +39,7 @@ export default function MacroList() {
     { macro: Macro; collection: Collection }[]
   >([])
 
-  useEffect(() => {
+  useMemo(() => {
     const newMatchingMacros: { macro: Macro; collection: Collection }[] = []
 
     if (searchValue) {
