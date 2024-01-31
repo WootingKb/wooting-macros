@@ -19,11 +19,12 @@ import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingSequence from '../../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../../contexts/settingsContext'
 import { KeyType } from '../../../constants/enums'
-import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
+import { checkIfKeypress, checkIfMouseButton} from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
 import useMainBgColour from '../../../hooks/useMainBgColour'
+import { useApplicationContext } from "../../../contexts/applicationContext";
 
 interface Props {
   onOpenMacroSettingsModal: () => void
@@ -40,6 +41,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   const { config } = useSettingsContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const fontSize = '0.844rem' //REM size for the font (13.5 px)
+  const {appDebugMode} = useApplicationContext()
 
   const onItemChanged = useCallback(
     (
@@ -207,11 +209,11 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         >
           <IconButton
             variant="brand"
-            isDisabled={true}
+            isDisabled={!appDebugMode ?? true}
             aria-label="MacroSettings"
             icon={<SettingsIcon />}
             size={['xs', 'sm', 'md']}
-            // onClick={onOpenMacroSettingsModal}
+            onClick={onOpenMacroSettingsModal}
           />
         </Tooltip>
       </HStack>

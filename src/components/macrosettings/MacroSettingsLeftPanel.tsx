@@ -1,9 +1,9 @@
 import { Flex, Text, useColorModeValue, VStack } from '@chakra-ui/react'
-import { SettingsCategory } from '../../constants/enums'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
-import SettingsButton from '../settings/SettingsButton'
-import { MacroSettingsGroup } from '../../constants/MacroSettingsMap'
+import SettingsButton from "../settings/SettingsButton";
+import { MacroSettingsGroup } from "../../constants/MacroSettingsMap";
+import { SettingsCategory } from "../../constants/enums";
 
 interface Props {
   pageIndex: number

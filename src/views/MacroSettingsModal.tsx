@@ -11,7 +11,7 @@ import {
   useColorModeValue,
   VStack
 } from '@chakra-ui/react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import useScrollbarStyles from '../hooks/useScrollbarStyles'
 import useMainBgColour from '../hooks/useMainBgColour'
@@ -33,6 +33,22 @@ export const macroSettingInfoLookup = new Map<number, MacroSettingInfo>(
     .filter((setting) => setting.pageIndex !== undefined)
     .map((setting) => [setting.pageIndex!, setting])
 )
+
+interface SettingsTabDefinition {
+  title: string
+  component: () => React.ReactNode
+}
+
+export const SettingTabs: SettingsTabDefinition[] = [
+  {
+    title: 'Macro Defaults',
+    component: () => <DefaultMacroSettings />
+  },
+  {
+    title: 'Notifications',
+    component: () => <NotificationMacroSettingsPanel />
+  }
+]
 export default function MacroSettingsModal({ isOpen, onClose }: Props) {
   const [pageIndex, setPageIndex] = useState(0)
   const rightPanelBg = useMainBgColour()
@@ -41,17 +57,6 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
   useEffect(() => {
     setPageIndex(0)
   }, [isOpen])
-
-  const SelectedPageComponent = useMemo(() => {
-    switch (pageIndex) {
-      case 0:
-        return <DefaultMacroSettings />
-      case 1:
-        return <NotificationMacroSettingsPanel />
-      default:
-        return <></>
-    }
-  }, [pageIndex])
 
   return (
     <Modal
@@ -104,7 +109,7 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
                     ' Settings'}
                 </Text>
                 <Divider></Divider>
-                {SelectedPageComponent}
+                {SettingTabs[pageIndex].component()}
               </VStack>
             </ModalBody>
           </Flex>
