@@ -1,9 +1,10 @@
 import { Flex, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useBorderColour from '../../hooks/useBorderColour'
-import SettingsButton from "../settings/SettingsButton";
-import { MacroSettingsGroup } from "../../constants/MacroSettingsMap";
-import { SettingsCategory } from "../../constants/enums";
+import SettingsButton from '../settings/SettingsButton'
+import { SettingTabs } from '../../views/MacroSettingsModal'
+import { SettingInfo } from '../../constants/SettingsMap'
+import { SettingsCategory } from '../../constants/enums'
 
 interface Props {
   pageIndex: number
@@ -36,17 +37,23 @@ export default function MacroSettingsLeftPanel({
           <Text w="full" textStyle="miniHeader" ml={4}>
             Macro Specific Settings
           </Text>
-          {MacroSettingsGroup.all
-            .filter((setting) => setting.category === SettingsCategory.Macro)
-            .map((setting) => (
+          {SettingTabs.map((item, index) => {
+            const settingItem: SettingInfo = {
+              displayString: item.title,
+              pageIndex: index,
+              category: SettingsCategory.Macro
+            }
+
+            return (
               <SettingsButton
-                setting={setting}
-                index={setting.pageIndex}
-                key={setting.displayString}
-                isFocused={pageIndex == setting.pageIndex}
+                setting={settingItem}
+                index={index}
+                key={item.title}
                 setFocus={onSettingsButtonPress}
+                isFocused={pageIndex == index}
               />
-            ))}
+            )
+          })}
         </VStack>
       </VStack>
     </Flex>

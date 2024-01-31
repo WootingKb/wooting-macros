@@ -18,21 +18,12 @@ import useMainBgColour from '../hooks/useMainBgColour'
 import NotificationMacroSettingsPanel from '../components/macrosettings/NotificationMacroSettingsPanel'
 import DefaultMacroSettings from '../components/macrosettings/DefaultMacroSettings'
 import MacroSettingsLeftPanel from '../components/macrosettings/MacroSettingsLeftPanel'
-import {
-  MacroSettingInfo,
-  MacroSettingsGroup
-} from '../constants/MacroSettingsMap'
 
 type Props = {
   isOpen: boolean
   onClose: () => void
 }
 
-export const macroSettingInfoLookup = new Map<number, MacroSettingInfo>(
-  MacroSettingsGroup.all
-    .filter((setting) => setting.pageIndex !== undefined)
-    .map((setting) => [setting.pageIndex!, setting])
-)
 
 interface SettingsTabDefinition {
   title: string
@@ -105,7 +96,7 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
                   fontWeight="bold"
                   fontSize="large"
                 >
-                  {macroSettingInfoLookup.get(pageIndex)?.displayString +
+                  {SettingTabs[pageIndex].title +
                     ' Settings'}
                 </Text>
                 <Divider></Divider>
