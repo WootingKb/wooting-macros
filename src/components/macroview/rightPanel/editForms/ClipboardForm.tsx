@@ -12,7 +12,7 @@ import { useMacroContext } from '../../../../contexts/macroContext'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { SystemEventAction } from '../../../../types'
-
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElementId: number
@@ -110,25 +110,7 @@ export default function ClipboardForm({
     <>
       <HStack justifyContent="center" p={1}>
         <Text>Editing element</Text>
-        <Box
-          h="32px"
-          w="fit-content"
-          bg={bg}
-          border="1px solid"
-          py={1}
-          px={3}
-          borderColor={kebabColour}
-          rounded='md'
-        >
-          <Text
-            fontSize={['sm', 'md', 'md']}
-            w="fit-content"
-            whiteSpace="nowrap"
-            fontWeight="bold"
-          >
-            Clipboard
-          </Text>
-        </Box>
+        <BoxText text={'Clipboard'} />
       </HStack>
       <Divider />
       <HStack w="full" justifyContent="space-between">

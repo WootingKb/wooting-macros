@@ -1,19 +1,10 @@
-import {
-  Box,
-  Button,
-  Divider,
-  HStack,
-  Text,
-  Textarea,
-  useColorModeValue,
-  VStack
-} from '@chakra-ui/react'
+import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { dialog } from '@tauri-apps/api'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
-
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElement: SystemEventAction
@@ -29,8 +20,6 @@ export default function OpenEventForm({
   const [subHeaderText, setSubHeaderText] = useState('')
   const [path, setPath] = useState('')
   const { updateElement } = useMacroContext()
-  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
-  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
 
   useEffect(() => {
     if (selectedElement.data.type !== 'Open') return
@@ -52,29 +41,12 @@ export default function OpenEventForm({
         break
     }
     setHeaderText(
-      <HStack justifyContent="center" p={1}>
-        <Text>Editing element</Text>
-        <Box
-          h="32px"
-          w="fit-content"
-          bg={bg}
-          border="1px solid"
-          py={1}
-          px={3}
-          borderColor={kebabColour}
-          rounded='md'
-        >
-          <Text
-            w="fit-content"
-            whiteSpace="nowrap"
-            fontSize={['sm', 'md', 'md']}
-            fontWeight="bold"
-          >
-            {sysEventLookup.get(selectedElement.data.action.type)
-              ?.displayString || ''}
-          </Text>
-        </Box>
-      </HStack>
+      <BoxText
+        text={
+          sysEventLookup.get(selectedElement.data.action.type)?.displayString ||
+          ''
+        }
+      />
     )
     setPath(selectedElement.data.action.data)
   }, [selectedElement])

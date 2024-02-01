@@ -1,5 +1,5 @@
-import { useColorModeValue, VStack } from '@chakra-ui/react'
-import { useMemo } from 'react'
+import { Box, HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react'
+import React, { useMemo } from 'react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedElement } from '../../../contexts/selectors'
 import useMainBgColour from '../../../hooks/useMainBgColour'
@@ -8,6 +8,36 @@ import EmptyForm from './editForms/EmptyForm'
 import KeyPressForm from './editForms/KeyPressForm'
 import MousePressForm from './editForms/MousePressForm'
 import SystemEventActionForm from './editForms/SystemEventActionForm'
+
+export function BoxText({ text }: { text: string }) {
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+
+  return (
+    <HStack justifyContent="center" p={1}>
+      <Text>Editing element</Text>
+      <Box
+        h="32px"
+        w="fit-content"
+        bg={bg}
+        border="1px solid"
+        py={1}
+        px={3}
+        borderColor={kebabColour}
+        rounded="md"
+      >
+        <Text
+          w="fit-content"
+          whiteSpace="nowrap"
+          fontSize={['sm', 'md', 'md']}
+          fontWeight="bold"
+        >
+          {text}
+        </Text>
+      </Box>
+    </HStack>
+  )
+}
 
 export default function EditArea() {
   const selectedElement = useSelectedElement()

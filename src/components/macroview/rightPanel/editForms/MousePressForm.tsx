@@ -1,11 +1,9 @@
 import {
-  Box,
   Button,
   Divider,
   Flex,
   Grid,
   GridItem,
-  HStack,
   Input,
   Text,
   useColorModeValue,
@@ -25,6 +23,7 @@ import {
 import { MouseEventAction } from '../../../../types'
 
 import { DefaultMouseDelay } from '../../../../constants/utils'
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElementId: number
@@ -53,30 +52,12 @@ export default function MousePressForm({
     }
 
     setHeadingText(
-      <HStack justifyContent="center" p={1}>
-        <Text>Editing element</Text>
-        <Box
-          h="32px"
-          w="fit-content"
-          bg={bg}
-          border="1px solid"
-          py={1}
-          px={3}
-          borderColor={kebabColour}
-          rounded="md"
-        >
-          <Text
-            w="fit-content"
-            fontSize={['sm', 'md', 'md']}
-            whiteSpace="nowrap"
-          >
-            {
-              mouseEnumLookup.get(selectedElement.data.data.button)
-                ?.displayString
-            }
-          </Text>
-        </Box>
-      </HStack>
+      <BoxText
+        text={
+          mouseEnumLookup.get(selectedElement.data.data.button)
+            ?.displayString ?? ''
+        }
+      />
     )
   }, [bg, kebabColour, selectedElement])
 

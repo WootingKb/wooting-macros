@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Divider,
   Flex,
@@ -25,6 +24,7 @@ import {
 import { KeyPressEventAction } from '../../../../types'
 
 import { DefaultMacroDelay } from '../../../../constants/utils'
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElementId: number
@@ -126,25 +126,11 @@ export default function KeyPressForm({
     <>
       <HStack justifyContent="center" p={1}>
         <Text>Editing element</Text>
-        <Box
-          h="32px"
-          w="fit-content"
-          bg={bg}
-          border="1px solid"
-          py={1}
-          px={3}
-          borderColor={kebabColour}
-          rounded="md"
-        >
-          <Text
-            fontSize={['sm', 'md', 'md']}
-            w="fit-content"
-            whiteSpace="nowrap"
-            fontWeight="bold"
-          >
-            {HIDLookup.get(selectedElement.data.keypress)?.displayString}
-          </Text>
-        </Box>
+        <BoxText
+          text={
+            HIDLookup.get(selectedElement.data.keypress)?.displayString ?? ''
+          }
+        />
       </HStack>
       <Divider />
       <Grid templateRows="20px 1fr" gap="2" w="full">

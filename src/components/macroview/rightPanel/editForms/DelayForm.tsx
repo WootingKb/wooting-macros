@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Divider,
   Grid,
@@ -17,6 +16,7 @@ import { DelayEventAction } from '../../../../types'
 import { DefaultDelayDelay } from '../../../../constants/utils'
 import { ResetDefaultIcon } from '../../../icons'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElementId: number
@@ -102,25 +102,7 @@ export default function DelayForm({
     <>
       <HStack justifyContent="center" p={1}>
         <Text>Editing element</Text>
-        <Box
-          h="32px"
-          w="fit-content"
-          bg={bg}
-          border="1px solid"
-          py={1}
-          px={3}
-          borderColor={kebabColour}
-          rounded="md"
-        >
-          <Text
-            fontSize={['sm', 'md', 'md']}
-            w="fit-content"
-            fontWeight="bold"
-            whiteSpace="nowrap"
-          >
-            Delay
-          </Text>
-        </Box>
+        <BoxText text={'Delay'} />
       </HStack>
       <Divider />
       <Grid templateRows="20px 1fr" gap="2" w="full">
