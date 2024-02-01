@@ -1,12 +1,14 @@
-use super::util;
+use std::path::PathBuf;
+use std::{time, vec};
+
 use anyhow::Result;
 use copypasta::{ClipboardContext, ClipboardProvider};
 use fastrand;
 use rdev;
-use std::path::PathBuf;
-use std::vec;
 use tokio::sync::mpsc::UnboundedSender;
 use url::Url;
+
+use super::util;
 
 // Frequently used keys within the code.
 const COPY_HOTKEY: [rdev::Key; 2] = [rdev::Key::ControlLeft, rdev::Key::KeyC];
@@ -89,6 +91,7 @@ impl SystemAction {
                     // Copy the text
                     util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
 
+                    tokio::time::sleep(time::Duration::from_millis(10)).await;
                     // Transform the text
                     let content = transform_text(
                         ctx.get_contents()
