@@ -209,7 +209,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
         >
           <IconButton
             variant="brand"
-            isDisabled={!appDebugMode ?? true}
+            isDisabled={!appDebugMode}
             aria-label="MacroSettings"
             icon={<SettingsIcon />}
             size={['xs', 'sm', 'md']}
