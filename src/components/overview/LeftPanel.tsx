@@ -105,7 +105,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {isSearching &&
+          {!isSearching &&
             collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
@@ -125,7 +125,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 }
               />
             ))}
-          {isSearching && (
+          {!isSearching && (
             <Button
               rounded="md"
               size="md"

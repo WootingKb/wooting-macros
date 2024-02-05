@@ -101,7 +101,7 @@ export default function CollectionPanel() {
         borderBottom="1px"
         borderColor={borderColour}
       >
-        {isSearching ? (
+        {!isSearching ? (
           <HStack w="full" justifyContent="space-between">
             <HStack w="full" spacing={4}>
               <EmojiPopover
