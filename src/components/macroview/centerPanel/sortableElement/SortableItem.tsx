@@ -116,7 +116,8 @@ export default function SortableItem({ id, element, recording }: Props) {
       }
       justifyContent="space-around"
       spacing="0px"
-      roundedLeft={0}
+      roundedLeft='0px'
+      roundedRight='md'
       cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >

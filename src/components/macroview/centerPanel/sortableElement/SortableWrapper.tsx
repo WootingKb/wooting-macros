@@ -38,7 +38,8 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0 : 1
+    opacity: isDragging ? 0 : 1,
+    rounded: 'md'
   }
 
   return (
@@ -63,6 +64,7 @@ export default function SortableWrapper({ id, isSmall, children }: Props) {
         h="full"
         bg={handleBg}
         cursor="grab"
+        roundedLeft='md'
       >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Center>
