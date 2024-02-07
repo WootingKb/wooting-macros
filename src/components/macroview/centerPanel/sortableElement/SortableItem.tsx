@@ -9,9 +9,10 @@ import {
   MenuItem,
   MenuList,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  VStack
 } from '@chakra-ui/react'
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { ActionEventType } from '../../../../types'
 import {
@@ -25,7 +26,6 @@ import {
   getElementDisplayString
 } from '../../../../constants/utils'
 import { KeyType } from '../../../../constants/enums'
-
 
 interface Props {
   id: number
@@ -116,8 +116,8 @@ export default function SortableItem({ id, element, recording }: Props) {
       }
       justifyContent="space-around"
       spacing="0px"
-      roundedLeft='0px'
-      roundedRight='md'
+      roundedLeft="0px"
+      roundedRight="md"
       cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >
@@ -137,7 +137,7 @@ export default function SortableItem({ id, element, recording }: Props) {
           borderColor={kebabColour}
           alignItems="center"
           justifyContent="center"
-          rounded='md'
+          rounded="md"
         >
           <Text
             h="fit-content"
@@ -163,7 +163,7 @@ export default function SortableItem({ id, element, recording }: Props) {
               py={1}
               px={3}
               borderColor={kebabColour}
-              rounded='md'
+              rounded="md"
             >
               <Text
                 w="fit-content"
@@ -190,7 +190,7 @@ export default function SortableItem({ id, element, recording }: Props) {
               py={1}
               px={3}
               borderColor={kebabColour}
-              rounded='md'
+              rounded="md"
             >
               <Text
                 w="fit-content"
@@ -209,13 +209,16 @@ export default function SortableItem({ id, element, recording }: Props) {
           )}
         <Menu variant="brand">
           <MenuButton
-            h="24px"
+            h="full"
             aria-label="Item options"
             color={kebabColour}
             px={2}
             _hover={{ color: kebabHoverColour }}
           >
-            <KebabVertical />
+            {/*To center the 3-dot menu properly, it needs to be wrapped in a VStack*/}
+            <VStack alignItems="center">
+              <KebabVertical />
+            </VStack>
           </MenuButton>
           <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
