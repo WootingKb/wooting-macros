@@ -109,8 +109,7 @@ export default function ClipboardForm({
   return (
     <>
       <HStack justifyContent="center" p={1}>
-        <Text>Editing element</Text>
-        <BoxText text={'Clipboard'} />
+        <BoxText>Clipboard</BoxText>
       </HStack>
       <Divider />
       <HStack w="full" justifyContent="space-between">

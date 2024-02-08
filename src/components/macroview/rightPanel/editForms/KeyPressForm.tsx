@@ -14,7 +14,6 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
-import { HIDLookup } from '../../../../constants/HIDmap'
 import {
   DownArrowIcon,
   DownUpArrowsIcon,
@@ -25,6 +24,7 @@ import { KeyPressEventAction } from '../../../../types'
 
 import { DefaultMacroDelay } from '../../../../constants/utils'
 import { BoxText } from '../EditArea'
+import { HIDLookup } from '../../../../constants/HIDmap'
 
 interface Props {
   selectedElementId: number
@@ -125,12 +125,9 @@ export default function KeyPressForm({
   return (
     <>
       <HStack justifyContent="center" p={1}>
-        <Text>Editing element</Text>
-        <BoxText
-          text={
-            HIDLookup.get(selectedElement.data.keypress)?.displayString ?? ''
-          }
-        />
+        <BoxText>
+          {HIDLookup.get(selectedElement.data.keypress)?.displayString ?? ''}
+        </BoxText>
       </HStack>
       <Divider />
       <Grid templateRows="20px 1fr" gap="2" w="full">

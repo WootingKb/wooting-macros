@@ -102,7 +102,7 @@ export default function DelayForm({
     <>
       <HStack justifyContent="center" p={1}>
         <Text>Editing element</Text>
-        <BoxText text={'Delay'} />
+        <BoxText>Delay</BoxText>
       </HStack>
       <Divider />
       <Grid templateRows="20px 1fr" gap="2" w="full">

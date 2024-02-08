@@ -52,12 +52,10 @@ export default function MousePressForm({
     }
 
     setHeadingText(
-      <BoxText
-        text={
-          mouseEnumLookup.get(selectedElement.data.data.button)
-            ?.displayString ?? ''
-        }
-      />
+      <BoxText>
+        {mouseEnumLookup.get(selectedElement.data.data.button)?.displayString ??
+          ''}
+      </BoxText>
     )
   }, [bg, kebabColour, selectedElement])
 

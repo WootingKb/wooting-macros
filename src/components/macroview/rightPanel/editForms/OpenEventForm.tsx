@@ -41,12 +41,10 @@ export default function OpenEventForm({
         break
     }
     setHeaderText(
-      <BoxText
-        text={
-          sysEventLookup.get(selectedElement.data.action.type)?.displayString ||
-          ''
-        }
-      />
+      <BoxText>
+        {sysEventLookup.get(selectedElement.data.action.type)?.displayString ||
+          ''}
+      </BoxText>
     )
     setPath(selectedElement.data.action.data)
   }, [selectedElement])

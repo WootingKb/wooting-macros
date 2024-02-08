@@ -9,7 +9,7 @@ import KeyPressForm from './editForms/KeyPressForm'
 import MousePressForm from './editForms/MousePressForm'
 import SystemEventActionForm from './editForms/SystemEventActionForm'
 
-export function BoxText({ text }: { text: string }) {
+export function BoxText({ children }: { children: string }) {
   const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
   const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
 
@@ -32,7 +32,7 @@ export function BoxText({ text }: { text: string }) {
           fontSize={['sm', 'md', 'md']}
           fontWeight="bold"
         >
-          {text}
+          {children}
         </Text>
       </Box>
     </HStack>
