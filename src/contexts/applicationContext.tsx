@@ -44,22 +44,24 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
   const [appDebugMode, setAppDebugMode] = useState<boolean | null>(null)
 
   useEffect(() => {
-    isDebug()
-      .then((value: boolean) => {
-        setAppDebugMode(value)
-      })
-      .catch((error) => {
-        toast({
-          title: 'Envvar incorrectly set',
-          description: `Debug envvar exists, but is not set to 'error', 'warn', 'info' or 'trace'. Debug features disabled.
-           Please remove or fix the debug variable, then restart the file explorer process and Wootomation.`,
-          status: 'error',
-          isClosable: true,
-          duration: 10000
+    if (appDebugMode === null) {
+      isDebug()
+        .then((value: boolean) => {
+          setAppDebugMode(value)
         })
-        setAppDebugMode(false)
-        console.log('Debug mode disabled: ', error)
-      })
+        .catch((error) => {
+          toast({
+            title: 'Envvar incorrectly set',
+            description: `Debug envvar exists, but is not set to 'error', 'warn', 'info' or 'trace'. Debug features disabled.
+           Please remove or fix the debug variable, then restart the file explorer process and Wootomation.`,
+            status: 'error',
+            isClosable: true,
+            duration: 10000
+          })
+          setAppDebugMode(false)
+          console.log('Debug mode disabled: ', error)
+        })
+    }
   })
 
   const toast = useToast()

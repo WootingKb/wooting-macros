@@ -24,23 +24,49 @@ function App() {
     onClose: onCloseMacroSettings
   } = useDisclosure()
 
-  if (appDebugMode !== null && !appDebugMode) {
-    // Disables Tauri right click context menu
-    document.addEventListener('contextmenu', (event) => event.preventDefault())
-    // Ctrl + f is disabled with this event listener to whether the debug mode is on
-    document.addEventListener('keydown', (event) => {
-      if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+  useEffect(() => {
+    if (appDebugMode !== null && !appDebugMode) {
+      // Disables Tauri right click context menu
+      document.addEventListener('contextmenu', (event) =>
         event.preventDefault()
-      }
-      if (event.ctrlKey && event.key.toLowerCase() === 'r') {
+      )
+      // Ctrl + f is disabled with this event listener to whether the debug mode is on
+      document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+          event.preventDefault()
+        }
+        if (event.ctrlKey && event.key.toLowerCase() === 'r') {
+          event.preventDefault()
+        }
+        if (event.key.toLowerCase() === 'f5') {
+          event.preventDefault()
+        }
+      })
+      document.addEventListener('selectstart', (event) =>
         event.preventDefault()
+      )
+
+      return () => {
+        document.removeEventListener('contextmenu', (event) =>
+          event.preventDefault()
+        )
+        document.removeEventListener('keydown', (event) => {
+          if (event.ctrlKey && event.key.toLowerCase() === 'f') {
+            event.preventDefault()
+          }
+          if (event.ctrlKey && event.key.toLowerCase() === 'r') {
+            event.preventDefault()
+          }
+          if (event.key.toLowerCase() === 'f5') {
+            event.preventDefault()
+          }
+        })
+        document.removeEventListener('selectstart', (event) =>
+          event.preventDefault()
+        )
       }
-      if (event.key.toLowerCase() === 'f5') {
-        event.preventDefault()
-      }
-    })
-    document.addEventListener('selectstart', (event) => event.preventDefault())
-  }
+    }
+  }, [appDebugMode])
 
   useEffect(() => {
     init({ data })
