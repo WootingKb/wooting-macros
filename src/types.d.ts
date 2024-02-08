@@ -26,7 +26,6 @@ export type AppState = {
   isMacroOutputEnabled: boolean
   changeMacroOutputEnabled: (value: boolean) => void
   changeSearchValue: (term: string) => void
-  isSearching: boolean
   appDebugMode: boolean | null
 }
 

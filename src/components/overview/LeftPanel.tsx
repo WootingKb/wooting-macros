@@ -63,7 +63,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     changeSelectedCollectionIndex,
     isMacroOutputEnabled,
     changeMacroOutputEnabled,
-    isSearching
+    searchValue
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
@@ -105,7 +105,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {!isSearching &&
+          {searchValue.length === 0 &&
             collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
@@ -125,7 +125,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 }
               />
             ))}
-          {!isSearching && (
+          {searchValue.length === 0 && (
             <Button
               rounded="md"
               size="md"

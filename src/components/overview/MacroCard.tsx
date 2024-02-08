@@ -42,7 +42,7 @@ export default function MacroCard({
     selection,
     onCollectionUpdate,
     changeSelectedMacroIndex,
-    isSearching
+    searchValue
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
@@ -134,7 +134,7 @@ export default function MacroCard({
       </HStack>
       {/** Trigger Keys Display */}
       <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
-        {isSearching && (
+        {searchValue.length !== 0 && (
           <HStack alignSelf="flex-start">
             <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
               {collectionName}
