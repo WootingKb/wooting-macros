@@ -79,7 +79,7 @@ export default function MousePressForm({
     } else if (mousepressDuration < DefaultMouseDelay) {
       toast({
         title: 'Minimum duration',
-        description: 'Duration must be at least 20ms',
+        description: `Duration must be at least ${DefaultMouseDelay}ms`,
         status: 'warning',
         duration: 4000,
         isClosable: true

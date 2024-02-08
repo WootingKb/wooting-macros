@@ -40,7 +40,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   } = useMacroContext()
   const { config } = useSettingsContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const fontSize = 'xs'
+  const fontSize = 'xs' //REM size for the font (13.5 px)
   const {appDebugMode} = useApplicationContext()
 
   const onItemChanged = useCallback(

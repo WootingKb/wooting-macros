@@ -69,7 +69,7 @@ export default function KeyPressForm({
     } else {
       toast({
         title: 'Minimum duration',
-        description: 'Duration must be at least 20ms',
+        description: `Duration must be at least ${DefaultMacroDelay}ms`,
         status: 'warning',
         duration: 4000,
         isClosable: true
