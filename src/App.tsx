@@ -40,7 +40,6 @@ function App() {
       }
     })
     document.addEventListener('selectstart', (event) => event.preventDefault())
-    console.log("prevented default action because debug is: ", appDebugMode)
   }
 
   useEffect(() => {

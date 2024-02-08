@@ -63,11 +63,14 @@ async fn set_macros(
 }
 
 #[tauri::command]
-async fn is_debug() -> bool {
+async fn is_debug() -> Result<bool, String> {
     if let Ok(result) = std::env::var(DEBUG_ENVVAR) {
-        return log::LevelFilter::from_str(result.as_str()).unwrap() >= log::LevelFilter::Debug;
+        return Ok(
+            log::LevelFilter::from_str(result.as_str()).map_err(|err| err.to_string())?
+                >= log::LevelFilter::Debug,
+        );
     } else {
-        false
+        Ok(false)
     }
 }
 
@@ -129,7 +132,7 @@ async fn main() -> Result<(), Error> {
     // The backend is run only on Windows and Linux, on macOS it won't work.
     info!("Running the macro backend");
     if let Err(e) = backend.init().await {
-        eprintln!("Initialization error: {}", e);
+        error!("Initialization error: {}", e);
     };
 
     // Read the options from the config.
