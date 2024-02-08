@@ -120,8 +120,9 @@ fn init_autostart(app_name: &str, set_autolaunch: bool) -> Result<(), Error> {
 /// (will crash on key grab/listen)
 async fn main() -> Result<(), Error> {
     // The optionENV only takes a string literal and can't be forced to take a const of any type.
-    let log_level: log::LevelFilter = option_env!("MACRO_LOG_LEVEL")
-        .and_then(|s| log::LevelFilter::from_str(s).ok())
+    let log_level = std::env::var(DEBUG_ENVVAR)
+        .ok()
+        .and_then(|s| str::parse::<log::LevelFilter>(&s).ok())
         .unwrap_or(log::LevelFilter::Info);
 
     MacroBackend::generate_directories().context("unable to generate config directories")?;

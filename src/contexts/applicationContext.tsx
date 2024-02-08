@@ -14,7 +14,6 @@ import { AppState, Collection, CurrentSelection, MacroData } from '../types'
 import { isDebug, updateBackendConfig } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
 import { invoke } from '@tauri-apps/api'
-import { isNullOrUndefined } from "node:util";
 
 interface ApplicationProviderProps {
   children: ReactNode
@@ -53,15 +52,14 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
       .catch((error) => {
         toast({
           title: 'Envvar incorrectly set',
-          description:
-            "Debug envvar exists, but is not set to 'error', 'warn', 'info' or 'trace'. Debug features disabled. ",
+          description: `Debug envvar exists, but is not set to 'error', 'warn', 'info' or 'trace'. Debug features disabled.
+           Please remove or fix the debug variable, then restart the file explorer process and Wootomation.`,
           status: 'error',
-          isClosable: false,
-          duration: null
+          isClosable: true,
+          duration: 10000
         })
         setAppDebugMode(false)
         console.log('Debug mode disabled: ', error)
-        return
       })
   })
 
