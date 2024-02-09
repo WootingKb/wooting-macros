@@ -91,7 +91,9 @@ impl SystemAction {
                     // Copy the text
                     util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
 
+                    // Delay is required to make Discord, and some other apps cooperate properly.
                     tokio::time::sleep(time::Duration::from_millis(10)).await;
+
                     // Transform the text
                     let content = transform_text(
                         ctx.get_contents()
