@@ -27,11 +27,13 @@ function App() {
   useEffect(() => {
     if (appDebugMode !== null && !appDebugMode) {
       // Disables Tauri right click context menu
-      document.addEventListener('contextmenu', (event) =>
+      const handleContextMenuBlock = (event: MouseEvent): void => {
         event.preventDefault()
-      )
+      }
+      document.addEventListener('contextmenu', handleContextMenuBlock)
+
       // Ctrl + f is disabled with this event listener to whether the debug mode is on
-      document.addEventListener('keydown', (event) => {
+      const handleKeyDownBlock = (event: KeyboardEvent): void => {
         if (event.ctrlKey && event.key.toLowerCase() === 'f') {
           event.preventDefault()
         }
@@ -41,29 +43,20 @@ function App() {
         if (event.key.toLowerCase() === 'f5') {
           event.preventDefault()
         }
-      })
-      document.addEventListener('selectstart', (event) =>
+      }
+      document.addEventListener('keydown', handleKeyDownBlock)
+
+      // Disable selectStart
+      const handleSelectStartBlock = (event: Event): void => {
         event.preventDefault()
-      )
+      }
+      document.addEventListener('selectstart', handleSelectStartBlock)
 
       return () => {
-        document.removeEventListener('contextmenu', (event) =>
-          event.preventDefault()
-        )
-        document.removeEventListener('keydown', (event) => {
-          if (event.ctrlKey && event.key.toLowerCase() === 'f') {
-            event.preventDefault()
-          }
-          if (event.ctrlKey && event.key.toLowerCase() === 'r') {
-            event.preventDefault()
-          }
-          if (event.key.toLowerCase() === 'f5') {
-            event.preventDefault()
-          }
-        })
-        document.removeEventListener('selectstart', (event) =>
-          event.preventDefault()
-        )
+        // Remove the listeners
+        document.removeEventListener('contextmenu', handleContextMenuBlock)
+        document.removeEventListener('keydown', handleKeyDownBlock)
+        document.removeEventListener('selectstart', handleSelectStartBlock)
       }
     }
   }, [appDebugMode])
