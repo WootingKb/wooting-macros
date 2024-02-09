@@ -1,13 +1,5 @@
 import { AddIcon, SettingsIcon } from '@chakra-ui/icons'
-import {
-  Button,
-  Divider,
-  Input,
-  Text,
-  useColorModeValue,
-  useToast,
-  VStack
-} from '@chakra-ui/react'
+import { Button, Divider, Text, useToast, VStack } from '@chakra-ui/react'
 import { Collection } from '../../types'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { updateMacroOutput } from '../../constants/utils'
@@ -18,43 +10,19 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 import { error } from 'tauri-plugin-log'
+import { SearchBar } from '../../views/Overview'
 
 interface Props {
   onOpenSettingsModal: () => void
+  searchValue: string
+  changeSearchValue: (newValue: string) => void
 }
 
-function SearchBar() {
-  const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
-  const borderColour = useColorModeValue(
-    'primary-light.500',
-    'primary-dark.500'
-  )
-  const { changeSearchValue } = useApplicationContext()
-
-  return (
-    <Input
-      type="search"
-      maxW={['full']}
-      maxH="32px"
-      variant="brand"
-      placeholder="Search for a macro..."
-      _placeholder={{ opacity: 1, color: borderColour }}
-      sx={{
-        '&::-webkit-search-cancel-button': {
-          WebkitAppearance: 'none',
-          display: 'inline-block',
-          width: '16px',
-          height: '16px',
-          background: `linear-gradient(45deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,${cancelSearchButtonColour} 45%,${cancelSearchButtonColour} 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%), linear-gradient(135deg, rgba(0,0,0,0) 0%,rgba(0,0,0,0) 43%,${cancelSearchButtonColour} 45%,${cancelSearchButtonColour} 55%,rgba(0,0,0,0) 57%,rgba(0,0,0,0) 100%)`,
-          cursor: 'pointer'
-        }
-      }}
-      onChange={(event) => changeSearchValue(event.target.value)}
-    />
-  )
-}
-
-export default function LeftPanel({ onOpenSettingsModal }: Props) {
+export default function LeftPanel({
+  onOpenSettingsModal,
+  searchValue,
+  changeSearchValue
+}: Props) {
   const {
     collections,
     selection,
@@ -62,8 +30,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     onCollectionUpdate,
     changeSelectedCollectionIndex,
     isMacroOutputEnabled,
-    changeMacroOutputEnabled,
-    searchValue
+    changeMacroOutputEnabled
   } = useApplicationContext()
   const [parent] = useAutoAnimate<HTMLDivElement>()
   const toast = useToast()
@@ -96,7 +63,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
             Collections
           </Text>
 
-          <SearchBar />
+          <SearchBar changeSearchValue={changeSearchValue} />
           <Divider />
         </VStack>
         <VStack

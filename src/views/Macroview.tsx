@@ -4,7 +4,7 @@ import SelectElementArea from '../components/macroview/leftPanel/SelectElementAr
 import SequencingArea from '../components/macroview/centerPanel/SequencingArea'
 import Header from '../components/macroview/topArea/Header'
 import { useMacroContext } from '../contexts/macroContext'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
   isEditing: boolean
@@ -16,6 +16,7 @@ export default function Macroview({
   onOpenMacroSettingsModal
 }: Props) {
   const { changeIsUpdatingMacro } = useMacroContext()
+  const [searchValue, changeSearchValue] = useState('')
 
   useEffect(() => {
     changeIsUpdatingMacro(isEditing)
@@ -34,7 +35,10 @@ export default function Macroview({
         spacing="0"
       >
         {/** Bottom Panels */}
-        <SelectElementArea />
+        <SelectElementArea
+          changeSearchValue={changeSearchValue}
+          searchValue={searchValue}
+        />
         <SequencingArea onOpenMacroSettingsModal={onOpenMacroSettingsModal} />
         <EditArea />
       </HStack>

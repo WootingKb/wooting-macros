@@ -23,14 +23,17 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import { motion } from 'framer-motion'
 
-export default function MacroList() {
+interface Props {
+  searchValue: string
+}
+
+export default function MacroList({ searchValue }: Props) {
   // Get the ApplicationContext from your hook.
   const {
     collections,
     selection,
     onCollectionUpdate,
     changeViewState,
-    searchValue,
     isMacroOutputEnabled
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
@@ -75,7 +78,8 @@ export default function MacroList() {
 
   const isSearching: boolean = useMemo((): boolean => {
     return searchValue.length !== 0
-  }, [searchValue])
+  }, [searchValue.length])
+
   return (
     <Box
       w="full"
@@ -152,6 +156,7 @@ export default function MacroList() {
                     macro={macro}
                     index={index}
                     onDelete={onMacroDelete}
+                    searchValue={searchValue}
                   />
                 </GridItem>
               </motion.div>
@@ -173,6 +178,7 @@ export default function MacroList() {
                   index={index}
                   onDelete={onMacroDelete}
                   collectionName={collection.name}
+                  searchValue={searchValue}
                 />
               </GridItem>
             </motion.div>

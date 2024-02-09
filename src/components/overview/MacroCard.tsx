@@ -30,20 +30,18 @@ interface Props {
   index: number
   onDelete: (index: number) => void
   collectionName?: string
+  searchValue: string
 }
 
 export default function MacroCard({
   macro,
   index,
   onDelete,
-  collectionName
+  collectionName,
+  searchValue
 }: Props) {
-  const {
-    selection,
-    onCollectionUpdate,
-    changeSelectedMacroIndex,
-    searchValue
-  } = useApplicationContext()
+  const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
+    useApplicationContext()
   const currentCollection = useSelectedCollection()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
   const shadowColour = useColorModeValue('md', 'white-md')

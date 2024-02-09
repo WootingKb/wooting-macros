@@ -22,10 +22,8 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
-  searchValue: string
   isMacroOutputEnabled: boolean
   changeMacroOutputEnabled: (value: boolean) => void
-  changeSearchValue: (term: string) => void
   appDebugMode: boolean | null
 }
 

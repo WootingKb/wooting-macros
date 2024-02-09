@@ -19,13 +19,16 @@ import EmojiPopover from '../EmojiPopover'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 
-export default function CollectionPanel() {
+interface Props {
+  searchValue: string
+}
+
+export default function CollectionPanel({ searchValue }: Props) {
   const {
     collections,
     selection,
     onCollectionUpdate,
-    onSelectedCollectionDelete,
-    searchValue
+    onSelectedCollectionDelete
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const {
@@ -176,7 +179,7 @@ export default function CollectionPanel() {
         isOpen={isDeleteModalOpen}
         onClose={onDeleteModalClose}
       />
-      <MacroList />
+      <MacroList searchValue={searchValue} />
     </VStack>
   )
 }

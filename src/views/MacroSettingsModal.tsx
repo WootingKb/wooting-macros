@@ -24,7 +24,6 @@ type Props = {
   onClose: () => void
 }
 
-
 interface SettingsTabDefinition {
   title: string
   component: () => React.ReactNode
@@ -96,8 +95,7 @@ export default function MacroSettingsModal({ isOpen, onClose }: Props) {
                   fontWeight="bold"
                   fontSize="large"
                 >
-                  {SettingTabs[pageIndex].title +
-                    ' Settings'}
+                  {SettingTabs[pageIndex].title + ' Settings'}
                 </Text>
                 <Divider></Divider>
                 {SettingTabs[pageIndex].component()}

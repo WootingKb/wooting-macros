@@ -7,15 +7,21 @@ import {
 } from '@chakra-ui/react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import SelectAreaAccordion from './AccordionComponents/SelectAreaAccordion'
-import { useApplicationContext } from '../../../contexts/applicationContext'
 
-export default function SelectElementArea() {
+interface Props {
+  searchValue: string
+  changeSearchValue: (newValue: string) => void
+}
+
+export default function SelectElementArea({
+  searchValue,
+  changeSearchValue
+}: Props) {
   const borderColour = useColorModeValue(
     'primary-light.500',
     'primary-dark.500'
   )
   const cancelSearchButtonColour = useColorModeValue('#A0AEC0', '#52525b')
-  const { changeSearchValue, searchValue } = useApplicationContext()
 
   return (
     <VStack w="33%" h="full" bg={useMainBgColour()} spacing={0}>
