@@ -21,7 +21,7 @@ import { HIDLookup } from '../../constants/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../constants/MouseMap'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { KebabVertical } from '../icons'
 import useMainBgColour from '../../hooks/useMainBgColour'
 
@@ -72,6 +72,10 @@ export default function MacroCard({
     newCollection.macros.push(macro)
     onCollectionUpdate(newCollection, selection.collectionIndex)
   }, [currentCollection, macro, onCollectionUpdate, selection.collectionIndex])
+
+  const isSearching: boolean = useMemo((): boolean => {
+    return searchValue.length !== 0
+  }, [searchValue])
 
   return (
     <VStack
@@ -134,7 +138,7 @@ export default function MacroCard({
       </HStack>
       {/** Trigger Keys Display */}
       <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
-        {searchValue.length !== 0 && (
+        {isSearching && (
           <HStack alignSelf="flex-start">
             <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
               {collectionName}

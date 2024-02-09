@@ -13,7 +13,7 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { updateMacroOutput } from '../../constants/utils'
 import CollectionButton from './CollectionButton'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
@@ -77,6 +77,10 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
     })
   }, [collections.length, onCollectionAdd])
 
+  const isSearching: boolean = useMemo((): boolean => {
+    return searchValue.length !== 0
+  }, [searchValue])
+
   return (
     <VStack
       bg={useMainBgColour()}
@@ -105,7 +109,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
           spacing={1}
           sx={useScrollbarStyles()}
         >
-          {searchValue.length === 0 &&
+          {!isSearching &&
             collections.map((collection: Collection, index: number) => (
               <CollectionButton
                 collection={collection}
@@ -125,7 +129,7 @@ export default function LeftPanel({ onOpenSettingsModal }: Props) {
                 }
               />
             ))}
-          {searchValue.length === 0 && (
+          {!isSearching && (
             <Button
               rounded="md"
               size="md"

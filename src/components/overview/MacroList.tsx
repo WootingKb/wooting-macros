@@ -73,6 +73,9 @@ export default function MacroList() {
     [currentCollection, onCollectionUpdate, selection.collectionIndex]
   )
 
+  const isSearching: boolean = useMemo((): boolean => {
+    return searchValue.length !== 0
+  }, [searchValue])
   return (
     <Box
       w="full"
@@ -175,7 +178,7 @@ export default function MacroList() {
             </motion.div>
           ))}
       </Grid>
-      {matchingMacros.length === 0 && searchValue.length > 0 && (
+      {matchingMacros.length === 0 && isSearching && (
         <HStack align="center" justifyContent="center">
           <Text>{`No macros correspond to: "${searchValue}"`}</Text>
         </HStack>

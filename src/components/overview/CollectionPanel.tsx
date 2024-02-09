@@ -14,7 +14,7 @@ import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import DeleteCollectionModal from './DeleteCollectionModal'
 import MacroList from './MacroList'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import EmojiPopover from '../EmojiPopover'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
@@ -41,6 +41,9 @@ export default function CollectionPanel() {
   const [collectionName, setCollectionName] = useState('')
   const borderColour = useBorderColour()
   const isCollectionUndeletable = collections.length <= 1
+  const isSearching: boolean = useMemo((): boolean => {
+    return searchValue.length !== 0
+  }, [searchValue])
 
   useEffect(() => {
     setCollectionName(currentCollection.name)
@@ -101,7 +104,7 @@ export default function CollectionPanel() {
         borderBottom="1px"
         borderColor={borderColour}
       >
-        {searchValue.length === 0 ? (
+        {!isSearching ? (
           <HStack w="full" justifyContent="space-between">
             <HStack w="full" spacing={4}>
               <EmojiPopover
