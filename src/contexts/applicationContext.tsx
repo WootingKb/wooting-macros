@@ -51,8 +51,8 @@ function ApplicationProvider({ children }: ApplicationProviderProps) {
         })
         .catch((error) => {
           toast({
-            title: 'Envvar incorrectly set',
-            description: `Debug envvar exists, but is not set to 'error', 'warn', 'info' or 'trace'. Debug features disabled.
+            title: 'Debug environment variable set incorrectly!',
+            description: `Debug environment variable exists, but is set to an invalid value. Only 'error', 'warn', 'info' or 'trace' are valid. Debug features disabled.
            Please remove or fix the debug variable, then restart the file explorer process and Wootomation.`,
             status: 'error',
             isClosable: true,
