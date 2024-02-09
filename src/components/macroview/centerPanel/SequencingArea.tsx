@@ -19,12 +19,12 @@ import { useMacroContext } from '../../../contexts/macroContext'
 import useRecordingSequence from '../../../hooks/useRecordingSequence'
 import { useSettingsContext } from '../../../contexts/settingsContext'
 import { KeyType } from '../../../constants/enums'
-import { checkIfKeypress, checkIfMouseButton} from '../../../constants/utils'
+import { checkIfKeypress, checkIfMouseButton } from '../../../constants/utils'
 import ClearSequenceModal from './ClearSequenceModal'
 import { RecordIcon, StopIcon } from '../../icons'
 import SortableList from './SortableList'
 import useMainBgColour from '../../../hooks/useMainBgColour'
-import { useApplicationContext } from "../../../contexts/applicationContext";
+import { useApplicationContext } from '../../../contexts/applicationContext'
 
 interface Props {
   onOpenMacroSettingsModal: () => void
@@ -40,8 +40,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
   } = useMacroContext()
   const { config } = useSettingsContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const fontSize = 'xs' //REM size for the font (13.5 px)
-  const {appDebugMode} = useApplicationContext()
+  const { appDebugMode } = useApplicationContext()
 
   const onItemChanged = useCallback(
     (
@@ -171,7 +170,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandRecord"
           leftIcon={recording ? <StopIcon /> : <RecordIcon />}
           size={['xs', 'sm', 'md']}
-          fontSize={['xs', fontSize, 'lg']}
+          fontSize={['xs', 'xs', 'lg']}
           isActive={recording}
           onClick={recording ? stopRecording : startRecording}
         >
@@ -181,7 +180,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandRecord"
           leftIcon={<TimeIcon />}
           size={['xs', 'sm', 'md']}
-          fontSize={['xs', fontSize, 'lg']}
+          fontSize={['xs', 'xs', 'lg']}
           onClick={() => {
             onElementAdd({
               type: 'DelayEventAction',
@@ -195,7 +194,7 @@ export default function SequencingArea({ onOpenMacroSettingsModal }: Props) {
           variant="brandWarning"
           leftIcon={<DeleteIcon />}
           size={['xs', 'sm', 'md']}
-          fontSize={['xs', fontSize, 'lg']}
+          fontSize={['xs', 'xs', 'lg']}
           onClick={onOpen}
           isDisabled={sequence.length === 0}
         >
