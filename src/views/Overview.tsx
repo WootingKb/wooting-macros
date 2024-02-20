@@ -17,7 +17,7 @@ export function SearchBar({
   return (
     <Input
       type="search"
-      maxW={['full']}
+      maxW="full"
       maxH="32px"
       variant="brand"
       placeholder="Search for a macro..."
