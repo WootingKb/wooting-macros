@@ -59,8 +59,8 @@ export default function PatchNotesPanel() {
             >
               Security updates and bugfixes.&nbsp;
             </Text>
-            We made sure the app is more secure than ever. Now you can also use
-            any layout for a trigger key.
+            We updated the dependencies so Wootomation stays secure. You can now
+            also use any layout for a trigger key.
           </ListItem>
           <ListItem>
             <Text
