@@ -63,7 +63,7 @@ function App() {
 
   useEffect(() => {
     init({ data })
-  })
+  }, [])
 
   if (!initComplete) {
     return (
