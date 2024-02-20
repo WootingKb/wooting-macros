@@ -20,11 +20,7 @@ pub trait ConfigFile: Default + serde::Serialize + for<'de> serde::Deserialize<'
                     Ok(x) => x,
                     Err(error) => {
                         error!("Error reading config.json, using default data and moving to backup. {}", error);
-                        let file_name = Self::file_name();
-                        let mut file_name = file_name?
-                            .to_str()
-                            .expect("Cannot preserve invalid file, crashing to save custom config")
-                            .to_string();
+                        let mut file_name = Self::file_name()?.to_str().unwrap().to_owned();
 
                         if PathBuf::from(format!("{}.bak", file_name)).exists() {
                             let mut i = 0;
