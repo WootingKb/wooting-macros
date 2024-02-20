@@ -38,11 +38,8 @@ export default function MacroList({ searchValue }: Props) {
   } = useApplicationContext()
   const currentCollection = useSelectedCollection()
   const shadowColour = useColorModeValue('md', 'white-md')
-  const [matchingMacros, setMatchingMacros] = useState<
-    { macro: Macro; collection: Collection }[]
-  >([])
 
-  useMemo(() => {
+  const matchingMacros = useMemo(() => {
     const newMatchingMacros: { macro: Macro; collection: Collection }[] = []
 
     if (searchValue) {
@@ -53,15 +50,13 @@ export default function MacroList({ searchValue }: Props) {
           }
         })
       })
-      setMatchingMacros(newMatchingMacros)
+      return newMatchingMacros
     } else {
-      setMatchingMacros(
-        currentCollection.macros.map((macro, index) => ({
-          macro,
-          collection: currentCollection,
-          index
-        }))
-      )
+      return currentCollection.macros.map((macro, index) => ({
+        macro,
+        collection: currentCollection,
+        index
+      }))
     }
   }, [searchValue, collections, currentCollection])
 
