@@ -1,4 +1,4 @@
-import { MacroType, ViewState, MouseButton } from './constants/enums'
+import { MacroType, MouseButton, ViewState } from './constants/enums'
 import { HidInfo } from './constants/HIDmap'
 import { PluginEventInfo } from './constants/PluginsEventMap'
 
@@ -22,6 +22,9 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
+  isMacroOutputEnabled: boolean
+  changeMacroOutputEnabled: (value: boolean) => void
+  appDebugMode: boolean | null
 }
 
 export type MacroState = {
@@ -35,6 +38,7 @@ export type MacroState = {
   updateMacroName: (newName: string) => void
   updateMacroIcon: (newIcon: string) => void
   updateMacroType: (newType: MacroType) => void
+  updateMacroRepeatAmount: (newAmount: number) => void
   updateTrigger: (newElement: TriggerEventType) => void
   updateAllowWhileOtherKeys: (value: boolean) => void
   onElementAdd: (newElement: ActionEventType) => void
@@ -58,6 +62,7 @@ export type SettingsState = {
   updateMinimizeOnClose: (value: boolean) => void
   updateAutoAddDelay: (value: boolean) => void
   updateDefaultDelayVal: (value: string) => void
+  updateDefaultElementDurationVal: (value: string) => void
   updateAutoSelectElement: (value: boolean) => void
   updateTheme: (value: string) => void
 }
@@ -65,10 +70,10 @@ export type SettingsState = {
 // Input Event Types
 export type TriggerEventType =
   | {
-      type: 'KeyPressEvent'
-      data: number[]
-      allow_while_other_keys: boolean
-    }
+  type: 'KeyPressEvent'
+  data: number[]
+  allow_while_other_keys: boolean
+}
   | { type: 'MouseEvent'; data: MouseButton }
 
 export type KeyPressEventAction = {
@@ -96,8 +101,9 @@ export interface MacroData {
 
 export interface ApplicationConfig {
   AutoStart: boolean
-  DefaultDelayValue: number
   AutoAddDelay: boolean
+  DefaultDelayValue: number
+  DefaultElementDurationValue: number
   AutoSelectElement: boolean
   MinimizeAtLaunch: boolean
   Theme: string
@@ -107,15 +113,16 @@ export interface ApplicationConfig {
 export interface Macro {
   name: string
   icon: string
-  active: boolean
+  enabled: boolean
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
+  repeat_amount: number
 }
 
 export interface Collection {
   name: string
-  active: boolean
+  enabled: boolean
   macros: Macro[]
   icon: string
 }
@@ -157,13 +164,19 @@ export type MousePressAction =
   | { type: 'Up'; button: MouseButton }
   | { type: 'DownUp'; button: MouseButton; duration: number }
 
+export type MacroIndividualCommand =
+  | {type: "Start" }
+  | {type: "Stop" }
+  | {type: "Abort" }
+  | {type: "AbortAll" };
+
 export type MouseAction = { type: 'Press'; data: MousePressAction }
 
 export type SystemAction =
   | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-  // | { type: 'Brightness'; action: MonitorBrightnessAction }
+// | { type: 'Brightness'; action: MonitorBrightnessAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -194,6 +207,7 @@ export interface KeyboardKeyCategory {
   name: string
   elements: HidInfo[]
 }
+
 export interface PluginCategory {
   name: string
   elements: PluginEventInfo[]

@@ -3,14 +3,10 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  AspectRatio,
   Flex,
-  Grid,
-  GridItem
+  Grid
 } from '@chakra-ui/react'
-import { PluginEventInfo } from '../../../../constants/PluginsEventMap'
 import { PluginCategory } from '../../../../types'
-import SelectElementButton from '../SelectElementButton'
 
 interface Props {
   pluginCategories: PluginCategory[]
@@ -27,7 +23,7 @@ export default function PluginsSection({ pluginCategories }: Props) {
                 as="span"
                 flex="1"
                 textAlign="left"
-                fontWeight={'semibold'}
+                fontWeight="semibold"
                 alignItems="center"
                 gap={2}
               >

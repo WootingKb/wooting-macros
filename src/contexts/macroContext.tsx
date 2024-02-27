@@ -1,22 +1,7 @@
-import {
-  ReactNode,
-  useState,
-  useMemo,
-  useContext,
-  createContext,
-  useCallback,
-  useEffect
-} from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { MacroType, ViewState } from '../constants/enums'
 import { checkIfElementIsEditable } from '../constants/utils'
-import {
-  MacroState,
-  ActionEventType,
-  Macro,
-  TriggerEventType,
-  KeyPressEventAction,
-  MouseEventAction
-} from '../types'
+import { ActionEventType, KeyPressEventAction, Macro, MacroState, MouseEventAction, TriggerEventType } from '../types'
 import { useApplicationContext } from './applicationContext'
 import { useSelectedCollection, useSelectedMacro } from './selectors'
 import { useSettingsContext } from './settingsContext'
@@ -38,13 +23,14 @@ function useMacroContext() {
 const macroDefault: Macro = {
   name: '',
   icon: ':smile:',
-  active: true,
+  enabled: true,
   macro_type: 'Single',
-  trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
-  sequence: []
+  trigger: {type: 'KeyPressEvent', data: [], allow_while_other_keys: false},
+  sequence: [],
+  repeat_amount: 1,
 }
 
-function MacroProvider({ children }: MacroProviderProps) {
+function MacroProvider({children}: MacroProviderProps) {
   const [macro, setMacro] = useState<Macro>(macroDefault)
   const [sequence, setSequence] = useState<ActionEventType[]>([])
   const [ids, setIds] = useState<number[]>([])
@@ -61,7 +47,7 @@ function MacroProvider({ children }: MacroProviderProps) {
     onCollectionUpdate,
     changeSelectedMacroIndex
   } = useApplicationContext()
-  const { config } = useSettingsContext()
+  const {config} = useSettingsContext()
 
   const keypressesInSequence = useMemo(() => {
     return sequence
@@ -139,7 +125,7 @@ function MacroProvider({ children }: MacroProviderProps) {
         macro.trigger.data.length === 0) ||
       (macro.trigger.type === 'MouseEvent' &&
         macro.trigger.data === undefined) ||
-      sequence.length === 0 
+      sequence.length === 0
     ) {
       return false
     }
@@ -163,34 +149,41 @@ function MacroProvider({ children }: MacroProviderProps) {
 
   const updateMacroName = useCallback(
     (newName: string) => {
-      setMacro({ ...macro, name: newName })
+      setMacro({...macro, name: newName})
     },
     [macro, setMacro]
   )
   const updateMacroIcon = useCallback(
     (newIcon: string) => {
-      setMacro({ ...macro, icon: newIcon })
+      setMacro({...macro, icon: newIcon})
     },
     [macro, setMacro]
   )
 
   const updateMacroType = useCallback(
     (newType: MacroType) => {
-      setMacro({ ...macro, macro_type: MacroType[newType] })
+      setMacro({...macro, macro_type: MacroType[newType]})
+    },
+    [macro, setMacro]
+  )
+
+  const updateMacroRepeatAmount = useCallback(
+    (repeat_amount: number) => {
+      setMacro({...macro, repeat_amount})
     },
     [macro, setMacro]
   )
 
   const updateTrigger = useCallback(
     (newElement: TriggerEventType) => {
-      setMacro({ ...macro, trigger: newElement })
+      setMacro({...macro, trigger: newElement})
     },
     [macro, setMacro]
   )
 
   const updateAllowWhileOtherKeys = useCallback(
     (value: boolean) => {
-      const temp = { ...macro, trigger: macro.trigger }
+      const temp = {...macro, trigger: macro.trigger}
       if (temp.trigger.type === 'KeyPressEvent') {
         temp.trigger.allow_while_other_keys = value
       }
@@ -312,7 +305,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       }
     }
 
-    const newCollection = { ...currentCollection }
+    const newCollection = {...currentCollection}
     if (
       viewState === ViewState.Editview &&
       selection.macroIndex !== undefined
@@ -355,6 +348,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
+      updateMacroRepeatAmount,
       updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,
@@ -381,6 +375,7 @@ function MacroProvider({ children }: MacroProviderProps) {
       updateMacroName,
       updateMacroIcon,
       updateMacroType,
+      updateMacroRepeatAmount,
       updateTrigger,
       updateAllowWhileOtherKeys,
       onElementAdd,

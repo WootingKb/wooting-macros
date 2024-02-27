@@ -1,18 +1,18 @@
-import { TimeIcon, EditIcon } from '@chakra-ui/icons'
+import { TimeIcon } from '@chakra-ui/icons'
 import {
   Box,
   Divider,
   Flex,
   HStack,
-  IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Text,
-  useColorModeValue
+  useColorModeValue,
+  VStack
 } from '@chakra-ui/react'
-import { useMemo, useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { ActionEventType } from '../../../../types'
 import {
@@ -34,12 +34,7 @@ interface Props {
   stopRecording: () => void
 }
 
-export default function SortableItem({
-  id,
-  element,
-  recording,
-  stopRecording
-}: Props) {
+export default function SortableItem({ id, element, recording }: Props) {
   const isEditable = checkIfElementIsEditable(element)
   const displayText = getElementDisplayString(element)
   const {
@@ -101,14 +96,6 @@ export default function SortableItem({
     if (checkIfElementIsEditable(element)) updateSelectedElementId(id - 1)
   }, [element, id, isSelected, recording, updateSelectedElementId])
 
-  const onEditButtonPress = useCallback(() => {
-    stopRecording()
-    if (isSelected) {
-      return
-    }
-    updateSelectedElementId(id - 1)
-  }, [id, isSelected, stopRecording, updateSelectedElementId])
-
   const onDeleteButtonPress = useCallback(() => {
     if (isSelected) {
       updateSelectedElementId(undefined)
@@ -116,12 +103,21 @@ export default function SortableItem({
     onElementDelete(id - 1)
   }, [id, isSelected, onElementDelete, updateSelectedElementId])
 
+  const secondBg = useColorModeValue('primary-light.0', 'primary-dark.800')
+
   return (
     <HStack
       w="full"
       h="full"
+      bg={
+        selectedElementId !== undefined && id === selectedElementId + 1
+          ? 'inherit'
+          : secondBg
+      }
       justifyContent="space-around"
       spacing="0px"
+      roundedLeft="0px"
+      roundedRight="md"
       cursor={isEditable ? 'pointer' : 'default'}
       onClick={onItemPress}
     >
@@ -211,24 +207,18 @@ export default function SortableItem({
               </Text>
             </Box>
           )}
-        {isEditable && (
-          <IconButton
-            variant="brandSecondary"
-            aria-label="Edit item"
-            icon={<EditIcon />}
-            size={['xs', 'sm']}
-            onClick={onEditButtonPress}
-          />
-        )}
         <Menu variant="brand">
           <MenuButton
-            h="24px"
+            h="full"
             aria-label="Item options"
             color={kebabColour}
             px={2}
             _hover={{ color: kebabHoverColour }}
           >
-            <KebabVertical />
+            {/*To center the 3-dot menu properly, it needs to be wrapped in a VStack*/}
+            <VStack alignItems="center">
+              <KebabVertical />
+            </VStack>
           </MenuButton>
           <MenuList p="2" right={0}>
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>

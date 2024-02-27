@@ -14,7 +14,7 @@ export const Tooltip = defineStyleConfig({
         'colors.primary-light.800',
         'colors.primary-dark.700'
       )(props),
-      borderRadius: 'md',
+      rounded: 'md'
     }),
     brandSecondary: (props: StyleFunctionProps) => ({
       bg: mode('primary-light.800', 'primary-dark.900')(props),
@@ -26,7 +26,7 @@ export const Tooltip = defineStyleConfig({
       )(props),
       border: '1px solid',
       borderColor: mode('primary-light.500', 'primary-dark.600')(props),
-      borderRadius: 'md',
+      rounded: 'md'
     }),
   }
 })

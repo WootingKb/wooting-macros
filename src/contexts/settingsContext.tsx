@@ -10,8 +10,8 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { updateSettings } from '../constants/utils'
-import {error} from "tauri-plugin-log"
+import { DefaultDelayDelay, DefaultMacroDelay, updateSettings } from '../constants/utils'
+import { error } from 'tauri-plugin-log'
 
 type SettingsProviderProps = { children: ReactNode }
 
@@ -29,7 +29,8 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
-    DefaultDelayValue: 20,
+    DefaultDelayValue: DefaultDelayDelay,
+    DefaultElementDurationValue: Number(DefaultMacroDelay),
     AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,
@@ -50,11 +51,9 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         error(e)
         toast({
           title: 'Error loading settings',
-          description:
-            'Unable to load settings, please re-open the app. If that does not work, please contact us on Discord.',
+          description: `Unable to load settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [toast])
@@ -65,11 +64,9 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         error(e)
         toast({
           title: 'Error updating settings',
-          description:
-            'Unable to update settings, please re-open the app. If that does not work, please contact us on Discord.',
+          description: `Unable to update settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [config, initComplete, toast])
@@ -99,6 +96,11 @@ function SettingsProvider({ children }: SettingsProviderProps) {
       return { ...config, DefaultDelayValue: Number(value) }
     })
   }, [])
+  const updateDefaultElementDelayVal = useCallback((value: string) => {
+    setConfig((config) => {
+      return { ...config, DefaultElementDurationValue: Number(value) }
+    })
+  }, [])
   const updateAutoSelectElement = useCallback((value: boolean) => {
     setConfig((config) => {
       return { ...config, AutoSelectElement: value }
@@ -122,6 +124,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
       updateMinimizeOnClose,
       updateAutoAddDelay,
       updateDefaultDelayVal,
+      updateDefaultElementDurationVal: updateDefaultElementDelayVal,
       updateAutoSelectElement,
       updateTheme
     }),
@@ -132,6 +135,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
       updateMinimizeOnClose,
       updateAutoAddDelay,
       updateDefaultDelayVal,
+      updateDefaultElementDelayVal,
       updateAutoSelectElement,
       updateTheme
     ]

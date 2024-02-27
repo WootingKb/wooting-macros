@@ -1,39 +1,40 @@
 [package]
 name = "wooting-macro-backend"
-version = "1.0.2"
+version = "1.1.0-pre-release"
 edition = "2021"
 description = "Macro software backend made by Wooting."
 authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N"]
 license = "GPL-3.0-only"
-
+publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.5", features = ["api-all", "icon-png", "system-tray"] }
-rdev = { version = "0.5", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
+rdev = { git = "https://github.com/medzernik/rdev", branch = "wootomation/1.2", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
 halfbrown = { version = "0.2", features = ["serde"] }
 lazy_static = "1.4"
-tokio = { version = "1.33", features = ["full"] }
-tokio-serde = { version = "0.8", features = ["json"] }
+tokio = { version = "1.36", features = ["full"] }
+tokio-serde = { version = "0.9", features = ["json"] }
 opener = "0.6"
 obws = { version = "0.11" }
 rodio = "0.17"
-copypasta = { version = "0.8", features = ["smithay-clipboard"] }
+copypasta = { version = "0.10", features = ["smithay-clipboard"] }
 
 serde_repr = "0.1"
 fastrand = "2.0"
 dirs = "5.0"
-itertools = "0.11"
+itertools = "0.12"
 anyhow = "1.0"
 log = "0.4"
-env_logger = "0.10"
+env_logger = "0.11"
 rayon = "1.8"
+url = "2.5"
+uuid = { version = "1.6", features = ["fast-rng", "v4", "macro-diagnostics"] }
 
-[target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
-brightness = { version = "0.5"}
-futures = "0.3"
+[target.'cfg(target_os = "windows")'.dependencies]
+multiinput = { git = "https://github.com/simon-wh/multiinput-rust", branch = "master" }
 
 [profile.release]
 lto = true

@@ -3,8 +3,8 @@ import {
   HStack,
   Switch,
   Text,
-  useColorModeValue,
-  Tooltip
+  Tooltip,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 
@@ -37,7 +37,7 @@ export default function CollectionButton({
       w="full"
       bg={isFocused ? buttonBg : ''}
       p="2"
-      rounded="md"
+      rounded='md'
       _hover={{ bg: buttonBg }}
       transition="ease-out 150ms"
     >
@@ -74,7 +74,7 @@ export default function CollectionButton({
           hasArrow
           label={
             isMacroOutputEnabled
-              ? collection.active
+              ? collection.enabled
                 ? 'Disable Collection'
                 : 'Enable Collection'
               : 'Re-enable Macro Output!'
@@ -85,8 +85,8 @@ export default function CollectionButton({
               size="sm"
               variant="brand"
               zIndex={10}
-              defaultChecked={collection.active}
-              isChecked={isMacroOutputEnabled ? collection.active : false}
+              defaultChecked={collection.enabled}
+              isChecked={isMacroOutputEnabled ? collection.enabled : false}
               isDisabled={!isMacroOutputEnabled}
               onChange={() => toggleCollection(index)}
               aria-label="Collection Toggle"

@@ -1,20 +1,13 @@
-import {
-  Accordion,
-  Flex,
-  Text,
-  Divider,
-} from '@chakra-ui/react'
+import { Accordion, Divider, Flex, Text } from '@chakra-ui/react'
 import { useMemo } from 'react'
-import { HIDCategory, PluginGroup } from '../../../../constants/enums'
+import { HIDCategory } from '../../../../constants/enums'
 import { Hid } from '../../../../constants/HIDmap'
 import { SystemEvent } from '../../../../constants/SystemEventMap'
 import MouseButtonsSection from './MouseButtonsSection'
 import SystemEventsSection from './SystemEventsSection'
 import { MouseInput } from '../../../../constants/MouseMap'
 import KeyboardKeysSection from './KeyboardKeysSection'
-import PluginsSection from './PluginsSection'
-import { Plugin } from '../../../../constants/PluginsEventMap'
-import { KeyboardKeyCategory, PluginCategory } from '../../../../types'
+import { KeyboardKeyCategory } from '../../../../types'
 import useScrollbarStyles from '../../../../hooks/useScrollbarStyles'
 
 interface Props {
@@ -51,7 +44,8 @@ export default function SelectAreaAccordion({ searchValue }: Props) {
       const elements = keyboardKeyElements.filter((element) => {
         return HIDCategory[element.category] === categoryName
       })
-      if (elements.length > 0) temp.push({ name: categoryName, elements: elements })
+      if (elements.length > 0)
+        temp.push({ name: categoryName, elements: elements })
     }
     return temp
   }, [keyboardKeyElements])

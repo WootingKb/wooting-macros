@@ -1,19 +1,19 @@
 import {
+  Box,
   Button,
-  Flex,
-  Text,
-  Switch,
   Divider,
-  VStack,
+  Flex,
+  HStack,
   Kbd,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
+  Switch,
+  Text,
+  Tooltip,
   useColorModeValue,
-  Box,
-  HStack,
-  Tooltip
+  VStack
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { Macro } from '../../types'
@@ -21,7 +21,7 @@ import { HIDLookup } from '../../constants/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { mouseEnumLookup } from '../../constants/MouseMap'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { KebabVertical } from '../icons'
 import useMainBgColour from '../../hooks/useMainBgColour'
 
@@ -29,9 +29,17 @@ interface Props {
   macro: Macro
   index: number
   onDelete: (index: number) => void
+  collectionName?: string
+  searchValue: string
 }
 
-export default function MacroCard({ macro, index, onDelete }: Props) {
+export default function MacroCard({
+  macro,
+  index,
+  onDelete,
+  collectionName,
+  searchValue
+}: Props) {
   const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
@@ -51,7 +59,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
   const onToggle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const newCollection = { ...currentCollection }
-      newCollection.macros[index].active = event.target.checked
+      newCollection.macros[index].enabled = event.target.checked
       onCollectionUpdate(newCollection, selection.collectionIndex)
     },
     [currentCollection, index, onCollectionUpdate, selection.collectionIndex]
@@ -63,13 +71,17 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
     onCollectionUpdate(newCollection, selection.collectionIndex)
   }, [currentCollection, macro, onCollectionUpdate, selection.collectionIndex])
 
+  const isSearching: boolean = useMemo((): boolean => {
+    return searchValue.length !== 0
+  }, [searchValue])
+
   return (
     <VStack
       w="full"
       h="full"
       bg={useMainBgColour()}
       boxShadow={shadowColour}
-      rounded="2xl"
+      rounded="md"
       p={5}
       m="auto"
       justifyContent="space-between"
@@ -86,7 +98,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <Box
             maxHeight="32px"
             cursor="default"
-            opacity={macro.active ? 1 : 0.5}
+            opacity={macro.enabled ? 1 : 0.5}
           >
             <em-emoji shortcodes={macro.icon} size="32px" />
           </Box>
@@ -94,7 +106,7 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
             textStyle="name"
             fontWeight="semibold"
             fontSize="2xl"
-            opacity={macro.active ? 1 : 0.5}
+            opacity={macro.enabled ? 1 : 0.5}
           >
             {macro.name}
           </Text>
@@ -108,12 +120,15 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           >
             <KebabVertical />
           </MenuButton>
-          <MenuList p="2" right={0}>
+          <MenuList p="2" right={0} position="relative">
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
             <Divider />
-            <MenuItem onClick={() => onDelete(index)} textColor={deleteTextColour}>
+            <MenuItem
+              onClick={() => onDelete(index)}
+              textColor={deleteTextColour}
+            >
               Delete
             </MenuItem>
           </MenuList>
@@ -121,8 +136,15 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
       </HStack>
       {/** Trigger Keys Display */}
       <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
+        {isSearching && (
+          <HStack alignSelf="flex-start">
+            <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
+              {collectionName}
+            </Text>
+          </HStack>
+        )}
         <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
-          Trigger Keys:
+          Trigger Keys
         </Text>
         <Flex
           w="full"
@@ -134,12 +156,12 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
         >
           {macro.trigger.type === 'KeyPressEvent' &&
             macro.trigger.data.map((HIDcode) => (
-              <Kbd variant="brand" key={HIDcode}>
+              <Kbd fontSize="md" variant="brand" key={HIDcode}>
                 {HIDLookup.get(HIDcode)?.displayString}
               </Kbd>
             ))}
           {macro.trigger.type === 'MouseEvent' && (
-            <Kbd variant="brand">
+            <Kbd fontSize="md" variant="brand">
               {mouseEnumLookup.get(macro.trigger.data)?.displayString}
             </Kbd>
           )}
@@ -162,8 +184,8 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           placement="bottom"
           hasArrow
           label={
-            currentCollection.active
-              ? macro.active
+            currentCollection.enabled
+              ? macro.enabled
                 ? 'Disable Macro'
                 : 'Enable Macro'
               : 'Re-enable Collection!'
@@ -172,9 +194,9 @@ export default function MacroCard({ macro, index, onDelete }: Props) {
           <Box>
             <Switch
               variant="brand"
-              defaultChecked={macro.active}
-              isChecked={currentCollection.active ? macro.active : false}
-              isDisabled={!currentCollection.active}
+              defaultChecked={macro.enabled}
+              isChecked={currentCollection.enabled ? macro.enabled : false}
+              isDisabled={!currentCollection.enabled}
               aria-label="Macro Toggle"
               onChange={onToggle}
             />

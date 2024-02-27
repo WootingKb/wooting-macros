@@ -1,12 +1,12 @@
 import {
   HStack,
-  VStack,
-  Text,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 
@@ -15,13 +15,17 @@ interface Props {
   description: string
   defaultValue: number
   onChange: (value: string) => void
+  minimum: number
+  maximum: number
 }
 
 export default function NumberInputSetting({
   title,
   description,
   defaultValue,
-  onChange
+  onChange,
+  minimum,
+  maximum
 }: Props) {
   const [value, setValue] = useState('')
 
@@ -48,12 +52,13 @@ export default function NumberInputSetting({
       <NumberInput
         w="25%"
         size="sm"
-        rounded="md"
+        rounded='md'
         variant="brand"
         step={5}
         value={value}
         onChange={(valueAsString) => setValue(valueAsString)}
-        min={1}
+        min={minimum}
+        max={maximum}
       >
         <NumberInputField />
         <NumberInputStepper>

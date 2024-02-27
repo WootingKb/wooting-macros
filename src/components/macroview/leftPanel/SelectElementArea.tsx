@@ -1,16 +1,22 @@
 import {
-  Text,
-  VStack,
+  HStack,
   Input,
+  Text,
   useColorModeValue,
-  HStack
+  VStack
 } from '@chakra-ui/react'
-import { useState } from 'react'
 import useMainBgColour from '../../../hooks/useMainBgColour'
 import SelectAreaAccordion from './AccordionComponents/SelectAreaAccordion'
 
-export default function SelectElementArea() {
-  const [searchValue, setSearchValue] = useState('')
+interface Props {
+  searchValue: string
+  changeSearchValue: (newValue: string) => void
+}
+
+export default function SelectElementArea({
+  searchValue,
+  changeSearchValue
+}: Props) {
   const borderColour = useColorModeValue(
     'primary-light.500',
     'primary-dark.500'
@@ -20,17 +26,22 @@ export default function SelectElementArea() {
   return (
     <VStack w="33%" h="full" bg={useMainBgColour()} spacing={0}>
       <HStack w="full" px={[2, 4, 6]} py={[2, 4]} alignItems="center">
-        <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
+        <Text
+          textAlign="left"
+          p={1}
+          fontWeight="semibold"
+          fontSize={['md', 'lg']}
+        >
           Elements
         </Text>
         <Input
           type="search"
-          maxW={['full']}
+          maxW="full"
           maxH="32px"
           variant="brand"
-          placeholder="Search"
+          placeholder="Search for an element..."
           _placeholder={{ opacity: 1, color: borderColour }}
-          onChange={(event) => setSearchValue(event.target.value)}
+          onChange={(event) => changeSearchValue(event.target.value)}
           sx={{
             '&::-webkit-search-cancel-button': {
               WebkitAppearance: 'none',
@@ -43,7 +54,7 @@ export default function SelectElementArea() {
           }}
         />
       </HStack>
-      <SelectAreaAccordion searchValue={searchValue.toLowerCase()} />
+      <SelectAreaAccordion searchValue={searchValue} />
     </VStack>
   )
 }

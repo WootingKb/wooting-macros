@@ -1,9 +1,10 @@
 import { Button, Divider, Text, Textarea, VStack } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { open } from '@tauri-apps/api/dialog'
+import { dialog } from '@tauri-apps/api'
 import { sysEventLookup } from '../../../../constants/SystemEventMap'
 import { SystemEventAction } from '../../../../types'
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElement: SystemEventAction
@@ -15,7 +16,7 @@ export default function OpenEventForm({
   selectedElement
 }: Props) {
   const [subtype, setSubtype] = useState<'File' | 'Directory' | 'Website'>()
-  const [headerText, setHeaderText] = useState('')
+  const [headerText, setHeaderText] = useState<JSX.Element | string>('')
   const [subHeaderText, setSubHeaderText] = useState('')
   const [path, setPath] = useState('')
   const { updateElement } = useMacroContext()
@@ -40,7 +41,10 @@ export default function OpenEventForm({
         break
     }
     setHeaderText(
-      sysEventLookup.get(selectedElement.data.action.type)?.displayString || ''
+      <BoxText>
+        {sysEventLookup.get(selectedElement.data.action.type)?.displayString ||
+          ''}
+      </BoxText>
     )
     setPath(selectedElement.data.action.data)
   }, [selectedElement])
@@ -67,7 +71,7 @@ export default function OpenEventForm({
   const onButtonPress = useCallback(
     async (isDirectory: boolean) => {
       if (isDirectory) {
-        const dir = await open({
+        const dir = await dialog.open({
           directory: true,
           multiple: false,
           title: 'Select a directory to open'
@@ -85,7 +89,7 @@ export default function OpenEventForm({
         }
         updateElement(temp, selectedElementId)
       } else {
-        const file = await open({
+        const file = await dialog.open({
           multiple: false,
           title: 'Select a file to open'
         })

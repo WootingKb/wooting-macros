@@ -1,16 +1,16 @@
 import { Icon, IconProps } from '@chakra-ui/react'
 import { SiDiscord, SiGithub } from 'react-icons/si'
 import { RxKeyboard } from 'react-icons/rx'
-import { BsMouse2 } from 'react-icons/bs'
+import { BsMouse2, BsThreeDotsVertical } from 'react-icons/bs'
 import { SlScreenDesktop } from 'react-icons/sl'
 import {
-  HiOutlinePuzzlePiece,
-  HiArrowUp,
   HiArrowDown,
-  HiArrowsUpDown
+  HiArrowsUpDown,
+  HiArrowUp,
+  HiOutlinePuzzlePiece
 } from 'react-icons/hi2'
-import { HiStop, HiPlay } from 'react-icons/hi'
-import { BsThreeDotsVertical } from 'react-icons/bs'
+import { HiPlay, HiStop } from 'react-icons/hi'
+import { RepeatClockIcon } from '@chakra-ui/icons'
 
 export const KeyboardIcon = (props: IconProps) => {
   return <Icon as={RxKeyboard} boxSize={5} {...props} />
@@ -47,4 +47,7 @@ export const StopIcon = (props: IconProps) => {
 }
 export const RecordIcon = (props: IconProps) => {
   return <Icon as={HiPlay} boxSize={5} {...props} />
+}
+export const ResetDefaultIcon = (props: IconProps) => {
+  return <Icon as={RepeatClockIcon} boxSize={5} {...props} />
 }

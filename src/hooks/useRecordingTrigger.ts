@@ -1,14 +1,11 @@
 import { useToast } from '@chakra-ui/react'
-import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
 import { MouseButton } from '../constants/enums'
-import { webCodeHIDLookup } from '../constants/HIDmap'
+import { webCodeLocationHidEncode, webCodeLocationHIDLookup } from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
-import {
-  checkIfModifierKey,
-  checkIfKeyShouldContinueTriggerRecording
-} from '../constants/utils'
-import {error} from "tauri-plugin-log"
+import { checkIfKeyShouldContinueTriggerRecording } from '../constants/utils'
+import { error } from 'tauri-plugin-log'
+import { invoke } from '@tauri-apps/api'
 
 export default function useRecordingTrigger(
   initialItems: MouseButton | number[]
@@ -43,7 +40,11 @@ export default function useRecordingTrigger(
       event.preventDefault()
       event.stopPropagation()
 
-      const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+      // Gets the ID according to the whichID, adds a separator extra digit '1' and then adds location to the end.
+      const HIDIdentifier = webCodeLocationHidEncode(event.which, event.location)
+
+      const HIDcode = webCodeLocationHIDLookup.get(HIDIdentifier)?.HIDcode
+
       if (HIDcode === undefined) {
         return
       }
@@ -102,7 +103,6 @@ export default function useRecordingTrigger(
         description:
           'Unable to disable macro output, please re-open the app. If that does not work, please contact us on Discord.',
         status: 'error',
-        duration: 2000,
         isClosable: true
       })
     })
@@ -117,7 +117,6 @@ export default function useRecordingTrigger(
           description:
             'Unable to enable macro output, please re-open the app. If that does not work, please contact us on Discord.',
           status: 'error',
-          duration: 2000,
           isClosable: true
         })
       })

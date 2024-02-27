@@ -5,12 +5,14 @@ import {
   ApplicationConfig,
   Collection,
   Keypress,
-  MacroData,
+  MacroData, MacroIndividualCommand,
   MousePressAction
 } from '../types'
 import { HIDLookup } from './HIDmap'
 import { mouseEnumLookup } from './MouseMap'
 import { sysEventLookup } from './SystemEventMap'
+import { MacroDataInterface } from "../components/macroview/topArea/MacroStateButtons";
+import { scrollbarRadiusStandard } from "../theme/config";
 
 export const updateBackendConfig = (
   collections: Collection[]
@@ -27,6 +29,14 @@ export const updateMacroOutput = (value: boolean): Promise<void> => {
   return invoke<void>('control_grabbing', {
     frontendBool: !value
   })
+}
+export const executeMacro = ({ macro_data }: MacroDataInterface, action: MacroIndividualCommand): Promise<void> => {
+  return invoke<void>('execute_macro', {
+    macroName: macro_data.name,
+    actionType: action,
+  })
+export const isDebug = (): Promise<boolean> => {
+  return invoke<boolean>('is_debug', {})
 }
 
 export const checkIfMouseButtonArray = (
@@ -135,15 +145,15 @@ export const scrollbarStylesLight = {
   },
   '&::-webkit-scrollbar-track': {
     background: '#D5DAE2',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#9EAABD',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#8392AA',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   }
 }
 
@@ -153,14 +163,18 @@ export const scrollbarsStylesDark = {
   },
   '&::-webkit-scrollbar-track': {
     background: '#27272a',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#3f3f46',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#52525b',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   }
 }
+
+export const DefaultMacroDelay = 20
+export const DefaultDelayDelay = 20
+export const DefaultMouseDelay = 20

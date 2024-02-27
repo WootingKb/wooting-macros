@@ -11,6 +11,7 @@ export default function ApplicationSettingsPanel() {
     updateMinimizeOnClose,
     updateAutoAddDelay,
     updateDefaultDelayVal,
+    updateDefaultElementDurationVal,
     updateAutoSelectElement
   } = useSettingsContext()
 
@@ -63,6 +64,17 @@ export default function ApplicationSettingsPanel() {
           description="The value (in ms) that all Delay elements will default to when added to the sequence."
           defaultValue={config.DefaultDelayValue}
           onChange={updateDefaultDelayVal}
+          minimum={1}
+          maximum={20000}
+        />
+        <Divider />
+        <NumberInputSetting
+          title="Default Element Duration Value"
+          description="The duration (in ms) that all elements other than Delay will default to when added to the sequence."
+          defaultValue={config.DefaultElementDurationValue}
+          onChange={updateDefaultElementDurationVal}
+          minimum={20}
+          maximum={20000}
         />
         <Divider />
       </VStack>

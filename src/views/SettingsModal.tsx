@@ -1,14 +1,14 @@
 import {
+  Flex,
+  HStack,
   Modal,
-  ModalOverlay,
-  ModalContent,
   ModalBody,
   ModalCloseButton,
-  HStack,
-  VStack,
+  ModalContent,
+  ModalOverlay,
   Text,
   useColorModeValue,
-  Flex
+  VStack
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { settingInfoLookup } from '../constants/SettingsMap'
@@ -58,7 +58,7 @@ export default function SettingsModal({ isOpen, onClose }: Props) {
   return (
     <Modal
       isOpen={isOpen}
-      size={'full'}
+      size="full"
       variant="brand"
       onClose={onClose}
       scrollBehavior="inside"

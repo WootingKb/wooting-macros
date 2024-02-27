@@ -1,12 +1,13 @@
 [package]
 name = "wooting-macros"
-version = "1.0.2"
+version = "1.1.0-pre-release"
+edition = "2021"
 description = "Macro software made by Wooting."
-authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N"]
+authors = ["Jeroen N", "Erik S", "Simon W", "David M", "Khang N", "Pola M"]
 license = "GPL-3.0-only"
 repository = "https://github.com/WootingKb/wooting-macros"
-edition = "2021"
-
+readme = "../README.md"
+publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
@@ -16,19 +17,20 @@ tauri-build = { version = "1.5", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.5", features = ["app-hide", "app-show", "clipboard-read-text", "clipboard-write-text", "dialog-open", "icon-png", "os-all", "shell-open", "system-tray", "updater"] }
-tokio = { version = "1.33", features = ["full"] }
-tokio-serde = { version = "0.8", features = ["json"] }
+tokio = { version = "1.36", features = ["full"] }
+tokio-serde = { version = "0.9", features = ["json"] }
 wooting-macro-backend = { path = "../wooting-macro-backend" }
 auto-launch = "0.5"
 log = "0.4"
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev", features= ["colored"] }
-byte-unit = "4.0"
+byte-unit = "5.1"
+anyhow = "1.0"
 
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
 default = ["custom-protocol"]
-# this feature is used used for production builds where `devPath` points to the filesystem
+# this feature is used for production builds where `devPath` points to the filesystem
 # DO NOT remove this
 custom-protocol = ["tauri/custom-protocol"]
 
