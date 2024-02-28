@@ -10,7 +10,8 @@ import useScrollbarStyles from '../../hooks/useScrollbarStyles'
 import useMainBgColour from '../../hooks/useMainBgColour'
 import useBorderColour from '../../hooks/useBorderColour'
 import { error } from 'tauri-plugin-log'
-import { SearchBar } from '../../views/Overview'
+
+import { SearchBar } from "../leftPanel/SearchBar";
 
 interface Props {
   onOpenSettingsModal: () => void
