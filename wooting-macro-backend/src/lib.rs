@@ -397,17 +397,6 @@ fn check_macro_execution_efficiently(
 #[derive(Debug, Clone, Default)]
 struct KeysPressed(Arc<RwLock<Vec<rdev::Key>>>);
 
-impl Drop for KeysPressed {
-    fn drop(&mut self) {
-        self.0.blocking_read().iter().for_each(|key| {
-            match simulate(&rdev::EventType::KeyRelease(*key)) {
-                Ok(()) => info!("Releasing pressed button {:?}", key),
-                Err(err) => error!("We could not send a drop key release.\n{}", err),
-            }
-        });
-    }
-}
-
 impl MacroBackend {
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() -> Result<()> {
