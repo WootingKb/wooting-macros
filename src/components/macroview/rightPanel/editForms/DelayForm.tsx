@@ -13,7 +13,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { DelayEventAction } from '../../../../types'
-import { DefaultDelayDelay } from '../../../../constants/utils'
+import { DefaultDelayDelay } from '../../../../constants'
 import { ResetDefaultIcon } from '../../../icons'
 import { useSettingsContext } from '../../../../contexts/settingsContext'
 import { BoxText } from '../EditArea'

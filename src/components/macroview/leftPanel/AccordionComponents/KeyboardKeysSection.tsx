@@ -13,7 +13,7 @@ import { HidInfo } from '../../../../constants/HIDmap'
 import { KeyboardKeyCategory } from '../../../../types'
 import { KeyboardIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
-import { DefaultMacroDelay } from '../../../../constants/utils'
+import { DefaultMacroDelay } from '../../../../constants'
 
 interface Props {
   keyboardKeyCategories: KeyboardKeyCategory[]

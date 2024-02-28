@@ -22,7 +22,7 @@ import {
 } from '../../../icons'
 import { MouseEventAction } from '../../../../types'
 
-import { DefaultMouseDelay } from '../../../../constants/utils'
+import { DefaultMouseDelay } from '../../../../constants'
 import { BoxText } from '../EditArea'
 
 interface Props {

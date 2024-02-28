@@ -10,8 +10,9 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { DefaultDelayDelay, updateSettings } from '../constants/utils'
 import { error } from 'tauri-plugin-log'
+import { DefaultDelayDelay } from "../constants";
+import { updateSettings } from "../constants/utils";
 
 type SettingsProviderProps = { children: ReactNode }
 

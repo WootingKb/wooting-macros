@@ -10,7 +10,7 @@ import {
 import { MouseInputInfo } from '../../../../constants/MouseMap'
 import { MouseIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
-import { DefaultMouseDelay } from '../../../../constants/utils'
+import { DefaultMouseDelay } from '../../../../constants'
 
 interface Props {
   elementsToRender: MouseInputInfo[]

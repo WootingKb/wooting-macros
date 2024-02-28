@@ -22,9 +22,9 @@ import {
 } from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
 
-import { DefaultMacroDelay } from '../../../../constants/utils'
 import { BoxText } from '../EditArea'
 import { HIDLookup } from '../../../../constants/HIDmap'
+import { DefaultMacroDelay } from "../../../../constants";
 
 interface Props {
   selectedElementId: number
