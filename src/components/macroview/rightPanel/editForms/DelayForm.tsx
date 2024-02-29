@@ -101,7 +101,6 @@ export default function DelayForm({
   return (
     <>
       <HStack justifyContent="center" p={1}>
-        <Text>Editing element</Text>
         <BoxText>Delay</BoxText>
       </HStack>
       <Divider />
