@@ -1,11 +1,11 @@
 import {
   HStack,
   IconButton,
+  StackDivider,
   Text,
-  useColorModeValue,
-  StackDivider
+  useColorModeValue
 } from '@chakra-ui/react'
-import { HiArrowRight, HiArrowDownTray, HiArrowPath } from 'react-icons/hi2'
+import { HiArrowDownTray, HiArrowPath, HiArrowRight } from 'react-icons/hi2'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { MacroType } from '../../../constants/enums'
 import { checkIfStringIsNonNumeric } from '../../../constants/utils'
@@ -23,7 +23,7 @@ export default function MacroTypeArea() {
       border="1px"
       borderColor={borderColour}
       divider={<StackDivider />}
-      rounded="md"
+      rounded='md'
       spacing="16px"
     >
       <Text fontWeight="semibold" fontSize={['sm', 'md']}>

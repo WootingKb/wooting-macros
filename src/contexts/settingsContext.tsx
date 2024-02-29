@@ -10,8 +10,9 @@ import {
   useState
 } from 'react'
 import { ApplicationConfig, SettingsState } from '../types'
-import { updateSettings } from '../constants/utils'
-import {error} from "tauri-plugin-log"
+import { error } from 'tauri-plugin-log'
+import { DefaultDelayDelay } from "../constants";
+import { updateSettings } from "../constants/utils";
 
 type SettingsProviderProps = { children: ReactNode }
 
@@ -29,7 +30,7 @@ function SettingsProvider({ children }: SettingsProviderProps) {
   const [initComplete, setInitComplete] = useState(false)
   const [config, setConfig] = useState<ApplicationConfig>({
     AutoStart: false,
-    DefaultDelayValue: 20,
+    DefaultDelayValue: DefaultDelayDelay,
     AutoAddDelay: false,
     AutoSelectElement: true,
     MinimizeAtLaunch: false,
@@ -50,11 +51,9 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         error(e)
         toast({
           title: 'Error loading settings',
-          description:
-            'Unable to load settings, please re-open the app. If that does not work, please contact us on Discord.',
+          description: `Unable to load settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [toast])
@@ -65,11 +64,9 @@ function SettingsProvider({ children }: SettingsProviderProps) {
         error(e)
         toast({
           title: 'Error updating settings',
-          description:
-            'Unable to update settings, please re-open the app. If that does not work, please contact us on Discord.',
+          description: `Unable to update settings: ${e}. Please re-open the app. If that does not work, please contact us on Discord.`,
           status: 'error',
-          duration: 2000,
-          isClosable: true
+          isClosable: false
         })
       })
   }, [config, initComplete, toast])

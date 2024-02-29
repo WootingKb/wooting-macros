@@ -1,8 +1,22 @@
-import { Divider, Grid, GridItem, Input, Button, Text } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import {
+  Button,
+  Divider,
+  Grid,
+  GridItem,
+  HStack,
+  Input,
+  Text,
+  useColorModeValue,
+  useToast,
+  VStack
+} from '@chakra-ui/react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
-import { useSettingsContext } from '../../../../contexts/settingsContext'
 import { DelayEventAction } from '../../../../types'
+import { DefaultDelayDelay } from '../../../../constants'
+import { ResetDefaultIcon } from '../../../icons'
+import { useSettingsContext } from '../../../../contexts/settingsContext'
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElementId: number
@@ -13,9 +27,14 @@ export default function DelayForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [delayDuration, setDelayDuration] = useState("0")
+  const config = useSettingsContext()
+  const [delayDuration, setDelayDuration] = useState(
+    config.config.DefaultDelayValue
+  )
   const { updateElement } = useMacroContext()
-  const { config } = useSettingsContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const toast = useToast()
 
   useEffect(() => {
     if (
@@ -24,74 +43,95 @@ export default function DelayForm({
     )
       return
 
-    setDelayDuration(selectedElement.data.toString())
+    setDelayDuration(selectedElement.data)
   }, [selectedElement])
 
   const onDelayDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-
-      setDelayDuration(event.target.value)
+      setDelayDuration(Number(event.target.value))
     },
     [setDelayDuration]
   )
 
   const onInputBlur = useCallback(() => {
-    let duration
-    if (delayDuration === '') {
-      duration = 0;
-    } else {
+    let duration = delayDuration
 
-      duration = parseInt(delayDuration)
-      if (Number.isNaN(duration)) {
-        return
-      }
+    if (delayDuration < 1) {
+      toast({
+        title: 'Minimum duration applied',
+        description: 'Applied minimum duration of 1ms',
+        status: 'info',
+        duration: 4000,
+        isClosable: true
+      })
+      duration = 1
+    } else if (Number.isNaN(duration)) {
+      return
     }
-    
+
     const temp: DelayEventAction = {
       ...selectedElement,
       data: duration
     }
     updateElement(temp, selectedElementId)
-  }, [delayDuration, selectedElement, selectedElementId, updateElement])
+  }, [delayDuration, selectedElement, selectedElementId, toast, updateElement])
 
-  const resetDuration = useCallback(() => {
-    setDelayDuration(config.DefaultDelayValue.toString())
+  const onResetClick = useCallback(() => {
+    toast({
+      title: 'Default duration applied',
+      description: `Applied default duration of ${config.config.DefaultDelayValue}ms`,
+      status: 'info',
+      duration: 4000,
+      isClosable: true
+    })
+    setDelayDuration(config.config.DefaultDelayValue)
     const temp: DelayEventAction = {
       ...selectedElement,
-      data: config.DefaultDelayValue
+      data: config.config.DefaultDelayValue
     }
     updateElement(temp, selectedElementId)
   }, [
-    config.DefaultDelayValue,
+    toast,
+    config.config.DefaultDelayValue,
     selectedElement,
-    selectedElementId,
-    updateElement
+    updateElement,
+    selectedElementId
   ])
 
   return (
     <>
-      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
-        Delay Element
-      </Text>
+      <HStack justifyContent="center" p={1}>
+        <Text>Editing element</Text>
+        <BoxText>Delay</BoxText>
+      </HStack>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+      <Grid templateRows="20px 1fr" gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']}>Duration (ms)</Text>
         </GridItem>
-        <GridItem w="full">
+        <VStack w="full">
           <Input
             type="number"
+            placeholder={String(DefaultDelayDelay)}
             variant="brandAccent"
             value={delayDuration}
             onChange={onDelayDurationChange}
             onBlur={onInputBlur}
-            isInvalid={Number.isNaN(parseInt(delayDuration))}
+            isInvalid={Number.isNaN(delayDuration)}
           />
-        </GridItem>
+          <Button
+            variant="brandTertiary"
+            leftIcon={<ResetDefaultIcon />}
+            w="full"
+            value=""
+            m={1}
+            size={['sm', 'md']}
+            onClick={onResetClick}
+          >
+            <Text fontSize={['sm', 'md']}>Reset to Default</Text>
+          </Button>
+        </VStack>
       </Grid>
-      <Button variant="brand" w="fit-content" onClick={resetDuration}>
-        Set to Default
-      </Button>
     </>
   )
 }

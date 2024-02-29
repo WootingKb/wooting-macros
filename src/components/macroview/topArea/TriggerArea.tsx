@@ -1,11 +1,11 @@
 import { EditIcon } from '@chakra-ui/icons'
 import {
+  Button,
   HStack,
   Kbd,
-  Button,
+  StackDivider,
   Text,
-  useColorModeValue,
-  StackDivider
+  useColorModeValue
 } from '@chakra-ui/react'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { HIDLookup } from '../../../constants/HIDmap'
@@ -30,10 +30,10 @@ export default function TriggerArea({ onOpen }: Props) {
       gap={2}
       divider={<StackDivider />}
       shadow={shadowColour}
-      rounded="md"
+      rounded='md'
       justifyContent="space-between"
     >
-      <Text fontWeight="semibold" fontSize={['xs', 'sm']} whiteSpace="nowrap">
+      <Text fontWeight="semibold" fontSize={['sm', 'md']} whiteSpace="nowrap">
         Trigger Keys
       </Text>
       <HStack
@@ -42,24 +42,24 @@ export default function TriggerArea({ onOpen }: Props) {
         h="27px"
         justifyContent="center"
         bg={secondBg}
-        rounded="md"
+        rounded='md'
         p="9px"
         shadow="inner"
       >
         {macro.trigger.type === 'KeyPressEvent' &&
           macro.trigger.data.map((HIDcode) => (
-            <Kbd variant="brand" key={HIDcode}>
+            <Kbd fontSize="md" variant="brand" key={HIDcode}>
               {HIDLookup.get(HIDcode)?.displayString}
             </Kbd>
           ))}
         {macro.trigger.type === 'MouseEvent' && (
-          <Kbd variant="brand">
+          <Kbd fontSize="md" variant="brand">
             {mouseEnumLookup.get(macro.trigger.data)?.displayString}
           </Kbd>
         )}
       </HStack>
       <Button
-        variant="brandAccent"
+        variant="brandRecord"
         size="sm"
         px={6}
         leftIcon={<EditIcon />}

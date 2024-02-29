@@ -1,10 +1,14 @@
-import { invoke } from '@tauri-apps/api/tauri'
 import { useCallback, useEffect, useState } from 'react'
-import { KeyType } from '../constants/enums'
-import { webCodeHIDLookup } from '../constants/HIDmap'
+import { KeyType, MouseButton } from '../constants/enums'
+import {
+  webCodeLocationHidEncode,
+  webCodeLocationHIDLookup
+} from '../constants/HIDmap'
 import { webButtonLookup } from '../constants/MouseMap'
 import { Keypress, MousePressAction } from '../types'
-import {error} from "tauri-plugin-log"
+import { error } from 'tauri-plugin-log'
+import { useToast } from '@chakra-ui/react'
+import { invoke } from '@tauri-apps/api'
 
 export default function useRecordingSequence(
   onItemChanged: (
@@ -21,6 +25,9 @@ export default function useRecordingSequence(
   const [prevItem, setPrevItem] = useState<
     Keypress | MousePressAction | undefined
   >(undefined)
+
+  const toast = useToast()
+
   const [eventType, setEventType] = useState<'Down' | 'Up'>('Down')
   const [prevEventType, setPrevEventType] = useState<'Down' | 'Up'>('Down')
 
@@ -44,8 +51,12 @@ export default function useRecordingSequence(
       if (event.repeat) {
         return
       }
+      const HIDIdentifier = webCodeLocationHidEncode(
+        event.which,
+        event.location
+      )
 
-      const HIDcode = webCodeHIDLookup.get(event.code)?.HIDcode
+      const HIDcode = webCodeLocationHIDLookup.get(HIDIdentifier)?.HIDcode
       if (HIDcode === undefined) {
         return
       }
@@ -97,6 +108,19 @@ export default function useRecordingSequence(
         return
       }
 
+      // We want to stop the recording when the left mouse button is pressed. Currently, always stops the recording
+      if (enumVal === MouseButton.Left) {
+        toast({
+          title: `Sequence recording stopped`,
+          description: `To record Mouse Button 1, insert the button from the left panel.`,
+          status: 'info',
+          duration: 4000,
+          isClosable: true
+        })
+        setRecording(false)
+        return
+      }
+
       const timeDiff = Math.round(event.timeStamp - prevTimestamp)
       setPrevTimestamp(event.timeStamp)
       setPrevEventType(eventType)
@@ -134,18 +158,22 @@ export default function useRecordingSequence(
     window.addEventListener('mousedown', addMousepress, false)
     window.addEventListener('keyup', addKeypress, false)
     window.addEventListener('mouseup', addMousepress, false)
-    invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
-      error(e)
-    })
+    invoke<void>('control_grabbing', { frontendBool: false }).catch(
+      (e: string) => {
+        error(e)
+      }
+    )
 
     return () => {
       window.removeEventListener('keydown', addKeypress, false)
       window.removeEventListener('mousedown', addMousepress, false)
       window.removeEventListener('keyup', addKeypress, false)
       window.removeEventListener('mouseup', addMousepress, false)
-      invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
-        error(e)
-      })
+      invoke<void>('control_grabbing', { frontendBool: true }).catch(
+        (e: string) => {
+          error(e)
+        }
+      )
     }
   }, [recording, addKeypress, addMousepress])
 

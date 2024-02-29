@@ -1,4 +1,4 @@
-import { ThemeConfig } from "@chakra-ui/react";
+import { ThemeConfig } from '@chakra-ui/react'
 
 export const config: ThemeConfig = {
   initialColorMode: 'light',

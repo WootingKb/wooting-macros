@@ -1,4 +1,4 @@
-import { MacroType, ViewState, MouseButton } from './constants/enums'
+import { MacroType, MouseButton, ViewState } from './constants/enums'
 import { HidInfo } from './constants/HIDmap'
 import { PluginEventInfo } from './constants/PluginsEventMap'
 
@@ -22,6 +22,9 @@ export type AppState = {
   ) => void
   changeSelectedCollectionIndex: (index: number) => void
   changeSelectedMacroIndex: (index: number | undefined) => void
+  isMacroOutputEnabled: boolean
+  changeMacroOutputEnabled: (value: boolean) => void
+  appDebugMode: boolean | null
 }
 
 export type MacroState = {
@@ -163,7 +166,7 @@ export type SystemAction =
   | { type: 'Open'; action: DirectoryAction }
   | { type: 'Volume'; action: VolumeAction }
   | { type: 'Clipboard'; action: ClipboardAction }
-  // | { type: 'Brightness'; action: MonitorBrightnessAction }
+// | { type: 'Brightness'; action: MonitorBrightnessAction }
 
 export type DirectoryAction =
   | { type: 'Directory'; data: string }
@@ -194,6 +197,7 @@ export interface KeyboardKeyCategory {
   name: string
   elements: HidInfo[]
 }
+
 export interface PluginCategory {
   name: string
   elements: PluginEventInfo[]

@@ -1,18 +1,29 @@
 import {
+  Button,
   Divider,
+  Flex,
   Grid,
   GridItem,
-  Flex,
-  Button,
   Input,
-  Text
+  Text,
+  useColorModeValue,
+  useToast,
+  VStack
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
 import { mouseEnumLookup } from '../../../../constants/MouseMap'
-import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
+import {
+  DownArrowIcon,
+  DownUpArrowsIcon,
+  ResetDefaultIcon,
+  UpArrowIcon
+} from '../../../icons'
 import { MouseEventAction } from '../../../../types'
+
+import { DefaultMouseDelay } from '../../../../constants'
+import { BoxText } from '../EditArea'
 
 interface Props {
   selectedElementId: number
@@ -23,27 +34,34 @@ export default function MousePressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [headingText, setHeadingText] = useState('')
-  const [mousepressDuration, setMousepressDuration] = useState("1")
+  const [headingText, setHeadingText] = useState<JSX.Element | string>('')
+  const [mousepressDuration, setMousepressDuration] =
+    useState(DefaultMouseDelay)
   const [mousepressType, setMousepressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const toast = useToast()
 
   useEffect(() => {
     const typeString: keyof typeof KeyType = selectedElement.data.data
       .type as keyof typeof KeyType
     setMousepressType(KeyType[typeString])
     if (selectedElement.data.data.type === 'DownUp') {
-      setMousepressDuration(selectedElement.data.data.duration.toString())
+      setMousepressDuration(selectedElement.data.data.duration)
     }
+
     setHeadingText(
-      `${mouseEnumLookup.get(selectedElement.data.data.button)?.displayString}`
+      <BoxText>
+        {mouseEnumLookup.get(selectedElement.data.data.button)?.displayString ??
+          ''}
+      </BoxText>
     )
-  }, [selectedElement])
+  }, [bg, kebabColour, selectedElement])
 
   const onMousepressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-
-      setMousepressDuration(event.target.value)
+      setMousepressDuration(Number(event.target.value))
     },
     [setMousepressDuration]
   )
@@ -52,15 +70,20 @@ export default function MousePressForm({
     if (selectedElement.data.data.type !== 'DownUp') {
       return
     }
-    let duration
-    if (mousepressDuration === '') {
-      duration = 0;
-    } else {
+    let duration = DefaultMouseDelay
 
-      duration = parseInt(mousepressDuration)
-      if (Number.isNaN(duration)) {
-        return
-      }
+    if (mousepressDuration >= DefaultMouseDelay) {
+      duration = mousepressDuration
+    } else if (mousepressDuration < DefaultMouseDelay) {
+      toast({
+        title: 'Minimum duration',
+        description: `Duration must be at least ${DefaultMouseDelay}ms`,
+        status: 'warning',
+        duration: 4000,
+        isClosable: true
+      })
+    } else if (Number.isNaN(duration)) {
+      return
     }
 
     const temp: MouseEventAction = {
@@ -74,7 +97,13 @@ export default function MousePressForm({
       }
     }
     updateElement(temp, selectedElementId)
-  }, [mousepressDuration, selectedElement, selectedElementId, updateElement])
+  }, [
+    mousepressDuration,
+    selectedElement,
+    selectedElementId,
+    toast,
+    updateElement
+  ])
 
   const onMousepressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -102,7 +131,9 @@ export default function MousePressForm({
                 ...temp.data.data,
                 type: 'DownUp',
                 duration:
-                  temp.data.data.type === 'DownUp' ? temp.data.data.duration : 1
+                  temp.data.data.type === 'DownUp'
+                    ? temp.data.data.duration
+                    : DefaultMouseDelay
               }
             }
           }
@@ -115,13 +146,41 @@ export default function MousePressForm({
     [selectedElement, selectedElementId, updateElement]
   )
 
+  const onResetClick = useCallback(() => {
+    if (selectedElement.data.data.type !== 'DownUp') {
+      return
+    }
+
+    toast({
+      title: 'Default duration applied',
+      description: `Applied default duration of ${DefaultMouseDelay}ms`,
+      status: 'info',
+      duration: 4000,
+      isClosable: true
+    })
+
+    setMousepressDuration(DefaultMouseDelay)
+
+    const temp: MouseEventAction = {
+      ...selectedElement,
+      data: {
+        ...selectedElement.data,
+        data: {
+          ...selectedElement.data.data,
+          duration: DefaultMouseDelay
+        }
+      }
+    }
+    updateElement(temp, selectedElementId)
+  }, [toast, selectedElement, updateElement, selectedElementId])
+
   return (
     <>
       <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
         {headingText}
       </Text>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+      <Grid templateRows="20px 1fr" gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Type of keystroke
@@ -134,7 +193,7 @@ export default function MousePressForm({
             justifyContent="space-around"
           >
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownUpArrowsIcon />}
               w="full"
               size={['sm', 'md']}
@@ -144,7 +203,7 @@ export default function MousePressForm({
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownArrowIcon />}
               w="full"
               size={['sm', 'md']}
@@ -154,7 +213,7 @@ export default function MousePressForm({
               <Text fontSize={['md', 'md', 'sm']}>Mouse Down</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<UpArrowIcon />}
               w="full"
               size={['sm', 'md']}
@@ -167,7 +226,7 @@ export default function MousePressForm({
         </GridItem>
       </Grid>
       {mousepressType === KeyType.DownUp && (
-        <Grid templateRows={'20px 1fr'} gap="2" w="full">
+        <Grid templateRows="20px 1fr" gap="2" w="full">
           <GridItem
             w="full"
             h="8px"
@@ -178,16 +237,28 @@ export default function MousePressForm({
               Duration (ms)
             </Text>
           </GridItem>
-          <GridItem w="full">
+          <VStack w="full">
             <Input
               type="number"
+              placeholder={String(DefaultMouseDelay)}
               variant="brandAccent"
               value={mousepressDuration}
               onChange={onMousepressDurationChange}
               onBlur={onInputBlur}
-              isInvalid={Number.isNaN(parseInt(mousepressDuration))}
+              isInvalid={Number.isNaN(mousepressDuration)}
             />
-          </GridItem>
+            <Button
+              variant="brandTertiary"
+              leftIcon={<ResetDefaultIcon />}
+              w="full"
+              value=""
+              m={1}
+              size={['sm', 'md']}
+              onClick={onResetClick}
+            >
+              <Text fontSize={['sm', 'md']}>Reset to Default</Text>
+            </Button>
+          </VStack>
         </Grid>
       )}
     </>

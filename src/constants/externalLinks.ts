@@ -1,8 +1,8 @@
-import { open } from '@tauri-apps/api/shell'
+import { shell } from '@tauri-apps/api'
 
 export const openDiscordLink = () => {
-  open('https://discord.gg/wooting')
+  shell.open('https://discord.gg/wooting')
 }
 export const openGithubLink = () => {
-  open('https://github.com/WootingKb/wooting-macros')
+  shell.open('https://github.com/WootingKb/wooting-macros')
 }

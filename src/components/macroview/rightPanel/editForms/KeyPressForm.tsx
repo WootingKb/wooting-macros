@@ -1,18 +1,30 @@
 import {
+  Button,
   Divider,
+  Flex,
   Grid,
   GridItem,
-  Flex,
-  Button,
+  HStack,
   Input,
-  Text
+  Text,
+  useColorModeValue,
+  useToast,
+  VStack
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useMacroContext } from '../../../../contexts/macroContext'
 import { KeyType } from '../../../../constants/enums'
-import { HIDLookup } from '../../../../constants/HIDmap'
-import { DownArrowIcon, DownUpArrowsIcon, UpArrowIcon } from '../../../icons'
+import {
+  DownArrowIcon,
+  DownUpArrowsIcon,
+  ResetDefaultIcon,
+  UpArrowIcon
+} from '../../../icons'
 import { KeyPressEventAction } from '../../../../types'
+
+import { BoxText } from '../EditArea'
+import { HIDLookup } from '../../../../constants/HIDmap'
+import { DefaultMacroDelay } from "../../../../constants";
 
 interface Props {
   selectedElementId: number
@@ -23,10 +35,12 @@ export default function KeyPressForm({
   selectedElementId,
   selectedElement
 }: Props) {
-  const [headingText, setHeadingText] = useState('')
-  const [keypressDuration, setKeypressDuration] = useState("1")
+  const [keypressDuration, setKeypressDuration] = useState(DefaultMacroDelay)
   const [keypressType, setKeypressType] = useState<KeyType>()
   const { updateElement } = useMacroContext()
+  const bg = useColorModeValue('primary-light.50', 'primary-dark.700')
+  const kebabColour = useColorModeValue('primary-light.500', 'primary-dark.500')
+  const toast = useToast()
 
   useEffect(() => {
     if (
@@ -37,26 +51,29 @@ export default function KeyPressForm({
 
     const typeString = selectedElement.data.keytype as keyof typeof KeyType
     setKeypressType(KeyType[typeString])
-    setKeypressDuration(selectedElement.data.press_duration.toString())
-    setHeadingText(
-      `Key ${HIDLookup.get(selectedElement.data.keypress)?.displayString}`
-    )
-  }, [selectedElement])
+    setKeypressDuration(keypressDuration)
+  }, [bg, kebabColour, selectedElement, keypressDuration])
 
   const onKeypressDurationChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setKeypressDuration(event.target.value)
+      setKeypressDuration(Number(event.target.value))
     },
     [setKeypressDuration]
   )
 
   const onInputBlur = useCallback(() => {
-    let duration
-    if (keypressDuration === '') {
-      duration = 0;
-    } else {
+    let duration = DefaultMacroDelay
 
-      duration = parseInt(keypressDuration)
+    if (keypressDuration >= DefaultMacroDelay) {
+      duration = keypressDuration
+    } else {
+      toast({
+        title: 'Minimum duration',
+        description: `Duration must be at least ${DefaultMacroDelay}ms`,
+        status: 'warning',
+        duration: 4000,
+        isClosable: true
+      })
       if (Number.isNaN(duration)) {
         return
       }
@@ -67,7 +84,31 @@ export default function KeyPressForm({
       data: { ...selectedElement.data, press_duration: duration }
     }
     updateElement(temp, selectedElementId)
-  }, [keypressDuration, selectedElement, selectedElementId, updateElement])
+  }, [
+    keypressDuration,
+    selectedElement,
+    selectedElementId,
+    toast,
+    updateElement
+  ])
+
+  const onResetClick = useCallback(() => {
+    toast({
+      title: 'Default duration applied',
+      description: `Applied default duration of ${DefaultMacroDelay}ms`,
+      status: 'info',
+      duration: 4000,
+      isClosable: true
+    })
+
+    setKeypressDuration(DefaultMacroDelay)
+
+    const temp: KeyPressEventAction = {
+      ...selectedElement,
+      data: { ...selectedElement.data, press_duration: DefaultMacroDelay }
+    }
+    updateElement(temp, selectedElementId)
+  }, [toast, selectedElement, updateElement, selectedElementId])
 
   const onKeypressTypeChange = useCallback(
     (newType: KeyType) => {
@@ -83,11 +124,13 @@ export default function KeyPressForm({
 
   return (
     <>
-      <Text w="full" fontWeight="semibold" fontSize={['sm', 'md']}>
-        {headingText}
-      </Text>
+      <HStack justifyContent="center" p={1}>
+        <BoxText>
+          {HIDLookup.get(selectedElement.data.keypress)?.displayString ?? ''}
+        </BoxText>
+      </HStack>
       <Divider />
-      <Grid templateRows={'20px 1fr'} gap="2" w="full">
+      <Grid templateRows="20px 1fr" gap="2" w="full">
         <GridItem w="full" h="8px" alignItems="center" justifyContent="center">
           <Text fontSize={['xs', 'sm', 'md']} fontWeight="semibold">
             Type of keystroke
@@ -100,7 +143,7 @@ export default function KeyPressForm({
             justifyContent="space-around"
           >
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownUpArrowsIcon />}
               w="full"
               size={['sm', 'md']}
@@ -110,7 +153,7 @@ export default function KeyPressForm({
               <Text fontSize={['md', 'md', 'sm']}>Full Press</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<DownArrowIcon />}
               w="full"
               size={['sm', 'md']}
@@ -120,7 +163,7 @@ export default function KeyPressForm({
               <Text fontSize={['md', 'md', 'sm']}>Key Down</Text>
             </Button>
             <Button
-              variant="brandAccentLight"
+              variant="brandTertiary"
               leftIcon={<UpArrowIcon />}
               w="full"
               size={['sm', 'md']}
@@ -144,16 +187,28 @@ export default function KeyPressForm({
               Duration (ms)
             </Text>
           </GridItem>
-          <GridItem w="full">
+          <VStack w="full">
             <Input
               type="number"
+              placeholder={String(DefaultMacroDelay)}
               variant="brandAccent"
               value={keypressDuration}
               onChange={onKeypressDurationChange}
               onBlur={onInputBlur}
-              isInvalid={Number.isNaN(parseInt(keypressDuration))}
+              isInvalid={Number.isNaN(keypressDuration)}
             />
-          </GridItem>
+            <Button
+              variant="brandTertiary"
+              leftIcon={<ResetDefaultIcon />}
+              w="full"
+              value=""
+              m={1}
+              size={['sm', 'md']}
+              onClick={onResetClick}
+            >
+              <Text fontSize={['sm', 'md']}>Reset to Default</Text>
+            </Button>
+          </VStack>
         </Grid>
       )}
     </>

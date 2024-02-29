@@ -3,8 +3,8 @@ import {
   HStack,
   Switch,
   Text,
-  useColorModeValue,
-  Tooltip
+  Tooltip,
+  useColorModeValue
 } from '@chakra-ui/react'
 import { Collection } from '../../types'
 
@@ -37,7 +37,7 @@ export default function CollectionButton({
       w="full"
       bg={isFocused ? buttonBg : ''}
       p="2"
-      rounded="md"
+      rounded='md'
       _hover={{ bg: buttonBg }}
       transition="ease-out 150ms"
     >

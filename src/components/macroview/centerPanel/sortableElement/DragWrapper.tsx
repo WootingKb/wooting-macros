@@ -31,6 +31,7 @@ export default function DragWrapper({ id, element, children }: Props) {
       w={element.type === 'DelayEventAction' ? 'fit-content' : 'full'}
       rounded="md"
       spacing="0px"
+      h="full"
       bg={
         selectedElementId !== undefined && id === selectedElementId + 1
           ? selectedBg
@@ -43,8 +44,8 @@ export default function DragWrapper({ id, element, children }: Props) {
         px={4}
         h="full"
         bg={handleBg}
-        roundedLeft="md"
         cursor="grab"
+        roundedLeft="md"
       >
         <DragHandleIcon w={4} h={8} color={handleIconColour} />
       </Center>

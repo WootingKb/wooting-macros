@@ -1,18 +1,22 @@
-import { VStack, HStack } from '@chakra-ui/react'
+import { HStack, VStack } from '@chakra-ui/react'
 import EditArea from '../components/macroview/rightPanel/EditArea'
 import SelectElementArea from '../components/macroview/leftPanel/SelectElementArea'
 import SequencingArea from '../components/macroview/centerPanel/SequencingArea'
 import Header from '../components/macroview/topArea/Header'
 import { useMacroContext } from '../contexts/macroContext'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
   isEditing: boolean
-  onOpenSettingsModal: () => void
+  onOpenMacroSettingsModal: () => void
 }
 
-export default function Macroview({ isEditing, onOpenSettingsModal }: Props) {
+export default function Macroview({
+  isEditing,
+  onOpenMacroSettingsModal
+}: Props) {
   const { changeIsUpdatingMacro } = useMacroContext()
+  const [searchValue, changeSearchValue] = useState('')
 
   useEffect(() => {
     changeIsUpdatingMacro(isEditing)
@@ -31,8 +35,11 @@ export default function Macroview({ isEditing, onOpenSettingsModal }: Props) {
         spacing="0"
       >
         {/** Bottom Panels */}
-        <SelectElementArea />
-        <SequencingArea onOpenSettingsModal={onOpenSettingsModal} />
+        <SelectElementArea
+          changeSearchValue={changeSearchValue}
+          searchValue={searchValue}
+        />
+        <SequencingArea onOpenMacroSettingsModal={onOpenMacroSettingsModal} />
         <EditArea />
       </HStack>
     </VStack>

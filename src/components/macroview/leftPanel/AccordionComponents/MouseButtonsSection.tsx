@@ -10,6 +10,7 @@ import {
 import { MouseInputInfo } from '../../../../constants/MouseMap'
 import { MouseIcon } from '../../../icons'
 import SelectElementButton from '../SelectElementButton'
+import { DefaultMouseDelay } from '../../../../constants'
 
 interface Props {
   elementsToRender: MouseInputInfo[]
@@ -23,7 +24,7 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
           <Flex
             flex="1"
             textAlign="left"
-            fontWeight={'semibold'}
+            fontWeight="semibold"
             alignItems="center"
             gap={2}
           >
@@ -38,8 +39,8 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
           h="fit"
           columns={{
             base: 2,
-            md: 4,
-            xl: 6
+            md: 3,
+            xl: 4
           }}
           px={4}
           spacing={2}
@@ -55,7 +56,7 @@ export default function MouseButtonsSection({ elementsToRender }: Props) {
                     data: {
                       type: 'DownUp',
                       button: info.enumVal,
-                      duration: 20
+                      duration: DefaultMouseDelay
                     }
                   }
                 }}

@@ -1,16 +1,16 @@
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
-  HStack,
+  Box,
+  Button,
   Flex,
+  HStack,
   IconButton,
   Input,
   Tooltip,
-  Button,
   useColorModeValue,
-  useDisclosure,
-  Box
+  useDisclosure
 } from '@chakra-ui/react'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplicationContext } from '../../../contexts/applicationContext'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { useSelectedMacro } from '../../../contexts/selectors'
@@ -144,6 +144,7 @@ export default function Header({ isEditing }: Props) {
         gap={4}
         shadow={shadowColour}
         justifyContent="space-between"
+        justifyItems="center"
       >
         <Flex maxW="400px" h="full" alignItems="center" gap="4">
           <IconButton

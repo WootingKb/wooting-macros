@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api'
 import { HIDCategory, MouseButton } from './enums'
 import {
   ActionEventType,
@@ -27,6 +27,9 @@ export const updateMacroOutput = (value: boolean): Promise<void> => {
   return invoke<void>('control_grabbing', {
     frontendBool: !value
   })
+}
+export const isDebug = (): Promise<boolean> => {
+  return invoke<boolean>('is_debug', {})
 }
 
 export const checkIfMouseButtonArray = (
@@ -135,15 +138,15 @@ export const scrollbarStylesLight = {
   },
   '&::-webkit-scrollbar-track': {
     background: '#D5DAE2',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#9EAABD',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#8392AA',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   }
 }
 
@@ -153,14 +156,16 @@ export const scrollbarsStylesDark = {
   },
   '&::-webkit-scrollbar-track': {
     background: '#27272a',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#3f3f46',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   },
   '&::-webkit-scrollbar-thumb:hover': {
     background: '#52525b',
-    borderRadius: '8px'
+    borderRadius: 'lg'
   }
 }
+
+
