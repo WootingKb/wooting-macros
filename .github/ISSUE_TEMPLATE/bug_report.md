@@ -22,7 +22,6 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows 10]
- - If USB problem: Motherboard type
 
 **Wootomation version**
 Find in your Wootomation settings
