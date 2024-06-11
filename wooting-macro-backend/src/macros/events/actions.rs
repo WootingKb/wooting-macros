@@ -87,11 +87,11 @@ impl ActionEventType {
                 tokio::time::sleep(time::Duration::from_millis(*data)).await;
             }
             ActionEventType::SystemEventAction { data } => {
-                data.execute(&send_channel).await?;
+                data.execute(send_channel).await?;
                 tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
             }
             ActionEventType::MouseEventAction { data } => {
-                data.execute(&send_channel).await?;
+                data.execute(send_channel).await?;
                 tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
             }
         }

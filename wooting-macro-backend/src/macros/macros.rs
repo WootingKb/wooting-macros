@@ -17,7 +17,7 @@ impl Macro {
         let macro_clone = macro_config.clone();
         tokio::task::spawn(async move {
             info!("Spawned a macro task");
-            MacroTask::new(task_receiver, macro_clone, macro_keypress_sender_clone).await;
+            MacroTask::start(task_receiver, macro_clone, macro_keypress_sender_clone).await;
         });
 
         debug!("Created a macro, name: {}", &macro_config.name);

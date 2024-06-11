@@ -3,7 +3,6 @@ use crate::macros::events::triggers::TriggerEventType;
 use crate::macros::macro_task::MacroTaskEvent;
 use crate::macros::macros::MacroType;
 
-use log::*;
 use tokio::sync::mpsc::UnboundedSender;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

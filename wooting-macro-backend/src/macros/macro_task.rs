@@ -23,7 +23,7 @@ pub struct MacroTask {
 }
 
 impl MacroTask {
-    pub async fn new(
+    pub async fn start(
         mut receive_channel: UnboundedReceiver<MacroTaskEvent>,
         // Only sequence probably needed here
         // TODO: Config will be a part of the Macro itself
@@ -38,7 +38,7 @@ impl MacroTask {
         loop {
             // This ugly way of checking the channel is done only when there is a new message pending,
             // otherwise we would block the thread
-            if receive_channel.len() > 0 {
+            if !receive_channel.is_empty() {
                 message_len = receive_channel
                     .recv_many(&mut buffer, receive_channel.len())
                     .await;
@@ -46,7 +46,7 @@ impl MacroTask {
 
             // If the message isn't present, we skip this as well. Note we check the actual
             // parsed message buffer.
-            if buffer.len() > 0 {
+            if !buffer.is_empty() {
                 debug!(
                     "value in channel: {:?}, received {message_len} messages",
                     buffer
@@ -63,7 +63,7 @@ impl MacroTask {
                         stop_after_running = Some(*amount);
                     }
                     MacroTaskEvent::RepeatStart => {
-                        if is_running == false {
+                        if !is_running {
                             error!("Executing starting a repeat macro");
                             is_running = true;
                             stop_after_running = None;
@@ -112,11 +112,8 @@ impl MacroTask {
                     }
                 }
                 // If it's a single macro, always stop running, else don't care.
-                match macro_data.macro_type {
-                    MacroType::Single => {
-                        is_running = false;
-                    }
-                    _ => (),
+                if macro_data.macro_type == MacroType::Single {
+                    is_running = false;
                 }
             } else {
                 // Small pause to not spam the CPU as this is polling based.

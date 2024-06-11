@@ -17,7 +17,7 @@ pub mod input {
     use crate::hid_table::*;
     use crate::macros::macro_data::MacroLookup;
     use crate::plugin::delay::DEFAULT_DELAY;
-    use crate::plugin::mouse;
+
     use crate::RwLock;
 
     pub async fn check_keypress_simon(
@@ -51,7 +51,7 @@ pub mod input {
                             // Add the keys to the array
                             current_pressed_keys
                                 .blocking_write()
-                                .push(*RDEV_TO_HID.get(&key).unwrap_or_else(|| &0));
+                                .push(*RDEV_TO_HID.get(&key).unwrap_or(&0));
 
                             // Make a copy of current values to prevent a deadlock
                             let current_pressed_keys_clone =
@@ -86,12 +86,13 @@ pub mod input {
                         }
                         // Only check KeyRelease and not Simulated Key Release
                         EventType::KeyRelease(key) => {
-                            *previously_pressed_keys.blocking_write() =
-                                current_pressed_keys.blocking_read().clone();
+                            previously_pressed_keys
+                                .blocking_write()
+                                .clone_from(&current_pressed_keys.blocking_read());
 
                             current_pressed_keys
                                 .blocking_write()
-                                .retain(|x| x != RDEV_TO_HID.get(&key).unwrap_or_else(|| &0));
+                                .retain(|x| x != RDEV_TO_HID.get(&key).unwrap_or(&0));
 
                             // Check if the macro corresponds and if to consume the trigger
                             let _ = check_macro_execution_simply(
@@ -151,11 +152,11 @@ pub mod input {
         loop {
             if inner_is_listening.load(Ordering::Relaxed) {
                 if let Some(event) = manager.get_event() {
-                    match event {
-                        RawEvent::KeyboardEvent(_, key, event) => match event {
+                    if let RawEvent::KeyboardEvent(_, key, event) = event {
+                        match event {
                             State::Pressed => {
                                 current_pressed_keys
-                                    .push(*MULTIINPUT_TO_HID.get(&key).unwrap_or_else(|| &0));
+                                    .push(*MULTIINPUT_TO_HID.get(&key).unwrap_or(&0));
                                 current_pressed_keys =
                                     current_pressed_keys.into_iter().unique().collect();
 
@@ -175,11 +176,10 @@ pub mod input {
                                 // }
                             }
                             State::Released => {
-                                previously_pressed_keys = current_pressed_keys.clone();
+                                previously_pressed_keys.clone_from(&current_pressed_keys);
 
-                                current_pressed_keys.retain(|x| {
-                                    x != MULTIINPUT_TO_HID.get(&key).unwrap_or_else(|| &0)
-                                });
+                                current_pressed_keys
+                                    .retain(|x| x != MULTIINPUT_TO_HID.get(&key).unwrap_or(&0));
 
                                 // if current_pressed_keys != previously_pressed_keys {
                                 //     debug!("RELEASED");
@@ -188,8 +188,7 @@ pub mod input {
                                 //     debug!("----------");
                                 // }
                             }
-                        },
-                        _ => {}
+                        }
                     }
                 }
                 tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
