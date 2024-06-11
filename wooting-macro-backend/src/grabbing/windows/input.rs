@@ -93,12 +93,13 @@ pub mod input {
                                 .blocking_write()
                                 .retain(|x| x != RDEV_TO_HID.get(&key).unwrap_or_else(|| &0));
 
-                            // if *current_pressed_keys.blocking_read() != *previously_pressed_keys.blocking_read() {
-                            //     debug!("RELEASED");
-                            //     debug!("Key status Current: {:?}", *current_pressed_keys.blocking_read());
-                            //     debug!("Key status Previous: {:?}", *previously_pressed_keys.blocking_read());
-                            //     debug!("=========\n");
-                            // }
+                            // Check if the macro corresponds and if to consume the trigger
+                            let _ = check_macro_execution_simply(
+                                &current_pressed_keys.blocking_read(),
+                                &previously_pressed_keys.blocking_read(),
+                                map.clone(),
+                                &schan_macro_execute_inner,
+                            );
 
                             Some(event)
                         }
