@@ -17,7 +17,6 @@ use tauri::{
 };
 use tauri_plugin_log::fern::colors::{Color, ColoredLevelConfig};
 
-use wooting_macro_backend::config;
 use wooting_macro_backend::config::{ApplicationConfig, ConfigFile, LogDirPath};
 use wooting_macro_backend::macros::events::triggers::MacroIndividualCommand;
 use wooting_macro_backend::macros::macro_data::MacroData;
@@ -67,10 +66,10 @@ async fn set_macros(
 #[tauri::command]
 async fn is_debug() -> Result<bool, String> {
     if let Ok(result) = std::env::var(DEBUG_ENVVAR) {
-        return Ok(
+        Ok(
             log::LevelFilter::from_str(result.as_str()).map_err(|err| err.to_string())?
                 >= log::LevelFilter::Debug,
-        );
+        )
     } else {
         Ok(false)
     }
@@ -89,7 +88,7 @@ async fn control_grabbing(
 #[tauri::command]
 /// Allows the frontend to control a macro's state directly
 async fn execute_macro(
-    mut state: tauri::State<'_, MacroBackend>,
+    state: tauri::State<'_, MacroBackend>,
     macro_name: String,
     action_type: MacroIndividualCommand,
 ) -> Result<(), String> {
@@ -176,7 +175,7 @@ async fn main() -> Result<(), Error> {
         ])
             .setup(move |app| {
                 let app_name = &app.package_info().name;
-                init_autostart(&app_name, set_autolaunch).unwrap_or_else(|err| {
+                init_autostart(app_name, set_autolaunch).unwrap_or_else(|err| {
                     error!("error changing the autostart options: {}", err.to_string())
                 });
 

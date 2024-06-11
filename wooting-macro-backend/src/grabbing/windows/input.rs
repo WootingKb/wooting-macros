@@ -61,13 +61,6 @@ pub mod input {
                             *current_pressed_keys.blocking_write() =
                                 current_pressed_keys_clone.into_iter().unique().collect();
 
-                            // if *current_pressed_keys.blocking_read() != *previously_pressed_keys.blocking_read() {
-                            //     debug!("PRESSED {:?}", key);
-                            //     debug!("Key status Current: {:?}", *current_pressed_keys.blocking_read());
-                            //     debug!("Key status Previous: {:?}", *previously_pressed_keys.blocking_read());
-                            //     debug!("----------");
-                            // }
-
                             // Check if the macro corresponds and if to consume the trigger
                             let consume = check_macro_execution_simply(
                                 &current_pressed_keys.blocking_read(),
@@ -167,26 +160,12 @@ pub mod input {
                                     &schan_macro_execute,
                                 )
                                 .await;
-
-                                // if current_pressed_keys != previously_pressed_keys {
-                                //     debug!("PRESSED");
-                                //     debug!("Key status Current: {:?}", current_pressed_keys);
-                                //     debug!("Key status Previous: {:?}", previously_pressed_keys);
-                                //     debug!("----------");
-                                // }
                             }
                             State::Released => {
                                 previously_pressed_keys.clone_from(&current_pressed_keys);
 
                                 current_pressed_keys
                                     .retain(|x| x != MULTIINPUT_TO_HID.get(&key).unwrap_or(&0));
-
-                                // if current_pressed_keys != previously_pressed_keys {
-                                //     debug!("RELEASED");
-                                //     debug!("Key status Current: {:?}", current_pressed_keys);
-                                //     debug!("Key status Previous: {:?}", previously_pressed_keys);
-                                //     debug!("----------");
-                                // }
                             }
                         }
                     }
