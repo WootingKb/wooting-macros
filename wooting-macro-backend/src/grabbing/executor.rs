@@ -40,7 +40,6 @@ pub mod input {
     pub async fn macro_executor(
         mut rchan_execute: UnboundedReceiver<MacroExecutorEvent>,
         macro_id_list: Arc<RwLock<MacroLookup>>,
-        // schan_keypress_execute: UnboundedSender<rdev::EventType>,
     ) {
         loop {
             if let Some(macro_event) = rchan_execute.recv().await {

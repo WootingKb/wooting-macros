@@ -48,25 +48,16 @@ impl ActionEventType {
                 key_press::KeyType::Down => {
                     // One key press down
                     send_channel.send(rdev::EventType::KeyPress(HID_TO_RDEV[&data.keypress]))?;
-                    // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
-                    //     RDEV_TO_HID[&data.keypress],
-                    // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                 }
                 key_press::KeyType::Up => {
                     // One key lift up
                     send_channel.send(rdev::EventType::KeyRelease(HID_TO_RDEV[&data.keypress]))?;
-                    // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
-                    //     RDEV_TO_HID[&data.keypress],
-                    // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                 }
                 key_press::KeyType::DownUp => {
                     // Key press
                     send_channel.send(rdev::EventType::KeyPress(HID_TO_RDEV[&data.keypress]))?;
-                    // plugin::util::direct_send_event(&rdev::EventType::KeyPress(
-                    //     RDEV_TO_HID[&data.keypress],
-                    // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
 
                     // Wait the set delay by user
@@ -74,9 +65,6 @@ impl ActionEventType {
 
                     // Lift the key
                     send_channel.send(rdev::EventType::KeyRelease(HID_TO_RDEV[&data.keypress]))?;
-                    // plugin::util::direct_send_event(&rdev::EventType::KeyRelease(
-                    //     RDEV_TO_HID[&data.keypress],
-                    // ))?;
                     tokio::time::sleep(time::Duration::from_millis(DEFAULT_DELAY)).await;
                 }
             },
