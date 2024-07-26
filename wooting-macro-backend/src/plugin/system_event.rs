@@ -41,7 +41,7 @@ impl SystemAction {
                 }
                 DirectoryAction::Website { data } => {
                     // The open_browser explicitly opens the path in a browser window.
-                    opener::open_browser(data.as_str())?;
+                    opener::open(data.as_str())?;
                 }
             },
             SystemAction::Volume { action } => match action {
