@@ -106,6 +106,29 @@ impl SystemAction {
                     // Paste the text again
                     util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
                 }
+
+                ClipboardAction::Spongebob => {
+                    let mut ctx = ClipboardContext::new()
+                        .map_err(|err| anyhow::Error::msg(err.to_string()))?;
+
+                    // Copy the text
+                    util::direct_send_hotkey(&send_channel, COPY_HOTKEY.to_vec()).await?;
+
+                    // Delay is required to make Discord, and some other apps cooperate properly.
+                    tokio::time::sleep(time::Duration::from_millis(10)).await;
+
+                    // Transform the text
+                    let content = spongebob_text_transform(
+                        ctx.get_contents()
+                            .map_err(|err| anyhow::Error::msg(err.to_string()))?,
+                    );
+
+                    ctx.set_contents(content)
+                        .map_err(|err| anyhow::Error::msg(err.to_string()))?;
+
+                    // Paste the text again
+                    util::direct_send_hotkey(&send_channel, PASTE_HOTKEY.to_vec()).await?;
+                }
             },
         }
         Ok(())
@@ -129,6 +152,20 @@ fn transform_text(text: String) -> String {
         .collect()
 }
 
+// Spongebob text transformation
+fn spongebob_text_transform(text: String) -> String {
+    text.chars()
+        .enumerate()
+        .map(|(i, c)| {
+            if i % 2 == 0 {
+                c.to_ascii_uppercase()
+            } else {
+                c.to_ascii_lowercase()
+            }
+        })
+        .collect()
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
 #[serde(tag = "type")]
 /// The type of action to perform. This is used to determine which action to perform.
@@ -139,6 +176,7 @@ pub enum ClipboardAction {
     Paste,
     PasteUserDefinedString { data: String },
     Sarcasm,
+    Spongebob,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]

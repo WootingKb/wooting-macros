@@ -31,6 +31,7 @@ log = "0.4"
 env_logger = "0.11"
 rayon = "1.8"
 url = "2.5"
+time = "0.3.36"
 
 [profile.release]
 lto = true

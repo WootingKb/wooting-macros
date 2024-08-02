@@ -180,6 +180,7 @@ export type ClipboardAction =
   | { type: 'Paste' }
   | { type: 'PasteUserDefinedString'; data: string }
   | { type: 'Sarcasm' }
+  | { type: 'Spongebob' }
 
 export type VolumeAction =
   | { type: 'LowerVolume' }

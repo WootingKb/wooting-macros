@@ -61,6 +61,18 @@ export class SystemEvent {
       description: "Randomly capitalizes some letters in the currently highlighted text."
     }
   }
+  static get Spongebob(): SystemEventInfo {
+    return {
+      type: 'Clipboard',
+      subtype: 'Spongebob',
+      displayString: 'SpOnGeBoB tExT',
+      defaultData: {
+        type: 'Clipboard',
+        action: { type: 'Spongebob' }
+      },
+      description: "Alternating capitalization of letters in the currently highlighted text."
+    }
+  }
   static get IncreaseVolume(): SystemEventInfo {
     return {
       type: 'Volume',
@@ -95,6 +107,7 @@ export class SystemEvent {
     SystemEvent.OpenWebsite,
     SystemEvent.Clipboard,
     SystemEvent.Sarcasm,
+    SystemEvent.Spongebob,
     SystemEvent.IncreaseVolume,
     SystemEvent.DecreaseVolume,
     SystemEvent.ToggleMuteVolume,
