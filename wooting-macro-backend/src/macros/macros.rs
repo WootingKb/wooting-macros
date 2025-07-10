@@ -44,6 +44,12 @@ impl Macro {
                     self.task_sender.send(MacroTaskEvent::OneShot).unwrap();
                 }
             }
+            MacroType::Release => {
+                if let MacroTriggerEvent::Released = event {
+                    warn!("Sending oneshot macro");
+                    self.task_sender.send(MacroTaskEvent::OneShot).unwrap();
+                }
+            }
             MacroType::Toggle => {
                 if let MacroTriggerEvent::Pressed = event {
                     warn!("Toggling");
@@ -80,6 +86,8 @@ impl Macro {
 pub enum MacroType {
     // Single macro fire
     Single,
+    // Trigger when released
+    Release,
     // press to start, press to finish cycle and terminate
     Toggle,
     // while held Execute macro (repeats)

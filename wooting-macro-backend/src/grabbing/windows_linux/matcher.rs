@@ -9,63 +9,32 @@ pub mod input {
 
     use crate::macros::events::triggers::TriggerEventType;
     use crate::macros::macro_data::MacroLookup;
-    use crate::macros::macros::MacroType;
 
-    pub fn check_macro_execution_simply(
-        current_pressed_keys: &Vec<u32>,
-        previously_pressed_keys: &Vec<u32>,
+    pub fn check_press_macro_execution(
+        pressed_modifier_keys: &Vec<u32>,
+        key: &u32,
         triggers: Arc<RwLock<MacroLookup>>,
         schan_macro_execute: &UnboundedSender<MacroExecutorEvent>,
     ) -> bool {
         let mut return_value = false;
         for (macro_id, macro_data) in triggers.blocking_read().id_map.iter() {
-            // Get the macro trigger
             match &macro_data.config.trigger {
                 TriggerEventType::KeyPressEvent { data, .. } => {
-                    match (data, &current_pressed_keys, &previously_pressed_keys) {
-                        // If the keys are the same, skip checking
-                        (_trigger_combo, pressed, pressed_previous)
-                            if pressed == pressed_previous
-                                && macro_data.config.macro_type == MacroType::OnHold =>
-                        {
-                            // Consumption of the trigger key (when held)
-                            return_value = false;
-                        }
-                        // If the keys are different and its a trigger key pressed, start a macro
-                        (trigger_combo, pressed, _pressed_previous)
-                            if trigger_combo.iter().all(|x| pressed.contains(x)) =>
-                        {
-                            schan_macro_execute
-                                .send(MacroExecutorEvent::Start(macro_id.clone()))
-                                .unwrap();
-                            // Consumption of the trigger key (when macro triggered)
-                            return_value = true;
-                        }
-                        // If the keys are different and its a trigger key released, stop a macro
-                        (trigger_combo, _pressed, pressed_previous)
-                            if trigger_combo.iter().all(|x| pressed_previous.contains(x)) =>
-                        {
-                            schan_macro_execute
-                                .send(MacroExecutorEvent::Stop(macro_id.clone()))
-                                .unwrap();
-
-                            // We don't consume the value here.
-                        }
-                        // Anything else just ignore
-                        _ => {}
+                    let mut keys = pressed_modifier_keys.clone();
+                    keys.push(*key);
+                    if data.iter().all(|x| keys.contains(x)) {
+                        schan_macro_execute
+                            .send(MacroExecutorEvent::Start(macro_id.clone()))
+                            .unwrap();
+                        return_value = true;
                     }
                 }
                 TriggerEventType::MouseEvent { data } => {
-                    match (data, current_pressed_keys, previously_pressed_keys) {
-                        (trigger_combo, pressed, _pressed_previous)
-                            if pressed.iter().all(|x: &u32| u32::from(trigger_combo) == *x) =>
-                        {
-                            schan_macro_execute
-                                .send(MacroExecutorEvent::Start(macro_id.clone()))
-                                .unwrap();
-                            return_value = true;
-                        }
-                        _ => {}
+                    if *key == u32::from(data) {
+                        schan_macro_execute
+                            .send(MacroExecutorEvent::Start(macro_id.clone()))
+                            .unwrap();
+                        return_value = true;
                     }
                 }
             }
@@ -73,4 +42,36 @@ pub mod input {
 
         return_value
     }
+
+    pub fn check_release_macro_execution(
+        _pressed_modifier_keys: &Vec<u32>,
+        key: &u32,
+        triggers: Arc<RwLock<MacroLookup>>,
+        schan_macro_execute: &UnboundedSender<MacroExecutorEvent>,
+    ) -> bool {
+        let mut return_value = false;
+        for (macro_id, macro_data) in triggers.blocking_read().id_map.iter() {
+            match &macro_data.config.trigger {
+                TriggerEventType::KeyPressEvent { data, .. } => {
+                    if data.last().unwrap() == key {
+                        schan_macro_execute
+                            .send(MacroExecutorEvent::Stop(macro_id.clone()))
+                            .unwrap();
+                        return_value = true;
+                    }
+
+                }
+                TriggerEventType::MouseEvent { data } => {
+                    if *key == u32::from(data) {
+                        schan_macro_execute
+                            .send(MacroExecutorEvent::Stop(macro_id.clone()))
+                            .unwrap();
+                        return_value = true;
+                    }
+                }
+            }
+        }
+        return_value
+    }
 }
+

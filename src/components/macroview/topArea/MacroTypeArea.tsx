@@ -12,10 +12,12 @@ import {
   VStack
 } from '@chakra-ui/react'
 import {
+  HiArrowDown,
   HiArrowDownTray,
   HiArrowPath,
   HiArrowPathRoundedSquare,
-  HiArrowRight
+  HiArrowRight,
+  HiArrowUp
 } from 'react-icons/hi2'
 import { useMacroContext } from '../../../contexts/macroContext'
 import { MacroType, MacroTypeDefinitions } from '../../../constants/enums'
@@ -30,7 +32,8 @@ export default function MacroTypeArea() {
   const secondBg = useColorModeValue('blue.50', 'gray.900')
   const primaryBg = useMainBgColour()
   const typeIcons = [
-    <HiArrowRight />,
+    <HiArrowDown />,
+    <HiArrowUp />,
     <HiArrowPath />,
     <HiArrowDownTray />,
     <HiArrowPathRoundedSquare />

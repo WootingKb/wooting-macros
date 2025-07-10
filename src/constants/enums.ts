@@ -7,6 +7,7 @@ export enum ViewState {
 /** Currently unused */
 export enum MacroType {
   Single,
+  Release,
   Toggle,
   OnHold, // TODO: need to add space later when displaying the macro type name text
   RepeatX,
@@ -17,6 +18,7 @@ export enum MacroType {
 /** Currently unused */
 export const MacroTypeDefinitions: string[] = [
   'SINGLE:\nThe macro will play once after the trigger key(s) is pressed.',
+  'RELEASE:\nThe macro will play once after the trigger key(s) is released.',
   'TOGGLE (BETA):\nThe macro will continuously repeat until the trigger key(s) is pressed again.',
   'ON HOLD (BETA):\nThe macro will only play while the trigger key(s) is pressed.',
   'REPEAT:\nThe macro will play X amount of times after the trigger key(s) is pressed.',
