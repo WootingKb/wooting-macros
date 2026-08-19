@@ -10,7 +10,7 @@ type Props = {
 export default function Overview({ onOpenSettingsModal }: Props) {
   const [searchValue, changeSearchValue] = useState('')
   return (
-    <HStack minH="100vh" spacing="0" overflow="hidden">
+    <HStack minH="100vh" spacing="0">
       <LeftPanel
         onOpenSettingsModal={onOpenSettingsModal}
         changeSearchValue={changeSearchValue}

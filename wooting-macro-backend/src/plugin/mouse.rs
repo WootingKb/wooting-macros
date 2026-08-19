@@ -1,5 +1,4 @@
 use anyhow::Result;
-use log::*;
 use serde_repr;
 use tokio::sync::mpsc::UnboundedSender;
 
@@ -62,10 +61,9 @@ impl MouseAction {
             },
 
             MouseAction::Move { x, y } => {
-                let display_size = rdev::display_size().map_err(|err| {
+                let _display_size = rdev::display_size().map_err(|err| {
                     anyhow::Error::msg(format!("Error getting displays: {:?}", err))
                 })?;
-                info!("Display size: {:?}", display_size);
 
                 send_channel.send(rdev::EventType::MouseMove {
                     x: *x as f64,

@@ -20,6 +20,7 @@ import { Macro } from '../../types'
 import { HIDLookup } from '../../constants/HIDmap'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
+import { ViewState } from '../../constants/enums'
 import { mouseEnumLookup } from '../../constants/MouseMap'
 import { useCallback, useMemo } from 'react'
 import { KebabVertical } from '../icons'
@@ -40,7 +41,7 @@ export default function MacroCard({
   collectionName,
   searchValue
 }: Props) {
-  const { selection, onCollectionUpdate, changeSelectedMacroIndex } =
+  const { selection, onCollectionUpdate, changeSelectedMacroIndex, changeViewState } =
     useApplicationContext()
   const currentCollection = useSelectedCollection()
   const secondBg = useColorModeValue('blue.50', 'gray.800')
@@ -86,6 +87,8 @@ export default function MacroCard({
       m="auto"
       justifyContent="space-between"
       spacing={4}
+      overflow="visible"
+      position="relative"
     >
       {/** Top Row */}
       <HStack
@@ -93,6 +96,8 @@ export default function MacroCard({
         justifyContent="space-between"
         alignItems="flex-end"
         spacing={0}
+        overflow="visible"
+        zIndex={1}
       >
         <Flex w="full" gap={2} alignItems="center">
           <Box
@@ -111,16 +116,17 @@ export default function MacroCard({
             {macro.name}
           </Text>
         </Flex>
-        <Menu variant="brand">
+        <Menu variant="brand" placement="left-end">
           <MenuButton
             h="24px"
             aria-label="macro options"
             color={kebabColour}
             _hover={{ color: kebabHoverColour }}
+            zIndex={10}
           >
             <KebabVertical />
           </MenuButton>
-          <MenuList p="2" right={0}>
+          <MenuList p="2">
             <MenuItem onClick={onDuplicate}>Duplicate</MenuItem>
             {/* <MenuItem isDisabled>Move to Collection</MenuItem> */}
             {/* <MenuItem isDisabled>Export</MenuItem> */}
@@ -135,38 +141,40 @@ export default function MacroCard({
         </Menu>
       </HStack>
       {/** Trigger Keys Display */}
-      <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
-        {isSearching && (
-          <HStack alignSelf="flex-start">
-            <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
-              {collectionName}
-            </Text>
-          </HStack>
-        )}
-        <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
-          Trigger Keys
-        </Text>
-        <Flex
-          w="full"
-          gap="4px"
-          bg={secondBg}
-          rounded="md"
-          p="9px"
-          shadow="inner"
-        >
-          {macro.trigger.type === 'KeyPressEvent' &&
-            macro.trigger.data.map((HIDcode) => (
-              <Kbd fontSize="md" variant="brand" key={HIDcode}>
-                {HIDLookup.get(HIDcode)?.displayString}
-              </Kbd>
-            ))}
-          {macro.trigger.type === 'MouseEvent' && (
-            <Kbd fontSize="md" variant="brand">
-              {mouseEnumLookup.get(macro.trigger.data)?.displayString}
-            </Kbd>
+      {!macro.mouse_emulation_enabled && (
+        <VStack w="full" spacing={1} opacity={macro.active ? 1 : 0.5}>
+          {isSearching && (
+            <HStack alignSelf="flex-start">
+              <Text fontSize="sm" fontWeight="thin" color={subtextColour}>
+                {collectionName}
+              </Text>
+            </HStack>
           )}
-        </Flex>
-      </VStack>
+          <Text fontSize="sm" color={subtextColour} alignSelf="self-start">
+            Trigger Keys
+          </Text>
+          <Flex
+            w="full"
+            gap="4px"
+            bg={secondBg}
+            rounded="md"
+            p="9px"
+            shadow="inner"
+          >
+            {macro.trigger.type === 'KeyPressEvent' &&
+              macro.trigger.data.map((HIDcode) => (
+                <Kbd fontSize="md" variant="brand" key={HIDcode}>
+                  {HIDLookup.get(HIDcode)?.displayString}
+                </Kbd>
+              ))}
+            {macro.trigger.type === 'MouseEvent' && (
+              <Kbd fontSize="md" variant="brand">
+                {mouseEnumLookup.get(macro.trigger.data)?.displayString}
+              </Kbd>
+            )}
+          </Flex>
+        </VStack>
+      )}
       {/** Buttons */}
       <Flex w="full" alignItems="center" justifyContent="space-between">
         <Button
@@ -174,7 +182,13 @@ export default function MacroCard({
           variant="yellowGradient"
           leftIcon={<EditIcon />}
           onClick={() => {
-            changeSelectedMacroIndex(index)
+            if (macro.mouse_emulation_enabled) {
+              // For mouse emulation macros, go to mouse emulation config view
+              changeViewState(ViewState.MouseEmulationConfig)
+            } else {
+              // For regular macros, go to macro editor
+              changeSelectedMacroIndex(index)
+            }
           }}
         >
           Edit

@@ -114,6 +114,8 @@ export interface Macro {
   macro_type: string
   trigger: TriggerEventType
   sequence: ActionEventType[]
+  mouse_emulation_config?: any // MouseEmulationConfig
+  mouse_emulation_enabled?: boolean
 }
 
 export interface Collection {

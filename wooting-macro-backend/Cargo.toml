@@ -13,8 +13,12 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 tauri = { version = "1.5", features = ["api-all", "icon-png", "system-tray"] }
 rdev = { git = "https://github.com/medzernik/rdev", branch = "main", features = ["evdev-rs", "serialize", "serde", "epoll", "inotify", "unstable_grab"] }
+enigo = "0.2"
+once_cell = "1.19"
+uuid = { version = "1.6", features = ["v4", "serde"] }
 halfbrown = { version = "0.2", features = ["serde"] }
 lazy_static = "1.4"
+libloading = "0.8"
 tokio = { version = "1.36", features = ["full"] }
 tokio-serde = { version = "0.9", features = ["json"] }
 opener = "0.6"
@@ -31,6 +35,8 @@ log = "0.4"
 env_logger = "0.11"
 rayon = "1.8"
 url = "2.5"
+time = "0.3.36"
+winapi = { version = "0.3", features = ["winuser"] }
 
 [profile.release]
 lto = true

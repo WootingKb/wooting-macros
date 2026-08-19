@@ -3,6 +3,7 @@ import Overview from './views/Overview'
 import { ViewState } from './constants/enums'
 import { useApplicationContext } from './contexts/applicationContext'
 import Macroview from './views/Macroview'
+import MouseEmulationView from './views/MouseEmulationView'
 import { useEffect } from 'react'
 import data from '@emoji-mart/data'
 import { init } from 'emoji-mart'
@@ -97,6 +98,9 @@ function App() {
             onOpenMacroSettingsModal={onOpenMacroSettings}
           />
         </MacroProvider>
+      )}
+      {viewState === ViewState.MouseEmulationConfig && (
+        <MouseEmulationView />
       )}
       <SettingsModal isOpen={isOpenSettings} onClose={onCloseSettings} />
       <MacroSettingsModal

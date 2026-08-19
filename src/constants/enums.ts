@@ -1,7 +1,8 @@
 export enum ViewState {
   Overview,
   Addview,
-  Editview
+  Editview,
+  MouseEmulationConfig
 }
 
 /** Currently unused */

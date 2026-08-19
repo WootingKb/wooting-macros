@@ -41,7 +41,9 @@ const macroDefault: Macro = {
   active: true,
   macro_type: 'Single',
   trigger: { type: 'KeyPressEvent', data: [], allow_while_other_keys: false },
-  sequence: []
+  sequence: [],
+  mouse_emulation_config: undefined,
+  mouse_emulation_enabled: false
 }
 
 function MacroProvider({ children }: MacroProviderProps) {

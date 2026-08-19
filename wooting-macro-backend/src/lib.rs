@@ -11,7 +11,6 @@ use halfbrown::HashMap;
 use itertools::Itertools;
 use log::*;
 use rayon::prelude::*;
-use rdev::simulate;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::sync::RwLock;
 use tokio::task;
@@ -28,6 +27,7 @@ use crate::plugin::delay;
 use crate::plugin::discord;
 use crate::plugin::key_press;
 use crate::plugin::mouse;
+use crate::plugin::mouse_emulation::{self, MouseEmulationAction};
 #[allow(unused_imports)]
 use crate::plugin::obs;
 use crate::plugin::phillips_hue;
@@ -72,6 +72,9 @@ pub enum ActionEventType {
     MouseEventAction {
         data: mouse::MouseAction,
     },
+    MouseEmulationAction {
+        data: mouse_emulation::MouseEmulationAction,
+    },
     //IDEA: Sound effects? Soundboards?
     //IDEA: Sending a message through online webapi (twitch)
     DelayEventAction {
@@ -105,6 +108,10 @@ pub struct Macro {
     pub macro_type: MacroType,
     pub trigger: TriggerEventType,
     pub active: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mouse_emulation_config: Option<serde_json::Value>,
+    #[serde(default)]
+    pub mouse_emulation_enabled: bool,
 }
 
 impl Macro {
@@ -157,6 +164,11 @@ impl Macro {
                     let channel_copy = send_channel.clone();
                     task::spawn(async move { action_copy.execute(channel_copy).await });
                 }
+                ActionEventType::MouseEmulationAction { data } => {
+                    let action_copy = data.clone();
+                    let channel_copy = send_channel.clone();
+                    task::spawn(async move { action_copy.execute(channel_copy).await });
+                }
             }
         }
         Ok(())
@@ -176,6 +188,7 @@ pub struct MacroBackend {
     pub config: Arc<RwLock<ApplicationConfig>>,
     pub triggers: Arc<RwLock<MacroTriggerLookup>>,
     pub is_listening: Arc<AtomicBool>,
+    pub event_channel: Arc<RwLock<Option<UnboundedSender<rdev::EventType>>>>,
 }
 
 ///MacroData is the main data structure that contains all macro data.
@@ -206,6 +219,11 @@ impl MacroData {
             if collections.active {
                 for macros in &collections.macros {
                     if macros.active {
+                        // Skip trigger extraction for mouse emulation macros (they run in background)
+                        if macros.mouse_emulation_enabled {
+                            continue;
+                        }
+
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
@@ -422,9 +440,61 @@ impl MacroBackend {
     }
     /// Sets the macros from the frontend to the files. This function is here to completely split the frontend off.
     pub async fn set_macros(&self, macros: MacroData) -> Result<()> {
+        // First, stop all running mouse emulation sessions gracefully
+        info!("Stopping all mouse emulation sessions before updating macros");
+        let channel_guard = self.event_channel.read().await;
+        if let Some(tx) = channel_guard.as_ref() {
+            MouseEmulationAction::Stop.execute(tx.clone()).await?;
+        }
+        drop(channel_guard);
+        
+        // Give threads a moment to shut down cleanly
+        tokio::time::sleep(time::Duration::from_millis(50)).await;
+        
         macros.write_to_file()?;
         *self.triggers.write().await = macros.extract_triggers()?;
-        *self.data.write().await = macros;
+        *self.data.write().await = macros.clone();
+        
+        // Auto-start any mouse emulation macros that are active
+        self.start_mouse_emulation_macros(&macros).await?;
+        
+        Ok(())
+    }
+
+    /// Auto-start all active mouse emulation macros
+    async fn start_mouse_emulation_macros(&self, macros: &MacroData) -> Result<()> {
+        for collections in &macros.data {
+            if collections.active {
+                for macro_item in &collections.macros {
+                    if macro_item.active && macro_item.mouse_emulation_enabled {
+                        if let Some(config_value) = &macro_item.mouse_emulation_config {
+                            // Try to deserialize the config from JSON
+                            let config = match serde_json::from_value::<mouse_emulation::MouseEmulationConfig>(config_value.clone()) {
+                                Ok(config) => {
+                                    info!("Loaded mouse emulation config for: {}", macro_item.name);
+                                    config
+                                }
+                                Err(e) => {
+                                    warn!("Failed to parse mouse emulation config for {}: {}. Using defaults.", macro_item.name, e);
+                                    warn!("Config value was: {:?}", config_value);
+                                    mouse_emulation::MouseEmulationConfig::default()
+                                }
+                            };
+                            
+                            info!("Auto-starting mouse emulation macro: {}", macro_item.name);
+                            // Get the real event channel that's connected to the event executor
+                            let channel_guard = self.event_channel.read().await;
+                            if let Some(tx) = channel_guard.as_ref() {
+                                let action = MouseEmulationAction::Start { config };
+                                action.execute(tx.clone()).await?;
+                            } else {
+                                warn!("Event channel not initialized yet, cannot start mouse emulation");
+                            }
+                        }
+                    }
+                }
+            }
+        }
         Ok(())
     }
 
@@ -447,6 +517,12 @@ impl MacroBackend {
 
         // Spawn the channels
         let (schan_execute, rchan_execute) = tokio::sync::mpsc::unbounded_channel();
+
+        // Store the channel sender in the backend for use with mouse emulation
+        {
+            let mut channel_guard = self.event_channel.write().await;
+            *channel_guard = Some(schan_execute.clone());
+        }
 
         // Create the executor
         thread::spawn(move || {
@@ -597,6 +673,7 @@ impl Default for MacroBackend {
             )),
             triggers: Arc::new(RwLock::from(triggers)),
             is_listening: Arc::new(AtomicBool::new(true)),
+            event_channel: Arc::new(RwLock::new(None)),
         }
     }
 }

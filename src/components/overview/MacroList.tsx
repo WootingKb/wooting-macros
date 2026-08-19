@@ -11,9 +11,10 @@ import {
   HStack,
   Text,
   useColorModeValue,
-  VStack
+  VStack,
+  Tooltip
 } from '@chakra-ui/react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useApplicationContext } from '../../contexts/applicationContext'
 import { useSelectedCollection } from '../../contexts/selectors'
 import { ViewState } from '../../constants/enums'
@@ -75,13 +76,17 @@ export default function MacroList({ searchValue }: Props) {
     return searchValue.length !== 0
   }, [searchValue.length])
 
+  const hasMacroWithMouseEmulation = useMemo((): boolean => {
+    return currentCollection.macros.some((macro) => macro.mouse_emulation_enabled)
+  }, [currentCollection.macros])
+
   return (
     <Box
       w="full"
       h="full"
       p="25px"
-      overflow="hidden"
       overflowY="auto"
+      overflowX="visible"
       sx={useScrollbarStyles()}
     >
       {!isMacroOutputEnabled && (
@@ -111,6 +116,7 @@ export default function MacroList({ searchValue }: Props) {
               animate={{ x: 0 }}
               transition={{ ease: 'circOut', duration: 0.2 }}
               exit={{ x: '100vh' }}
+              style={{ overflow: 'visible' }}
             >
               <Flex h="full" justifyContent="center" alignItems="center">
                 <VStack
@@ -138,6 +144,55 @@ export default function MacroList({ searchValue }: Props) {
                 </VStack>
               </Flex>
             </motion.div>
+            <motion.div
+              initial={{ x: '100vh' }}
+              animate={{ x: 0 }}
+              transition={{ ease: 'circOut', duration: 0.2 }}
+              exit={{ x: '100vh' }}
+            >
+              <Flex h="full" justifyContent="center" alignItems="center">
+                <VStack
+                  w="full"
+                  minH="202px"
+                  h="full"
+                  bg={useMainBgColour()}
+                  boxShadow={shadowColour}
+                  rounded="md"
+                  p={3}
+                  m="auto"
+                  justifyContent="center"
+                  spacing={2}
+                >
+                  {!hasMacroWithMouseEmulation ? (
+                    <Tooltip label="Add mouse emulation settings to a macro" hasArrow>
+                      <Button
+                        variant="yellowGradient"
+                        leftIcon={<AddIcon />}
+                        size={['sm', 'md', 'lg']}
+                        onClick={() => {
+                          changeViewState(ViewState.MouseEmulationConfig)
+                        }}
+                      >
+                        Add Mouse Emulation
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip 
+                      label="Mouse Emulation already enabled on a macro. Edit the macro to manage settings." 
+                      hasArrow
+                    >
+                      <Button
+                        size={['sm', 'md', 'lg']}
+                        isDisabled
+                        opacity={0.6}
+                      >
+                        🖱️ Mouse Emulation Active
+                      </Button>
+                    </Tooltip>
+                  )}
+                </VStack>
+              </Flex>
+            </motion.div>
             {currentCollection.macros.map((macro, index) => (
               <motion.div
                 key={`${macro.name} + ${index}`}
@@ -145,6 +200,7 @@ export default function MacroList({ searchValue }: Props) {
                 transition={{ ease: 'circOut', duration: 0.2 }}
                 animate={{ x: 0 }}
                 exit={{ x: '100vh' }}
+                style={{ overflow: 'visible' }}
               >
                 <GridItem w="full" h="fit-content">
                   <MacroCard
@@ -166,6 +222,7 @@ export default function MacroList({ searchValue }: Props) {
               transition={{ ease: 'circOut', duration: 0.2 }}
               animate={{ x: 0 }}
               exit={{ x: '100vh' }}
+              style={{ overflow: 'visible' }}
             >
               <GridItem w="full" h="fit-content">
                 <MacroCard
